@@ -53,7 +53,7 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     public void bindData(StepNotExecuted stepNotExecuted) {
         Drawable placeHolder;
         placeHolder = context.getResources().getDrawable(R.drawable.ic_baseline_close_24);
-        placeHolder.setColorFilter(context.getResources().getColor(R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
+        placeHolder.setColorFilter(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
         stepNotExecutedIvIcon.setImageDrawable(placeHolder);
         setTextViewContent(stepNotExecutedTvJustifyLbl, stepNotExecuted.getJustifyLbl());
         setTextViewContent(stepNotExecutedTvJustify, stepNotExecuted.getJustify());
@@ -86,8 +86,8 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
             final String localPath = path;
 
             Glide.with(context).asBitmap()
-                    .placeholder(R.drawable.sand_watch_transp)
-                    .error(R.drawable.sand_watch_transp)
+                    .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
+                    .error(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                     .load(localPath)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
@@ -123,7 +123,7 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
                             super.onLoadStarted(placeholder);
                             stepNotExecutedIvPhoto.setVisibility(View.VISIBLE);
                             stepNotExecutedIvPhoto.setEnabled(false);
-                            Drawable dPlaceholder = context.getResources().getDrawable(R.drawable.sand_watch_transp);
+                            Drawable dPlaceholder = context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
                             dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
                             stepNotExecutedIvPhoto.setImageDrawable(dPlaceholder);
                         }

@@ -22,12 +22,12 @@ import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripTarget
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_FLEET_TRIP_SEND_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_FLEET_TRIP_SEND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_ORIGIN_TRIP_SEND_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_ORIGIN_TRIP_SEND_TTL
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.destination.DestinationDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.EditOriginDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
@@ -98,90 +98,89 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                 etLayoutFilter.hint = hmAuxExtractTranslate[EXTRACT_FILTER_LBL]
 
 
-                val listExtract = viewModel.getListExtract()
-                if(listExtract.isEmpty()){
-                    emptyList.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }else {
-                    val adapter = ExtractAdapter(
-                        context = requireContext(),
-                        hmAuxTranslate = hmAuxExtractTranslate,
-                        source = listExtract,
-                        onSelectUser = { item, position ->
-                            lastIndex = position
-                            showEditUser(item, true)
-                        },
-                        onSelectEvent = { item, position ->
-                            lastIndex = position
-                            showDialogEvent(item, true)
-                        },
-                        onSelectOrigin = { item, position ->
-                            lastIndex = position
-                            showEditOrigin(item)
-                        },
-                        onSelectDestination = { item, position ->
-                            lastIndex = position
-                            showEditDestination(item)
-                        },
-                        onSelectAction = { item, position ->
-                            item.actPDFLocal?.let {
-                                requireContext().openFormPDF(
-                                    it,
-                                    notFoundDialog = {
-                                        ToolBox.alertMSG(
-                                            context,
-                                            hmAuxTranslate["alert_pdf_not_found_ttl"],
-                                            hmAuxTranslate["alert_pdf_not_found_msg"],
-                                            DialogInterface.OnClickListener { dialogInterface, i ->
-                                                ToolBox_Inf.scheduleAllDownloadWorkers(context)
-                                            },
-                                            0
-                                        )
-                                    },
-                                    errorDialog = {
-                                        //
-                                        ToolBox.alertMSG(
-                                            context,
-                                            hmAuxTranslate["alert_starting_pdf_not_supported_ttl"],
-                                            hmAuxTranslate["alert_starting_pdf_not_supported_msg"],
-                                            null,
-                                            0
-                                        )
-                                    }
-                                )
+                state.listExtract?.let { listExtract ->
+                    if(listExtract.isEmpty()){
+                        emptyList.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }else {
+                        val adapter = ExtractAdapter(
+                            context = requireContext(),
+                            hmAuxTranslate = hmAuxExtractTranslate,
+                            source = listExtract,
+                            onSelectUser = { item, position ->
+                                lastIndex = position
+                                showEditUser(item, true)
+                            },
+                            onSelectEvent = { item, position ->
+                                lastIndex = position
+                                showDialogEvent(item, true)
+                            },
+                            onSelectOrigin = { item, position ->
+                                lastIndex = position
+                                showEditOrigin(item)
+                            },
+                            onSelectDestination = { item, position ->
+                                lastIndex = position
+                                showEditDestination(item)
+                            },
+                            onSelectAction = { item, position ->
+                                item.actPDFLocal?.let {
+                                    requireContext().openFormPDF(
+                                        it,
+                                        notFoundDialog = {
+                                            ToolBox.alertMSG(
+                                                context,
+                                                hmAuxTranslate["alert_pdf_not_found_ttl"],
+                                                hmAuxTranslate["alert_pdf_not_found_msg"],
+                                                DialogInterface.OnClickListener { dialogInterface, i ->
+                                                    ToolBox_Inf.scheduleAllDownloadWorkers(context)
+                                                },
+                                                0
+                                            )
+                                        },
+                                        errorDialog = {
+                                            //
+                                            ToolBox.alertMSG(
+                                                context,
+                                                hmAuxTranslate["alert_starting_pdf_not_supported_ttl"],
+                                                hmAuxTranslate["alert_starting_pdf_not_supported_msg"],
+                                                null,
+                                                0
+                                            )
+                                        }
+                                    )
+                                }
+                            },
+                            updateList = { size ->
+                                if (size == 0) {
+                                    recyclerView.visibility = View.GONE
+                                    emptyList.visibility = View.VISIBLE
+                                } else {
+                                    emptyList.visibility = View.GONE
+                                    recyclerView.visibility = View.VISIBLE
+                                }
                             }
-                        },
-                        updateList = { size ->
-                            if (size == 0) {
-                                recyclerView.visibility = View.GONE
-                                emptyList.visibility = View.VISIBLE
-                            } else {
-                                emptyList.visibility = View.GONE
-                                recyclerView.visibility = View.VISIBLE
-                            }
+
+                        )
+
+                        recyclerView.apply {
+                            layoutManager = LinearLayoutManager(context)
+                            this.adapter = adapter
+                            lastIndex?.let(this::scrollToPosition)
                         }
 
-                    )
-
-                    recyclerView.apply {
-                        layoutManager = LinearLayoutManager(context)
-                        this.adapter = adapter
-                        lastIndex?.let(this::scrollToPosition)
+                        etFilter.addTextChangedListener(onTextChanged = { text, start, before, count ->
+                            adapter.filter(text.toString())
+                        })
                     }
-
-                    etFilter.addTextChangedListener(onTextChanged = { text, start, before, count ->
-                        adapter.filter(text.toString())
-                    })
                 }
-
-
             }
         }.launchIn(CoroutineScope(Dispatchers.Main))
 
     }
 
 
-    private lateinit var chainOriginAndFleet: SaveOriginEdit.FLEET
+    private var chainOriginAndFleet: SaveOriginEdit.FLEET? = null
     private fun showEditOrigin(item: FSTrip) {
         dialogActive = EditOriginDialog(
             context = requireContext(),
@@ -210,13 +209,14 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                         )
 
                         editSaveOrigin(
-                            WS_TRIP_SAVE_FLEET_AND_ORIGIN,
-                            typeSave.date
+                            wsProcess = WS_TRIP_SAVE_FLEET_AND_ORIGIN,
+                            date = typeSave.date,
+                            chainOriginAndFleet = chainOriginAndFleet!!
                         )
                     }
 
                     is SaveOriginEdit.FLEET -> {
-
+                        chainOriginAndFleet = null
                         editSaveFleet(
                             fleetPlate = typeSave.fleet,
                             odometer = if(typeSave.odometer.isNotBlank()){ typeSave.odometer.toLong()} else {null},
@@ -227,6 +227,7 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                     }
 
                     is SaveOriginEdit.ORIGIN -> {
+                        chainOriginAndFleet = null
                         editSaveOrigin(
                             wsProcess = WS_TRIP_ORIGIN_SET,
                             date = typeSave.date
@@ -240,49 +241,68 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                 callCamera(id, path)
             }
         )
-        dialogActive.show()
+        dialogActive?.show()
     }
 
 
     fun editSaveFleet(
-        wsProcess: String = WS_TRIP_SAVE_FLEET,
-        fleetPlate: String = chainOriginAndFleet.fleet,
-        odometer: Long? = chainOriginAndFleet.odometer.toLong(),
-        pathImage: String = chainOriginAndFleet.photoUpdate.path,
-        changePhoto: Int = chainOriginAndFleet.photoUpdate.isNew,
-        deletePhoto: Boolean = chainOriginAndFleet.photoUpdate.deletePhoto,
+        fleetPlate: String = "",
+        odometer: Long? = null,
+        pathImage: String = "",
+        changePhoto: Int = 0,
+        deletePhoto: Boolean = false,
         target: TripTarget = TripTarget.START
     ) {
-        listener?.callTripWS(
-            wsProcess,
-            hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
-            hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!,
+        val progressTranslate = TripWsProgress(
+            process = if(target == TripTarget.END) WS_TRIP_SAVE_FLEET_END_TRIP
+            else WS_TRIP_SAVE_FLEET,
+            title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
+            message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
         )
+        chainOriginAndFleet?.let { chain ->
+            viewModel.saveFleetData(
+                fleetPlate = chain.fleet,
+                odometer = chain.odometer.toLong(),
+                path = chain.photoUpdate.path,
+                changePhoto = chain.photoUpdate.isNew,
+                deletePhoto = chain.photoUpdate.deletePhoto,
+                target = target,
+                progressTranslate = progressTranslate
+            )
+            return
+        }
+
         viewModel.saveFleetData(
             fleetPlate = fleetPlate,
             odometer = odometer,
             path = pathImage,
             changePhoto = changePhoto,
             target = target,
-            deletePhoto = deletePhoto
+            deletePhoto = deletePhoto,
+            progressTranslate = progressTranslate
         )
     }
 
     private fun editSaveOrigin(
         wsProcess: String,
         date: String,
-        originType: OriginType = OriginType.EDIT
+        originType: OriginType = OriginType.EDIT,
+        chainOriginAndFleet: SaveOriginEdit.FLEET? = null
     ) {
         viewModel.saveOriginSet(
             date = date,
             originType = originType,
-            activateWsProgressDialog = {
-                listener?.callTripWS(
-                    wsProcess,
-                    hmAuxTranslate[PROGRESS_ORIGIN_TRIP_SEND_TTL] ?: "",
-                    hmAuxTranslate[PROGRESS_ORIGIN_TRIP_SEND_MSG] ?: "",
-                )
-            },
+            chainOriginAndFleet = chainOriginAndFleet,
+            progressTranslate = TripWsProgress(
+                process = wsProcess,
+                title = hmAuxTranslate[PROGRESS_ORIGIN_TRIP_SEND_TTL]!!,
+                message = hmAuxTranslate[PROGRESS_ORIGIN_TRIP_SEND_MSG]!!
+            ),
+            progressTranslateFleet = TripWsProgress(
+                process = WS_TRIP_SAVE_FLEET,
+                title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
+                message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
+            ),
             locationNotFound = {}
         )
     }
@@ -307,25 +327,19 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
 
                 when (save) {
                     is SaveDestinationEdit.DATE -> {
-                        listener?.callTripWS(
-                            WS_TRIP_DESTINATION_EDIT_DATE,
-                            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
-                            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: "",
-                        )
-
                         viewModel.saveDestinationDate(
                             dateStart = save.dateStart,
                             dateEnd = save.dateEnd,
-                            destinationSeq = save.destinationSeq
+                            destinationSeq = save.destinationSeq,
+                            progressTranslate = TripWsProgress(
+                                WS_TRIP_DESTINATION_EDIT_DATE,
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: ""
+                            )
                         )
                     }
 
                     is SaveDestinationEdit.ODOMETER -> {
-                        listener?.callTripWS(
-                            WS_TRIP_SAVE_FLEET,
-                            hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL] ?: "",
-                            hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG] ?: "",
-                        )
 
                         viewModel.saveFleetData(
                             odometer = save.odometer,
@@ -333,16 +347,17 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                             changePhoto = save.photoUpdate.isNew,
                             destinationSeq = save.destinationSeq,
                             target = TripTarget.DESTINATION,
-                            deletePhoto = save.photoUpdate.deletePhoto
+                            deletePhoto = save.photoUpdate.deletePhoto,
+                            progressTranslate = TripWsProgress(
+                                process = WS_TRIP_SAVE_FLEET,
+                                title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL] ?: "",
+                                message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG] ?: "",
+                            )
                         )
                     }
 
                     is SaveDestinationEdit.ALL -> {
-                        listener?.callTripWS(
-                            WS_TRIP_DESTINATION_EDIT_CHAIN,
-                            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
-                            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: "",
-                        )
+
 
                         chainDestinationAndFleet = SaveDestinationEdit.ODOMETER(
                             odometer = save.odometer,
@@ -353,7 +368,18 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                         viewModel.saveDestinationDate(
                             dateStart = save.dateStart,
                             dateEnd = save.dateEnd,
-                            destinationSeq = save.destinationSeq
+                            destinationSeq = save.destinationSeq,
+                            chainDestinationAndFleet = chainDestinationAndFleet,
+                            progressTranslate = TripWsProgress(
+                                process = WS_TRIP_DESTINATION_EDIT_CHAIN,
+                                title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL] ?: "",
+                                message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG] ?: "",
+                            ),
+                            progressTranslateFleet = TripWsProgress(
+                                WS_TRIP_DESTINATION_EDIT_DATE,
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: ""
+                            )
                         )
 
                     }
@@ -365,22 +391,22 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                 callCamera(id, path)
             }
         )
-        dialogActive.show()
+        dialogActive?.show()
     }
 
     fun saveFleetData() {
-        listener?.callTripWS(
-            WS_TRIP_SAVE_FLEET,
-            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
-            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: "",
-        )
 
         viewModel.saveFleetData(
             odometer = chainDestinationAndFleet.odometer,
             path = chainDestinationAndFleet.photoUpdate.path,
             changePhoto = chainDestinationAndFleet.photoUpdate.isNew,
             destinationSeq = chainDestinationAndFleet.destinationSeq,
-            target = TripTarget.DESTINATION
+            target = TripTarget.DESTINATION,
+            progressTranslate = TripWsProgress(
+                process = WS_TRIP_SAVE_FLEET,
+                title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
+                message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
+            )
         )
     }
 

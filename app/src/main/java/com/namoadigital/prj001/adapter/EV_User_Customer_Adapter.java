@@ -93,7 +93,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
         String code = item.get(EV_User_CustomerDao.CUSTOMER_NAME) + " (" + item.get(EV_User_CustomerDao.CUSTOMER_CODE) + ")";
         SpannableString id_string = new SpannableString(code);
         id_string.setSpan(
-                new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
+                new TextAppearanceSpan(context, com.namoa_digital.namoa_library.R.style.Base_TextAppearance_Material3_LabelSmall),
                 code.indexOf("("),
                 code.length(),
                 0
@@ -113,7 +113,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0) {
                 iv001.setVisibility(View.VISIBLE);
                 iv001.setImageResource(R.drawable.ic_cloud_off_black_24dp);
-                iv001.setColorFilter(context.getResources().getColor(R.color.m3_namoa_outline_variant));
+                iv001.setColorFilter(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.m3_namoa_outline_variant));
                 //
                 iv002.setVisibility(View.VISIBLE);
                 iv002.setColorFilter(context.getResources().getColor(R.color.m3_namoa_primary));

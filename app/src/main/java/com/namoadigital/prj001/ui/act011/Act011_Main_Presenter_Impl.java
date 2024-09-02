@@ -252,6 +252,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         FSTrip trip = dao.getTrip();
         return trip != null && trip.getSyncRequired() == 1;
     }
+    @Override
+    public boolean isTripInUpdateRequired() {
+        FSTripDao dao = new FSTripDao(context);
+        return dao.hasTripUpdateRequired();
+    }
 
     @Override
     public void executeTripUpdate() {

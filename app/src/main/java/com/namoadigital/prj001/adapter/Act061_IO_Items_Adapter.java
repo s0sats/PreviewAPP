@@ -463,16 +463,12 @@ public class Act061_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         @Override
         public void onClick(View v) {
             if (mOnIoItemClickListener != null) {
-                switch (v.getId()) {
-                    case R.id.act061_frag_item_cell_iv_serial:
-                        mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
-                    case R.id.act061_frag_item_cell_iv_conf:
-                        mOnIoItemClickListener.onConfClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
-                    case R.id.act061_frag_item_cell_iv_put_away:
-                        mOnIoItemClickListener.onPutAwayClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
+                if(v.getId() == R.id.act061_frag_item_cell_iv_serial){
+                    mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
+                }else if(v.getId() == R.id.act061_frag_item_cell_iv_conf){
+                    mOnIoItemClickListener.onConfClick(mFilteredValues.get(getAdapterPosition()));
+                }else if(v.getId() == R.id.act061_frag_item_cell_iv_put_away){
+                    mOnIoItemClickListener.onPutAwayClick(mFilteredValues.get(getAdapterPosition()));
                 }
             }
         }

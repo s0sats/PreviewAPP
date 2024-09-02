@@ -25,6 +25,7 @@ interface Act092_Contract {
         fun showPD(ttl: String?, msg: String?)
         fun disablePD()
         fun setItemAsDownloaded(position: Int, myActions: MyActions)
+        fun getContext():Context
     }
 
     interface Presenter : BasePresenter<View> {

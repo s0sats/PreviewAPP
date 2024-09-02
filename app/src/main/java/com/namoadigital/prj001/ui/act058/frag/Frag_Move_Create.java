@@ -440,10 +440,10 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         switch (view_param) {
             case 0:
                 if (ss_reason.getmValue() == null || !ss_reason.getmValue().hasConsistentValue(SearchableSpinner.ID)) {
-                    ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                    ss_reason.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     isSuccessfully = false;
                 } else {
-                    ss_reason.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+                    ss_reason.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                 }
                 break;
             case 1:
@@ -460,27 +460,27 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
         }
         if (ss_zone.getVisibility() == View.VISIBLE) {
             if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                ss_zone.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                 isSuccessfully = false;
             } else {
-                ss_zone.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+                ss_zone.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
             }
         }
         if (ss_local.getVisibility() == View.VISIBLE) {
             if (ss_local.getmValue() == null || !ss_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                ss_local.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                 isSuccessfully = false;
             } else {
-                ss_local.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+                ss_local.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
             }
         }
 
-        mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        mket_serial.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
 
         if (mket_serial.getVisibility() == View.VISIBLE) {
             if (!mdProductSerial.getSerial_id().equalsIgnoreCase(mket_serial.getText().toString().trim())) {
                 isSuccessfully = false;
-                mket_serial.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                mket_serial.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             }
         }
 

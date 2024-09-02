@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.core.data.remote.domain
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.model.Main_Header_Env
 import com.namoadigital.prj001.util.Constant
 
 data class ApiRequest<T>(
-    @SerializedName("token") var token: String,
-    @SerializedName("parameters") var parameters: T? = null
+    @Expose @SerializedName("token") var token: String,
+    @Expose @SerializedName("parameters") var parameters: T? = null
 ) : Main_Header_Env() {
 
     init {
@@ -18,7 +19,7 @@ data class ApiRequest<T>(
 }
 
 data class APIWithoutToken<T>(
-    @SerializedName("parameters") var parameters: T? = null
+    @Expose @SerializedName("parameters") var parameters: T? = null
 ) : Main_Header_Env() {
     init {
         app_code = Constant.PRJ001_CODE
@@ -28,9 +29,9 @@ data class APIWithoutToken<T>(
 }
 
 data class ApiPageRequest<T>(
-    @SerializedName("pageSize") val pageSize: Int = 9999,
-    @SerializedName("pageNumber") val pageNumber: Int = 1,
-    @SerializedName("parameters") var parameters: T? = null
+    @Expose @SerializedName("pageSize") val pageSize: Int = 9999,
+    @Expose @SerializedName("pageNumber") val pageNumber: Int = 1,
+    @Expose @SerializedName("parameters") var parameters: T? = null
 ) : Main_Header_Env() {
     init {
         app_code = Constant.PRJ001_CODE

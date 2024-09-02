@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.dao;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -51,6 +52,22 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String APP_EXECUTIONS_COUNT = "app_executions_count";
     public static final String LICENSE_BLOCKED = "license_blocked";
     public static final String EMAIL_NC = "email_nc";
+
+    public static final String COUNTRY_CODE = "country_code";
+    public static final String STATE = "state";
+    public static final String CITY = "city";
+    public static final String DISTRICT = "district";
+    public static final String STREET = "street";
+    public static final String NUM = "num";
+    public static final String COMPLEMENT = "complement";
+    public static final String ZIP_CODE = "zip_code";
+    public static final String PLUS_CODE = "plus_code";
+    public static final String CONTACT_NAME = "contact_name";
+    public static final String CONTACT_PHONE = "contact_phone";
+    public static final String REGION_CODE = "region_code";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+
 
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -329,6 +346,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     }
 
     private class CursorMD_SiteMapper implements Mapper<Cursor, MD_Site> {
+        @SuppressLint("Range")
         @Override
         public MD_Site map(Cursor cursor) {
             MD_Site md_site = new MD_Site();
@@ -394,6 +412,39 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             }else{
                 md_site.setEmail_nc(cursor.getString(cursor.getColumnIndex(EMAIL_NC)));
             }
+            md_site.setCountryCode(cursor.getString(cursor.getColumnIndex(COUNTRY_CODE)));
+            md_site.setState(cursor.getString(cursor.getColumnIndex(STATE)));
+            md_site.setCity(cursor.getString(cursor.getColumnIndex(CITY)));
+            md_site.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            md_site.setStreet(cursor.getString(cursor.getColumnIndex(STREET)));
+            md_site.setNum(cursor.getString(cursor.getColumnIndex(NUM)));
+            md_site.setComplement(cursor.getString(cursor.getColumnIndex(COMPLEMENT)));
+            md_site.setZipCode(cursor.getString(cursor.getColumnIndex(ZIP_CODE)));
+            md_site.setPlusCode(cursor.getString(cursor.getColumnIndex(PLUS_CODE)));
+            md_site.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+            md_site.setContactPhone(cursor.getString(cursor.getColumnIndex(CONTACT_PHONE)));
+
+
+            md_site.setRegionCode(cursor.getInt(cursor.getColumnIndex(CONTACT_PHONE)));
+
+            if(cursor.isNull(cursor.getColumnIndex(REGION_CODE))){
+                md_site.setRegionCode(null);
+            }else{
+                md_site.setRegionCode(cursor.getInt(cursor.getColumnIndex(REGION_CODE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(LATITUDE))){
+                md_site.setLatitude(null);
+            }else{
+                md_site.setLatitude(cursor.getString(cursor.getColumnIndex(LATITUDE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(LONGITUDE))){
+                md_site.setLongitude(null);
+            }else{
+                md_site.setLongitude(cursor.getString(cursor.getColumnIndex(LONGITUDE)));
+            }
+
             return md_site;
         }
 
@@ -457,6 +508,21 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                 contentValues.put(LICENSE_BLOCKED, md_site.getLicense_blocked());
             }
             contentValues.put(EMAIL_NC,md_site.getEmail_nc());
+
+            contentValues.put(COUNTRY_CODE, md_site.getCountryCode());
+            contentValues.put(STATE, md_site.getState());
+            contentValues.put(CITY, md_site.getCity());
+            contentValues.put(DISTRICT, md_site.getDistrict());
+            contentValues.put(STREET, md_site.getStreet());
+            contentValues.put(NUM, md_site.getNum());
+            contentValues.put(COMPLEMENT, md_site.getComplement());
+            contentValues.put(ZIP_CODE, md_site.getZipCode());
+            contentValues.put(PLUS_CODE, md_site.getPlusCode());
+            contentValues.put(CONTACT_NAME, md_site.getContactName());
+            contentValues.put(CONTACT_PHONE, md_site.getContactPhone());
+            contentValues.put(REGION_CODE, md_site.getRegionCode());
+            contentValues.put(LATITUDE, md_site.getLatitude());
+            contentValues.put(LONGITUDE, md_site.getLongitude());
             return contentValues;
 
         }

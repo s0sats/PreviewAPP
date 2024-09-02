@@ -382,13 +382,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     if(mProductListener.hasWithdrawnDataChange(tk_ticket_product)) {
                         product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
                     }else{
-                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.color.padrao_WHITE));
                     }
 
                     if(mProductListener.hasAppliedDataChange(tk_ticket_product)) {
                         product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
                     }else{
-                        product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+                        product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.color.padrao_WHITE));
                     }
                 }
             } else if (act_profile == 2) {
@@ -452,7 +452,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
          */
         private void disableAppliedLayout() {
             product_cell_iv_applied_substract.setVisibility(View.INVISIBLE);
-            product_cell_iv_applied_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+            product_cell_iv_applied_add.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.color.padrao_WHITE));
             product_cell_iv_applied_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_applied_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
             //Remove listeners ao desabilitar
@@ -564,7 +564,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         private void disableWithdrawLayout() {
             product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
             product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_withdraw_lbl"));
-            product_cell_iv_withdrawn_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+            product_cell_iv_withdrawn_add.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.color.padrao_WHITE));
             product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
             //Remove listeners ao desabilitar
@@ -680,21 +680,18 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(itemView.getWindowToken(), 0);
                     //
-                    switch (checkedId) {
-                        case R.id.act075_approval_form_rg_approval:
-                            mApproveListener.onSelectOption(true);
+                    if(checkedId == R.id.act075_approval_form_rg_approval){
+                        mApproveListener.onSelectOption(true);
+                        mApproveListener.setSaveEnable(true);
+                        defineCommentRequired(false);
+                    }else if(checkedId == R.id.act075_approval_form_rg_decline) {
+                        mApproveListener.onSelectOption(false);
+                        if (mket_comment.getText().toString().isEmpty()) {
+                            mApproveListener.setSaveEnable(false);
+                        } else {
                             mApproveListener.setSaveEnable(true);
-                            defineCommentRequired(false);
-                            break;
-                        case R.id.act075_approval_form_rg_decline:
-                            mApproveListener.onSelectOption(false);
-                            if (mket_comment.getText().toString().isEmpty()) {
-                                mApproveListener.setSaveEnable(false);
-                            }else{
-                                mApproveListener.setSaveEnable(true);
-                            }
-                            defineCommentRequired(true);
-                            break;
+                        }
+                        defineCommentRequired(true);
                     }
                 }
             });

@@ -4,6 +4,7 @@ import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.DialogEventTrip.Companion.DIALOG_EVENT_RETRY_IMAGE_LBL
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 object TranslateInfoDialogs {
@@ -70,6 +71,7 @@ object TranslateInfoDialogs {
             DIALOG_ERROR_FLEET_PLATE_LBL,
             DIALOG_ERROR_ODOMETER_LBL,
             DIALOG_DESTINATION_OVER_NIGHT_LBL,
+            DIALOG_EVENT_RETRY_IMAGE_LBL,
             DIALOG_DATE_START_EXCEEDED_END_DATE_DESTINATION_LBL,
             DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL,
             DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_LBL,

@@ -46,6 +46,16 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
         this.toTK_Ticket_ActionMapper = new CursorToTk_Ticket_ActionMapper();
     }
 
+    public TK_Ticket_ActionDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
+        //
+        this.toContentValuesMapper = new TK_TicketActionToContentValues();
+        this.toTK_Ticket_ActionMapper = new CursorToTk_Ticket_ActionMapper();
+    }
+
 
     @Override
     public DaoObjReturn addUpdate(TK_Ticket_Action tk_ticket_action) {

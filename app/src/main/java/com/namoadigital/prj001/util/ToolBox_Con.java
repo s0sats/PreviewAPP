@@ -130,7 +130,7 @@ public class ToolBox_Con {
         if (httpStatus == HttpURLConnection.HTTP_OK) {
             sb.append(readStreamAux(conn.getInputStream()));
         } else {
-            throw new NetworkConnectionException(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
+            throw new NetworkConnectionException("HTTP_STATUS: " + httpStatus);
             //sb.append("Error: " + "HTTP_STATUS " + httpStatus);
         }
 

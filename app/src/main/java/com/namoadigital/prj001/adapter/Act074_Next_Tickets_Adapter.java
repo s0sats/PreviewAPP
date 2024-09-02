@@ -190,7 +190,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             try {
                 tv_status.setTextColor(ToolBox_Inf.getStatusColorV2(context, item.getTicket_status()));
             }catch (NullPointerException e){
-                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_status_stop));
+                tv_status.setTextColor(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_stop));
             }
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));

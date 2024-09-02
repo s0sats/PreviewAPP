@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.core.trip.domain.usecase
 
+import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
+import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.model.trip.TripTarget
+import kotlinx.coroutines.flow.Flow
 
 class SaveFleetDataUseCase constructor(
     private val repository: TripRepository
-) : UseCaseWithoutFlow<SaveFleetDataUseCase.SaveFleetParams, Unit> {
+) : UseCases<SaveFleetDataUseCase.SaveFleetParams, Unit> {
 
     data class SaveFleetParams(
         val licensePlate: String? = null,
@@ -18,8 +21,8 @@ class SaveFleetDataUseCase constructor(
         val deletePhoto: Boolean=false,
     )
 
-    override fun invoke(input: SaveFleetParams) {
-        repository.execSaveFleetData(
+    override suspend fun invoke(input: SaveFleetParams): Flow<IResult<Unit>> {
+        return repository.execSaveFleetData(
             input.licensePlate,
             input.odometer,
             input.pathPhoto,

@@ -30,7 +30,7 @@ class WSDestinationEdit :
 
     lateinit var dao: FSTripDao
     lateinit var destinationDao: FsTripDestinationDao
-    private val hmAuxTranslate by lazy { loadNetworkTranslate(this) }
+    private val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
 
     override fun onHandleIntent(intent: Intent?) {

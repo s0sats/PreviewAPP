@@ -25,152 +25,256 @@ import java.util.ArrayList;
 
 public class TK_Ticket implements Cloneable, Serializable {
     @Expose
-    @SerializedName("customer_code") private long customer_code;//pk
+    @SerializedName("customer_code")
+    private long customer_code;//pk
     @Expose
-    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix")
+    private int ticket_prefix;//pk
     @Expose
-    @SerializedName("ticket_code") private int ticket_code;//pk
+    @SerializedName("ticket_code")
+    private int ticket_code;//pk
     @Expose
-    @SerializedName("scn") private int scn;
-    @SerializedName("user_level_min") private int user_level_min;
-    @SerializedName("ticket_id") private String ticket_id;
-    @SerializedName("type_code") private int type_code;
-    @SerializedName("type_id") private String type_id;
-    @SerializedName("type_desc") private String type_desc;
-    @SerializedName("app_personal_data") private int app_personal_data;
-    @SerializedName("type_path") private String type_path;
-    @SerializedName("open_comments") private String open_comments;
-    @SerializedName("open_photo") private String open_photo;
-    @SerializedName("open_photo_local") private String open_photo_local;
-    @SerializedName("open_name") private String open_name;
-    @SerializedName("open_email") private String open_email;
-    @SerializedName("open_phone") private String open_phone;
-    @SerializedName("open_date") private String open_date;
-    @SerializedName("open_user") private int open_user;
-    @SerializedName("open_user_name") private String open_user_name;
+    @SerializedName("scn")
+    private int scn;
+    @SerializedName("user_level_min")
+    private int user_level_min;
+    @SerializedName("ticket_id")
+    private String ticket_id;
+    @SerializedName("type_code")
+    private int type_code;
+    @SerializedName("type_id")
+    private String type_id;
+    @SerializedName("type_desc")
+    private String type_desc;
+    @SerializedName("app_personal_data")
+    private int app_personal_data;
+    @SerializedName("type_path")
+    private String type_path;
+    @SerializedName("open_comments")
+    private String open_comments;
+    @SerializedName("open_photo")
+    private String open_photo;
+    @SerializedName("open_photo_local")
+    private String open_photo_local;
+    @SerializedName("open_name")
+    private String open_name;
+    @SerializedName("open_email")
+    private String open_email;
+    @SerializedName("open_phone")
+    private String open_phone;
+    @SerializedName("open_date")
+    private String open_date;
+    @SerializedName("open_user")
+    private int open_user;
+    @SerializedName("open_user_name")
+    private String open_user_name;
     @Expose
-    @SerializedName("internal_comments") private String internal_comments;
-    @SerializedName("open_site_code") private int open_site_code;
-    @SerializedName("open_site_id") private String open_site_id;
-    @SerializedName("open_site_desc") private String open_site_desc;
-    @SerializedName("open_zone_code") private Integer open_zone_code;
-    @SerializedName("open_zone_id") private String open_zone_id;
-    @SerializedName("open_zone_desc") private String open_zone_desc;
-    @SerializedName("open_operation_code") private int open_operation_code;
-    @SerializedName("open_operation_id") private String open_operation_id;
-    @SerializedName("open_operation_desc") private String open_operation_desc;
-    @SerializedName("open_product_code") private int open_product_code;
-    @SerializedName("open_product_id") private String open_product_id;
-    @SerializedName("open_product_desc") private String open_product_desc;
-    @SerializedName("open_serial_code") private int open_serial_code;
-    @SerializedName("open_serial_id") private String open_serial_id;
+    @SerializedName("internal_comments")
+    private String internal_comments;
+    @SerializedName("open_site_code")
+    private int open_site_code;
+    @SerializedName("open_site_id")
+    private String open_site_id;
+    @SerializedName("open_site_desc")
+    private String open_site_desc;
+    @SerializedName("open_zone_code")
+    private Integer open_zone_code;
+    @SerializedName("open_zone_id")
+    private String open_zone_id;
+    @SerializedName("open_zone_desc")
+    private String open_zone_desc;
+    @SerializedName("open_operation_code")
+    private int open_operation_code;
+    @SerializedName("open_operation_id")
+    private String open_operation_id;
+    @SerializedName("open_operation_desc")
+    private String open_operation_desc;
+    @SerializedName("open_product_code")
+    private int open_product_code;
+    @SerializedName("open_product_id")
+    private String open_product_id;
+    @SerializedName("open_product_desc")
+    private String open_product_desc;
+    @SerializedName("open_serial_code")
+    private int open_serial_code;
+    @SerializedName("open_serial_id")
+    private String open_serial_id;
     @Expose
-    @SerializedName("change_date") private String change_date;
-    @SerializedName("start_date") private String start_date;
+    @SerializedName("change_date")
+    private String change_date;
+    @SerializedName("start_date")
+    private String start_date;
     @Nullable
-    @SerializedName("forecast_date") private String forecast_date;
+    @SerializedName("forecast_date")
+    private String forecast_date;
     @Expose
-    @SerializedName("forecast_time") private String forecast_time;
-    @SerializedName("ticket_status") private String ticket_status;
+    @SerializedName("forecast_time")
+    private String forecast_time;
+    @SerializedName("ticket_status")
+    private String ticket_status;
     @Nullable
-    @SerializedName("close_date") private String close_date;
-    @SerializedName("close_user") private Integer close_user;
+    @SerializedName("close_date")
+    private String close_date;
+    @SerializedName("close_user")
+    private Integer close_user;
     @Nullable
-    @SerializedName("close_user_name") private String close_user_name;
-    @SerializedName("duration_minutes") private Integer duration_minutes;
-    @SerializedName("barcode_code") private Integer barcode_code;
+    @SerializedName("close_user_name")
+    private String close_user_name;
+    @SerializedName("duration_minutes")
+    private Integer duration_minutes;
+    @SerializedName("barcode_code")
+    private Integer barcode_code;
     @Nullable
-    @SerializedName("pc_code") private Integer pc_code;
+    @SerializedName("pc_code")
+    private Integer pc_code;
     @Nullable
-    @SerializedName("pc_id") private String pc_id;
+    @SerializedName("pc_id")
+    private String pc_id;
     @Nullable
-    @SerializedName("pc_desc") private String pc_desc;
+    @SerializedName("pc_desc")
+    private String pc_desc;
     @Nullable
     @Expose
-    @SerializedName("main_user") private Integer main_user;
+    @SerializedName("main_user")
+    private Integer main_user;
     @Nullable
     @Expose
-    @SerializedName("main_user_nick") private String main_user_nick;
+    @SerializedName("main_user_nick")
+    private String main_user_nick;
     @Nullable
     @Expose
-    @SerializedName("main_user_name") private String main_user_name;
-    @SerializedName("pipeline_code") private Integer pipeline_code;
+    @SerializedName("main_user_name")
+    private String main_user_name;
+    @SerializedName("pipeline_code")
+    private Integer pipeline_code;
     @Nullable
-    @SerializedName("pipeline_id") private String pipeline_id;
+    @SerializedName("pipeline_id")
+    private String pipeline_id;
     @Nullable
-    @SerializedName("pipeline_desc") private String pipeline_desc;
-    @SerializedName("current_step_order") private Integer current_step_order;
-    @SerializedName("approval_rejected") private int approval_rejected;
-    @SerializedName("origin_type") private String origin_type;
-    @SerializedName("origin_desc") private String origin_desc;
-    @SerializedName("valid_structure_step") private int valid_structure_step;
-    @SerializedName("inventory_control") private int inventory_control;
-    @SerializedName("user_focus") private int user_focus;
-    @SerializedName("has_item_check") private int has_item_check;
-    @SerializedName("allow_step_approval") private int allow_step_approval;
-    @SerializedName("sync_required") private int sync_required;
-    @SerializedName("update_required") private int update_required;
-    @SerializedName("update_required_product") private int update_required_product;
-    @SerializedName("update_required_status") private int update_required_status;
+    @SerializedName("pipeline_desc")
+    private String pipeline_desc;
+    @SerializedName("current_step_order")
+    private Integer current_step_order;
+    @SerializedName("approval_rejected")
+    private int approval_rejected;
+    @SerializedName("origin_type")
+    private String origin_type;
+    @SerializedName("origin_desc")
+    private String origin_desc;
+    @SerializedName("valid_structure_step")
+    private int valid_structure_step;
+    @SerializedName("inventory_control")
+    private int inventory_control;
+    @SerializedName("user_focus")
+    private int user_focus;
+    @SerializedName("has_item_check")
+    private int has_item_check;
+    @SerializedName("allow_step_approval")
+    private int allow_step_approval;
+    @SerializedName("sync_required")
+    private int sync_required;
+    @SerializedName("update_required")
+    private int update_required;
+    @SerializedName("update_required_product")
+    private int update_required_product;
+    @SerializedName("update_required_status")
+    private int update_required_status;
     @Expose
-    @SerializedName("token") private String token;
+    @SerializedName("token")
+    private String token;
     @Expose
     @Nullable
-    @SerializedName("schedule_prefix") private Integer schedule_prefix;
+    @SerializedName("schedule_prefix")
+    private Integer schedule_prefix;
     @Expose
     @Nullable
-    @SerializedName("schedule_code") private Integer schedule_code;
+    @SerializedName("schedule_code")
+    private Integer schedule_code;
     @Expose
     @Nullable
-    @SerializedName("schedule_exec") private Integer schedule_exec;
+    @SerializedName("schedule_exec")
+    private Integer schedule_exec;
     @Nullable
-    @SerializedName("client_code") private Integer client_code;
+    @SerializedName("client_code")
+    private Integer client_code;
     @Nullable
-    @SerializedName("client_id") private String client_id;
+    @SerializedName("client_id")
+    private String client_id;
     @Nullable
-    @SerializedName("client_name") private String client_name;
+    @SerializedName("client_name")
+    private String client_name;
     @Nullable
-    @SerializedName("address") private TkTicketAddress address;
+    @SerializedName("address")
+    private TkTicketAddress address;
     @Nullable
-    @SerializedName("address_country") private String address_country;
+    @SerializedName("address_country")
+    private String address_country;
+
     @Nullable
-    @SerializedName("address_state") private String address_state;
+    @SerializedName("address_country_id")
+    private String address_countryId;
     @Nullable
-    @SerializedName("address_city") private String address_city;
+    @SerializedName("address_state")
+    private String address_state;
     @Nullable
-    @SerializedName("address_district") private String address_district;
+    @SerializedName("address_city")
+    private String address_city;
     @Nullable
-    @SerializedName("address_street") private String address_street;
+    @SerializedName("address_district")
+    private String address_district;
     @Nullable
-    @SerializedName("address_num") private String address_num;
+    @SerializedName("address_street")
+    private String address_street;
     @Nullable
-    @SerializedName("address_complement") private String address_complement;
+    @SerializedName("address_num")
+    private String address_num;
     @Nullable
-    @SerializedName("address_zipcode") private String address_zipcode;
+    @SerializedName("address_complement")
+    private String address_complement;
     @Nullable
-    @SerializedName("address_lat") private String address_lat;
+    @SerializedName("address_zipcode")
+    private String address_zipcode;
     @Nullable
-    @SerializedName("address_lng") private String address_lng;
+    @SerializedName("address_lat")
+    private String address_lat;
     @Nullable
-    @SerializedName("contract_code") private Integer contract_code;
+    @SerializedName("address_lng")
+    private String address_lng;
+
     @Nullable
-    @SerializedName("contract_id") private String contract_id;
+    @SerializedName("address_plus_code")
+    private String address_plusCode;
     @Nullable
-    @SerializedName("contract_desc") private String contract_desc;
+    @SerializedName("contract_code")
+    private Integer contract_code;
+    @Nullable
+    @SerializedName("contract_id")
+    private String contract_id;
+    @Nullable
+    @SerializedName("contract_desc")
+    private String contract_desc;
     //LUCHE - 03/12/2020 - Propriedade que grava o SCN recebido via FCM
-    @SerializedName("fcm_scn") private int fcm_scn;
+    @SerializedName("fcm_scn")
+    private int fcm_scn;
     @Expose
-    @SerializedName("time_action") String time_action;
+    @SerializedName("time_action")
+    String time_action;
     @Expose
-    @SerializedName("move_other_date") Integer move_other_date;
+    @SerializedName("move_other_date")
+    Integer move_other_date;
     @Expose
-    @SerializedName("move_steps") Integer move_steps;
+    @SerializedName("move_steps")
+    Integer move_steps;
     @Expose
-    @SerializedName("apply_perc_steps") String apply_perc_steps;
+    @SerializedName("apply_perc_steps")
+    String apply_perc_steps;
     @Expose
-    @SerializedName("tag_operational_code") private int tag_operational_code;
-    @SerializedName("tag_operational_id") private String tag_operational_id;
-    @SerializedName("tag_operational_desc") private String tag_operational_desc;
+    @SerializedName("tag_operational_code")
+    private int tag_operational_code;
+    @SerializedName("tag_operational_id")
+    private String tag_operational_id;
+    @SerializedName("tag_operational_desc")
+    private String tag_operational_desc;
     @Expose
     @SerializedName("justify_group_code")
     private Integer justify_group_code;
@@ -196,20 +300,38 @@ public class TK_Ticket implements Cloneable, Serializable {
     private Integer not_executed_photo;
     @SerializedName("not_executed_date")
     private String not_executed_date;
-    @SerializedName("class_code") private Integer class_code;
-    @SerializedName("class_id") private String class_id;
-    @SerializedName("class_color") private String class_color;
-    @SerializedName("class_available") private Integer class_available;
-    @SerializedName("kanban") private int kanban;
-    @SerializedName("kanban_stage") private String kanban_stage;
-    @SerializedName("kanban_date") private String kanban_date;
-    @SerializedName("kanban_custom_form_type") private Integer kanban_custom_form_type;
-    @SerializedName("kanban_custom_form_code") private Integer kanban_custom_form_code;
-    @SerializedName("kanban_open_continue") private Integer kanban_open_continue;
-    @SerializedName("able_to_done") private int able_to_done;
-    @SerializedName("preventive") private Integer preventive;
-    @SerializedName("is_priority") private Integer is_priority;
-    @SerializedName("has_open_so_partition") private int has_open_so_partition;
+    @SerializedName("class_code")
+    private Integer class_code;
+    @SerializedName("class_id")
+    private String class_id;
+    @SerializedName("class_color")
+    private String class_color;
+    @SerializedName("class_available")
+    private Integer class_available;
+    @SerializedName("kanban")
+    private int kanban;
+    @SerializedName("kanban_stage")
+    private String kanban_stage;
+    @SerializedName("kanban_date")
+    private String kanban_date;
+    @SerializedName("kanban_custom_form_type")
+    private Integer kanban_custom_form_type;
+    @SerializedName("kanban_custom_form_code")
+    private Integer kanban_custom_form_code;
+    @SerializedName("kanban_open_continue")
+    private Integer kanban_open_continue;
+    @SerializedName("able_to_done")
+    private int able_to_done;
+    @SerializedName("preventive")
+    private Integer preventive;
+    @SerializedName("is_priority")
+    private Integer is_priority;
+    @SerializedName("has_open_so_partition")
+    private int has_open_so_partition;
+    @SerializedName("contact_name")
+    private String contactName;
+    @SerializedName("contact_phone")
+    private String contactPhone;
     private int has_address;
     @Expose
     @SerializedName("step")
@@ -226,10 +348,10 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setPK() {
 
-        if(address != null){
+        if (address != null) {
             has_address = 1;
             address_country = address.getCountry();
-//            address_country_id = address.getCountryId();
+            address_countryId = address.getCountryId();
             address_state = address.getState();
             address_city = address.getCity();
             address_district = address.getDistrict();
@@ -237,8 +359,12 @@ public class TK_Ticket implements Cloneable, Serializable {
             address_num = address.getStreetnumber();
             address_complement = address.getComplement();
             address_zipcode = address.getZipcode();
-//            address_plus_code = address.getPlus_code();
-        }else{
+            address_plusCode = address.getPlus_code();
+            address_lat = address.getLatitude();
+            address_lng = address.getLongitude();
+            contactName = address.getContact();
+            contactPhone = address.getPhone();
+        } else {
             has_address = 0;
         }
         for (int i = 0; i < step.size(); i++) {
@@ -1284,36 +1410,37 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.
 //region NOVO_TICKET_CTRL_NA_STEP
+
     /**
      * Metodo que seta a referente a imagem local no campos *_photo_local.
      */
     public void updateLocalImagesPathIfExists() {
         //Se existe foto no servidor, busca referencia local.
-        if(open_photo != null && !open_photo.isEmpty()) {
+        if (open_photo != null && !open_photo.isEmpty()) {
             setOpen_photo_local(
-                getLocalPath(
-                    ToolBox_Inf.buildTicketImgPath(this)
-                )
+                    getLocalPath(
+                            ToolBox_Inf.buildTicketImgPath(this)
+                    )
             );
         }
-        if((not_executed_photo_url != null && !not_executed_photo_url.isEmpty())
-        || (not_executed_photo != null &&  not_executed_photo > 0)) {
+        if ((not_executed_photo_url != null && !not_executed_photo_url.isEmpty())
+                || (not_executed_photo != null && not_executed_photo > 0)) {
             setNot_executed_photo_name(getLocalPath(ToolBox_Inf.buildTicketNotExecutedImgPath(this)));
         }
         //
-        if(getStep() != null) {
+        if (getStep() != null) {
             for (TK_Ticket_Step ticketStep : getStep()) {
-                if(ticketStep.getCtrl() != null){
+                if (ticketStep.getCtrl() != null) {
                     for (TK_Ticket_Ctrl ctrl : ticketStep.getCtrl()) {
-                        switch (ctrl.getCtrl_type()){
+                        switch (ctrl.getCtrl_type()) {
                             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                                if(ctrl.getAction() != null) {
+                                if (ctrl.getAction() != null) {
                                     //Se existe foto no servidor, busca referencia local.
                                     if (existsActionPhotoInServer(ctrl)) {
                                         ctrl.getAction().setAction_photo_local(
-                                            getLocalPath(
-                                                ToolBox_Inf.buildTicketActionImgPath(ctrl)
-                                            )
+                                                getLocalPath(
+                                                        ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                                                )
                                         );
                                     } else {
                                         //Se não existe foto no server, mas existe local, significa que a foto foi apagada
@@ -1321,7 +1448,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                                         if (getLocalPath(ToolBox_Inf.buildTicketActionImgPath(ctrl)) != null) {
                                             //Apaga arquivo local
                                             ToolBox_Inf.deleteDownloadFile(
-                                                Constant.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketActionImgPath(ctrl)
+                                                    Constant.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketActionImgPath(ctrl)
                                             );
                                         }
                                     }
@@ -1343,21 +1470,23 @@ public class TK_Ticket implements Cloneable, Serializable {
     /**
      * LUCHE - 28/08/2020
      * Metdoo que analisa o PDF do form ja foi baixado e atualiza a utrl local
+     *
      * @param ctrl
      */
     private void checkUpdateFormUrlLocal(TK_Ticket_Ctrl ctrl) {
-        if(ctrl.getForm() != null){
-            if( ctrl.getForm().getPdf_url() != null && !ctrl.getForm().getPdf_url().isEmpty()
-                && (ctrl.getForm().getPdf_url_local() == null || ctrl.getForm().getPdf_url_local().isEmpty())
-            ){
+        if (ctrl.getForm() != null) {
+            if (ctrl.getForm().getPdf_url() != null && !ctrl.getForm().getPdf_url().isEmpty()
+                    && (ctrl.getForm().getPdf_url_local() == null || ctrl.getForm().getPdf_url_local().isEmpty())
+            ) {
                 String pdfUrlLocalName = ctrl.getForm().getPdfUrlLocalName(true);
-                File file = new File(ConstantBaseApp.CACHE_PATH, pdfUrlLocalName );
-                if(file.exists()){
+                File file = new File(ConstantBaseApp.CACHE_PATH, pdfUrlLocalName);
+                if (file.exists()) {
                     ctrl.getForm().setPdf_url_local(pdfUrlLocalName);
                 }
             }
         }
     }
+
     /**
      * Metodo que varre todas as actions do ticket e verifica se houve mudança no photo_code.
      * Esse metodo serve para atualizar a foto da action quando alguem alterou a foto via web
@@ -1368,19 +1497,19 @@ public class TK_Ticket implements Cloneable, Serializable {
      */
     public static void checkActionPhotoResetNeeds(TK_Ticket dbTicket, TK_Ticket tkTicket) {
         //Se existe o ticket localmente, começa a analisar as fotos das action
-        if(dbTicket != null && dbTicket.getStep() != null && dbTicket.getStep().size() > 0 ){
+        if (dbTicket != null && dbTicket.getStep() != null && dbTicket.getStep().size() > 0) {
             for (int stepIdx = 0; stepIdx < tkTicket.getStep().size(); stepIdx++) {
                 TK_Ticket_Step tkTicketStep = tkTicket.getStep().get(stepIdx);
-                if(tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0){
+                if (tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0) {
                     for (TK_Ticket_Ctrl tkTicketCtrl : tkTicketStep.getCtrl()) {
-                        if( stepIdx <= dbTicket.getStep().size() //Garante que não haja indexOutOfBound
-                            && tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
-                            && tkTicketCtrl.getAction() != null
-                        ){
-                            if (haveToResetPhoto(dbTicket.getStep().get(stepIdx),tkTicketCtrl)) {
+                        if (stepIdx <= dbTicket.getStep().size() //Garante que não haja indexOutOfBound
+                                && tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
+                                && tkTicketCtrl.getAction() != null
+                        ) {
+                            if (haveToResetPhoto(dbTicket.getStep().get(stepIdx), tkTicketCtrl)) {
                                 //Apaga arquivo local
                                 ToolBox_Inf.deleteDownloadFile(
-                                    Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
+                                        Constant.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
                                 );
                             }
                         }
@@ -1392,46 +1521,46 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     /**
      * LUCHE - 26/12/2019
-     *
+     * <p>
      * Metodo que verifica se a foto da action precisa ser resetada(apagada).
-     *
+     * <p>
      * O metodo busca o controle passado por parametro na lista de controles do ticketDB e avalia a nessecidade de reset.
      * A logica para reset é:
-     *  - O ticket local, possui foto baixada(getAction_photo_local() != null)
-     *  - O ticket recebido, possui o codigo da foto(getAction_photo_code() != null)
-     *  - (O ticket local não possui codigo da foto OU possui mas é diferente de 0 e diferente do codigo do ticket recebido)
-     *  A ultima codição se refere:
-     *    "O ticket local não possui codigo da foto":
-     *    - Se não possui codigo da foto e um codigo foi retornado, significa que essa ação teve uma foto adicionada(via web ou por outro usr)
-     *    "possui mas é diferente de 0":
-     *    - Se o codigo for 0 , signifca que a action não tinha foto e o proprio usr adicionou a foto.Nesse caso não é necessario reset
-     *    " e diferente do codigo do ticket recebido":
-     *    - Se o codigo for != 0, significa que ja existia uma foto, então, só é necessario o reset caso o codigo recebido seja diferente do atual.
+     * - O ticket local, possui foto baixada(getAction_photo_local() != null)
+     * - O ticket recebido, possui o codigo da foto(getAction_photo_code() != null)
+     * - (O ticket local não possui codigo da foto OU possui mas é diferente de 0 e diferente do codigo do ticket recebido)
+     * A ultima codição se refere:
+     * "O ticket local não possui codigo da foto":
+     * - Se não possui codigo da foto e um codigo foi retornado, significa que essa ação teve uma foto adicionada(via web ou por outro usr)
+     * "possui mas é diferente de 0":
+     * - Se o codigo for 0 , signifca que a action não tinha foto e o proprio usr adicionou a foto.Nesse caso não é necessario reset
+     * " e diferente do codigo do ticket recebido":
+     * - Se o codigo for != 0, significa que ja existia uma foto, então, só é necessario o reset caso o codigo recebido seja diferente do atual.
      * LUCHE - 27/08/2020
      * Modificado metodo, adicionando uma ultima condição, de quando a action é rejeitado pois ja foi executado por outro usr
-     *  - Se codigo da imagem é 0, o codigo retornado for != de 0 e o usr da action é diferente, tb reseta a foto.
+     * - Se codigo da imagem é 0, o codigo retornado for != de 0 e o usr da action é diferente, tb reseta a foto.
      *
      * @param ticketStepsDb - Ticket no DB local
-     * @param tkTicketCtrl - Controle do ticket vindo do server
+     * @param tkTicketCtrl  - Controle do ticket vindo do server
      * @return - Verdadeiro se é necessario resetar / apagar a foto
      */
     private static boolean haveToResetPhoto(TK_Ticket_Step ticketStepsDb, TK_Ticket_Ctrl tkTicketCtrl) {
         for (TK_Ticket_Ctrl ctrlDb : ticketStepsDb.getCtrl()) {
-            if( ctrlDb.getCustomer_code() == tkTicketCtrl.getCustomer_code()
-                && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
-                && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
-                //TODO REVER ESSE OR, pois como o ticket qu vem do server nunca tem tmp, talvez não faça sentido....
-                && ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
-                && ctrlDb.getStep_code() == tkTicketCtrl.getStep_code()
-                && ctrlDb.getAction() != null
-                && tkTicketCtrl.getAction() != null
-                && ctrlDb.getAction().getAction_photo_local() != null
-                && tkTicketCtrl.getAction().getAction_photo_code() != null
-                && ( ctrlDb.getAction().getAction_photo_code() == null
-                     || hasExistingPhotoCodeChanged(tkTicketCtrl, ctrlDb)
-                     || hasPhotoCodeChangedByActionPlannedRejection(tkTicketCtrl, ctrlDb)
-                   )
-            ){
+            if (ctrlDb.getCustomer_code() == tkTicketCtrl.getCustomer_code()
+                    && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
+                    && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
+                    //TODO REVER ESSE OR, pois como o ticket qu vem do server nunca tem tmp, talvez não faça sentido....
+                    && ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
+                    && ctrlDb.getStep_code() == tkTicketCtrl.getStep_code()
+                    && ctrlDb.getAction() != null
+                    && tkTicketCtrl.getAction() != null
+                    && ctrlDb.getAction().getAction_photo_local() != null
+                    && tkTicketCtrl.getAction().getAction_photo_code() != null
+                    && (ctrlDb.getAction().getAction_photo_code() == null
+                    || hasExistingPhotoCodeChanged(tkTicketCtrl, ctrlDb)
+                    || hasPhotoCodeChangedByActionPlannedRejection(tkTicketCtrl, ctrlDb)
+            )
+            ) {
                 return true;
             }
         }
@@ -1443,8 +1572,8 @@ public class TK_Ticket implements Cloneable, Serializable {
      * LUCHE - 27/08/2020
      * <p></p>
      * Metodo que avalia a condição:
-     *  - Usuario enviou uma action planejada como foto, porem foi rejeitado pelo servidor,
-     *  pois essa ação ja constava como executada no servidor e com foto.
+     * - Usuario enviou uma action planejada como foto, porem foi rejeitado pelo servidor,
+     * pois essa ação ja constava como executada no servidor e com foto.
      *
      * @param tkTicketCtrl
      * @param ctrlDb
@@ -1452,9 +1581,9 @@ public class TK_Ticket implements Cloneable, Serializable {
      */
     private static boolean hasPhotoCodeChangedByActionPlannedRejection(TK_Ticket_Ctrl tkTicketCtrl, TK_Ticket_Ctrl ctrlDb) {
         return ctrlDb.getAction().getAction_photo_code().equals(0)
-           && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code())
-           && ctrlDb.getCtrl_end_user() != null
-           && !ctrlDb.getCtrl_end_user().equals(tkTicketCtrl.getCtrl_end_user());
+                && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code())
+                && ctrlDb.getCtrl_end_user() != null
+                && !ctrlDb.getCtrl_end_user().equals(tkTicketCtrl.getCtrl_end_user());
     }
 
     /**
@@ -1462,29 +1591,32 @@ public class TK_Ticket implements Cloneable, Serializable {
      * <p></p>
      * Metodo que avalia se foto daquela action ja possuia um foto e ela foi trocada.
      * Acontece quando um action esta em processo no servidor teve sua foto alterada.
+     *
      * @param tkTicketCtrl
      * @param ctrlDb
      * @return
      */
     private static boolean hasExistingPhotoCodeChanged(TK_Ticket_Ctrl tkTicketCtrl, TK_Ticket_Ctrl ctrlDb) {
         return !ctrlDb.getAction().getAction_photo_code().equals(0)
-            && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code());
+                && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code());
     }
 //endregion
+
     /**
      * Verifica se existe referencia de imagem no servidor
      * A referencia de imagem no servidor se pela regra:
-     *  - Action_photo ou action_photo_name existem
+     * - Action_photo ou action_photo_name existem
+     *
      * @param ctrl
      * @return
      */
     private boolean existsActionPhotoInServer(TK_Ticket_Ctrl ctrl) {
         return (ctrl.getAction().getAction_photo_name() != null && !ctrl.getAction().getAction_photo_name().isEmpty())
-            || (ctrl.getAction().getAction_photo_url() != null && !ctrl.getAction().getAction_photo_url().isEmpty());
+                || (ctrl.getAction().getAction_photo_url() != null && !ctrl.getAction().getAction_photo_url().isEmpty());
     }
 
     private static String getLocalPath(String imgLocalPath) {
-        String localPath = Constant.CACHE_PATH_PHOTO + "/" +imgLocalPath;
+        String localPath = Constant.CACHE_PATH_PHOTO + "/" + imgLocalPath;
         File file = new File(localPath);
         if (file.exists()) {
             return imgLocalPath;
@@ -1496,14 +1628,15 @@ public class TK_Ticket implements Cloneable, Serializable {
      * LUCHE - 11/03/2020
      * <p></p>
      * Metodo que valida se o ticket passada por parametro é valido
+     *
      * @param tk_ticket - Ticket a ser avaliado
-     * @return  - Verdadeiro se ticket tiver os dados da pk diferente de 0
+     * @return - Verdadeiro se ticket tiver os dados da pk diferente de 0
      */
-    public static boolean isValidTkTicket(TK_Ticket tk_ticket){
-        return  tk_ticket != null
+    public static boolean isValidTkTicket(TK_Ticket tk_ticket) {
+        return tk_ticket != null
                 && tk_ticket.getCustomer_code() > 0
                 && tk_ticket.getTicket_prefix() > 0
-                && tk_ticket.getTicket_code() > 0 ;
+                && tk_ticket.getTicket_code() > 0;
 
     }
 
@@ -1513,14 +1646,14 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     public void updateTicketCtrlFormInProcess(Context context) {
-        if(getStep() != null) {
+        if (getStep() != null) {
             for (TK_Ticket_Step ticketStep : getStep()) {
                 //
-                if(ticketStep.getCtrl() != null){
+                if (ticketStep.getCtrl() != null) {
                     for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
-                        switch (ticketCtrl.getCtrl_type()){
+                        switch (ticketCtrl.getCtrl_type()) {
                             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
-                                checkUpdateCtrlFormInProcess(context,ticketCtrl);
+                                checkUpdateCtrlFormInProcess(context, ticketCtrl);
                                 break;
                             default:
                                 break;
@@ -1532,28 +1665,28 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     private void checkUpdateCtrlFormInProcess(Context context, TK_Ticket_Ctrl serverCtrl) {
-        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(serverCtrl.getCtrl_status())) {
+        if (ConstantBaseApp.SYS_STATUS_PENDING.equals(serverCtrl.getCtrl_status())) {
             TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
             TK_Ticket_Ctrl dbTicketCtrl = ticketCtrlDao.getByString(
-                new TK_Ticket_Ctrl_Sql_001(
-                    serverCtrl.getCustomer_code(),
-                    serverCtrl.getTicket_prefix(),
-                    serverCtrl.getTicket_code(),
-                    serverCtrl.getTicket_seq(),
-                    serverCtrl.getStep_code()
-                ).toSqlQuery()
+                    new TK_Ticket_Ctrl_Sql_001(
+                            serverCtrl.getCustomer_code(),
+                            serverCtrl.getTicket_prefix(),
+                            serverCtrl.getTicket_code(),
+                            serverCtrl.getTicket_seq(),
+                            serverCtrl.getStep_code()
+                    ).toSqlQuery()
             );
             //
-            if ( dbTicketCtrl != null
-                 && ( ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketCtrl.getCtrl_status())
-                      || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketCtrl.getCtrl_status()))
-                 && dbTicketCtrl.getForm() != null
-                 && dbTicketCtrl.getForm().getCustom_form_data_tmp() != null
+            if (dbTicketCtrl != null
+                    && (ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketCtrl.getCtrl_status())
+                    || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketCtrl.getCtrl_status()))
+                    && dbTicketCtrl.getForm() != null
+                    && dbTicketCtrl.getForm().getCustom_form_data_tmp() != null
             ) {
                 serverCtrl.setCtrl_status(dbTicketCtrl.getCtrl_status());
                 serverCtrl.setCtrl_start_date(dbTicketCtrl.getCtrl_start_date());
@@ -1561,7 +1694,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 serverCtrl.setCtrl_start_user_name(dbTicketCtrl.getCtrl_start_user_name());
                 serverCtrl.copyCtrlStatusForInnerProcess();
                 //Atualiza custom_form_data_tmp com o do banco.
-                if(serverCtrl.getForm() != null){
+                if (serverCtrl.getForm() != null) {
                     //LUCHE - 22/04/2021 - Correção form perdido ao trocar versão do form quando
                     //ja existia um aberto localmente.
                     serverCtrl.getForm().setCustom_form_version(dbTicketCtrl.getForm().getCustom_form_version());
@@ -1571,20 +1704,20 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
     }
 
-    public void getNextUserFocus(int stepIdx){
+    public void getNextUserFocus(int stepIdx) {
 
         TK_Ticket_Step current_step = getStep().get(stepIdx);
 
         boolean hasUserFocus = false;
         boolean hasSingleSteps = current_step.getStep_order_seq() == null;
-        int pendingSteps = getPendingStepAmount(current_step.getStep_order(),stepIdx);
-        if(!hasSingleSteps && pendingSteps >0) {
+        int pendingSteps = getPendingStepAmount(current_step.getStep_order(), stepIdx);
+        if (!hasSingleSteps && pendingSteps > 0) {
             for (int i = 0; i < step.size(); i++) {
                 if (i != stepIdx) {
                     TK_Ticket_Step ticket_step = step.get(i);
                     if (current_step.getStep_order() == ticket_step.getStep_order()) {
                         if ((ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
-                                        || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))
+                                || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))
                                 && ticket_step.getUser_focus() == 1) {
                             hasUserFocus = true;
                         }
@@ -1600,13 +1733,13 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     private int getPendingStepAmount(int step_order, int stepIdx) {
-        int pendingSteps=0;
-        for(int i=0; i< step.size(); i++){
+        int pendingSteps = 0;
+        for (int i = 0; i < step.size(); i++) {
             TK_Ticket_Step ticket_step = step.get(i);
-            if(ticket_step.getStep_order() == step_order
-            && stepIdx != i
-            && (ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
-                || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))){
+            if (ticket_step.getStep_order() == step_order
+                    && stepIdx != i
+                    && (ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
+                    || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))) {
                 pendingSteps++;
             }
         }
@@ -1627,14 +1760,16 @@ public class TK_Ticket implements Cloneable, Serializable {
     public boolean isReadOnlyUserLevel(Context context) {
         EV_User_Customer evUserCustomer = ToolBox_Inf.getCurrentEvUsrCustomerInfo(context);
         //
-        if(evUserCustomer.getLicense_user_level_value() == null){
+        if (evUserCustomer.getLicense_user_level_value() == null) {
             return 0 < user_level_min;
         }
         return evUserCustomer.getLicense_user_level_value() < user_level_min;
     }
+
     /**
      * BARRIONUEVO 07-06-2021
      * Controle de acesso do produto deve levar o foco do step.
+     *
      * @return
      */
     public boolean isProductReadOnly(Context context) {
@@ -1643,9 +1778,11 @@ public class TK_Ticket implements Cloneable, Serializable {
                 || isReadOnlyDueFocus(context);
     }
     //
+
     /**
      * BARRIONUEVO 07-06-2021
      * Controle de acesso.
+     *
      * @return
      */
     public boolean isReadOnly(Context context) {
@@ -1654,9 +1791,9 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     public boolean isReadOnlyDueFocus(Context context) {
-        if(!ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-            && !isCurrentStepFocused()){
-         return true;
+        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+                && !isCurrentStepFocused()) {
+            return true;
         }
         return false;
     }
@@ -1664,12 +1801,13 @@ public class TK_Ticket implements Cloneable, Serializable {
     /**
      * BARRIONUEVO 04-06-2021
      * Metodo que condensa o update required do ticket e seus steps de ordem atual.
+     *
      * @return
      */
     public boolean isUpdateRequired() {
-        return update_required >0
-                || update_required_product >0
-                || update_required_status >0
+        return update_required > 0
+                || update_required_product > 0
+                || update_required_status > 0
                 || isCurrentStepUpdateRequired()
                 || ToolBox_Inf.hasTicketsToken(customer_code, ticket_prefix, ticket_code);
     }
@@ -1677,7 +1815,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private boolean isCurrentStepUpdateRequired() {
         ArrayList<TK_Ticket_Step> steps = getStep();
         //
-        if(steps != null) {
+        if (steps != null) {
             for (TK_Ticket_Step step : steps) {
                 if (step.getStep_order() == current_step_order) {
                     if (step.getUpdate_required() == 1) {
@@ -1693,7 +1831,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private boolean isCurrentStepFocused() {
         ArrayList<TK_Ticket_Step> steps = getStep();
         //
-        if(steps != null) {
+        if (steps != null) {
             for (TK_Ticket_Step step : steps) {
                 if (step.getStep_order() == current_step_order) {
                     if (step.getUser_focus() == 1) {
@@ -1749,37 +1887,37 @@ public class TK_Ticket implements Cloneable, Serializable {
 //                );
 //    }
 
-    public static MyActions toMyActionsObj(Context context, HMAux hmAux, String lastSelectedActionPk){
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux, String lastSelectedActionPk) {
         int midIcon;
-        if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
+        if ("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
                 && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
                 && "0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))
                 && !ToolBox_Inf.hasTicketsToken(hmAux.get(TK_TicketDao.CUSTOMER_CODE), hmAux.get(TK_TicketDao.TICKET_PREFIX), hmAux.get(TK_TicketDao.TICKET_CODE))
         ) {
             midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
-        }else {
-            if(isTicketUpdateRequired(hmAux) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
+        } else {
+            if (isTicketUpdateRequired(hmAux) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
                 midIcon = R.drawable.ic_sync_main_menu_data;
-            }else if(isTicketUpdateRequired(hmAux)){
+            } else if (isTicketUpdateRequired(hmAux)) {
                 midIcon = R.drawable.ic_cloud_upload_24_red;
-            }else if("1".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))){
+            } else if ("1".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))) {
                 midIcon = R.drawable.ic_baseline_cloud_upload_24_gray;
-            }else{
+            } else {
                 midIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
             }
         }
-        String processPk = hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE);
-        String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
+        String processPk = hmAux.get(TK_TicketDao.TICKET_PREFIX) + "." + hmAux.get(TK_TicketDao.TICKET_CODE);
+        String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(TK_TicketDao.FORECAST_DATE), hmAux.get(TK_TicketDao.FORECAST_DATE));
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String lateDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         //
-        if(hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
-           && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
-           && !hmAux.get(TK_Ticket_StepDao.FORECAST_START).isEmpty()
-           && !hmAux.get(TK_Ticket_StepDao.FORECAST_END).isEmpty()
-        ){
-            plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_Ticket_StepDao.FORECAST_START),hmAux.get(TK_Ticket_StepDao.FORECAST_END));
+        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
+                && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
+                && !hmAux.get(TK_Ticket_StepDao.FORECAST_START).isEmpty()
+                && !hmAux.get(TK_Ticket_StepDao.FORECAST_END).isEmpty()
+        ) {
+            plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(TK_Ticket_StepDao.FORECAST_START), hmAux.get(TK_Ticket_StepDao.FORECAST_END));
             orderByDate = hmAux.get(TK_Ticket_StepDao.FORECAST_START);
             periodStartDate = hmAux.get(TK_Ticket_StepDao.FORECAST_START);
             lateDate = hmAux.get(TK_Ticket_StepDao.FORECAST_END);
@@ -1788,40 +1926,40 @@ public class TK_Ticket implements Cloneable, Serializable {
         String doneDate = null;
         Integer rightIcon = null;
         /*
-        * Quando o ticket for finalizado, as datas planejadas e de ordenação devem ser as mesmas que
-        * a data de finalização.
-        */
-        if( hmAux.hasConsistentValue(TK_TicketDao.CLOSE_DATE)
-            && !hmAux.get(TK_TicketDao.CLOSE_DATE).isEmpty()
-        ){
+         * Quando o ticket for finalizado, as datas planejadas e de ordenação devem ser as mesmas que
+         * a data de finalização.
+         */
+        if (hmAux.hasConsistentValue(TK_TicketDao.CLOSE_DATE)
+                && !hmAux.get(TK_TicketDao.CLOSE_DATE).isEmpty()
+        ) {
             doneDate = ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.CLOSE_DATE)),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.CLOSE_DATE)),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
             //
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
-            if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
+            if (ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_check_circle_24;
                 plannedDate = "";
-            }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
+            } else if (ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_cancel_24;
-                plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.START_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
+                plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(TK_TicketDao.START_DATE), hmAux.get(TK_TicketDao.FORECAST_DATE));
                 orderByDate = hmAux.get(TK_TicketDao.START_DATE);
             }
-        }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
+        } else if (hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
             rightIcon = R.drawable.ic_baseline_person_24_secondary60;
-        }else{
-            if(hmAux.hasConsistentValue(TK_TicketDao.USER_FOCUS)
+        } else {
+            if (hmAux.hasConsistentValue(TK_TicketDao.USER_FOCUS)
                     && hmAux.get(TK_TicketDao.USER_FOCUS).equals("1")) {
                 rightIcon = R.drawable.ic_baseline_group_24;
-            }else{
+            } else {
                 rightIcon = R.drawable.ic_unfocus_person_off;
             }
         }
 
         String openZoneDesc = null;
         //
-        if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_SITE_CODE)){
+        if (hmAux.hasConsistentValue(TK_TicketDao.OPEN_SITE_CODE)) {
             openZoneDesc = ToolBox_Inf.getProductSerialZone(
                     context,
                     Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
@@ -1829,48 +1967,48 @@ public class TK_Ticket implements Cloneable, Serializable {
                     new MD_Product_SerialDao(context,
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM),
-                    hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Long.parseLong(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0,
+                    hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE) ? Long.parseLong(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0,
                     hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
             );
         }
         //
         String focusStepDesc = "";
         if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)
-        && !hmAux.get(TK_Ticket_StepDao.STEP_DESC).isEmpty()) {
-            focusStepDesc = hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC);
+                && !hmAux.get(TK_Ticket_StepDao.STEP_DESC).isEmpty()) {
+            focusStepDesc = hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". " + hmAux.get(TK_Ticket_StepDao.STEP_DESC);
         }
         //
-        MyActions myActions =  new MyActions(
-            MyActions.MY_ACTION_TYPE_TICKET,
-            processPk,
-            hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
-            hmAux.get(TK_TicketDao.TICKET_STATUS),
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
-            null,
-            midIcon,
-            rightIcon,
-            plannedDate,
-            hmAux.get(TK_TicketDao.TAG_OPERATIONAL_DESC),
-            hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
-            hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
-            hmAux.get(TK_TicketDao.ORIGIN_DESC),
-            hmAux.get(TK_TicketDao.TYPE_DESC),
-            hmAux.get(TK_TicketDao.INTERNAL_COMMENTS),
+        MyActions myActions = new MyActions(
+                MyActions.MY_ACTION_TYPE_TICKET,
+                processPk,
+                hmAux.get(TK_TicketDao.TICKET_PREFIX) + "." + hmAux.get(TK_TicketDao.TICKET_CODE),
+                hmAux.get(TK_TicketDao.TICKET_STATUS),
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
+                null,
+                midIcon,
+                rightIcon,
+                plannedDate,
+                hmAux.get(TK_TicketDao.TAG_OPERATIONAL_DESC),
+                hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
+                hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
+                hmAux.get(TK_TicketDao.ORIGIN_DESC),
+                hmAux.get(TK_TicketDao.TYPE_DESC),
+                hmAux.get(TK_TicketDao.INTERNAL_COMMENTS),
                 focusStepDesc,
-            ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
-            hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
-            openZoneDesc,
-            null,
-            doneDate,
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(orderByDate),
-                "yyyyMMddHHmm"
-            ),
-            hmAux.get(TK_TicketDao.ORIGIN_TYPE),
-            hmAux.hasConsistentValue(TK_TicketDao.SCN)?Integer.parseInt(hmAux.get(TK_TicketDao.SCN)): -1,
-            !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
-            ToolBox_Inf.isItemLate(periodStartDate),
-            ToolBox_Inf.isItemLate(lateDate),
+                ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
+                hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
+                openZoneDesc,
+                null,
+                doneDate,
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(orderByDate),
+                        "yyyyMMddHHmm"
+                ),
+                hmAux.get(TK_TicketDao.ORIGIN_TYPE),
+                hmAux.hasConsistentValue(TK_TicketDao.SCN) ? Integer.parseInt(hmAux.get(TK_TicketDao.SCN)) : -1,
+                !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
+                ToolBox_Inf.isItemLate(periodStartDate),
+                ToolBox_Inf.isItemLate(lateDate),
                 processPk.equals(lastSelectedActionPk),
                 hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context)),
                 false,
@@ -1886,12 +2024,46 @@ public class TK_Ticket implements Cloneable, Serializable {
                 null
         );
 
-        myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);
+        myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE) ? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);
         return myActions;
     }
 
     private static boolean isTicketUpdateRequired(HMAux hmAux) {
         return "1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
                 || ToolBox_Inf.hasTicketsToken(hmAux.get(TK_TicketDao.CUSTOMER_CODE), hmAux.get(TK_TicketDao.TICKET_PREFIX), hmAux.get(TK_TicketDao.TICKET_CODE));
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    @Nullable
+    public String getAddress_plusCode() {
+        return address_plusCode;
+    }
+
+    public void setAddress_plusCode(@Nullable String address_plusCode) {
+        this.address_plusCode = address_plusCode;
+    }
+
+    @Nullable
+    public String getAddress_countryId() {
+        return address_countryId;
+    }
+
+    public void setAddress_countryId(@Nullable String address_countryId) {
+        this.address_countryId = address_countryId;
     }
 }

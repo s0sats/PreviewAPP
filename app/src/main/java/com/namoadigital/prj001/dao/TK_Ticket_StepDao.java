@@ -68,6 +68,14 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
         toContentValuesMapper = new TK_Ticket_StepToContentValuesMapper();
         toTK_Ticket_StepMapper = new CursorToTK_Ticket_StepMapper();
     }
+    public TK_Ticket_StepDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
+        toContentValuesMapper = new TK_Ticket_StepToContentValuesMapper();
+        toTK_Ticket_StepMapper = new CursorToTK_Ticket_StepMapper();
+    }
 
     @Override
     public DaoObjReturn addUpdate(TK_Ticket_Step tk_ticket_step) {

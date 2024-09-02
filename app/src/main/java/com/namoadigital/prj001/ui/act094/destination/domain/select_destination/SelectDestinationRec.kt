@@ -10,11 +10,11 @@ data class SelectDestinationRec(
     @SerializedName("destinationSeq") var destinationSeq: Int,
     @SerializedName("destinationStatus") var destinationStatus: String,
     @SerializedName("tripStatus") var tripStatus: String,
-    @SerializedName("lat") var lat: Double,
-    @SerializedName("lon") var lon: Double,
-    @SerializedName("arrivedDate") var arrivedDate: String?,
-    @SerializedName("arrivedLat") var arrivedLat: Double?,
-    @SerializedName("arrivedLon") var arrivedLon: Double?,
+    @SerializedName("lat") var lat: Double?,
+    @SerializedName("lon") var lon: Double?,
+    @SerializedName("arrivedDate") var arrivedDate: String? = null,
+    @SerializedName("arrivedLat") var arrivedLat: Double? = null,
+    @SerializedName("arrivedLon") var arrivedLon: Double? = null,
     @SerializedName("distanceMin") var distanceMin: Double
 ) : Main_Header_Rec() {
 

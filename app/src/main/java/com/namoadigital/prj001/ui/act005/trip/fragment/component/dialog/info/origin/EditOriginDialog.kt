@@ -78,9 +78,10 @@ class EditOriginDialog constructor(
         tvFleetInfo.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_FLEET_INFO_LBL]
         edittextFleetPlateLayout.hint = hmAuxTranslate[TranslateInfoDialogs.DIALOG_FLEET_PLATE_HINT]
         edittextOdometerLayout.hint = hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]
-        buttonOdometerPhoto.text = getOdometerPhotoLabel(isRequiredFleetData, hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!)
-        if(isRequiredFleetData){
+        if (isRequiredFleetData) {
             setRequiredOdometerPhotoButton()
+        } else {
+            setOptionalOdometerPhotoButton()
         }
         btnSave.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_SAVE_BTN]
         tvFleetplateInvalid.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FLEET_PLATE_LBL]
@@ -118,6 +119,36 @@ class EditOriginDialog constructor(
             R.color.m3_namoa_primary,
             null
         )
+
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(
+            true,
+            hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!
+        )
+    }
+
+    private fun TripDialogInfoEditBinding.setOptionalOdometerPhotoButton() {
+        buttonOdometerPhoto.iconTint = ResourcesCompat.getColorStateList(
+            context.resources,
+            R.color.m3_namoa_primary,
+            null
+        )
+        buttonOdometerPhoto.setTextColor(
+            ResourcesCompat.getColorStateList(
+                context.resources,
+                R.color.m3_namoa_primary,
+                null
+            )
+        )
+        buttonOdometerPhoto.backgroundTintList = ResourcesCompat.getColorStateList(
+            context.resources,
+            android.R.color.transparent,
+            null
+        )
+
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(
+            false,
+            hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!
+        )
     }
 
 
@@ -130,9 +161,14 @@ class EditOriginDialog constructor(
                     buttonOdometerPhoto.visibility = View.GONE
                     updatePhotoView(getPhoto())
                 },
-                loading = {
+                loading = { _, _ ->
                     photoLoading.visibility = View.VISIBLE
                     buttonOdometerPhoto.visibility = View.GONE
+                    buttonRetryDownloadImage.visibility = View.GONE
+                },
+                error = { _, _ ->
+                    photoLoading.visibility = View.GONE
+                    buttonOdometerPhoto.visibility = View.VISIBLE
                     buttonRetryDownloadImage.visibility = View.GONE
                 },
                 failed = {
@@ -195,7 +231,7 @@ class EditOriginDialog constructor(
         etOdometer.addTextChangedListener(TextWatcherHelper(object :
             TextWatcherHelper.TextChangedListener {
             override fun onTextChanged(text: String) {
-                isValidOdometer(text.toString())
+                validateOdometer(text)
             }
         }))
 
@@ -235,7 +271,7 @@ class EditOriginDialog constructor(
         return true
     }
 
-    private fun TripDialogInfoEditBinding.isValidOdometer(odometer: String): Boolean {
+    fun TripDialogInfoEditBinding.validateOdometer(odometer: String): Boolean {
         if (odometer.isNotBlank()) {
             val inputOdometerValid = isInputOdometerValid(
                 null,
@@ -245,35 +281,88 @@ class EditOriginDialog constructor(
             )
 
             if (inputOdometerValid.isNotBlank()) {
+                setOdometerErrorLayout(
+                    context,
+                    edittextOdometerLayout,
+                    layoutOdometerInvalid,
+                    tvOdometerInvalid,
+                    inputOdometerValid,
+                    View.VISIBLE
+                )
                 edittextOdometerLayout.setBoxStrokeColorState(context, R.color.m3_namoa_error)
                 edittextOdometerLayout.setHintTextColor(context, R.color.m3_namoa_error)
-                layoutOdometerInvalid.visibility = View.VISIBLE
-                tvOdometerInvalid.text = inputOdometerValid
                 updateButtonState()
                 return false
             }
-        }
 
-        if (!isRequiredFleetData) {
+            if (!trip.isRequireDestinationFleetData && buttonOdometerPhoto.isVisible) {
+                setRequiredOdometerPhotoButton()
+                edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                    true,
+                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                )
+            }
+
+            setOdometerErrorLayout(
+                context,
+                edittextOdometerLayout,
+                layoutOdometerInvalid,
+                tvOdometerInvalid,
+                "",
+                View.GONE
+            )
             edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
             edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
-            layoutOdometerInvalid.visibility = View.GONE
+            updateButtonState()
+            return true
+        } else {
+            if (!isRequiredFleetData && ivPhoto.isVisible) {
+                setOdometerErrorLayout(
+                    context,
+                    edittextOdometerLayout,
+                    layoutOdometerInvalid,
+                    tvOdometerInvalid,
+                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]!!,
+                    View.VISIBLE
+                )
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.color.m3_namoa_error)
+                edittextOdometerLayout.setHintTextColor(context, R.color.m3_namoa_error)
+                updateButtonState()
+                return false
+            } else if (!isRequiredFleetData && buttonOdometerPhoto.isVisible) {
+                setOptionalOdometerPhotoButton()
+                edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                    false,
+                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                )
+            } else if (isRequiredFleetData) {
+                setOdometerErrorLayout(
+                    context,
+                    edittextOdometerLayout,
+                    layoutOdometerInvalid,
+                    tvOdometerInvalid,
+                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]!!,
+                    View.VISIBLE
+                )
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.color.m3_namoa_error)
+                edittextOdometerLayout.setHintTextColor(context, R.color.m3_namoa_error)
+                updateButtonState()
+                return false
+            }
+
+            setOdometerErrorLayout(
+                context,
+                edittextOdometerLayout,
+                layoutOdometerInvalid,
+                tvOdometerInvalid,
+                "",
+                View.GONE
+            )
+            edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+            edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
             updateButtonState()
             return true
         }
-
-        odometer.ifEmpty {
-            edittextOdometerLayout.setBoxStrokeColorState(context, R.color.m3_namoa_error)
-            edittextOdometerLayout.setHintTextColor(context, R.color.m3_namoa_error)
-            layoutOdometerInvalid.visibility = View.VISIBLE
-            tvOdometerInvalid.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]
-            updateButtonState()
-            return false
-        }
-
-        layoutOdometerInvalid.visibility = View.GONE
-        updateButtonState()
-        return true
     }
 
     private fun updateButtonState() {
@@ -294,7 +383,7 @@ class EditOriginDialog constructor(
                     trip.tripCode,
                 )
                 //
-                if(!checkNextDate(dateError, dateStart, hourStart)){
+                if (!checkNextDate(dateError, dateStart, hourStart)) {
                     return false
                 }
                 //
@@ -315,7 +404,7 @@ class EditOriginDialog constructor(
         nextStartDate: String?,
         dateStart: String,
         hourStart: String
-    ):Boolean {
+    ): Boolean {
 
         nextStartDate?.let {
             //
@@ -392,13 +481,60 @@ class EditOriginDialog constructor(
         }
     }
 
-    private fun TripDialogInfoEditBinding.updatePhotoView(bitmap: Bitmap?) {
+    private fun TripDialogInfoEditBinding.updatePhotoView(
+        bitmap: Bitmap?,
+        isUpdatePhoto: Boolean = false
+    ) {
         ivPhoto.apply {
-            visibility = if (bitmap == null) View.GONE else View.VISIBLE
-            if (bitmap != null) setImageBitmap(bitmap)
+            if (bitmap == null) {
+                visibility = View.GONE
+                if(isUpdatePhoto && !trip.isRequireDestinationFleetData && etOdometer.text.isNullOrEmpty()){
+                    edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                        false,
+                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                    )
+                }
+            } else {
+                visibility = View.VISIBLE
+                setImageBitmap(bitmap)
+                if(isUpdatePhoto && !trip.isRequireDestinationFleetData){
+                    edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                        true,
+                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                    )
+                }
+            }
         }
 
         buttonOdometerPhoto.visibility = if (bitmap == null) View.VISIBLE else View.GONE
+
+        if (bitmap == null) {
+            if (!trip.isRequireDestinationFleetData && layoutOdometerInvalid.isVisible || etOdometer.text.isNullOrEmpty()) {
+                setOdometerErrorLayout(
+                    context,
+                    edittextOdometerLayout,
+                    layoutOdometerInvalid,
+                    tvOdometerInvalid,
+                    "",
+                    View.GONE
+                )
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
+            } else if (isUpdatePhoto && !etOdometer.text.isNullOrEmpty()) {
+                setRequiredOdometerPhotoButton()
+            }
+        } else if (etOdometer.text.isNullOrEmpty() && (!trip.isRequireDestinationFleetData && isUpdatePhoto && ivPhoto.isVisible)) {
+            setOdometerErrorLayout(
+                context,
+                edittextOdometerLayout,
+                layoutOdometerInvalid,
+                tvOdometerInvalid,
+                hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]!!,
+                View.VISIBLE
+            )
+        }
         updateButtonState()
     }
 
@@ -454,7 +590,7 @@ class EditOriginDialog constructor(
     }
 
     fun updatePhotoDialog() {
-        binding.updatePhotoView(updatePhoto())
+        binding.updatePhotoView(updatePhoto(), true)
     }
 
 

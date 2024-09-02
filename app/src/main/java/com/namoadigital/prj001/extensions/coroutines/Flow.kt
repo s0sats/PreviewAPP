@@ -17,3 +17,11 @@ fun <T> Flow<IResult<T>>.namoaCatch(
         emit(failed(e))
     }
 }
+
+
+fun <T> Flow<IResult<T>>.flowCatch(
+    local: String,
+) = this.catch { e ->
+    ToolBox_Inf.registerException(local, IOException(e.message))
+    emit(failed(e))
+}

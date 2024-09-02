@@ -1,22 +1,24 @@
 package com.namoadigital.prj001.model.trip
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class FSTripEvent(
-    @SerializedName("eventSeq") var eventSeq: Int,
-    @SerializedName("eventTypeCode") var eventTypeCode: Int,
-    @SerializedName("eventTypeDesc") var eventTypeDesc: String?,
-    @SerializedName("eventCost") var cost: Double?,
-    @SerializedName("eventComments") var comment: String?,
+    @Expose @SerializedName("eventSeq") var eventSeq: Int,
+    @Expose @SerializedName("eventTypeCode") var eventTypeCode: Int,
+    @Expose @SerializedName("eventTypeDesc") var eventTypeDesc: String?,
+    @Expose @SerializedName("eventCost") var cost: Double?,
+    @Expose @SerializedName("eventComments") var comment: String?,
     var photoLocal: String?,
-    @SerializedName("eventPhotoName") var photoName: String?,
-    @SerializedName("eventPhoto") var photoUrl: String?,
-    @SerializedName("eventStatus") var eventStatus: String?,
-    @SerializedName("eventStart") var eventStart: String?,
-    @SerializedName("eventEnd") var eventEnd: String?,
-    @SerializedName("eventTime") var eventTime: String?,
-    @SerializedName("eventAllowedTime") var allowedTime: String?,
-    @SerializedName("eventTimeAlert") var timeAlert: Int?,
+    @Expose @SerializedName("eventPhotoName") var photoName: String?,
+    @Expose @SerializedName("eventPhoto") var photoUrl: String?,
+    @Expose @SerializedName("eventStatus") var eventStatus: String?,
+    @Expose @SerializedName("eventStart") var eventStart: String?,
+    @Expose @SerializedName("eventEnd") var eventEnd: String?,
+    @Expose @SerializedName("eventTime") var eventTime: String?,
+    @Expose @SerializedName("eventPhotoChanged") var eventPhotoChanged: Int,
+    @Expose @SerializedName("eventAllowedTime") var allowedTime: String?,
+    @Expose @SerializedName("eventTimeAlert") var timeAlert: Int?,
 ) {
     @SerializedName("customerCode")
     var customerCode: Long = -1
@@ -47,6 +49,7 @@ data class FSTripEvent(
         photoLocal: String?,
         photoName: String?,
         photoUrl: String?,
+        eventPhotoChanged: Int
     ) : this(
         eventSeq = eventSeq,
         eventTypeCode = eventTypeCode,
@@ -61,7 +64,8 @@ data class FSTripEvent(
         eventStatus = eventStatus,
         eventTime = eventTime,
         allowedTime = eventAllowedTime,
-        timeAlert = eventTimeAlert
+        timeAlert = eventTimeAlert,
+        eventPhotoChanged = eventPhotoChanged
     ) {
         this.customerCode = customerCode
         this.tripPrefix = tripPrefix

@@ -3,6 +3,9 @@ package com.namoadigital.prj001.migrations
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.trip.FSTripDao
+import com.namoadigital.prj001.dao.trip.FSTripEventDao
+import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.database.MigrationSQLite
 import com.namoadigital.prj001.database.scripts.FS_TRIP_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT
@@ -11,9 +14,11 @@ import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.FS_TRIP_POSITION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.FS_TRIP_USER_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.masterdata.RegionScript
+import com.namoadigital.prj001.model.trip.FsTripDestination
 
 
-val MigrationV1 = object : MigrationSQLite(1, 2){
+val MigrationV1 = object : MigrationSQLite(1, 2) {
     override fun migrate(db: SQLiteDatabase) {
         //
         db.execSQL(
@@ -75,20 +80,20 @@ val MigrationV1 = object : MigrationSQLite(1, 2){
 val MigrationV2 = object : MigrationSQLite(2, 3) {
 
     override fun migrate(db: SQLiteDatabase) {
-        if(!isFieldExist(db,"tk_ticket", "class_code")){
+        if (!isFieldExist(db, "tk_ticket", "class_code")) {
             db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_code] int;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket", "class_id")){
+        if (!isFieldExist(db, "tk_ticket", "class_id")) {
             db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_id] text collate nocase;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket", "class_color")){
+        if (!isFieldExist(db, "tk_ticket", "class_color")) {
             db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_color] text collate nocase;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket", "class_available")){
+        if (!isFieldExist(db, "tk_ticket", "class_available")) {
             db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_available] int;""".trimIndent())
         }
 
-        if(!isFieldExist(db,"tk_ticket_cache", "class_code")){
+        if (!isFieldExist(db, "tk_ticket_cache", "class_code")) {
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_code] int;""".trimIndent())
         }
         if (!isFieldExist(db, "tk_ticket_cache", "class_id")) {
@@ -148,7 +153,12 @@ val MigrationV5 = object : MigrationSQLite(5, 6) {
             """.trimIndent()
         )
         //
-        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET)) {
+        if (!isFieldExist(
+                db,
+                GE_Custom_FormDao.TABLE,
+                GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET}] int not null DEFAULT 0;""".trimIndent())
         }
         //
@@ -184,7 +194,12 @@ val MigrationV7 = object : MigrationSQLite(7, 8) {
             db.execSQL(""" ALTER TABLE [${SO_Pack_ExpressDao.TABLE}] ADD [${SO_Pack_ExpressDao.PIPELINE_DESC}]  text collate nocase;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, SO_Pack_Express_LocalDao.TABLE, SO_Pack_Express_LocalDao.PIPELINE_DESC)) {
+        if (!isFieldExist(
+                db,
+                SO_Pack_Express_LocalDao.TABLE,
+                SO_Pack_Express_LocalDao.PIPELINE_DESC
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${SO_Pack_Express_LocalDao.TABLE}] ADD [${SO_Pack_Express_LocalDao.PIPELINE_DESC}] text collate nocase;""".trimIndent())
         }
     }
@@ -224,28 +239,58 @@ val MigrationV8 = object : MigrationSQLite(8, 9) {
         """.trimIndent()
         )
         //
-        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1)) {
+        if (!isFieldExist(
+                db,
+                MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,
+                MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1}]  text collate nocase;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2)) {
+        if (!isFieldExist(
+                db,
+                MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,
+                MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2}]  text collate nocase;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3)) {
+        if (!isFieldExist(
+                db,
+                MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,
+                MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3}]  text collate nocase;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4)) {
+        if (!isFieldExist(
+                db,
+                MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,
+                MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4}]  text collate nocase;""".trimIndent())
             db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE has_item_check = 1;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {
+        if (!isFieldExist(
+                db,
+                GE_Custom_FormDao.TABLE,
+                GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT}] int not null DEFAULT 0;""".trimIndent())
         }
         //
-        if (!isFieldExist(db, GE_Custom_Form_LocalDao.TABLE, GE_Custom_Form_LocalDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_LocalDao.TABLE,
+                GE_Custom_Form_LocalDao.NC_RECOGNIZE_EMAIL_IN_COMMENT
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_Form_LocalDao.TABLE}] ADD [${GE_Custom_Form_LocalDao.NC_RECOGNIZE_EMAIL_IN_COMMENT}] int not null DEFAULT 0;""".trimIndent())
         }
         //
@@ -268,7 +313,8 @@ val migrationV9: MigrationSQLite = object : MigrationSQLite(9, 10) {
             db.execSQL(""" ALTER TABLE [${MD_ProductDao.TABLE}] ADD [${MD_ProductDao.HAS_GROUP}]   int not null default 0;""".trimIndent())
         }
         //
-        db.execSQL(""" 
+        db.execSQL(
+            """ 
             update ${MD_All_ProductDao.TABLE} 
             set ${MD_All_ProductDao.HAS_GROUP}  =  ( select 
                                      case when count(1) = 0 
@@ -278,9 +324,11 @@ val migrationV9: MigrationSQLite = object : MigrationSQLite(9, 10) {
                                 from  ${MD_All_Product_Group_ProductDao.TABLE} gp
                                where ${MD_All_ProductDao.TABLE}.${MD_All_ProductDao.PRODUCT_CODE} = gp.${MD_All_Product_Group_ProductDao.PRODUCT_CODE} 
             )
-        """.trimIndent())
+        """.trimIndent()
+        )
         //
-        db.execSQL(""" 
+        db.execSQL(
+            """ 
             update ${MD_ProductDao.TABLE} 
             set ${MD_ProductDao.HAS_GROUP}  =  ( select 
                                      case when count(1) = 0 
@@ -556,39 +604,51 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.KANBAN)) {
+                TkTicketCacheDao.KANBAN
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.KANBAN}]  int not null default 0;""".trimIndent())
         }
 
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.KANBAN_STAGE)) {
+                TkTicketCacheDao.KANBAN_STAGE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.KANBAN_STAGE}]  text;""".trimIndent())
         }
 
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.ABLE_TO_DONE)) {
+                TkTicketCacheDao.ABLE_TO_DONE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.ABLE_TO_DONE}]  text;""".trimIndent())
         }
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.PREVENTIVE)) {
+                TkTicketCacheDao.PREVENTIVE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.PREVENTIVE}]  int;""".trimIndent())
         }
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.IS_PRIORITY)) {
+                TkTicketCacheDao.IS_PRIORITY
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.IS_PRIORITY}]  int;""".trimIndent())
         }
         if (!isFieldExist(
                 db,
                 TkTicketCacheDao.TABLE,
-                TkTicketCacheDao.ADDRESS)) {
+                TkTicketCacheDao.ADDRESS
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.ADDRESS}]  int;""".trimIndent())
         }
         //Tk_Ticket
@@ -596,7 +656,9 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.KANBAN_DATE)) {
+                TK_TicketDao.KANBAN_DATE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_DATE}]  text;""".trimIndent())
             ticketChange = true
         }
@@ -604,7 +666,9 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.KANBAN_CUSTOM_FORM_TYPE)) {
+                TK_TicketDao.KANBAN_CUSTOM_FORM_TYPE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_CUSTOM_FORM_TYPE}]  text;""".trimIndent())
             ticketChange = true
         }
@@ -612,42 +676,54 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.KANBAN_CUSTOM_FORM_CODE)) {
+                TK_TicketDao.KANBAN_CUSTOM_FORM_CODE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_CUSTOM_FORM_CODE}]  text;""".trimIndent())
             ticketChange = true
         }
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.KANBAN_OPEN_CONTINUE)) {
+                TK_TicketDao.KANBAN_OPEN_CONTINUE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_OPEN_CONTINUE}]  text;""".trimIndent())
             ticketChange = true
         }
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.KANBAN_STAGE)) {
+                TK_TicketDao.KANBAN_STAGE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_STAGE}]  text;""".trimIndent())
             ticketChange = true
         }
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.ABLE_TO_DONE)) {
+                TK_TicketDao.ABLE_TO_DONE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.ABLE_TO_DONE}]  int not null default 0;""".trimIndent())
             ticketChange = true
         }
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.PREVENTIVE)) {
+                TK_TicketDao.PREVENTIVE
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.PREVENTIVE}]  int;""".trimIndent())
             ticketChange = true
         }
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
-                TK_TicketDao.IS_PRIORITY)) {
+                TK_TicketDao.IS_PRIORITY
+            )
+        ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.IS_PRIORITY}]  int;""".trimIndent())
             ticketChange = true
         }
@@ -660,9 +736,145 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_ADDRESS}]  int not null default 0;""".trimIndent())
             ticketChange = true
         }
-        if(ticketChange){
+        if (ticketChange) {
             db.execSQL(""" UPDATE [${TK_TicketDao.TABLE}] SET [${TK_TicketDao.SYNC_REQUIRED}] = 1;""".trimIndent())
         }
+    }
+}
+
+
+val MigrationV12 = object : MigrationSQLite(12, 13) {
+    override fun migrate(db: SQLiteDatabase) {
+        //Table Region
+        db.execSQL(RegionScript.CREATE_TABLE)
+
+        listOf(
+            MD_SiteDao.COUNTRY_CODE,
+            MD_SiteDao.STATE,
+            MD_SiteDao.CITY,
+            MD_SiteDao.DISTRICT,
+            MD_SiteDao.STREET,
+            MD_SiteDao.NUM,
+            MD_SiteDao.COMPLEMENT,
+            MD_SiteDao.ZIP_CODE,
+            MD_SiteDao.PLUS_CODE,
+            MD_SiteDao.CONTACT_NAME,
+            MD_SiteDao.CONTACT_PHONE,
+            MD_SiteDao.LATITUDE,
+            MD_SiteDao.LONGITUDE,
+        ).forEach { column ->
+            db.checkIfFieldExist(
+                MD_SiteDao.TABLE,
+                column
+            ){
+                addColumn(
+                    MD_SiteDao.TABLE,
+                    column,
+                    "text collate nocase"
+                )
+            }
+        }
+
+        db.checkIfFieldExist(
+            MD_SiteDao.TABLE,
+            MD_SiteDao.REGION_CODE
+        ){
+            addColumn(
+                MD_SiteDao.TABLE,
+                MD_SiteDao.REGION_CODE,
+                "int"
+            )
+        }
+
+        //Table Event
+        db.checkIfFieldExist(
+            FSTripEventDao.TABLE,
+            FSTripEventDao.PHOTO_CHANGED
+        ) {
+            addColumn(
+                FSTripEventDao.TABLE,
+                FSTripEventDao.PHOTO_CHANGED,
+                "int not null default 0"
+            )
+        }
+
+        //Table Destination
+        db.checkIfFieldExist(
+            FsTripDestinationDao.TABLE,
+            FsTripDestinationDao.ARRIVED_FLEET_PHOTO_CHANGED
+        ){
+            addColumn(
+                FsTripDestinationDao.TABLE,
+                FsTripDestinationDao.ARRIVED_FLEET_PHOTO_CHANGED,
+                "int not null default 0"
+            )
+        }
+
+        listOf(
+            FSTripDao.FLEET_START_PHOTO_CHANGED,
+            FSTripDao.FLEET_END_PHOTO_CHANGED,
+            FSTripDao.UPDATE_REQUIRED
+        ).forEach { column ->
+            db.checkIfFieldExist(
+                FSTripDao.TABLE,
+                column
+            ){
+                addColumn(
+                    FSTripDao.TABLE,
+                    column,
+                    "int not null default 0"
+                )
+            }
+        }
+
+        listOf(
+            TK_TicketDao.ADDRESS_COUNTRY_ID,
+            TK_TicketDao.ADDRESS_PLUS_CODE,
+            TK_TicketDao.CONTACT_NAME,
+            TK_TicketDao.CONTACT_PHONE,
+        ).forEach { column ->
+            db.checkIfFieldExist(
+                TK_TicketDao.TABLE,
+                column
+            ){
+                addColumn(
+                    TK_TicketDao.TABLE,
+                    column,
+                    "text collate nocase"
+                )
+            }
+        }
+
+
+    }
+}
+
+private fun SQLiteDatabase.addColumn(tableName: String, columnName: String, columnType: String) {
+    execSQL(
+        """
+        ALTER TABLE $tableName
+        ADD COLUMN [$columnName] $columnType;
+    """.trimIndent()
+    )
+}
+
+private fun SQLiteDatabase.updateColumn(tableName: String, columnName: String, value: String) {
+    execSQL(
+        """
+        UPDATE $tableName
+        SET $columnName = $value;
+    """.trimIndent()
+    )
+}
+
+
+inline fun SQLiteDatabase.checkIfFieldExist(
+    tableName: String,
+    fieldName: String,
+    block: SQLiteDatabase.() -> Unit
+) {
+    if (!isFieldExist(this, tableName, fieldName)) {
+        block()
     }
 }
 

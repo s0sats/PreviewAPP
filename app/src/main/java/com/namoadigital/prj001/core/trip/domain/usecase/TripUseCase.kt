@@ -8,4 +8,6 @@ data class TripUseCase(
     val listSites: ListSitesUseCase,
     val saveOrigin: SaveOriginUseCase,
     val getEvent: GetEventUseCase,
+    val sendTripFull: SendTripFullUseCase,
+    val hasTripWithUpdateRequired: CheckExistsTripUpdateUseCase
 )

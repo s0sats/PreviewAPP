@@ -137,24 +137,24 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         boolean isSuccessfully = true;
 
         if (ss_zone.getmValue() == null || !ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+            ss_zone.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             isSuccessfully = false;
         } else {
-            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+            ss_zone.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
         }
 
         if (ss_local.getmValue() == null || !ss_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-            ss_local.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+            ss_local.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             isSuccessfully = false;
         } else {
-            ss_local.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+            ss_local.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
         }
 
         if (ss_reason.getmValue() == null || !ss_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-            ss_reason.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+            ss_reason.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             isSuccessfully = false;
         } else {
-            ss_reason.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+            ss_reason.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
         }
 
         return isSuccessfully;

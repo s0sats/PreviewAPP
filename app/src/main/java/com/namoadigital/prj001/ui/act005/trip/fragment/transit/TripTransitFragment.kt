@@ -66,11 +66,13 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
                 binding.apply {
                     btnDestinationCall.visibility = View.GONE
                     btnMapNavigation.visibility = View.GONE
-                    it.contactName?.let{
-                        btnDestinationCall.visibility = View.VISIBLE
+                    if(it.containsContact()) {
+                        it.contactName?.let {
+                            btnDestinationCall.visibility = View.VISIBLE
+                        }
                     }
 
-                    if (it.getFullAddress().isNotEmpty()) {
+                    if (it.containsAddress()) {
                         btnMapNavigation.visibility = View.VISIBLE
                     }
                 }
@@ -90,7 +92,7 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()

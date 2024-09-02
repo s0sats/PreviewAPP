@@ -94,7 +94,7 @@ class DialogEditUser(
             btnCancel.apply {
                 if (isEditMode) {
                     text = hmAuxTranslate[DIALOG_PARTICIPANT_DELETE_LBL]
-                    icon = context.getDrawableId(R.drawable.ic_baseline_delete_24)
+                    icon = context.getDrawableId(com.namoa_digital.namoa_library.R.drawable.ic_baseline_delete_24)
                     iconTint = context.getColorStateListId(R.color.m3_namoa_primary)
                 } else {
                     text = hmAuxTranslate[DIALOG_EDIT_BTN_CANCEL]
@@ -281,7 +281,7 @@ class DialogEditUser(
 
 
             val (dateStart, hourStart) = user.dateStart?.parseDatePair() ?: Pair("", "")
-            val (dateEnd, hourEnd) = user.dateEnd?.parseDatePair() ?: Pair("", "")
+            val (dateEnd, hourEnd) = user.dateEnd?.takeIf { it.isNotEmpty() }?.parseDatePair() ?: Pair("", "")
             val dateStartIsEquals =
                 "$dateStart $hourStart" == "${etStartDate.text} ${etStartHour.text}"
             val dateEndIsEquals = "$dateEnd $hourEnd" == "${etEndDate.text} ${etEndHour.text}"
@@ -476,7 +476,7 @@ class DialogEditUser(
                                 inputFormat = "dd/MM/yy HH:mm"
                             )
                         ),
-                        UserAction.EDIT,
+                        if(isEditMode) UserAction.EDIT else UserAction.INSERT,
                         Pair(
                             hmAuxTranslate[PROCESS_TRIP_SAVE_USERS_TTL] ?: "",
                             hmAuxTranslate[PROCESS_TRIP_SAVE_USERS_MSG] ?: ""

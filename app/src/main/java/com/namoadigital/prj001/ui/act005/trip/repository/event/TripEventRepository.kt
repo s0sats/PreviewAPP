@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.ui.act005.trip.repository.event
 
 import com.namoadigital.prj001.adapter.trip.model.Extract
+import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
 import com.namoadigital.prj001.model.trip.FSEventType
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
+import kotlinx.coroutines.flow.Flow
 
 interface TripEventRepository {
 
@@ -17,14 +19,17 @@ interface TripEventRepository {
         cost: Double?,
         comment: String?,
         photoPath: String?,
-        changePhoto: Int?,
+        changePhoto: Int,
         seq: Int?,
         eventStatus: EventStatus,
         dateStart: String?,
         dateEnd: String?
-    )
+    ): Flow<IResult<Unit>>
 
     fun getExtract(trip: FSTrip?) : List<Extract<FSTripEvent>>
+
+    fun getListEvents(tripPrefix: Int, tripCode: Int) : List<FSTripEvent>
+
     fun checkRestrictionDate(
         startDateInMilis: Long,
         endDateInMilis: Long?,

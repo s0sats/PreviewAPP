@@ -109,10 +109,10 @@ public class Act018_Adapter_Messages extends BaseAdapter {
 
         switch (item.get("type").toLowerCase()) {
             case ALERT:
-                iv_003.setImageResource(R.drawable.ic_alert_n);
+                iv_003.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_alert_n);
                 break;
             case WARNING:
-                iv_003.setImageResource(R.drawable.ic_problem_n);
+                iv_003.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_problem_n);
                 break;
             default:
                 break;

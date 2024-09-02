@@ -881,25 +881,25 @@ public class Act050_Frag_SO extends BaseFragment {
 
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") + "\n";
-            ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
+            ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             isValidated = false;
         }
         if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") + "\n";
-            ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
+            ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             isValidated = false;
         }
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_package_default_field_msg") + "\n";
-            clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
+            clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             isValidated = false;
         }
 
         if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE) && selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
             if (edtClientName.getText().toString().isEmpty()) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") + "\n";
-                clClientName.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
+                clClientName.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
                 isValidated = false;
             }
 
@@ -907,7 +907,7 @@ public class Act050_Frag_SO extends BaseFragment {
                     && !edtClientEmail.getText().toString().isEmpty()
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") + "\n";
-                llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
+                llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
                 isValidated = false;
             }
         }
@@ -920,17 +920,17 @@ public class Act050_Frag_SO extends BaseFragment {
         SO_Creation_Obj soCreationObj = mListener.getmSOCreationObj();
         //Novo agrupamento de avalidações baseado no envio.
         if(!validadeByMaskViewType(etBillingInfo1.getText().toString().trim(),soCreationObj.getBilling_add_inf1_view())){
-            llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+            llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info1_required") + "\n";
             isValidated = false;
         }
         if(!validadeByMaskViewType(etBillingInfo2.getText().toString().trim(),soCreationObj.getBilling_add_inf2_view())){
-            llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+            llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info2_required") + "\n";
             isValidated = false;
         }
         if(!validadeByMaskViewType(etBillingInfo3.getText().toString().trim(),soCreationObj.getBilling_add_inf3_view())){
-            llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+            llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info3_required") + "\n";
             isValidated = false;
         }
@@ -938,47 +938,47 @@ public class Act050_Frag_SO extends BaseFragment {
         SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
         if(favoriteItem != null && favoriteItem.getMaskCode() != null ){
             if(!validadeByMaskViewType(edtSoInfo1.getText().toString().trim(),favoriteItem.getSoAddInf1View())){
-                llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info1_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo2.getText().toString().trim(),favoriteItem.getSoAddInf2View())){
-                llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info2_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo3.getText().toString().trim(),favoriteItem.getSoAddInf3View())){
-                llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info3_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo4.getText().toString().trim(),favoriteItem.getSoAddInf4View())){
-                llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info4_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo5.getText().toString().trim(),favoriteItem.getSoAddInf5View())){
-                llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info5_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo6.getText().toString().trim(),favoriteItem.getSoAddInf6View())){
-                llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info6_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(etClientSoId.getText().toString().trim(),favoriteItem.getSoClientSoIdView())){
-                llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_client_so_id_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoId.getText().toString().trim(),favoriteItem.getSoIdView())){
-                llId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llId.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_id_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoDesc.getText().toString().trim(),favoriteItem.getSoDescView())){
-                llDesc.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
+                llDesc.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_desc_required") + "\n";
                 isValidated = false;
             }
@@ -1035,24 +1035,24 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void clearValidation() {
-        ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
-        ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
-        clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
-        clClientName.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
-        llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        clClientName.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok));
         //LUCHE - 03/08/2021
-        llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
-        llDesc.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llId.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        llDesc.setBackground(ContextCompat.getDrawable(requireContext(),com.namoa_digital.namoa_library.R.drawable.shape_ok));
     }
 
     private boolean validateMkDateTime() {

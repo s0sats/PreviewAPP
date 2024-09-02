@@ -15,6 +15,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.data.domain.model.SiteInventory
@@ -45,6 +46,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_PDF_NOT_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_STARTING_PDF_NOT_SUPPORTED_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_STARTING_PDF_NOT_SUPPORTED_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_ACTION_FORM_OS_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
@@ -260,7 +262,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()
@@ -399,7 +401,11 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                     btnSaveToStyleFilled(this)
 
                     btnOpenFormOs.apply {
-                        text = hmAuxTranslate[BTN_CONTINUE_OS]
+                        text = if(model.custom_form_status == ConstantBase.SYS_STATUS_WAITING_SYNC){
+                            hmAuxTranslate[TRIP_ACTION_FORM_OS_BTN]
+                        }else{
+                            hmAuxTranslate[BTN_CONTINUE_OS]
+                        }
                         setOnClickListener {
                             tripActionListener?.callActivityOs(makeBundleForm(model))
                         }

@@ -31,6 +31,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
@@ -176,7 +177,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             fcmMessage.setCancellable(remoteMessage.getData().get("cancellable"));
-            Log.d("TRIP_FCM", "Message data payload: " + sb.toString());
+//            Log.d("TRIP_FCM", "Message data payload: " + sb.toString());
+
+
             //Se FCM não é o que esta usr logado, aborta FCM
             if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
                 return;
@@ -214,7 +217,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                       &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
                       && ToolBox_Inf.isUsrAppLogged(getApplicationContext())
                     ) {
-                    Log.d("ChatEvent", "CHAT_NOTIFICATION_TYPE_CHAT   -  getTitle:" + fcmMessage.getTitle());
+//                    Log.d("ChatEvent", "CHAT_NOTIFICATION_TYPE_CHAT   -  getTitle:" + fcmMessage.getTitle());
                     String param = "";
                     switch (fcmMessage.getTitle()){
                         case Constant.CHAT_NOTIFICATION_FCM_MSG:
@@ -287,6 +290,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
              *        não insere o ticket e informa a necessidade de sincronismo.
              */
             else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
+
                 switch (fcmMessage.getTitle()){
                     case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
                         String module = getFcmModuleByTicketFocusUpdate(fcmMessage);
@@ -329,9 +333,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 && trip.getTripPrefix() == tripLongMsg.getTrip().getTripPrefix()
                 && trip.getTripCode() == tripLongMsg.getTrip().getTripCode()
                 ){
-                    Log.d("TRIP_FILE", "--------------FCM-----------------------");
-                    Log.d("TRIP_FILE", "trip.getScn(): " + trip.getScn());
-                    Log.d("TRIP_FILE", "tripLongMsg.getTrip().getScn(): " + tripLongMsg.getTrip().getScn());
+
                     if(trip.getScn() == tripLongMsg.getTrip().getScn()){
                         ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
                     }else{
@@ -366,7 +368,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         ).get(FCMMessage_Sql_003.BADGE_MESSAGES_QTY)
                 );
 
-                Log.d("msg", "Message data payload: " + sb.toString());
+//                Log.d("msg", "Message data payload: " + sb.toString());
 
                 makeNF(
                         getApplicationContext(),
@@ -386,7 +388,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d("msg", "Message Notification Body: " + remoteMessage.getNotification().getBody());
+//            Log.d("msg", "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -500,11 +502,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         sync_required = false;
                     }
                 }
+
                 if(sync_required){
                     ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
                     return ConstantBaseApp.FCM_MODULE_SYNC;
                 }else{
                     ticketCacheDao.addUpdate(caches, false);
+                    WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
                 }
             } catch (JSONException e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
@@ -842,6 +846,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     Integer.parseInt(ticket_scn)
                 ).toSqlQuery()
             );
+            //
+            WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
             //
             sendFCMStatus(fcmMessage.getTitle());
         }catch (Exception e){

@@ -20,8 +20,6 @@ abstract class BaseWsIntentService(
         loadGenericTranslation()
     }
 
-
-
     override fun onCreate() {
         super.onCreate()
         //

@@ -45,22 +45,24 @@ class PositionDefinedDestinationUseCase @Inject constructor(
                     coordinates
                 )
             } else {
-                input.tripDestinationSeq?.let { destinationSeq ->
+                if (input.tripDestinationSeq != null) {
                     val coordinatesDestination = destinationRepository.getCoordinatesDestination(
                         trip.customerCode,
                         trip.tripPrefix,
                         trip.tripCode,
                         input.tripDestinationSeq
                     )
-                    //
-                    coordinatesDestination?.let {
-                        calculateDistance(it, coordinates)
+                    if (coordinatesDestination != null && !coordinatesDestination.isDefault) {
+                        calculateDistance(coordinatesDestination, coordinates)
+                    } else {
+                        null
                     }
-                    //
-                } ?: calculateDistance(
-                    it.originCoordinates,
-                    coordinates
-                )
+                } else {
+                    calculateDistance(
+                        it.originCoordinates,
+                        coordinates
+                    )
+                }
             }
         }
 

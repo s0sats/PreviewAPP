@@ -408,7 +408,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         AlertDialog.Builder builder = null;
         if (detailDialog == null || !detailDialog.isShowing()) {
-            builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
             bindingDetailDialog = Act047SoNextOrdersDialogBinding.inflate(LayoutInflater.from(context));
         }
         //
@@ -447,9 +447,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(R.color.font_normal));
             } else {
                 bindingDetailDialog.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.VISIBLE);
-                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionSiteVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
-                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionZoneVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
-                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionSiteVal.setTextColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_error));
+                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionZoneVal.setTextColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_error));
+                bindingDetailDialog.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_error));
             }
         } else {
             bindingDetailDialog.act047SoNextOrdersDialogLlSoPosition.setVisibility(View.GONE);
@@ -845,7 +845,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             Drawable drawable = DrawableCompat.wrap(
                     ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
             DrawableCompat.setTint(
-                    drawable.mutate(), ContextCompat.getColor(context, R.color.padrao_WHITE)
+                    drawable.mutate(), ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.padrao_WHITE)
             );
 
             sw_filter.setImageDrawable(drawable);
@@ -1028,7 +1028,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @SuppressLint("ResourceType")
     private void showFilterDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
         Act047FilterDialogBinding binding = Act047FilterDialogBinding.inflate(LayoutInflater.from(context));
         NextOsFilter filter = mPresenter.getCheckboxFromPreference();
         List<TypeStatusFilter> status = filter.getStatusFilter();

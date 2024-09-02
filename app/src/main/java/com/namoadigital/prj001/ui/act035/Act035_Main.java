@@ -913,15 +913,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void processingJoinAP(int selected) {
         if (ToolBox_Con.isOnline(context, true)) {
-            switch (selected) {
-                case R.id.act035_join_ap_dialog_rb_join:
-                    executeApSyncWs("join");
-                    break;
-                case R.id.act035_join_ap_dialog_rb_ap:
-                    executeApSyncWs("");
-                    break;
-                default:
-                    break;
+            if (selected == R.id.act035_join_ap_dialog_rb_join) {
+                executeApSyncWs("join");
+            } else if (selected == R.id.act035_join_ap_dialog_rb_ap) {
+                executeApSyncWs("");
             }
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
@@ -1222,7 +1217,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                     break;
                             }
                         }catch (Exception e){
-                            colorName = ContextCompat.getColor(context, R.color.namoa_status_error);
+                            colorName = ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.namoa_status_error);
                         }
                         //
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
@@ -2384,7 +2379,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     tv_name_img.setText(ch_Message.getUser_nick());
 
                     if (ch_Message.getMessage_image_local() == null || ch_Message.getMessage_image_local().isEmpty()) {
-                        iv_foto_img.setImageResource(R.drawable.sand_watch_transp);
+                        iv_foto_img.setImageResource(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
                     } else {
                         iv_foto_img.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
                                 ch_Message.getMessage_image_local().replace(".jpg", "") + "_thumb.jpg"

@@ -504,16 +504,12 @@ public class Act067_IO_Items_Adapter extends RecyclerView.Adapter<RecyclerView.V
         @Override
         public void onClick(View v) {
             if (mOnIoItemClickListener != null) {
-                switch (v.getId()) {
-                    case R.id.act067_frag_item_cell_iv_serial:
-                        mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
-                    case R.id.act067_act067_frag_item_cell_iv_picking_done:
-                        mOnIoItemClickListener.onPickingDoneClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
-                    case R.id.act067_frag_item_cell_iv_picking:
-                        mOnIoItemClickListener.onPickingClick(mFilteredValues.get(getAdapterPosition()));
-                        break;
+                if(v.getId() == R.id.act067_frag_item_cell_iv_serial){
+                    mOnIoItemClickListener.onSerialClick(mFilteredValues.get(getAdapterPosition()));
+                }else if(v.getId() == R.id.act067_act067_frag_item_cell_iv_picking_done){
+                    mOnIoItemClickListener.onPickingDoneClick(mFilteredValues.get(getAdapterPosition()));
+                }else if(v.getId() == R.id.act067_frag_item_cell_iv_picking){
+                    mOnIoItemClickListener.onPickingClick(mFilteredValues.get(getAdapterPosition()));
                 }
             }
         }

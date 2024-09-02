@@ -1,15 +1,16 @@
 package com.namoadigital.prj001.model.trip
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv.Companion.TYPE_MANUAL
 
 data class TripDestinationEditEnv(
-    @SerializedName("tripPrefix") val tripPrefix: Int,
-    @SerializedName("tripCode") val tripCode: Int,
-    @SerializedName("scn") val scn: Int,
-    @SerializedName("destinationSeq") val destinationSeq: Int,
-    @SerializedName("arrivedDate") val arrivedDate: String,
-    @SerializedName("departedDate") val departedDate: String,
+    @Expose @SerializedName("tripPrefix") val tripPrefix: Int,
+    @Expose @SerializedName("tripCode") val tripCode: Int,
+    @Expose @SerializedName("scn") val scn: Int,
+    @Expose @SerializedName("destinationSeq") val destinationSeq: Int,
+    @Expose @SerializedName("arrivedDate") val arrivedDate: String,
+    @Expose @SerializedName("departedDate") val departedDate: String,
 ){
 
     companion object {

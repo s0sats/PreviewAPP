@@ -113,6 +113,7 @@ public class Constant extends ConstantBaseApp {
     public static String WS_TRIP_ORIGIN_SET = "https://portal.namoadigital.com/ws/prj001/trip/trip_origin_set.ws";
     public static String WS_TRIP_DESTINATION_EDIT = "https://portal.namoadigital.com/ws/prj001/trip/trip_destination_edit.ws";
     public static String WS_TRIP_EVENT = "https://portal.namoadigital.com/ws/prj001/trip/trip_event_set.ws";
+    public static String WS_TRIP_UPDATE = "https://portal.namoadigital.com/ws/prj001/trip/trip_full_update.ws";
 
     // Connection Test
     public static final String WS_HOST = "portal.namoadigital.com";

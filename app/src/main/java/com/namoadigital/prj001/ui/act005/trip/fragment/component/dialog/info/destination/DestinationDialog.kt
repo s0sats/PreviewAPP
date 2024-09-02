@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
@@ -93,12 +94,10 @@ class DestinationDialog constructor(
         etLayoutEndHour.hint = hmAuxTranslate[TranslateInfoDialogs.DIALOG_HOUR_HINT]
         tvFleetInfo.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_FLEET_INFO_LBL]
         edittextOdometerLayout.hint = hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]
-        buttonOdometerPhoto.text = getOdometerPhotoLabel(
-            trip.isRequireDestinationFleetData,
-            hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!
-        )
         if (trip.isRequireDestinationFleetData) {
             setRequiredOdometerPhotoButton()
+        } else {
+            setOptionalOdometerPhotoButton()
         }
         btnSave.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_SAVE_BTN]
         tvOdometerInvalid.text = hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]
@@ -169,6 +168,36 @@ class DestinationDialog constructor(
             R.color.m3_namoa_primary,
             null
         )
+
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(
+            true,
+            hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!
+        )
+    }
+
+    private fun TripDialogInfoEditBinding.setOptionalOdometerPhotoButton() {
+        buttonOdometerPhoto.iconTint = ResourcesCompat.getColorStateList(
+            context.resources,
+            R.color.m3_namoa_primary,
+            null
+        )
+        buttonOdometerPhoto.setTextColor(
+            ResourcesCompat.getColorStateList(
+                context.resources,
+                R.color.m3_namoa_primary,
+                null
+            )
+        )
+        buttonOdometerPhoto.backgroundTintList = ResourcesCompat.getColorStateList(
+            context.resources,
+            android.R.color.transparent,
+            null
+        )
+
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(
+            false,
+            hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_PHOTO_BTN]!!
+        )
     }
 
     private fun TripDialogInfoEditBinding.initializeListener() {
@@ -201,13 +230,22 @@ class DestinationDialog constructor(
         etOdometer.addTextChangedListener(TextWatcherHelper(object :
             TextWatcherHelper.TextChangedListener {
             override fun onTextChanged(text: String) {
-                etOdometer.text?.let { if (it.toString().isNotBlank()) {
-                    if (isOdometerInvalid(it.toString().toLong())){
-                        updateButtonState()
-                        return
-                    }
+                etOdometer.text?.let {
+                    if (it.toString().isNotBlank()) {
+                        if (isOdometerInvalid(it.toString().toLong())) {
+                            updateButtonState()
+                            return
+                        }
 
-                    setOdometerErrorLayout(
+                        if (buttonOdometerPhoto.isVisible && !trip.isRequireDestinationFleetData) {
+                            setRequiredOdometerPhotoButton()
+                            edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                                true,
+                                hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                            )
+                        }
+
+                        setOdometerErrorLayout(
                             context,
                             edittextOdometerLayout,
                             layoutOdometerInvalid,
@@ -216,7 +254,9 @@ class DestinationDialog constructor(
                             View.GONE
                         )
                     } else {
-                        if (trip.isRequireDestinationFleetData && etLayoutEndDate.isVisible) {
+                        if (trip.isRequireDestinationFleetData && etLayoutEndDate.isVisible ||
+                            !trip.isRequireDestinationFleetData && ivPhoto.isVisible
+                        ) {
                             setOdometerErrorLayout(
                                 context,
                                 edittextOdometerLayout,
@@ -225,8 +265,16 @@ class DestinationDialog constructor(
                                 hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]!!,
                                 View.VISIBLE
                             )
+                            updateButtonState()
                             return
                         } else {
+                            if (buttonOdometerPhoto.isVisible && !trip.isRequireDestinationFleetData) {
+                                setOptionalOdometerPhotoButton()
+                                edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                                    false,
+                                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                                )
+                            }
                             setOdometerErrorLayout(
                                 context,
                                 edittextOdometerLayout,
@@ -235,6 +283,7 @@ class DestinationDialog constructor(
                                 "",
                                 View.GONE
                             )
+                            updateButtonState()
                         }
                     }
                 }
@@ -298,9 +347,14 @@ class DestinationDialog constructor(
                     buttonOdometerPhoto.visibility = View.GONE
                     updatePhotoView(getPhoto())
                 },
-                loading = {
+                loading = { _, _ ->
                     photoLoading.visibility = View.VISIBLE
                     buttonOdometerPhoto.visibility = View.GONE
+                    buttonRetryDownloadImage.visibility = View.GONE
+                },
+                error = { _, _ ->
+                    buttonOdometerPhoto.visibility = View.VISIBLE
+                    photoLoading.visibility = View.GONE
                     buttonRetryDownloadImage.visibility = View.GONE
                 },
                 failed = {
@@ -366,19 +420,74 @@ class DestinationDialog constructor(
                 return
             }
 
+            if (!trip.isRequireDestinationFleetData &&
+                ivPhoto.isVisible &&
+                etOdometer.text.isNullOrEmpty()
+            ) {
+                btnSave.isEnabled = false
+                return
+            }
+
             btnSave.isEnabled =
                 !(isEqualsStartDate && isEqualsEndDate && isEqualsOdometer) || (isNewPhoto && ivPhoto.isVisible)
 
         }
     }
 
-    private fun TripDialogInfoEditBinding.updatePhotoView(bitmap: Bitmap?) {
+    private fun TripDialogInfoEditBinding.updatePhotoView(
+        bitmap: Bitmap?,
+        isUpdatePhoto: Boolean = false
+    ) {
         ivPhoto.apply {
-            visibility = if (bitmap == null) View.GONE else View.VISIBLE
-            if (bitmap != null) setImageBitmap(bitmap)
+            if (bitmap == null) {
+                visibility = View.GONE
+                if(isUpdatePhoto && !trip.isRequireDestinationFleetData && etOdometer.text.isNullOrEmpty()){
+                    edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                        false,
+                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                    )
+                }
+            } else {
+                visibility = View.VISIBLE
+                setImageBitmap(bitmap)
+                if(isUpdatePhoto && !trip.isRequireDestinationFleetData){
+                    edittextOdometerLayout.hint = getOdometerPhotoLabel(
+                        true,
+                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
+                    )
+                }
+            }
         }
 
         buttonOdometerPhoto.visibility = if (bitmap == null) View.VISIBLE else View.GONE
+
+        if (bitmap == null) {
+            if (!trip.isRequireDestinationFleetData && layoutOdometerInvalid.isVisible || etOdometer.text.isNullOrEmpty()) {
+                setOdometerErrorLayout(
+                    context,
+                    edittextOdometerLayout,
+                    layoutOdometerInvalid,
+                    tvOdometerInvalid,
+                    "",
+                    View.GONE
+                )
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
+                edittextOdometerLayout.setHintTextColor(context, R.drawable.edittext_theme)
+            } else if (isUpdatePhoto && !etOdometer.text.isNullOrEmpty()) {
+                setRequiredOdometerPhotoButton()
+            }
+        } else if (etOdometer.text.isNullOrEmpty() && (!trip.isRequireDestinationFleetData && isUpdatePhoto && ivPhoto.isVisible)) {
+            setOdometerErrorLayout(
+                context,
+                edittextOdometerLayout,
+                layoutOdometerInvalid,
+                tvOdometerInvalid,
+                hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL]!!,
+                View.VISIBLE
+            )
+        }
         updateButtonState()
     }
 
@@ -390,14 +499,14 @@ class DestinationDialog constructor(
 
         with(binding) {
 
-            if(dateIsFuture("$dateStart $hourStart")){
+            if (dateIsFuture("$dateStart $hourStart")) {
                 setStartDateError()
                 tvDateStartInvalid.text =
                     hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE]
                 btnSave.isEnabled = false
                 isSuccess = false
             }
-            if(isSuccess) {
+            if (isSuccess) {
                 if (dateBeforeTrip("$dateStart $hourStart")) {
                     setStartDateError()
                     tvDateStartInvalid.text =
@@ -452,9 +561,9 @@ class DestinationDialog constructor(
                     }
                 }
             }
-            if(isSuccess) {
+            if (isSuccess) {
                 setStartDateLayoutSuccess()
-            }else{
+            } else {
                 return false
             }
         }
@@ -487,9 +596,9 @@ class DestinationDialog constructor(
 
         with(binding) {
 
-            if(dateIsFuture("$dateEnd $hourEnd")){
+            if (dateIsFuture("$dateEnd $hourEnd")) {
                 setEndDateError()
-                tvDateEndInvalid.text = hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE ]
+                tvDateEndInvalid.text = hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE]
                 btnSave.isEnabled = false
                 return false
             }
@@ -575,7 +684,7 @@ class DestinationDialog constructor(
                     if (newPhoto) saveImage()
                     SaveDestinationEdit.ALL(
                         dateStart = startDate.parseFullDate(),
-                        dateEnd = if(endDate.isNotEmpty()) "${etEndDate.text} ${etEndHour.text}".parseFullDate() else "",
+                        dateEnd = if (endDate.isNotEmpty()) "${etEndDate.text} ${etEndHour.text}".parseFullDate() else "",
                         odometer = odometer,
                         photoUpdate = PhotoUpdate(
                             originPath.name,
@@ -622,7 +731,7 @@ class DestinationDialog constructor(
 
             return SaveDestinationEdit.DATE(
                 dateStart = startDate.parseFullDate(),
-                dateEnd = if(endDate.isNotEmpty()) endDate.parseFullDate() else "",
+                dateEnd = if (endDate.isNotEmpty()) endDate.parseFullDate() else "",
                 destinationSeq = destination.destinationSeq
             )
         }
@@ -651,7 +760,7 @@ class DestinationDialog constructor(
     }
 
     fun updatePhotoDialog() {
-        binding.updatePhotoView(updatePhoto())
+        binding.updatePhotoView(updatePhoto(), true)
     }
 
     override fun show() {

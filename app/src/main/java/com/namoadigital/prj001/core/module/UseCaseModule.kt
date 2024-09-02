@@ -1,11 +1,14 @@
-package com.namoadigital.prj001.ui.act005.trip.module
+package com.namoadigital.prj001.core.module
 
 import android.content.Context
+import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepository
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
+import com.namoadigital.prj001.core.trip.domain.usecase.CheckNextDestinationStatusTripUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.CheckExistsTripUpdateUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.CreateTripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationUseCase
@@ -17,12 +20,17 @@ import com.namoadigital.prj001.core.trip.domain.usecase.SaveDestinationDateUseCa
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveFleetDataUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveOriginUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SavePreferenceTripUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.SendTripFullUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SetDestinationStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.TripStatusChangeUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.TripUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.CheckNextStatusTripUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.CheckNextStatusWhenNewDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationCounter
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveOverNightDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.DestinationActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.GetDestinationActionUseCase
@@ -56,15 +64,23 @@ object UseCaseModule {
 
     @ViewModelScoped
     @Provides
-    fun providesTripUseCase(repository: TripRepository): TripUseCase {
+    fun providesTripUseCase(
+        repository: TripRepository,
+        destinationRepository: TripDestinationRepository,
+    ): TripUseCase {
         return TripUseCase(
-            trip =  GetTripUseCase(repository),
-            statusChange =  TripStatusChangeUseCase(repository),
+            trip = GetTripUseCase(repository),
+            statusChange = TripStatusChangeUseCase(
+                repository,
+                CheckNextDestinationStatusTripUseCase(repository, destinationRepository)
+            ),
             savePrefTrip = SavePreferenceTripUseCase(repository),
             saveFleet = SaveFleetDataUseCase(repository),
             listSites = ListSitesUseCase(repository),
             saveOrigin = SaveOriginUseCase(repository),
             getEvent = GetEventUseCase(repository),
+            sendTripFull = SendTripFullUseCase(repository),
+            hasTripWithUpdateRequired = CheckExistsTripUpdateUseCase(repository)
         )
     }
 
@@ -74,16 +90,35 @@ object UseCaseModule {
         @ApplicationContext app: Context,
         repository: TripDestinationRepository,
         ticketRepository: TicketRepository,
-        ticketCacheRepository: TicketCacheRepository
+        ticketCacheRepository: TicketCacheRepository,
+        tripRepository: TripRepository,
+        serialRepository: SerialRepository
     ): DestinationUseCase {
         return DestinationUseCase(
             destination = GetDestinationUseCase(repository),
             destinationByStatus = GetDestinationByStatusUseCase(repository),
-            getDestinationCounter = GetDestinationCounter(app, repository, ticketRepository,ticketCacheRepository),
-            setDestinationStatusUseCase = SetDestinationStatusUseCase(repository),
+            getDestinationCounter = GetDestinationCounter(
+                app,
+                repository,
+                ticketRepository,
+                ticketCacheRepository,
+                serialRepository
+            ),
+            setDestinationStatusUseCase = SetDestinationStatusUseCase(
+                repository,
+                CheckNextStatusTripUseCase(tripRepository, repository)
+            ),
             execSelectDestination = SelectDestinationUseCase(repository),
             saveDestinationDateUseCase = SaveDestinationDateUseCase(repository),
-            getDestinationForThresholdValidationUseCase = GetDestinationForThresholdValidationUseCase(repository)
+            getDestinationForThresholdValidationUseCase = GetDestinationForThresholdValidationUseCase(
+                repository
+            ),
+            saveOverNightDestinationUseCase = SaveOverNightDestinationUseCase(
+                repository,
+                tripRepository,
+                SelectDestinationUseCase(repository),
+                SaveDestinationUseCase(repository, tripRepository, CheckNextStatusWhenNewDestinationUseCase(repository, tripRepository))
+            )
         )
     }
 
@@ -103,6 +138,7 @@ object UseCaseModule {
             GetListSiteExtractUseCase(repository)
         )
     }
+
     @ViewModelScoped
     @Provides
     fun providesEventUseCase(repository: TripEventRepository): TripEventUseCase {
@@ -132,7 +168,7 @@ object UseCaseModule {
         trip: TripRepository,
         destination: TripDestinationRepository,
         action: TripDestinationActionRepository
-        ) = ListExtractUseCase(user, event, trip, destination, action)
+    ) = ListExtractUseCase(user, event, trip, destination, action)
 
 
     @ViewModelScoped
@@ -151,8 +187,8 @@ object UseCaseModule {
         destination: TripDestinationRepository,
         user: TripUserRepository,
     ) = GetFirstDateOnTripUseCase(
-            event,
-            destination,
-            user,
-        )
+        event,
+        destination,
+        user,
+    )
 }

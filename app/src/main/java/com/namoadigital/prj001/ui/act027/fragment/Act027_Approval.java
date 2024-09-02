@@ -519,7 +519,7 @@ public class Act027_Approval extends BaseFragment {
                     layoutParams.setMargins(0, 100, 0, 0);
 
                     iv_signature.setLayoutParams(layoutParams);
-                    iv_signature.setImageResource(R.drawable.sand_watch_transp);
+                    iv_signature.setImageResource(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
                 }
 
                 approvalStatus();
@@ -527,6 +527,7 @@ public class Act027_Approval extends BaseFragment {
         }
     }
 
+    @SuppressLint("SwitchIntDef")
     private void approvalStatus() {
 
         ll_quality.setVisibility(View.GONE);
@@ -660,39 +661,28 @@ public class Act027_Approval extends BaseFragment {
                 rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                        switch (checkedId) {
-                            case R.id.act027_approval_content_rb_user:
-
-                                approvalApprovalUser.setVisibility(View.VISIBLE);
-                                approvalNFC.setVisibility(View.GONE);
-                                approvalUser_Password.setVisibility(View.GONE);
-                                break;
-                            case R.id.act027_approval_content_rb_other:
-
-                                approvalApprovalUser.setVisibility(View.GONE);
-                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
-                                approvalUser_Password.setVisibility(View.VISIBLE);
-                                break;
+                        if (checkedId == R.id.act027_approval_content_rb_user) {
+                            approvalApprovalUser.setVisibility(View.VISIBLE);
+                            approvalNFC.setVisibility(View.GONE);
+                            approvalUser_Password.setVisibility(View.GONE);
+                        } else if (checkedId == R.id.act027_approval_content_rb_other) {
+                            approvalApprovalUser.setVisibility(View.GONE);
+                            approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                            approvalUser_Password.setVisibility(View.VISIBLE);
                         }
                     }
                 });
 
                 if (rg_opc.getVisibility() == View.VISIBLE && rg_opc.getCheckedRadioButtonId() != -1) {
-                    switch (rg_opc.getCheckedRadioButtonId()) {
-                        case R.id.act027_approval_content_rb_user:
-
-                            approvalApprovalUser.setVisibility(View.VISIBLE);
-                            approvalNFC.setVisibility(View.GONE);
-                            approvalUser_Password.setVisibility(View.GONE);
-
-                            break;
-                        case R.id.act027_approval_content_rb_other:
-
-                            approvalApprovalUser.setVisibility(View.GONE);
-                            approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
-                            approvalUser_Password.setVisibility(View.VISIBLE);
-
-                            break;
+                    int checkedId = rg_opc.getCheckedRadioButtonId();
+                    if (checkedId == R.id.act027_approval_content_rb_user) {
+                        approvalApprovalUser.setVisibility(View.VISIBLE);
+                        approvalNFC.setVisibility(View.GONE);
+                        approvalUser_Password.setVisibility(View.GONE);
+                    } else if (checkedId == R.id.act027_approval_content_rb_other) {
+                        approvalApprovalUser.setVisibility(View.GONE);
+                        approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                        approvalUser_Password.setVisibility(View.VISIBLE);
                     }
                 }else{
                     if (hasQualityProfile) {
@@ -724,41 +714,28 @@ public class Act027_Approval extends BaseFragment {
                     rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                            switch (checkedId) {
-                                case R.id.act027_approval_content_rb_user:
-
-                                    approvalApprovalUser.setVisibility(View.VISIBLE);
-                                    approvalNFC.setVisibility(View.GONE);
-                                    approvalUser_Password.setVisibility(View.GONE);
-
-                                    break;
-                                case R.id.act027_approval_content_rb_other:
-
-                                    approvalApprovalUser.setVisibility(View.GONE);
-                                    approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
-                                    approvalUser_Password.setVisibility(View.VISIBLE);
-
-                                    break;
+                            if (checkedId == R.id.act027_approval_content_rb_user) {
+                                approvalApprovalUser.setVisibility(View.VISIBLE);
+                                approvalNFC.setVisibility(View.GONE);
+                                approvalUser_Password.setVisibility(View.GONE);
+                            } else if (checkedId == R.id.act027_approval_content_rb_other) {
+                                approvalApprovalUser.setVisibility(View.GONE);
+                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                                approvalUser_Password.setVisibility(View.VISIBLE);
                             }
                         }
                     });
 
                     if (rg_opc.getVisibility() == View.VISIBLE && rg_opc.getCheckedRadioButtonId() != -1) {
-                        switch (rg_opc.getCheckedRadioButtonId()) {
-                            case R.id.act027_approval_content_rb_user:
-
-                                approvalApprovalUser.setVisibility(View.VISIBLE);
-                                approvalNFC.setVisibility(View.GONE);
-                                approvalUser_Password.setVisibility(View.GONE);
-
-                                break;
-                            case R.id.act027_approval_content_rb_other:
-
-                                approvalApprovalUser.setVisibility(View.GONE);
-                                approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
-                                approvalUser_Password.setVisibility(View.VISIBLE);
-
-                                break;
+                        int checkedId = rg_opc.getCheckedRadioButtonId();
+                        if (checkedId == R.id.act027_approval_content_rb_user) {
+                            approvalApprovalUser.setVisibility(View.VISIBLE);
+                            approvalNFC.setVisibility(View.GONE);
+                            approvalUser_Password.setVisibility(View.GONE);
+                        } else if (checkedId == R.id.act027_approval_content_rb_other) {
+                            approvalApprovalUser.setVisibility(View.GONE);
+                            approvalNFC.setVisibility(mNFCSupport ? View.VISIBLE : View.GONE);
+                            approvalUser_Password.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -793,18 +770,14 @@ public class Act027_Approval extends BaseFragment {
                 rg_opc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                        switch (checkedId) {
-                            case R.id.act027_approval_content_rb_user:
-                                mSm_so.setClient_approval_type_sig("USER");
-                                mk_name_value.setText(ToolBox_Con.getPreference_User_Code_Nick(getActivity()));
-                                mk_name_value.setEnabled(false);
-
-                                break;
-                            case R.id.act027_approval_content_rb_other:
-                                mSm_so.setClient_approval_type_sig("CLIENT");
-                                mk_name_value.setText(mSm_so.getClient_name());
-                                mk_name_value.setEnabled(true);
-                                break;
+                        if (checkedId == R.id.act027_approval_content_rb_user) {
+                            mSm_so.setClient_approval_type_sig("USER");
+                            mk_name_value.setText(ToolBox_Con.getPreference_User_Code_Nick(getActivity()));
+                            mk_name_value.setEnabled(false);
+                        } else if (checkedId == R.id.act027_approval_content_rb_other) {
+                            mSm_so.setClient_approval_type_sig("CLIENT");
+                            mk_name_value.setText(mSm_so.getClient_name());
+                            mk_name_value.setEnabled(true);
                         }
                     }
                 });

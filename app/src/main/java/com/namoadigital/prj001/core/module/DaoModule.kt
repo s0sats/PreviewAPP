@@ -1,9 +1,10 @@
-package com.namoadigital.prj001.ui.act005.trip.module
+package com.namoadigital.prj001.core.module
 
 import android.content.Context
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_FileDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_SiteDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
@@ -92,4 +93,9 @@ object DaoModule {
         @ApplicationContext app: Context
     ) = GE_Custom_Form_LocalDao(app)
 
+    @ViewModelScoped
+    @Provides
+    fun providesMdProductSerialDao(
+        @ApplicationContext app: Context
+    ) = MD_Product_SerialDao(app)
 }

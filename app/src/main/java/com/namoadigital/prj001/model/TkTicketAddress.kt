@@ -13,4 +13,8 @@ class TkTicketAddress(
     @SerializedName("complement") val complement: String?,
     @SerializedName("zipcode") val zipcode: String?,
     @SerializedName("plus_code") val plus_code: String?,
+    @SerializedName("latitude") val latitude: String?,
+    @SerializedName("longitude") val longitude: String?,
+    @SerializedName("contact") val contact: String?,
+    @SerializedName("phone") val phone: String?,
 )

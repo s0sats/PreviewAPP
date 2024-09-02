@@ -599,7 +599,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
     private void setImagePlaceholder(ImageView imageView) {
-        Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+        Drawable dPlaceholder = getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
         dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
         imageView.setImageDrawable(dPlaceholder);
     }

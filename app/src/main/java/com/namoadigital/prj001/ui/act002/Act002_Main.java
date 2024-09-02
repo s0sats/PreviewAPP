@@ -470,6 +470,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             //
             mPresenter.setPeriodFilterPreference();
             //
+            mPresenter.scheduleTicketCacheDownload();
+            //
             callAct003(context);
             //
             ToolBox_Con.setPreference_Service(context, "SERVICE");

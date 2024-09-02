@@ -14,22 +14,18 @@ class GetTicketActionUseCase constructor(
 
     override fun invoke(input: Params): Results {
         val tickets = mutableListOf<HMAux>()
-        var otherTickets: Int= 0
+
         val focus = if(input.isFocus) 1 else 0
-        val unfocus = if(!input.isFocus) 0 else 1
+
         tickets.addAll(
             repository.getTicketActionList(
                 input.siteCode,
                 focus,
-                input.multStepsLbl
+                input.multStepsLbl,
+                input.productCode,
+                input.serialId,
             )
         )
-
-        otherTickets += repository.getTicketActionList(
-            input.siteCode,
-            unfocus,
-            input.multStepsLbl
-        ).size
 
         return Results(
             tickets
@@ -39,7 +35,9 @@ class GetTicketActionUseCase constructor(
     data class Params(
         val siteCode: Int,
         val isFocus: Boolean,
-        val multStepsLbl: String?
+        val multStepsLbl: String?,
+        val productCode: Int? = null,
+        val serialId: String? = null,
     )
 
     data class Results(

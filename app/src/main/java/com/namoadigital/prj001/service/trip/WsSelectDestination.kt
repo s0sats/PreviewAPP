@@ -8,6 +8,7 @@ import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepositoryImp
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
 import com.namoadigital.prj001.core.util.TokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
@@ -16,19 +17,32 @@ import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.extensions.getUserSessionAPP
 import com.namoadigital.prj001.extensions.watchStatus
+import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.toTripStatus
 import com.namoadigital.prj001.receiver.trip.WBR_SelectDestination
 import com.namoadigital.prj001.service.base.BaseWsIntentService
+import com.namoadigital.prj001.ui.act094.destination.domain.destination_availables.DestinationAvailables
 import com.namoadigital.prj001.ui.act094.destination.domain.select_destination.SelectDestinationEnv
 import com.namoadigital.prj001.ui.act094.destination.domain.select_destination.SelectDestinationRec
+import com.namoadigital.prj001.ui.act094.domain.toAdapterList
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class WsSelectDestination : BaseWsIntentService("WsSelectDestionation", IntentServiceMode.DOWNLOAD_DATA()) {
+@AndroidEntryPoint
+class WsSelectDestination :
+    BaseWsIntentService("WsSelectDestionation", IntentServiceMode.DOWNLOAD_DATA()) {
 
     private var hmAux_Trans = HMAux()
+
+    @Inject
+    lateinit var saveDestinationUseCase: SaveDestinationUseCase
+
+    @Inject
+    lateinit var tripDao: FSTripDao
 
     override fun onHandleIntent(intent: Intent?) {
         intent?.extras?.let {
@@ -38,11 +52,21 @@ class WsSelectDestination : BaseWsIntentService("WsSelectDestionation", IntentSe
                     it.getInt(SelectDestinationUseCase.TRIP_PREFIX),
                     it.getInt(SelectDestinationUseCase.TRIP_CODE),
                     it.getInt(SelectDestinationUseCase.TRIP_SCN),
-                    if(it.containsKey(SelectDestinationUseCase.SITE_CODE))  it.getInt(SelectDestinationUseCase.SITE_CODE)else null,
-                    if(it.containsKey(SelectDestinationUseCase.DESTINATION_TICKET_PREFIX))  it.getInt(SelectDestinationUseCase.DESTINATION_TICKET_PREFIX)else null,
-                    if(it.containsKey(SelectDestinationUseCase.DESTINATION_TICKET_CODE)) it.getInt(SelectDestinationUseCase.DESTINATION_TICKET_CODE) else null,
-                    if(it.containsKey(SelectDestinationUseCase.CURRENT_LAT)) it.getDouble(SelectDestinationUseCase.CURRENT_LAT) else null,
-                    if(it.containsKey(SelectDestinationUseCase.CURRENT_LON)) it.getDouble(SelectDestinationUseCase.CURRENT_LON) else null,
+                    if (it.containsKey(SelectDestinationUseCase.SITE_CODE)) it.getInt(
+                        SelectDestinationUseCase.SITE_CODE
+                    ) else null,
+                    if (it.containsKey(SelectDestinationUseCase.DESTINATION_TICKET_PREFIX)) it.getInt(
+                        SelectDestinationUseCase.DESTINATION_TICKET_PREFIX
+                    ) else null,
+                    if (it.containsKey(SelectDestinationUseCase.DESTINATION_TICKET_CODE)) it.getInt(
+                        SelectDestinationUseCase.DESTINATION_TICKET_CODE
+                    ) else null,
+                    if (it.containsKey(SelectDestinationUseCase.CURRENT_LAT)) it.getDouble(
+                        SelectDestinationUseCase.CURRENT_LAT
+                    ) else null,
+                    if (it.containsKey(SelectDestinationUseCase.CURRENT_LON)) it.getDouble(
+                        SelectDestinationUseCase.CURRENT_LON
+                    ) else null,
                 )
             } catch (e: Exception) {
                 ToolBox_Inf.wsExceptionTreatment(applicationContext, e).let { string ->
@@ -100,9 +124,10 @@ class WsSelectDestination : BaseWsIntentService("WsSelectDestionation", IntentSe
         connectWS<ApiResponse<SelectDestinationRec>>(
             url = Constant.WS_SELECT_DESTINATION,
             model = modelEnv
-        ){
+        ) {
             it.watchStatus(
                 success = { response ->
+                    manager.deleteToken()
                     sendBCStatus(
                         WsTypeStatus.UPDATE_DIALOG_MESSAGE(
                             message = genericServiceTranslate["generic_processing_data"],
@@ -110,19 +135,6 @@ class WsSelectDestination : BaseWsIntentService("WsSelectDestionation", IntentSe
                         )
                     )
                     response.data?.let { data ->
-                        if(destinationType.toTripStatus() == TripStatus.OVER_NIGHT){
-                            val tripDestinationRepository = TripDestinationRepositoryImp(
-                                applicationContext,
-                                FsTripDestinationDao(applicationContext),
-                                FSTripDao(applicationContext)
-                            )
-                            //
-                            tripDestinationRepository.saveOverNightDestination(
-                                ToolBox_Con.getPreference_Customer_Code(applicationContext),
-                                data
-                            )
-                        }
-                        //
                         ToolBox.sendBCStatus(
                             applicationContext,
                             "CLOSE_ACT",
@@ -131,6 +143,21 @@ class WsSelectDestination : BaseWsIntentService("WsSelectDestionation", IntentSe
                             gson.toJson(data),
                             "0"
                         )
+                    }
+                },
+                failed = {
+
+                    val trip = tripDao.getTrip()
+                    trip?.let { trip ->
+                            //
+                            ToolBox.sendBCStatus(
+                                applicationContext,
+                                "ERROR_1",
+                                hmAux_Trans[""],
+                                HMAux(),
+                                "",
+                                "0"
+                            )
                     }
                 }
             )

@@ -68,6 +68,7 @@ import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
 import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
 import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
+import com.namoadigital.prj001.dao.md.MDRegionDao;
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.dao.trip.FSTripEventDao;
@@ -76,6 +77,7 @@ import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.extensions.ListHelperKt;
+import com.namoadigital.prj001.database.scripts.masterdata.RegionScript;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -144,6 +146,7 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
+import com.namoadigital.prj001.model.region.MDRegion;
 import com.namoadigital.prj001.model.trip.FSEventType;
 import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -206,6 +209,7 @@ import com.namoadigital.prj001.sql.TkTicketCacheSqlTruncate;
 import com.namoadigital.prj001.sql.TkTicketTypeOperationSqlTruncate;
 import com.namoadigital.prj001.sql.TkTicketTypeProductSqlTruncate;
 import com.namoadigital.prj001.sql.TkTicketTypeSqlTruncate;
+import com.namoadigital.prj001.sql.trip.GetSingleTrip;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -705,6 +709,7 @@ public class WS_Sync extends BaseWsIntentService {
             FsTripDestinationDao fsTripDestinationDao= new FsTripDestinationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             FSEventTypeDao fsEventTypeDao= new FSEventTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             FsTripPositionDao fsTripPositionDao= new FsTripPositionDao(getApplicationContext());
+            MDRegionDao mdRegionDao = new MDRegionDao(getApplicationContext());
 
 
 
@@ -744,12 +749,13 @@ public class WS_Sync extends BaseWsIntentService {
             tkTicketTypeSiteDao.remove(new TkTicketTypeSqlTruncate().toSqlQuery());
             tkTicketTypeOperationDao.remove(new TkTicketTypeOperationSqlTruncate().toSqlQuery());
             tkTicketTypeProductDao.remove(new TkTicketTypeProductSqlTruncate().toSqlQuery());
-            fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
+
             fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
             fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
             fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
             fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
             fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
+            mdRegionDao.remove(RegionScript.REMOVE_TABLE);
 
             //
             // Processamento Operation
@@ -851,6 +857,20 @@ public class WS_Sync extends BaseWsIntentService {
             }
             ////Libera pro GB
             files_site = null;
+            //
+            // Processamento Region
+            File[] file_region = ToolBox_Inf.getListOfFiles_v2("md_region-");
+            for (File _file : file_region) {
+                ArrayList<MDRegion> regions = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MDRegion>>() {
+                        }.getType());
+
+                mdRegionDao.addUpdate(regions, false);
+            }
+            file_region = null;
             //
             // Processamento Product
             //
@@ -1069,7 +1089,7 @@ public class WS_Sync extends BaseWsIntentService {
                                 }.getType()
                         )
                 );
-                Log.d("TpDeviceItemHistMat", gson.toString());
+
             }
 
             for (File _file : files_serial) {
@@ -1254,7 +1274,7 @@ public class WS_Sync extends BaseWsIntentService {
             if (!loginProcess) {
                 //Apaga AP que não são pra mim e nem tenho sala
                 int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
-                Log.d("FORM_AP", "AP's del: " + qtyDel);
+
             }
             //Libera pro GB
             files_action_plan = null;
@@ -1802,6 +1822,7 @@ public class WS_Sync extends BaseWsIntentService {
             File[] files_fs_trip  = ToolBox_Inf.getListOfFiles_v2("fs_trip-");
             if(files_fs_trip == null || files_fs_trip.length ==0){
                 fsTripPositionDao.remove(new FsTripPositionSqlTruncate().toSqlQuery());
+                fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
             }
             for (File _file : files_fs_trip) {
                 FSTrip fsTrips = gson.fromJson(
@@ -1811,8 +1832,22 @@ public class WS_Sync extends BaseWsIntentService {
                         FSTrip.class
                 );
                 //
-                fsTrips.setPk();
-                fsTripDao.syncTripFull(fsTrips);
+                if(fsTrips != null){
+                FSTrip dbTrip = fsTripDao.getByString(
+                        new GetSingleTrip(
+                                fsTrips.getCustomerCode(),
+                                fsTrips.getTripPrefix(),
+                                fsTrips.getTripCode()
+                        ).toSqlQuery()
+                );
+                //
+                if (dbTrip == null
+                        || !dbTrip.getHasUpdateRequired()) {
+                    fsTrips.setPk();
+                    fsTripDao.syncTripFull(fsTrips);
+                }
+                }
+
             }
             //Libera pro GB
             files_fs_trip = null;

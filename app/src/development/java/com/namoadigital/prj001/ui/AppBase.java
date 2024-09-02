@@ -68,7 +68,6 @@ import dagger.hilt.android.HiltAndroidApp;
 @HiltAndroidApp
 public class AppBase extends Application {
 
-    public static final String CUTUCA_E = "/namoa";
     public static final String NAMOA_DIR = "/namoa";
     public static final String ZIPS_DIR = "/zips";
     public static final String IMGS_DIR = "/imgs";
@@ -151,7 +150,7 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 12;
+        DB_VERSION_CUSTOM = 13;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

@@ -18,11 +18,13 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.namoa_digital.namoa_library.util.ConstantBase
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Camera_Activity
-import com.namoadigital.prj001.R
 import com.namoadigital.prj001.service.location.FsTripLocationService
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -33,7 +35,7 @@ fun Context.showAlertWithYesOrNot(
     cancelable: Boolean = false,
     actionYes: DialogInterface.OnClickListener? = null,
     actionNo: DialogInterface.OnClickListener? = null
-) = AlertDialog.Builder(this, R.style.AlertDialogTheme).apply {
+) = AlertDialog.Builder(this, com.namoa_digital.namoa_library.R.style.AlertDialogTheme).apply {
     setTitle(title)
     setMessage(msg)
     setCancelable(cancelable)
@@ -99,6 +101,30 @@ fun Context.sendCommandToServiceTripLocation(action: String) {
         it.action = action
         this.startService(it)
     }
+}
+
+ fun Context.loadGenericTranslation(): HMAux {
+    val translist = listOf(
+        "generic_sending_data_msg",
+        "generic_receiving_data_msg",
+        "generic_processing_data",
+        "generic_process_finalized_msg",
+        "msg_no_data_returned"
+    )
+    //
+    val mResourceCode = ToolBox_Inf.getResourceCode(
+        applicationContext,
+        Constant.APP_MODULE,
+        "ws_generic_resource"
+    )
+    //
+    return ToolBox_Inf.setLanguage(
+        applicationContext,
+        Constant.APP_MODULE,
+        mResourceCode,
+        ToolBox_Con.getPreference_Translate_Code(applicationContext),
+        translist
+    )
 }
 
 fun Context.showMaterialAlert(
@@ -218,3 +244,13 @@ fun Context.getDrawableId(@DrawableRes id: Int, theme: Resources.Theme? = null) 
 
 fun Context.getColorStateListId(@ColorRes id: Int, theme: Resources.Theme? = null) = ResourcesCompat
     .getColorStateList(this.resources, id, theme)
+
+fun Context.sendFCMStatus(module_type:String){
+    val mIntent = Intent()
+    mIntent.setAction(Constant.WS_FCM)
+    mIntent.addCategory(Intent.CATEGORY_DEFAULT)
+    mIntent.putExtra(ConstantBaseApp.SW_TYPE, module_type)
+
+    //
+    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(mIntent)
+}

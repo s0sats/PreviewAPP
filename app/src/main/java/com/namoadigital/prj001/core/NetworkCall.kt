@@ -15,7 +15,6 @@ import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.model.Main_Header_Env
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripFull
-import com.namoadigital.prj001.sql.FsTripSqlTruncate
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.NetworkConnectionException
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -43,7 +42,7 @@ inline fun <reified API : ApiResponse<*>> Context.connectWS(
     wsResult: WsResult<API>
 ) {
     var gson: Gson?
-    gson = GsonBuilder().serializeNulls().create()
+    gson = GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create()
     val jsonString = gson.toJson(model)
 
     runCatching {
@@ -53,7 +52,7 @@ inline fun <reified API : ApiResponse<*>> Context.connectWS(
             val type = object : TypeToken<API>() {}.type
             gson = GsonBuilder().serializeNulls().create()
             val response = gson?.fromJson<API>(success, type)!!
-            val hmAuxTrans = loadNetworkTranslate(this)
+            val hmAuxTrans = loadNetworkTranslate()
             val serverCode = response.status?.code
 
             if (processWSCheckValidation(
@@ -64,11 +63,11 @@ inline fun <reified API : ApiResponse<*>> Context.connectWS(
             ) return
 
 
-            if(serverCode == 200){
+            if (serverCode == 200) {
                 wsResult(IResult.success(response))
                 return
             }
-            if(errorFeedback) {
+            if (errorFeedback) {
                 when (serverCode) {
                     500 -> {
                         ToolBox_Inf.registerException(
@@ -139,7 +138,7 @@ inline fun <reified API : ApiResponse<*>> Context.connectWS(
                         return
                     }
                 }
-            }else{
+            } else {
                 val gsonReturn = GsonBuilder().serializeNulls().create()
                 val responseError = gsonReturn.toJson(response)
                 wsResult(IResult.error(responseError))
@@ -147,22 +146,24 @@ inline fun <reified API : ApiResponse<*>> Context.connectWS(
         },
         onFailure = { ex ->
             wsResult(IResult.failed(ex))
-            wsExceptionTreatment(ex)
+            wsExceptionTreatment(ex, errorFeedback)
         }
     )
 }
 
 
-fun Context.wsExceptionTreatment(ex: Throwable) {
+fun Context.wsExceptionTreatment(ex: Throwable, errorFeedback: Boolean = true) {
     ToolBox_Inf.wsExceptionTreatment(this, Exception(ex)).let { string ->
         ToolBox_Inf.registerException(javaClass.name, Exception(ex))
-        ToolBox.sendBCStatus(
-            this,
-            "ERROR_1",
-            string.toString(),
-            "",
-            "0"
-        )
+        if (errorFeedback) {
+            ToolBox.sendBCStatus(
+                this,
+                "ERROR_1",
+                string.toString(),
+                "",
+                "0"
+            )
+        }
     }
 }
 
@@ -186,20 +187,20 @@ fun Context.processWSCheckValidation(
     )
 }
 
-fun loadNetworkTranslate(context: Context): HMAux {
+fun Context.loadNetworkTranslate(): HMAux {
     listOf(
         NETWORK_GENERIC_ERROR,
         DB_TRANSACTION_ERROR_LBL
     ).let {
         return ToolBox_Inf.setLanguage(
-            context,
+            this,
             Constant.APP_MODULE,
             ToolBox_Inf.getResourceCode(
-                context,
+                this,
                 Constant.APP_MODULE,
                 "0"
             ),
-            ToolBox_Con.getPreference_Translate_Code(context),
+            ToolBox_Con.getPreference_Translate_Code(this),
             it
         )
     }

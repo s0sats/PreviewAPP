@@ -288,18 +288,10 @@ class FSEventTypeDao(
                     if(it.eventTypeCode > -1){
                         put(EVENT_TYPE_CODE,it.eventTypeCode)
                     }
-                    if(it.eventTypeDesc != null) {
-                        put(EVENT_TYPE_DESC, it.eventTypeDesc)
-                    }
-                    if(it.confCost != null) {
-                        put(CONF_COST, it.confCost)
-                    }
-                    if(it.confComments != null) {
-                        put(CONF_COMMENTS, it.confComments)
-                    }
-                    if(it.confPhoto != null) {
-                        put(CONF_PHOTO, it.confPhoto)
-                    }
+                    put(EVENT_TYPE_DESC, it.eventTypeDesc)
+                    put(CONF_COST, it.confCost)
+                    put(CONF_COMMENTS, it.confComments)
+                    put(CONF_PHOTO, it.confPhoto)
                     if(it.waitAllowed > -1) {
                         put(WAIT_ALLOWED, it.waitAllowed)
                     }

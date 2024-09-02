@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -9,6 +10,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -23,6 +25,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
+import com.namoadigital.prj001.extensions.isCurrentTrip
 import com.namoadigital.prj001.extensions.logout
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
@@ -75,6 +78,10 @@ class Act092_Main : BaseActivityMvp
     override fun setItemAsDownloaded(position: Int, myActions: MyActions) {
         mAdapter.filterList[position] = SerialViewItem.ContentItem(myActions)
         mAdapter.notifyItemChanged(position)
+    }
+
+    override fun getContext(): Context {
+        return context
     }
 
     private val _focusState = MutableStateFlow(FilterFocusUser())
@@ -238,7 +245,7 @@ class Act092_Main : BaseActivityMvp
                     )
                 } else {
                     ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
-                    _focusState.value.mainUser = false
+                    _focusState.value.mainUser = context.isCurrentTrip()
                     presenter.getMyActionList()
                 }
                 return
@@ -393,7 +400,7 @@ class Act092_Main : BaseActivityMvp
 
             btnOtherSerial.setOnClickListener {
                 _focusState.value = focusState.value.copy(
-                    mainUser = false,
+                    mainUser = if(context.isCurrentTrip()) true else false,
                     userFocus = !focusState.value.userFocus
                 )
 
@@ -405,7 +412,7 @@ class Act092_Main : BaseActivityMvp
 
                 disableMainAndOtherActions()
 
-                if (_focusState.value.userFocus) {
+                if (_focusState.value.userFocus && !context.isCurrentTrip()) {
                     presenter.getMyActionList()
                 } else {
                     presenter.otherActionFlow(context)
@@ -564,17 +571,17 @@ class Act092_Main : BaseActivityMvp
     private fun disableMainAndOtherActions() {
 
 
-        val focusState = _focusState.value
+        val focusState = _focusState.value.userFocus
 
         val btnBackground =
-            if (!focusState.userFocus) {
+            if (!focusState) {
                 ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
             } else {
-                ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+                ColorStateList.valueOf(resources.getColor(com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT))
             }
 
         val mainUserCircle =
-            if (!focusState.userFocus) {
+            if (!focusState) {
                 resources.getDrawable(
                     R.drawable.my_action_toogle_disable_inset
                 )
@@ -582,14 +589,14 @@ class Act092_Main : BaseActivityMvp
                 resources.getDrawable(R.drawable.my_action_toogle_default_inset)
             }
         val mainUserPerson =
-            if (focusState.userFocus) {
+            if (focusState) {
                 R.drawable.ic_person_black_24dp
             } else {
                 R.drawable.ic_person_disable_24dp
             }
 
         val textColor =
-            if (!focusState.userFocus) {
+            if (!focusState) {
                 resources.getColor(
                     R.color.m3_namoa_surface
                 )
@@ -602,15 +609,19 @@ class Act092_Main : BaseActivityMvp
                 backgroundTintList = btnBackground
                 iconTint = ColorStateList.valueOf(textColor)
                 setTextColor(textColor)
-                strokeWidth = if (focusState.userFocus) 1 else 0
+                strokeWidth = if (focusState) 1 else 0
             }
 
             mainUserSelection.apply {
-                isEnabled = focusState.userFocus
+                isEnabled = focusState && !context.isCurrentTrip()
                 background = mainUserCircle
-                setImageResource(mainUserPerson)
-                setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
-                isClickable = focusState.userFocus
+                if(context.isCurrentTrip() && focusState){
+                    selectMainUserLayout()
+                }else {
+                    setImageResource(mainUserPerson)
+                    setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
+                }
+                isClickable = focusState && !context.isCurrentTrip()
             }
 
         }
@@ -856,9 +867,9 @@ class Act092_Main : BaseActivityMvp
 
 
                     val colorsRequired = intArrayOf(
-                        resources.getColor(R.color.customff_required_on_color),
-                        resources.getColor(R.color.customff_required_on_color),
-                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
                     )
 
                     val colorsDefault = intArrayOf(
@@ -922,15 +933,19 @@ class Act092_Main : BaseActivityMvp
 
         with(binding.mainUserSelection) {
             if (value) {
-                setImageResource(R.drawable.ic_person_white_24dp)
-                background = resources.getDrawable(R.drawable.my_action_toogle_pressed_inset)
-                setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
+                selectMainUserLayout()
             } else {
                 background = resources.getDrawable(R.drawable.my_action_toogle_default_inset)
                 setImageResource(R.drawable.ic_person_black_24dp)
                 setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
             }
         }
+    }
+
+    private fun ImageView.selectMainUserLayout() {
+        setImageResource(R.drawable.ic_person_white_24dp)
+        background = resources.getDrawable(R.drawable.my_action_toogle_pressed_inset)
+        setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
     }
 
     private fun openDialog(
@@ -992,7 +1007,7 @@ class Act092_Main : BaseActivityMvp
         val itemsVisible = if (isLoading) View.GONE else View.VISIBLE
 
         with(binding) {
-            mainUserSelection.isEnabled = !isLoading
+            mainUserSelection.isEnabled = !isLoading || !context.isCurrentTrip()
             btnOtherSerial.isEnabled = !isLoading
             editSerialFilter.isEnabled = !isLoading
             //progress

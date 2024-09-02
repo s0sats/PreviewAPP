@@ -1683,12 +1683,12 @@ public class Act028_Task extends BaseFragment {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        View mView = inflater.inflate(R.layout.taskcontrol_dialog, null);
+        View mView = inflater.inflate(com.namoa_digital.namoa_library.R.layout.taskcontrol_dialog, null);
 
-        final TextView tv_title = (TextView) mView.findViewById(R.id.taskcontrol_dialog_tv_title);
-        final Button btnCancel = (Button) mView.findViewById(R.id.taskcontrol_dialog_btn_cancel);
-        final Button btnSaveParcially = (Button) mView.findViewById(R.id.taskcontrol_dialog_btn_save_parcial);
-        final Button btnSaveFull = (Button) mView.findViewById(R.id.taskcontrol_dialog_btn_save_full);
+        final TextView tv_title = (TextView) mView.findViewById(com.namoa_digital.namoa_library.R.id.taskcontrol_dialog_tv_title);
+        final Button btnCancel = (Button) mView.findViewById(com.namoa_digital.namoa_library.R.id.taskcontrol_dialog_btn_cancel);
+        final Button btnSaveParcially = (Button) mView.findViewById(com.namoa_digital.namoa_library.R.id.taskcontrol_dialog_btn_save_parcial);
+        final Button btnSaveFull = (Button) mView.findViewById(com.namoa_digital.namoa_library.R.id.taskcontrol_dialog_btn_save_full);
 
         dialog.setView(mView);
 

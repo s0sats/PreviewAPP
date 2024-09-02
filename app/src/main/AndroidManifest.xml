@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.namoadigital.prj001">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <queries>
 
@@ -18,6 +17,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:name=".ui.AppBase"
@@ -641,12 +642,6 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
-        <activity
-            android:name=".ui.act005.location.LocationTestMain"
-            android:exported="false"
-            android:screenOrientation="fullSensor"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
 
         <service android:name=".service.location.FsTripLocationService"
             android:foregroundServiceType="location" />
@@ -658,51 +653,64 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
-        <service android:name=".service.WS_GetCustomer" />
+        <service
+            android:name=".service.WS_GetCustomer"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Session" />
 
-        <service android:name=".service.WS_Session" />
+        <service android:name=".service.WS_Session"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Sync" />
 
-        <service android:name=".service.WS_Sync" />
+        <service android:name=".service.WS_Sync"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_UpdateSoftware" />
 
-        <service android:name=".service.WS_UpdateSoftware" />
+        <service android:name=".service.WS_UpdateSoftware"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Serial" />
 
-        <service android:name=".service.WS_Serial" />
+        <service android:name=".service.WS_Serial"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Save" />
 
-        <service android:name=".service.WS_Save" />
+        <service android:name=".service.WS_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_DownLoad_Picture" />
 
-        <service android:name=".service.WS_DownLoad_Picture" />
+        <service android:name=".service.WS_DownLoad_Picture"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_DownLoad_PDF" />
 
-        <service android:name=".service.WS_DownLoad_PDF" />
+        <service android:name=".service.WS_DownLoad_PDF"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Upload_Img" />
 
-        <service android:name=".service.WS_Upload_Img" />
+        <service android:name=".service.WS_Upload_Img"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Upload_Img_Chat" />
 
-        <service android:name=".service_chat.WS_Upload_Img_Chat" />
+        <service android:name=".service_chat.WS_Upload_Img_Chat"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_DownLoad_Customer_Logo" />
 
-        <service android:name=".service.WS_DownLoad_Customer_Logo" />
+        <service android:name=".service.WS_DownLoad_Customer_Logo"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Logout" />
 
-        <service android:name=".service.WS_Logout" />
+        <service android:name=".service.WS_Logout"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver
             android:name=".receiver.WBR_Connections_Change"
@@ -724,6 +732,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service
             android:name=".service.SV_LocationTracker"
             android:foregroundServiceType="location" />
+
         <service
             android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false">
@@ -731,266 +740,334 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".fcm.RegistrationIntentService" />
-        <service android:name=".fcm.WS_Google" />
-        <service android:name=".fcm.WS_Notification_Sync" />
+        <service android:name=".fcm.RegistrationIntentService"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".fcm.WS_Google"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".fcm.WS_Notification_Sync"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Enable_NFC" />
 
-        <service android:name=".service.WS_Enable_NFC" />
+        <service android:name=".service.WS_Enable_NFC"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Cancel_NFC" />
 
-        <service android:name=".service.WS_Cancel_NFC" />
+        <service android:name=".service.WS_Cancel_NFC"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Upload_Support" />
 
-        <service android:name=".service.WS_Upload_Support" />
+        <service android:name=".service.WS_Upload_Support"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Serial_Search" />
 
-        <service android:name=".service.WS_Serial_Search" />
+        <service android:name=".service.WS_Serial_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Search" />
 
-        <service android:name=".service.WS_SO_Search" />
+        <service android:name=".service.WS_SO_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Serial_Save" />
 
-        <service android:name=".service.WS_SO_Serial_Save" />
+        <service android:name=".service.WS_SO_Serial_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Approval" />
 
-        <service android:name=".service.WS_SO_Approval" />
+        <service android:name=".service.WS_SO_Approval"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Save" />
 
-        <service android:name=".service.WS_SO_Save" />
+        <service android:name=".service.WS_SO_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Serial_Save" />
 
-        <service android:name=".service.WS_Serial_Save" />
+        <service android:name=".service.WS_Serial_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Serial_Tracking_Search" />
 
-        <service android:name=".service.WS_Serial_Tracking_Search" />
+        <service android:name=".service.WS_Serial_Tracking_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_UserAuthor" />
 
-        <service android:name=".service.WS_UserAuthor" />
+        <service android:name=".service.WS_UserAuthor"
+            android:foregroundServiceType="dataSync"/>
         <service
             android:name=".service.AppBackgroundService"
+            android:foregroundServiceType="dataSync"
             android:stopWithTask="true" />
 
         <receiver android:name=".receiver_chat.WBR_C_Room" />
 
-        <service android:name=".service_chat.WS_C_Room" />
+        <service android:name=".service_chat.WS_C_Room"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_Message" />
 
-        <service android:name=".service_chat.WS_C_Message" />
+        <service android:name=".service_chat.WS_C_Message"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_Add_Room" />
 
-        <service android:name=".service_chat.WS_C_Add_Room" />
+        <service android:name=".service_chat.WS_C_Add_Room"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_Remove_Room" />
 
-        <service android:name=".service_chat.WS_C_Remove_Room" />
+        <service android:name=".service_chat.WS_C_Remove_Room"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_Message_Tmp" />
 
-        <service android:name=".service_chat.WS_C_Message_Tmp" />
+        <service android:name=".service_chat.WS_C_Message_Tmp"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_All_Delivered" />
 
-        <service android:name=".service_chat.WS_C_All_Delivered" />
+        <service android:name=".service_chat.WS_C_All_Delivered"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_C_All_Read" />
 
-        <service android:name=".service_chat.WS_C_All_Read" />
+        <service android:name=".service_chat.WS_C_All_Read"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Room_Info" />
 
-        <service android:name=".service_chat.WS_Room_Info" />
+        <service android:name=".service_chat.WS_Room_Info"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.NotificationReceiver" />
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
         <receiver android:name=".receiver_chat.WBR_Delivered" />
 
-        <service android:name=".service_chat.WS_Delivered" />
+        <service android:name=".service_chat.WS_Delivered"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Room_Private" />
 
-        <service android:name=".service_chat.WS_Room_Private" />
+        <service android:name=".service_chat.WS_Room_Private"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Leave_Room" />
 
-        <service android:name=".service_chat.WS_Leave_Room" />
+        <service android:name=".service_chat.WS_Leave_Room"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_AP_Search" />
 
-        <service android:name=".service.WS_AP_Search" />
+        <service android:name=".service.WS_AP_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_AP_Save" />
 
-        <service android:name=".service.WS_AP_Save" />
+        <service android:name=".service.WS_AP_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Room_AP" />
 
-        <service android:name=".service_chat.WS_Room_AP" />
+        <service android:name=".service_chat.WS_Room_AP"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Pack_Express_Local" />
 
-        <service android:name=".service.WS_SO_Pack_Express_Local" />
+        <service android:name=".service.WS_SO_Pack_Express_Local"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Service_Search" />
 
-        <service android:name=".service.WS_SO_Service_Search" />
+        <service android:name=".service.WS_SO_Service_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver_chat.WBR_Add_User_Room_AP" />
 
-        <service android:name=".service_chat.WS_Add_User_Room_AP" />
+        <service android:name=".service_chat.WS_Add_User_Room_AP"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Process_Form_Ap" />
 
-        <service android:name=".service.WS_Process_Form_AP" />
+        <service android:name=".service.WS_Process_Form_AP"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Serial_Log" />
         <receiver android:name=".receiver.WBR_SO_Next_Orders" />
 
-        <service android:name=".service.WS_Serial_Log" />
-        <service android:name=".service.WS_SO_Next_Orders" />
-        <service android:name=".service.WS_SO_Favorite_List" />
+        <service android:name=".service.WS_Serial_Log"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_SO_Next_Orders"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_SO_Favorite_List"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Favorite_List" />
 
-        <service android:name=".service.WS_SO_Client_List" />
+        <service android:name=".service.WS_SO_Client_List"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Client_List" />
 
-        <service android:name=".service.WS_SO_Creation_Save" />
+        <service android:name=".service.WS_SO_Creation_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Creation_Save" />
 
-        <service android:name=".service.WS_Generate_NForm_PDF" />
+        <service android:name=".service.WS_Generate_NForm_PDF"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Generate_NForm_PDF" />
 
-        <service android:name=".service.WS_IO_Serial_Process_Search" />
+        <service android:name=".service.WS_IO_Serial_Process_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Search" />
 
-        <service android:name=".service.WS_IO_Serial_Process_Download" />
+        <service android:name=".service.WS_IO_Serial_Process_Download"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Download" />
 
-        <service android:name=".service.WS_IO_Move_Search" />
+        <service android:name=".service.WS_IO_Move_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Move_Search" />
 
-        <service android:name=".service.WS_IO_Inbound_Search" />
+        <service android:name=".service.WS_IO_Inbound_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Search" />
 
-        <service android:name=".service.WS_IO_Outbound_Search" />
+        <service android:name=".service.WS_IO_Outbound_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Outbound_Search" />
 
-        <service android:name=".service.WS_IO_Move_Download" />
+        <service android:name=".service.WS_IO_Move_Download"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Move_Download" />
 
-        <service android:name=".service.WS_IO_Inbound_Download" />
+        <service android:name=".service.WS_IO_Inbound_Download"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Download" />
 
-        <service android:name=".service.WS_IO_Outbound_Download" />
+        <service android:name=".service.WS_IO_Outbound_Download"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Outbound_Download" />
 
-        <service android:name=".service.WS_IO_Master_Data" />
+        <service android:name=".service.WS_IO_Master_Data"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Master_Data" />
 
-        <service android:name=".service.WS_IO_From_Site_Search" />
+        <service android:name=".service.WS_IO_From_Site_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_From_Site_Search" />
 
-        <service android:name=".service.WS_IO_Move_Save" />
+        <service android:name=".service.WS_IO_Move_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Move_Save" />
 
-        <service android:name=".service.WS_IO_Inbound_Header_Save" />
+        <service android:name=".service.WS_IO_Inbound_Header_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Header_Save" />
 
-        <service android:name=".service.WS_IO_Address_Suggestion" />
+        <service android:name=".service.WS_IO_Address_Suggestion"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Address_Suggestion" />
 
-        <service android:name=".service.WS_IO_Blind_Move_Save" />
+        <service android:name=".service.WS_IO_Blind_Move_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Blind_Move_Save" />
 
-        <service android:name=".service.WS_IO_Inbound_Item_Save" />
+        <service android:name=".service.WS_IO_Inbound_Item_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Item_Save" />
 
-        <service android:name=".service.WS_IO_Inbound_Item_Add" />
+        <service android:name=".service.WS_IO_Inbound_Item_Add"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Inbound_Item_Add" />
 
-        <service android:name=".service.WS_Upload_Other_User_Img" />
+        <service android:name=".service.WS_Upload_Other_User_Img"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_Upload_Other_User_Img" />
 
-        <service android:name=".service.WS_IO_Outbound_Header_Save" />
+        <service android:name=".service.WS_IO_Outbound_Header_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Outbound_Header_Save" />
 
-        <service android:name=".service.WS_IO_Outbound_Item_Add" />
+        <service android:name=".service.WS_IO_Outbound_Item_Add"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Outbound_Item_Add" />
 
-        <service android:name=".service.WS_IO_Outbound_Item_Save" />
+        <service android:name=".service.WS_IO_Outbound_Item_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Outbound_Item_Save" />
 
-        <service android:name=".service.WS_IO_Transport_Order_Out_Search" />
+        <service android:name=".service.WS_IO_Transport_Order_Out_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_IO_Transport_Order_Out_Search" />
 
-        <service android:name=".service.WS_SO_Service_Cancel" />
+        <service android:name=".service.WS_SO_Service_Cancel"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Service_Cancel" />
         <receiver android:name=".receiver.WBR_SO_Get_Service_For_Edit" />
 
-        <service android:name=".service.WS_SO_Get_Service_For_Edit" />
+        <service android:name=".service.WS_SO_Get_Service_For_Edit"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Set_Service_For_Edit" />
 
-        <service android:name=".service.WS_SO_Set_Service_For_Edit" />
+        <service android:name=".service.WS_SO_Set_Service_For_Edit"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Download" />
 
-        <service android:name=".service.WS_TK_Ticket_Download" />
+        <service android:name=".service.WS_TK_Ticket_Download"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Checkin" />
 
-        <service android:name=".service.WS_TK_Ticket_Checkin" />
+        <service android:name=".service.WS_TK_Ticket_Checkin"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Save" />
 
-        <service android:name=".service.WS_TK_Ticket_Save" />
+        <service android:name=".service.WS_TK_Ticket_Save"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Search" />
 
-        <service android:name=".service.WS_TK_Ticket_Search" />
+        <service android:name=".service.WS_TK_Ticket_Search"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Product_Event_Cancel" />
 
-        <service android:name=".service.WS_SO_Product_Event_Cancel" />
+        <service android:name=".service.WS_SO_Product_Event_Cancel"
+            android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".receiver.WBR_SO_Create_Room" />
         <receiver android:name=".receiver.WBR_TK_Next_Ticket" />
@@ -1025,40 +1102,76 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.trip.WBR_Event" />
         <receiver android:name=".receiver.trip.WBRDestinationEdit" />
         <receiver android:name=".receiver.trip.WBRGetTripFull" />
+        <receiver android:name=".receiver.trip.WBRSendTripFullUpdate" />
 
-        <service android:name=".service.WS_SO_Create_Room" />
-        <service android:name=".service.WS_TK_Next_Ticket" />
-        <service android:name=".service.WS_TK_Header_N_Group_Save" />
-        <service android:name=".service.WS_TK_Ticket_Client_Contract_Search" />
-        <service android:name=".service.WS_TK_Get_Workgroup_List" />
-        <service android:name=".service.WS_TK_Main_User_List" />
-        <service android:name=".service.WS_Get_Customer_Site_License" />
-        <service android:name=".service.WS_TK_Ticket_Search_Not_Focus" />
-        <service android:name=".service.WS_Workgroup_Member_List" />
-        <service android:name=".service.WS_Workgroup_Member_Edit" />
-        <service android:name=".service.WS_User_Search" />
-        <service android:name=".service.WS_Product_Serial_Structure" />
-        <service android:name=".service.WS_Product_Serial_Backup" />
-        <service android:name=".service.WSTicketCreation" />
-        <service android:name=".service.WS_UnfocusAndHistoric" />
-        <service android:name=".service.WsScheduleNotExecuted" />
-        <service android:name=".service.WSSoStatusChange" />
-        <service android:name=".service.WSSoPriorityChange" />
-        <service android:name=".service.trip.WsAvailablesDestinations" />
-        <service android:name=".service.trip.WsSelectDestination" />
-        <service android:name=".service.trip.WsGetUsersAvailable" />
-        <service android:name=".service.WS_SO_Sync" />
-        <service android:name=".service.WsSerialSiteInventory" />
-        <service android:name=".service.trip.WsUserPosition" />
-        <service android:name=".service.trip.WsCreateTrip" />
-        <service android:name=".service.trip.WSFleetSet" />
-        <service android:name=".service.trip.WSTripStatusChange" />
-        <service android:name=".service.trip.WsOriginSet" />
-        <service android:name=".service.trip.WsTripEditUsers" />
-        <service android:name=".service.trip.WsEvent" />
-        <service android:name=".service.trip.WsTripDestinationStatusChange" />
-        <service android:name=".service.trip.WSDestinationEdit" />
-        <service android:name=".service.trip.WsGetTripFull" />
+        <service android:name=".service.WS_SO_Create_Room"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Next_Ticket"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Header_N_Group_Save"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Ticket_Client_Contract_Search"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Get_Workgroup_List"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Main_User_List"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_Get_Customer_Site_License"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_TK_Ticket_Search_Not_Focus"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_Workgroup_Member_List"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_Workgroup_Member_Edit"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_User_Search"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_Product_Serial_Structure"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_Product_Serial_Backup"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WSTicketCreation"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_UnfocusAndHistoric"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WsScheduleNotExecuted"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WSSoStatusChange"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WSSoPriorityChange"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsAvailablesDestinations"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsSelectDestination"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsGetUsersAvailable"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WS_SO_Sync"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.WsSerialSiteInventory"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsUserPosition"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsCreateTrip"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WSFleetSet"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WSTripStatusChange"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsOriginSet"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsTripEditUsers"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsEvent"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsTripDestinationStatusChange"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WSDestinationEdit"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsGetTripFull"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsSendTripUpdate"
+            android:foregroundServiceType="dataSync"/>
 
 
         <!--Broadcast-->

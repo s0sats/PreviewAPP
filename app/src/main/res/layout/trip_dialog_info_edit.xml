@@ -287,11 +287,10 @@
                         android:id="@+id/et_fleet_plate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-                        android:inputType="textCapCharacters|text"
+                        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+                        android:inputType="textCapCharacters"
                         android:maxLength="8"
                         android:singleLine="true"
-                        android:textAllCaps="true"
                         android:textColor="@drawable/edittext_theme_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.core.trip.domain.usecase.destination
 import android.content.Context
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
+import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
@@ -19,6 +20,7 @@ class GetDestinationCounter constructor(
     private val destinationRepository: TripDestinationRepository,
     private val ticketRepository: TicketRepository,
     private val ticketCacheRepository: TicketCacheRepository,
+    private val serialRepository: SerialRepository,
 ) : UseCaseWithoutFlow<FsTripDestination, DestinationCounter> {
 
     override fun invoke(input: FsTripDestination): DestinationCounter {
@@ -75,9 +77,9 @@ class GetDestinationCounter constructor(
                     todayCnt += ticketCacheRepository.getTodayCntList(it)
                     lateCnt += ticketCacheRepository.getLateCntList(it)
                     next += ticketCacheRepository.getNextList(it)
+                    serial += serialRepository.getListSerialsBySiteCode(it).size
                 }
                 //
-                serial += destination?.serialCnt ?: 0
                 //
             }
         }

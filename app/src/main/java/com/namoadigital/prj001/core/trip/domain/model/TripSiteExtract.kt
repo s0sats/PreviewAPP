@@ -8,5 +8,6 @@ data class TripSiteExtract<T : Any>(
 
 enum class FormStatus(val weight: Int) {
     IN_PROCESS(0),
-    DONE(1)
+    WAITING_SYNC(1),
+    DONE(2)
 }

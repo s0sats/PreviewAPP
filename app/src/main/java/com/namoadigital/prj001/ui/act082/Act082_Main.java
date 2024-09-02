@@ -273,7 +273,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         tv_internal_comments_val.setVisibility(View.VISIBLE);
     }
     private void setDateReadOnly() {
-        ColorStateList buttonTintColorList = ColorStateList.valueOf(ContextCompat.getColor(context,R.color.padrao_TRANSPARENT));
+        ColorStateList buttonTintColorList = ColorStateList.valueOf(ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT));
         rb_start_date.setEnabled(false);
         rb_end_date.setEnabled(false);
         rb_time.setEnabled(false);

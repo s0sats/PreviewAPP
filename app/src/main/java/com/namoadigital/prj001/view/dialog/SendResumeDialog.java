@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.appcompat.content.res.AppCompatResources;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,24 +39,33 @@ public class SendResumeDialog extends AlertDialog {
     private View expressSoItem;
     private View ticketItem;
     private View positionItem;
-    private TextView  tv_module_nform;
-    private TextView  tv_module_serial;
-    private TextView  tv_module_form_ap;
-    private TextView  tv_module_assets;
-    private TextView  tv_module_so;
-    private TextView  tv_module_express_so;
-    private TextView  tv_module_ticket;
-    private TextView  tvTitle;
+    private View tripItem;
+    private TextView tv_module_nform;
+    private TextView tv_module_serial;
+    private TextView tv_module_form_ap;
+    private TextView tv_module_assets;
+    private TextView tv_module_so;
+    private TextView tv_module_express_so;
+    private TextView tv_module_ticket;
+    private TextView tvTitle;
     private Button btnOK;
     public OnDialogClickListener listener;
     private boolean hasPositionUpdateRequired;
+    private boolean hasTripUpdateRequired;
 
-    public SendResumeDialog(Context context, HMAux hmAux_trans, boolean hasPositionUpdateRequired, OnDialogClickListener listener) {
+    public SendResumeDialog(
+            Context context,
+            HMAux hmAux_trans,
+            boolean hasPositionUpdateRequired,
+            boolean hasTripUpdateRequired,
+            OnDialogClickListener listener
+    ) {
         super(context);
         this.hmAux_trans = hmAux_trans;
         this.context = context;
         this.listener = listener;
         this.hasPositionUpdateRequired = hasPositionUpdateRequired;
+        this.hasTripUpdateRequired = hasTripUpdateRequired;
     }
 
     @Override
@@ -82,32 +93,33 @@ public class SendResumeDialog extends AlertDialog {
     }
 
     /**
-     *  BARRIONUEVO 13/02/2020
+     * BARRIONUEVO 13/02/2020
+     *
      * @param layout_id escolha uma ID dentre as seguintes para atualizar o status do extrato,
      *                  qualquer ID diferente gerar uma Exception
      *
-     *      <p></p>R.id.act005_send_resume_nform
-     *      <br>R.id.act005_send_resume_serial
-     *      <br>R.id.act005_send_resume_so
-     *      <br>R.id.act005_send_resume_assets
-     *      <br>R.id.act005_send_resume_form_ap
-     *      <br>R.id.act005_send_resume_express_so
-     *      <br>R.id.act005_send_resume_ticket
-     *      <br>R.id.act005_send_resume_position
+     *                  <p></p>R.id.act005_send_resume_nform
+     *                  <br>R.id.act005_send_resume_serial
+     *                  <br>R.id.act005_send_resume_so
+     *                  <br>R.id.act005_send_resume_assets
+     *                  <br>R.id.act005_send_resume_form_ap
+     *                  <br>R.id.act005_send_resume_express_so
+     *                  <br>R.id.act005_send_resume_ticket
+     *                  <br>R.id.act005_send_resume_position
      */
-    public void updateResumeStatus(int layout_id, boolean isDone, int sucessAmount, int totalAmount ) throws Exception{
+    public void updateResumeStatus(int layout_id, boolean isDone, int sucessAmount, int totalAmount) throws Exception {
         updateStatusResume(layout_id, isDone, sucessAmount, totalAmount, false);
     }
 
-    private void updateStatusResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount, boolean withPosition) throws Exception {
+    private void updateStatusResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount, boolean textOk) throws Exception {
         try {
             View selectLayout = findViewById(layout_id);
             selectLayout.findViewById(R.id.send_resume_pb).setVisibility(View.INVISIBLE);
             ImageView module_status = selectLayout.findViewById(R.id.send_resume_iv_ready);
             TextView module_amount = selectLayout.findViewById(R.id.send_resume_amount);
-            if(withPosition){
+            if (textOk) {
                 module_amount.setText(R.string.sys_alert_btn_ok);
-            }else{
+            } else {
                 module_amount.setText(sucessAmount + "/" + totalAmount);
             }
 
@@ -115,15 +127,15 @@ public class SendResumeDialog extends AlertDialog {
             if (isDone) {
                 Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
-                DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, android.R.color.holo_green_light) );
+                DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, android.R.color.holo_green_light));
                 module_status.setBackground(wrappedDrawable);
-            }else{
+            } else {
                 Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_clear_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
-                DrawableCompat.setTint(wrappedDrawable,  ContextCompat.getColor(context, android.R.color.holo_red_light));
+                DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, android.R.color.holo_red_light));
                 module_status.setBackground(wrappedDrawable);
             }
-        }catch (Exception e ){
+        } catch (Exception e) {
             throw new Exception("Incorrect Layout Id");
         }
     }
@@ -132,15 +144,30 @@ public class SendResumeDialog extends AlertDialog {
         updateStatusResume(R.id.act005_send_resume_position, isDone, 0, 0, true);
     }
 
+    public void updateResumeStatusTrip(boolean isDone) throws Exception {
+        updateStatusResume(R.id.act005_send_resume_trip, isDone, 0, 0, true);
+    }
+
     private void setViewVisibility() {
         tvTitle.setText(hmAux_trans.get("alert_resume_title"));
         btnOK.setText(R.string.sys_alert_btn_ok);
         btnOK.setEnabled(false);
+
+        if (hasTripUpdateRequired){
+            tripItem.setVisibility(View.VISIBLE);
+            tripItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
+            tripItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
+            TextView tv_module_position = tripItem.findViewById(R.id.send_resume_tv_module);
+            tv_module_position.setText(hmAux_trans.get("alert_resume_trip"));
+        }else{
+            tripItem.setVisibility(View.GONE);
+        }
+
         /**
          *  BARRIONUEVO - 07-04-2020
          *  O N-Form nao possui
          */
-        setNFormMenuResmue();
+            setNFormMenuResmue();
         //
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, null)) {
             serialItem.setVisibility(View.VISIBLE);
@@ -208,13 +235,13 @@ public class SendResumeDialog extends AlertDialog {
             ticketItem.setVisibility(View.GONE);
         }
 
-        if(hasPositionUpdateRequired){
+        if (hasPositionUpdateRequired) {
             positionItem.setVisibility(View.VISIBLE);
             positionItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             positionItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
             TextView tv_module_position = positionItem.findViewById(R.id.send_resume_tv_module);
             tv_module_position.setText(hmAux_trans.get("alert_resume_position"));
-        }else{
+        } else {
             positionItem.setVisibility(View.GONE);
         }
 
@@ -238,6 +265,7 @@ public class SendResumeDialog extends AlertDialog {
         expressSoItem = findViewById(R.id.act005_send_resume_express_so);
         ticketItem = findViewById(R.id.act005_send_resume_ticket);
         positionItem = findViewById(R.id.act005_send_resume_position);
+        tripItem = findViewById(R.id.act005_send_resume_trip);
         tvTitle = findViewById(R.id.act005_send_resume_tv_title);
         btnOK = findViewById(R.id.act005_send_resume_btn_ok);
     }
@@ -254,6 +282,7 @@ public class SendResumeDialog extends AlertDialog {
         transList.add("alert_resume_express_so");
         transList.add("alert_resume_ticket");
         transList.add("alert_resume_position");
+        transList.add("alert_resume_trip");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getContext(),

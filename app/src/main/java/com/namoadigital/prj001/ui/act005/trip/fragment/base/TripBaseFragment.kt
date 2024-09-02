@@ -9,6 +9,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
@@ -58,6 +59,7 @@ import com.namoadigital.prj001.ui.act005.trip.di.enums.UserAction
 import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_ABORT_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_ABORT_TRIP_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_CANCEL_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_CREATE_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_LATLON_ERROR_MSG
@@ -73,6 +75,8 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_ABORT_CONFIRM_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_DESTINATION_DELETE_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_DESTINATION_DELETE_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_OFFLINE_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_OFFLINE_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.BTN_NEW_TRIP
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.CANCEL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.DESTINATION_EXTERNAL_ADDRESS_LBL
@@ -84,6 +88,14 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.DESTIN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.DESTINATION_TODAY_COUNTER_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.DIALOG_ERROR_CLOSE_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.DialogOrigin
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_ADD_USER_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_ADD_USER_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_OFFLINE_GENERIC_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_OFFLINE_GENERIC_TITLE
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_SAVE_OFFLINE_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_SAVE_OFFLINE_TITLE
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_TRY_SAVE_ONLINE_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ERROR_TRY_SAVE_ONLINE_TITLE
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.FLEET_DIALOG_DESTINATION_TITLE
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.FLEET_DIALOG_END_DESC
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.FLEET_DIALOG_END_TITLE
@@ -131,8 +143,9 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRE
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_TRIP_WAITING_DESTINATION_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE_END_TRIP_BTN
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE_TRIP_OFFLINE_TOAST
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SEND_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_ACTION_FORM_OS_BTN
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_TICKETS_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_ACTION_TICKET_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_CALL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_CANCEL_LBL
@@ -141,6 +154,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_D
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_ARRIVED_DATE_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_MY_TICKETS_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_SEARCH_SERIAL_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_TICKETS_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_FLEET_EDIT_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_FLEET_KILOMETERS_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_FLEET_PLATE_LBL
@@ -190,6 +204,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.e
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.EventTypeListDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.users.DialogEditUser
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.users.DialogListUsers
+import com.namoadigital.prj001.ui.act005.trip.fragment.extract.TripExtractFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.gps.TripGpsFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.gps.TripGpsFragment.Companion.TRIP_GPS_CONFIG_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.gps.TripGpsFragment.Companion.TRIP_GPS_SUBTITLE
@@ -218,22 +233,30 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFrag
 import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_CONFIRM_TRANSFER_TRIP_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_CONTAINS_EVENT_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_CONTAINS_EVENT_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_GPS_POSITION_NOT_FOUND_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_GPS_POSITION_NOT_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_CONFIRM_TRANSIT_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_CONFIRM_TRANSIT_TRIP_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination.TripWaitingDestinationFragment.Companion.ALERT_CONFIRM_WAITING_DESTINATION_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination.TripWaitingDestinationFragment.Companion.ALERT_CONFIRM_WAITING_DESTINATION_TRIP_TTL
+import com.namoadigital.prj001.ui.act005.trip.util.ProgressState
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable.Companion.convertZeroToLine
 import com.namoadigital.prj001.ui.act094.domain.toDestinationDetailDialog
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_TRIP_NOT_FOUND_MSG
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_TRIP_NOT_FOUND_TTL
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.FRG_MAIN_HOME
+import com.namoadigital.prj001.util.NetworkConnectionException
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.TripUserException
 import com.namoadigital.prj001.view.dialog.DestinationDetailDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.sql.SQLException
 
 
 abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInteract,
@@ -250,7 +273,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
     val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     protected var listener: OnFrgMainHomeInteract? = null
 
-    lateinit var dialogActive: BaseTripDialog<*>
+    var dialogActive: BaseTripDialog<*>? = null
     private lateinit var bottomSheet: ReportBottomSheet
     private val tripReceiver by lazy {
         TripLocationReceiver()
@@ -290,6 +313,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         }
         //
         handleTripState()
+        onObserverLoadingState()
         initializeLayoutVisibility()
         updateUI()
         setLabels()
@@ -298,6 +322,13 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
     private fun handleTripState() {
         viewModel.state.onEach { tripState ->
+            //
+            if (tripState.updateTripScreen) {
+                tripState.updateTripScreen = false
+                listener?.onSelectTrip()
+                return@onEach
+            }
+            //
             tripState.destination?.let { destination ->
                 binding.apply {
                     //
@@ -401,7 +432,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                     }
                 }
             }
-
+            //
             tripState.counter?.let { counter ->
                 destinationBinding?.let { destinationInfoBinding ->
                     destinationInfoBinding.urgentLabel.text =
@@ -563,20 +594,20 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                     } else {
                         WS_TRIP_SAVE_FLEET
                     }
-                    listener?.callTripWS(
-                        wsProcess,
-                        hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL] ?: "",
-                        hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG] ?: "",
-                    )
 
                     viewModel.saveFleetData(
-                        fleetPlate,
-                        odometer,
-                        photoUpdate.path,
-                        photoUpdate.isNew,
-                        target,
-                        destinationSeq,
-                        photoUpdate.deletePhoto
+                        fleetPlate = fleetPlate,
+                        odometer = odometer,
+                        path = photoUpdate.path,
+                        changePhoto = photoUpdate.isNew,
+                        target = target,
+                        destinationSeq = destinationSeq,
+                        deletePhoto = photoUpdate.deletePhoto,
+                        progressTranslate = TripWsProgress(
+                            process = wsProcess,
+                            title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
+                            message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
+                        )
                     )
                 },
                 getDestinationThresholds = { customerCode, tripPrefix, tripCode, destinationSeq: Int, type ->
@@ -593,7 +624,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 }
             )
 
-            dialogActive.show()
+            dialogActive?.show()
         } ?: showDialogTripNotFound()
     }
 
@@ -620,27 +651,27 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                         siteCode = option.code
                         siteDesc = option.desc
                     }
-
                     viewModel.saveOriginSet(
-                        date,
-                        siteCode,
-                        siteDesc,
-                        option.originType,
-                        activateWsProgressDialog = {
-                            listener?.callTripWS(
-                                WS_TRIP_ORIGIN_SET,
-                                originAux[DialogOrigin.PROGRESS_ORIGIN_TRIP_SET_TTL] ?: "",
-                                originAux[DialogOrigin.PROGRESS_ORIGIN_TRIP_SET_MSG] ?: "",
-                            )
-                        },
+                        date = date,
+                        siteCode = siteCode,
+                        siteDesc = siteDesc,
+                        originType = option.originType,
+                        progressTranslate = TripWsProgress(
+                            process = WS_TRIP_ORIGIN_SET,
+                            title = originAux[DialogOrigin.PROGRESS_ORIGIN_TRIP_SET_TTL] ?: "",
+                            message = originAux[DialogOrigin.PROGRESS_ORIGIN_TRIP_SET_MSG] ?: "",
+                        ),
+                        progressTranslateFleet = TripWsProgress(
+                            process = WS_TRIP_SAVE_FLEET,
+                            title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
+                            message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
+                        ),
                         locationNotFound = {
                             showDialogError(
                                 hmAuxTranslate[ALERT_POSITION_NOT_FOUND_TTL]!!,
                                 hmAuxTranslate[ALERT_POSITION_NOT_FOUND_MSG]!!,
                                 onClose = { dialog ->
-                                    if (this::dialogActive.isInitialized) {
-                                        dialogActive.errorSendData()
-                                    }
+                                    dialogActive?.errorSendData()
                                     update()
                                     dialog.dismiss()
                                 }
@@ -650,50 +681,61 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 }
             )
 
-            dialogActive.show()
+            dialogActive?.show()
         } ?: showDialogTripNotFound()
     }
 
 
     fun dismissUserDialog(response: String) {
-        if (!this::dialogActive.isInitialized) return
-        dialogActive.closeDialog("""${hmAuxTranslate[TRIP_SUCCESS_SEND_USER_DATA] ?: ""} $response""")
+        dialogActive?.closeDialog("""${hmAuxTranslate[TRIP_SUCCESS_SEND_USER_DATA] ?: ""} $response""")
     }
 
     fun dismissDialog(onlyClose: Boolean = false) {
-        if (!this::dialogActive.isInitialized) return
-        if (onlyClose) {
-            dialogActive.dismiss()
-            return
+        dialogActive?.let { dialog ->
+            if (onlyClose) {
+                dialogActive = null
+                dialog.dismiss()
+                return
+            }
+            dialog.closeDialog(hmAuxTranslate[TRIP_SUCCESS_SEND_DATA] ?: "")
         }
-        dialogActive.closeDialog(hmAuxTranslate[TRIP_SUCCESS_SEND_DATA] ?: "")
     }
 
     fun errorDialog(closeDialog: Boolean = false) {
-
-        if (!this::dialogActive.isInitialized) return
-
-        if (closeDialog) {
-            dialogActive.dismiss()
-            return
+        dialogActive?.let { dialog ->
+            listener?.hideProgressWs()
+            if (closeDialog) {
+                dialog.dismiss()
+                viewModel.getCurrentTrip()
+                return
+            }
+            dialog.errorSendData()
         }
-        dialogActive.errorSendData()
     }
 
     fun showBottomSheet() {
-        bottomSheet = ReportBottomSheet(
-            context = requireContext(),
-            callWs = { process, title, message ->
-                listener?.callTripWS(process, title, message)
-            },
-            callServiceUsers = {
-                viewModel.getUsersAvailable()
-            },
-            openDialogEvent = {
-                showDialogEvent()
-            }
-        )
-        bottomSheet.show(this.activity!!.supportFragmentManager, "fsTripBottomSheet")
+        viewModel.state.value.trip?.let {
+            bottomSheet = ReportBottomSheet(
+                trip = it,
+                context = requireContext(),
+                callWs = { process, title, message ->
+                    listener?.callTripWS(process, title, message)
+                },
+                callServiceUsers = {
+                    viewModel.getUsersAvailable()
+                },
+                openDialogEvent = {
+                    showDialogEvent()
+                },
+                showTripOffline = {
+                    showDialogError(
+                        hmAuxTranslate[ALERT_TRIP_OFFLINE_TTL] ?: "",
+                        hmAuxTranslate[ALERT_TRIP_OFFLINE_MSG] ?: ""
+                    )
+                }
+            )
+            bottomSheet.show(this.activity!!.supportFragmentManager, "fsTripBottomSheet")
+        } ?: showDialogTripNotFound()
     }
 
     fun showDialogEvent(
@@ -718,7 +760,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                     callEventTypeFormDialog(eventType, null, false)
                 },
             )
-            dialogActive.show()
+            dialogActive?.show()
         }
     }
 
@@ -739,26 +781,27 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 eventType = eventType,
                 onSave = { eventAux, event ->
 
-                    if (event.eventStatus == EventStatus.CANCELLED) {
-                        listener?.callTripWS(
+                    val tripWsProgress = if (event.eventStatus == EventStatus.CANCELLED) {
+                        TripWsProgress(
                             WS_TRIP_SAVE_FLEET,
                             eventAux[PROGRESS_EVENT_TRIP_DELETE_TTL] ?: "",
                             eventAux[PROGRESS_EVENT_TRIP_DELETE_MSG] ?: "",
                         )
                     } else {
-                        listener?.callTripWS(
+                        TripWsProgress(
                             WS_TRIP_SAVE_FLEET,
                             eventAux[PROGRESS_EVENT_TRIP_SEND_TTL] ?: "",
                             eventAux[PROGRESS_EVENT_TRIP_SEND_MSG] ?: "",
                         )
                     }
-                    viewModel.updateEvent(event)
+
+                    viewModel.updateEvent(event, tripWsProgress)
                 },
                 checkEventIntersectionDate = { startDateInMilis, endDateInMilis, tripEvent, waiting ->
                     viewModel.getEventError(startDateInMilis, endDateInMilis, tripEvent, waiting)
                 }
             )
-            dialogActive.show()
+            dialogActive?.show()
         }
     }
 
@@ -772,11 +815,10 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                     onSaveUser = { user, action, processMessage ->
                         saveUser(user, action, processMessage)
                     },
-                    checkUserIntersectionDate = {
-                            userCode,
-                            userSeq,
-                            startDateInMilis,
-                            endDateInMilis ->
+                    checkUserIntersectionDate = { userCode,
+                                                  userSeq,
+                                                  startDateInMilis,
+                                                  endDateInMilis ->
                         viewModel.checkUserIntersection(
                             userCode,
                             userSeq,
@@ -785,11 +827,11 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                         )
                     }
                 )
-            dialogActive.show()
+            dialogActive?.show()
         } ?: showDialogTripNotFound()
     }
 
-    fun showEditUser(user: TripUserEdit, isEditMode: Boolean = false) {
+    fun showEditUser(user: TripUserEdit, isEditMode: Boolean) {
         val trip = viewModel.state.value.trip
         trip?.let {
             dialogActive = DialogEditUser(
@@ -802,7 +844,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 },
                 checkUserIntersectionDate = viewModel::checkUserIntersection
             )
-            dialogActive.show()
+            dialogActive?.show()
         }
     }
 
@@ -811,19 +853,22 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         userAction: UserAction,
         message: Pair<String, String>
     ) {
-        listener?.callTripWS(
-            WS_TRIP_SAVE_USER,
-            message.first,
-            message.second
-        )
 
-        viewModel.editUser(user, userAction)
+        viewModel.editUser(
+            user = user,
+            userAction = userAction,
+            tripWsProgress = TripWsProgress(
+                process = WS_TRIP_SAVE_USER,
+                title = message.first,
+                message = message.second
+            )
+        )
     }
 
     private fun showDialogTripNotFound() {
         showDialogError(
-            "Viagem não encontrada",
-            "Não foi possível buscar os dados da viagem, tente novamente",
+            hmAuxTranslate[ALERT_TRIP_NOT_FOUND_TTL] ?: "",
+            hmAuxTranslate[ALERT_TRIP_NOT_FOUND_MSG] ?: "",
             onClose = { dialog ->
                 update()
                 dialog.dismiss()
@@ -856,7 +901,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
     ) {
         update()
         showToast(messageSuccess)
-        dialogActive.dismiss()
+        dialogActive?.dismiss()
+        dialogActive = null
     }
 
     override fun onResume() {
@@ -864,20 +910,26 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
         setTripReceiver()
 
-        if (this::dialogActive.isInitialized) {
-            when (val dialog = dialogActive) {
+        dialogActive?.let {
+            when (val dialog = it) {
                 is FleetDialog -> dialog.updatePhotoDialog()
                 is DialogEventTrip -> dialog.updatePhotoDialog()
                 is EditOriginDialog -> dialog.updatePhotoDialog()
                 is DestinationDialog -> dialog.updatePhotoDialog()
             }
+        } ?: run {
+            if(cameFromOnPause && this !is TripExtractFragment){
+                listener?.onSelectTrip()
+            }
         }
-
+        cameFromOnPause = false
         if (this::headerBinding.isInitialized) setDatetimeVisibility()
     }
 
+    private var cameFromOnPause = false
     override fun onPause() {
         super.onPause()
+        cameFromOnPause = true
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(tripReceiver)
     }
 
@@ -994,12 +1046,15 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         destinationStatus: DestinationStatus,
         destination: FsTripDestination? = viewModel.state.value.destination
     ) {
-        listener?.callTripWS(
-            WS_TRIP_DESTINATION_CHANGE,
-            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_CHANGE_TTL]!!,
-            hmAuxTranslate[PROGRESS_TRIP_DESTINATION_CHANGE_MSG]!!,
+        viewModel.setDestinationStatus(
+            destinationStatus,
+            destination,
+            tripWsProgress = TripWsProgress(
+                process = WS_TRIP_DESTINATION_CHANGE,
+                title = hmAuxTranslate[PROGRESS_TRIP_DESTINATION_CHANGE_TTL]!!,
+                message = hmAuxTranslate[PROGRESS_TRIP_DESTINATION_CHANGE_MSG]!!,
+            )
         )
-        viewModel.setDestinationStatus(destinationStatus, destination)
     }
 
     override fun refreshChatBadge(chatBadgeQty: Int) {
@@ -1048,8 +1103,10 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
     inner class TripLocationReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.d("TRIP_Receiver", "onReceive")
             val bundle = intent.extras
             val tripWarning: Int? = bundle?.getInt(TRIP_WARNING_KEY, -1)
+            Log.d("TRIP_Receiver", "tripWarning? $tripWarning")
             //
             setAlertTypeCard(tripWarning)
         }
@@ -1073,8 +1130,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 TRIP_WARNING_DEPARTED_FROM_ORIGIN -> {
                     setWarningCard(
                         it,
-                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_ORIGIN_TTL]!!,
-                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_ORIGIN_MSG]!!
+                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_ORIGIN_TTL] ?: "",
+                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_ORIGIN_MSG] ?: ""
                     )
                     showGPSWarning(View.VISIBLE)
                 }
@@ -1091,8 +1148,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 TRIP_WARNING_DEPARTED_FROM_SITE -> {
                     setWarningCard(
                         it,
-                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_SITE_TTL]!!,
-                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_SITE_MSG]!!
+                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_SITE_TTL] ?: "",
+                        hmAuxTranslate[TRIP_WARNING_DEPARTED_FROM_SITE_MSG] ?: ""
                     )
                     showGPSWarning(View.VISIBLE)
                 }
@@ -1100,8 +1157,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 TRIP_WARNING_WAITING_DESTINATION -> {
                     setWarningCard(
                         it,
-                        hmAuxTranslate[TRIP_WARNING_WAITING_DESTINATION_TTL]!!,
-                        hmAuxTranslate[TRIP_WARNING_WAITING_DESTINATION_MSG]!!
+                        hmAuxTranslate[TRIP_WARNING_WAITING_DESTINATION_TTL] ?: "",
+                        hmAuxTranslate[TRIP_WARNING_WAITING_DESTINATION_MSG] ?: ""
                     )
                     showGPSWarning(View.VISIBLE)
                 }
@@ -1121,11 +1178,90 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         return viewModel.state.value.trip?.tripStatus?.toTripStatus() == TripStatus.OVER_NIGHT
     }
 
+    private fun onObserverLoadingState() {
+        viewModel.state.onEach { trip ->
+            listener?.invalidateMenuOptions();
+            when (val state = trip.progressState) {
+                is ProgressState.Online -> {
+                    listener?.callTripWS(
+                        state.process,
+                        state.title,
+                        state.message
+                    )
+                }
+
+                is ProgressState.Offline -> {
+                    listener?.hideProgressWs()
+                    showToast(hmAuxTranslate[SAVE_TRIP_OFFLINE_TOAST] ?: "")
+                }
+
+                is ProgressState.Hide -> {
+                    dismissDialog(state.onlyClose)
+                }
+
+
+                is ProgressState.Error -> {
+                    listener?.hideProgressWs()
+
+                    val defaultOnClick: (dialog: DialogInterface) -> Unit = { dialog ->
+                        dialog.dismiss()
+                        errorDialog(state.closeDialog)
+                    }
+
+                    when (state.throwable) {
+                        is SQLException -> {
+                            showDialogError(
+                                title = hmAuxTranslate[ERROR_SAVE_OFFLINE_TITLE] ?: "",
+                                message = hmAuxTranslate[ERROR_SAVE_OFFLINE_MSG] ?: ""
+                            )
+                        }
+
+                        is NetworkConnectionException -> {
+                            showDialogError(
+                                title = hmAuxTranslate[ERROR_TRY_SAVE_ONLINE_TITLE] ?: "",
+                                message = state.errorMsg
+                                    ?: hmAuxTranslate[ERROR_TRY_SAVE_ONLINE_MSG] ?: "",
+                                onClose = {
+                                    it.dismiss()
+                                    errorDialog(state.closeDialog)
+
+                                }
+                            )
+                        }
+
+                        is TripUserException -> {
+                            showDialogError(
+                                title = hmAuxTranslate[ERROR_ADD_USER_TTL] ?: "",
+                                message = hmAuxTranslate[ERROR_ADD_USER_MSG] ?: "",
+                                onClose = {
+                                    it.dismiss()
+                                    errorDialog()
+                                }
+                            )
+                        }
+
+                        else -> {
+                            showDialogError(
+                                title = hmAuxTranslate[ERROR_OFFLINE_GENERIC_TITLE] ?: "",
+                                message = "${hmAuxTranslate[ERROR_OFFLINE_GENERIC_MSG]}",
+                                onClose = defaultOnClick
+                            )
+                        }
+                    }
+
+                }
+            }
+        }.launchIn(lifecycleScope)
+    }
+
     private fun loadingTranslate(): HMAux {
         listOf(
             SAVE,
             SAVE_END_TRIP_BTN,
             CANCEL,
+            SEND_BTN,
+            TripTranslate.ALERT_HAS_TRIP_UPDATE_REQUIRED_TTL,
+            ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG,
             FLEET_DIALOG_ORIGIN_TITLE,
             FLEET_DIALOG_DESTINATION_TITLE,
             FLEET_DIALOG_END_TITLE,
@@ -1256,6 +1392,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             TripTransferFragment.ALERT_CONFIRM_END_TRIP_MSG,
             ALERT_CONTAINS_EVENT_TTL,
             ALERT_CONTAINS_EVENT_MSG,
+            ALERT_GPS_POSITION_NOT_FOUND_TTL,
+            ALERT_GPS_POSITION_NOT_FOUND_MSG,
             TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_LBL,
             TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_LBL,
             TranslateInfoDialogs.DIALOG_ERROR_ODOMETER_LBL,
@@ -1271,6 +1409,19 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             TRIP_LOCATION_PERMISSION_TITLE,
             TRIP_LOCATION_PERMISSION_SUBTITLE,
             TRIP_LOCATION_PERMISSION_CONFIG_BTN,
+            SAVE_TRIP_OFFLINE_TOAST,
+            ERROR_SAVE_OFFLINE_TITLE,
+            ERROR_SAVE_OFFLINE_MSG,
+            ERROR_OFFLINE_GENERIC_TITLE,
+            ERROR_OFFLINE_GENERIC_MSG,
+            ALERT_TRIP_NOT_FOUND_TTL,
+            ALERT_TRIP_NOT_FOUND_MSG,
+            ALERT_TRIP_OFFLINE_TTL,
+            ALERT_TRIP_OFFLINE_MSG,
+            ERROR_TRY_SAVE_ONLINE_TITLE,
+            ERROR_TRY_SAVE_ONLINE_MSG,
+            ERROR_ADD_USER_TTL,
+            ERROR_ADD_USER_MSG
         ).let { list ->
             return TranslateResource(
                 requireContext(),
@@ -1329,6 +1480,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         private const val TRIP_MAIN_SCREENS = "trip_main_screens"
         const val WS_TRIP_PREFIX = "ws_trip_"
         const val WS_TRIP_DOWNLOAD = "ws_trip_trip_download"
+        const val WS_TRIP_SEND_UPDATE = WS_TRIP_PREFIX + "trip_update"
         const val WS_TRIP_CREATE_NEW = WS_TRIP_PREFIX + "create_new"
         const val WS_TRIP_GET_LOCATION = WS_TRIP_PREFIX + "get_location"
         const val WS_TRIP_SAVE_FLEET = WS_TRIP_PREFIX + "save_fleet"

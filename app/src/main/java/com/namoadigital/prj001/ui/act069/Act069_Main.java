@@ -387,7 +387,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
         View view = (View) LayoutInflater.from(context).inflate(R.layout.act069_filter_dialog,null);
         //
         TextView tvTitle = view.findViewById(R.id.act069_filter_dialog_tv_title);

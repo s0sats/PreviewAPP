@@ -34,7 +34,7 @@ class Act090MaterialItemVH(
                     setTextColor(root.context.getResources().getColor(R.color.namoa_color_red))
                 }else{
                     text = materialItem.getFormttedPlannedQty(hmAuxTrans["planned_qty_lbl"]!!)
-                    setTextColor(root.context.getResources().getColor(R.color.namoa_status_pending))
+                    setTextColor(root.context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_pending))
                 }
             }
             //

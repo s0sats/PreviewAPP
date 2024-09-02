@@ -951,10 +951,10 @@ public class Frg_Serial_Edit extends BaseFragment {
 
 
     private void initFabMenuItens() {
-        int lblBgColor = getResources().getColor(R.color.namoa_fab_item_bg_color);
-        int lblColor = getResources().getColor(R.color.padrao_WHITE);
+        int lblBgColor = getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_fab_item_bg_color);
+        int lblColor = getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE);
         int btnBgColor = getResources().getColor(R.color.namoa_lime_green);
-        int iconColor = getResources().getColor(R.color.padrao_WHITE);
+        int iconColor = getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE);
         int icon = R.drawable.ic_arrow_left_thick;
 
         fabTop = new FabMenuItem(context);
@@ -1448,7 +1448,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             forceCheckExistences = false;
             blockAllProperties();
             btn_action.setText(hmAux_Trans.get("btn_check_exists"));
-            btn_action.setIcon(getResources().getDrawable(R.drawable.baseline_search_24));
+            btn_action.setIcon(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.baseline_search_24));
             btn_action.setOnClickListener(checkExistSerialListner);
         }
         //
@@ -1464,6 +1464,34 @@ public class Frg_Serial_Edit extends BaseFragment {
                 iv_add_tracking.setEnabled(false);
             }
         }
+        //
+        if(hasSiteAccessWhileOnTrip()){
+            showAlertDialog(
+                    hmAux_Trans.get("alert_serial_validation_ttl"),
+                    hmAux_Trans.get("alert_site_change_denied_on_trip_msg"),
+                    (dialogInterface, i) -> blockAllProperties()
+            );
+        }
+    }
+
+    private boolean hasSiteAccessWhileOnTrip() {
+
+        MD_SiteDao siteDao = new MD_SiteDao(context);
+        //
+        boolean hasAccess = false;
+        if(mdProductSerial.getSite_code() != null ) {
+            MD_Site md_site = siteDao.getByString(
+                    new MD_Site_Sql_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            mdProductSerial.getSite_code().toString()
+                    ).toSqlQuery()
+            );
+            hasAccess = md_site != null;
+        }
+        //
+        return FsTripHelperKt.isCurrentTrip(context)
+                && mdProductSerial.getSite_code() != null
+                && !hasAccess;
     }
 
     private String displayMeasureValueSuffix(String measureValueSuffix) {
@@ -1694,9 +1722,22 @@ public class Frg_Serial_Edit extends BaseFragment {
                             }
 
                         } else {
+                            String siteRestrictionViolationMsg = "";
+                            if(FsTripHelperKt.isCurrentTrip(context)){
+                                if(hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg") != null) {
+                                    siteRestrictionViolationMsg = hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg");
+                                }else{
+                                    siteRestrictionViolationMsg ="";
+                                }
+                            }
+                            if(mdProduct.getSite_restriction() == 1){
+                                siteRestrictionViolationMsg +=
+                                        siteRestrictionViolationMsg.isEmpty() ? hmAux_Trans.get("alert_site_restriction_violation_msg") : "\n" + hmAux_Trans.get("alert_site_restriction_violation_msg");
+                            }
+                            //
                             showAlertDialog(
                                     hmAux_Trans.get("alert_serial_validation_ttl"),
-                                    hmAux_Trans.get("alert_site_restriction_violation_msg"),
+                                    siteRestrictionViolationMsg,
                                     hideSerialInfoErrorListner
                             );
                         }
@@ -1804,7 +1845,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (!serialIdChanged && !s.equalsIgnoreCase((String) mket_serial_id.getTag())) {
                     serialIdChanged = true;
                     btn_action.setText(hmAux_Trans.get("btn_check_exists"));
-                    btn_action.setIcon(getResources().getDrawable(R.drawable.baseline_search_24));
+                    btn_action.setIcon(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.baseline_search_24));
                     btn_action.setOnClickListener(checkExistSerialListner);
                     blockAllProperties();
                 }
@@ -2813,7 +2854,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 && siteSelected.hasConsistentValue(SearchableSpinner.CODE)
                 && siteSelected.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
         ) {
-            Log.d("SITE_CHANGE", "true");
+//            Log.d("SITE_CHANGE", "true");
             return true;
         }
         //Por mais maluco que seja, esse if abaixo significa
@@ -2828,12 +2869,12 @@ public class Frg_Serial_Edit extends BaseFragment {
                         && siteSelected.get(SearchableSpinner.CODE).equals("null")
                 )
         ) {
-            Log.d("SITE_CHANGE", "true");
+//            Log.d("SITE_CHANGE", "true");
             return true;
         }
         //
         if (mdProductSerial.getProduct_io_control() == 0) {
-            Log.d("SITE_CHANGE", "true");
+//            Log.d("SITE_CHANGE", "true");
             return true;
 
         } else {
@@ -2844,12 +2885,12 @@ public class Frg_Serial_Edit extends BaseFragment {
                         && siteSelected.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1")
                 )
                 ) {
-                    Log.d("SITE_CHANGE", "true");
+//                    Log.d("SITE_CHANGE", "true");
                     return true;
                 }
             }
         }
-        Log.d("SITE_CHANGE", "false");
+//        Log.d("SITE_CHANGE", "false");
         //
         return false;
     }
@@ -2992,8 +3033,8 @@ public class Frg_Serial_Edit extends BaseFragment {
             return true;
         }
         //
-        ss_segment.setBackground(segment ? null : context.getDrawable(R.drawable.shape_error) );
-        ss_category_price.setBackground(category ? null :  context.getDrawable(R.drawable.shape_error) );
+        ss_segment.setBackground(segment ? null : context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error) );
+        ss_category_price.setBackground(category ? null :  context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error) );
         //Se chegou até aqui um dos itens é falso navega para sessão de propriedades.
         scrollToView(ll_serial_properties);
         //
@@ -3630,6 +3671,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("btn_check_exists");
         transListFrag.add("alert_site_restriction_ttl");
         transListFrag.add("alert_site_restriction_violation_msg");
+        transListFrag.add("alert_site_restriction_violation_on_trip_msg");
+        transListFrag.add("alert_site_change_denied_on_trip_msg");
         //
         transListFrag.add("alert_serial_not_found_title");
         transListFrag.add("alert_serial_not_found_msg");

@@ -437,26 +437,18 @@ public class Frg_Serial_Search extends Fragment {
 
             String btnAction = null;
 
-            switch (v.getId()) {
-                case R.id.frg_serial_search_btn_option_01:
-                    btnAction = BTN_OPTION_01;
-                    break;
-                case R.id.frg_serial_search_btn_option_02:
-                    btnAction = BTN_OPTION_02;
-                    break;
-                case R.id.frg_serial_search_btn_option_03:
-                    btnAction = BTN_OPTION_03;
-                    break;
-                case R.id.frg_serial_search_btn_option_04:
-                    btnAction = BTN_OPTION_04;
-                    break;
-                case R.id.frg_serial_search_btn_option_05:
-                    btnAction = BTN_OPTION_05;
-                    break;
-
-                default:
-                    btnAction = "";
-                    break;
+            if (v.getId() == R.id.frg_serial_search_btn_option_01) {
+                btnAction = BTN_OPTION_01;
+            } else if (v.getId() == R.id.frg_serial_search_btn_option_02) {
+                btnAction = BTN_OPTION_02;
+            } else if (v.getId() == R.id.frg_serial_search_btn_option_03) {
+                btnAction = BTN_OPTION_03;
+            } else if (v.getId() == R.id.frg_serial_search_btn_option_04) {
+                btnAction = BTN_OPTION_04;
+            } else if (v.getId() == R.id.frg_serial_search_btn_option_05) {
+                btnAction = BTN_OPTION_05;
+            } else {
+                btnAction = "";
             }
 
             HMAux values = getHMAuxValues();

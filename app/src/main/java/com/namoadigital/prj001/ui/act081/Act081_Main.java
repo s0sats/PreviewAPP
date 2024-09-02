@@ -195,6 +195,13 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         }
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_start_form"));
+        if(ToolBox_Inf.profileExists(
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_BLOCK_FORM_SPONTANEOUS
+        )){
+            mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        }
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //LUCHE - 08/06/2021 - evita que ao ler barcode, seja disparado o click no btn principal.
@@ -533,7 +540,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
 
-        Log.d("NFC", value[0]);
+//        Log.d("NFC", value[0]);
 
         if (!status) {
             if (progressDialog != null && progressDialog.isShowing()) {

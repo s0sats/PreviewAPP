@@ -110,6 +110,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         toMD_Schedule_ExecMapper = new CursorToMD_Schedule_ExecMapper();
     }
 
+    public MD_Schedule_ExecDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
+        //
+        toContentValuesMapper = new MD_Schedule_ExecToContentValuesMapper();
+        toMD_Schedule_ExecMapper = new CursorToMD_Schedule_ExecMapper();
+    }
+
     @Override
     public DaoObjReturn addUpdate(MD_Schedule_Exec md_schedule_exec) {
         DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);

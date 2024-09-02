@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui.act005.trip.fragment.overnight
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.SetDestinationStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FSTrip
@@ -9,6 +11,7 @@ import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv
 import com.namoadigital.prj001.model.trip.toDescription
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,18 +21,13 @@ class TripOverNightViewModel  @Inject constructor(
 
     fun endOverNightPeriod(destination: FsTripDestination, scn: Int) {
         //
-        val modelEnv = destination.let{
-            TripDestinationStatusChangeEnv(
-                it.tripPrefix,
-                it.tripCode,
-                it.destinationSeq,
-                scn,
-                DestinationStatus.DEPARTED.toDescription(),
+        viewModelScope.launch {
+            destinationUseCase.setDestinationStatusUseCase?.invoke(
+                SetDestinationStatusUseCase.Params(
+                    destination.destinationSeq,
+                    DestinationStatus.DEPARTED,
+                )
             )
-        }
-        //
-        modelEnv.let {
-            destinationUseCase.setDestinationStatusUseCase?.invoke(it)
         }
         //
     }

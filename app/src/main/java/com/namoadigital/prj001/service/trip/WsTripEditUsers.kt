@@ -32,7 +32,7 @@ class WsTripEditUsers : BaseWsIntentService("WsTripEditUsers", IntentServiceMode
 
     private lateinit var dao: FSTripUserDao
     private lateinit var tripDao: FSTripDao
-    private val hmAuxTranslate by lazy { loadNetworkTranslate(this) }
+    private val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
     override fun onHandleIntent(intent: Intent?) {
         try {

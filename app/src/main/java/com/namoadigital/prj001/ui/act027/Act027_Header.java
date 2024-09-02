@@ -507,15 +507,12 @@ public class Act027_Header extends BaseFragment {
         rdoGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                switch (checkedId) {
-                    case R.id.act027_header_content_rdo_data:
-                        ll_pdf_list.setVisibility(View.GONE);
-                        ll_header_data.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.act027_header_content_rdo_attach:
-                        ll_header_data.setVisibility(View.GONE);
-                        ll_pdf_list.setVisibility(View.VISIBLE);
-                        break;
+                if (checkedId == R.id.act027_header_content_rdo_data) {
+                    ll_pdf_list.setVisibility(View.GONE);
+                    ll_header_data.setVisibility(View.VISIBLE);
+                } else if (checkedId == R.id.act027_header_content_rdo_attach) {
+                    ll_header_data.setVisibility(View.GONE);
+                    ll_pdf_list.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -939,7 +936,7 @@ public class Act027_Header extends BaseFragment {
                     //atualiza contador e baixados.
                     downloadedCount++;
                 } else {
-                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+                    iv_pdf_icon.setImageDrawable(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp));
                     //
                     view.setOnClickListener(null);
                     view.setClickable(false);

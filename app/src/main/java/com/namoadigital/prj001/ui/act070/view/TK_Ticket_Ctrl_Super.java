@@ -146,11 +146,11 @@ public abstract class TK_Ticket_Ctrl_Super extends LinearLayout{
         int color = 0;
         switch (ctrl_type){
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                color = R.color.namoa_status_stop;
+                color = com.namoa_digital.namoa_library.R.color.namoa_status_stop;
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
             default:
-                color = R.color.namoa_status_pending;
+                color = com.namoa_digital.namoa_library.R.color.namoa_status_pending;
                 break;
         }
        //

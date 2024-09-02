@@ -37,11 +37,11 @@ data class SelectionDestinationAvailable(
     fun getFullAddress(): String {
         return listOfNotNull(
             street,
-            streetnumber?.let { ", $it" },
-            complement?.let { ", $it" },
-            district?.let { ", $it" },
-            city?.let { ", $it" },
-            state?.let { "- $it" },
+            streetnumber?.takeIf { it.isNotEmpty() }?.let { ", $it" },
+            complement?.takeIf { it.isNotEmpty() }?.let { ", $it" },
+            district?.takeIf { it.isNotEmpty() }?.let { ", $it" },
+            city?.takeIf { it.isNotEmpty() }?.let { ", $it" },
+            state?.takeIf { it.isNotEmpty() }?.let { "- $it" },
             zipCode
         ).joinToString("").trimIndent()
     }

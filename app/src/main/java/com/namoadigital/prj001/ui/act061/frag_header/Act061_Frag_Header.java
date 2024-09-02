@@ -275,7 +275,7 @@ public class Act061_Frag_Header extends BaseFragment implements Act061_Frag_Head
     }
 
     private void setIvStatus() {
-        ivEdit.setImageDrawable(inEdit ? context.getDrawable(R.drawable.ic_pencil) : context.getDrawable(R.drawable.ic_pencil_lock));
+        ivEdit.setImageDrawable(inEdit ? context.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_pencil) : context.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_pencil_lock));
     }
 
     private void initActions() {

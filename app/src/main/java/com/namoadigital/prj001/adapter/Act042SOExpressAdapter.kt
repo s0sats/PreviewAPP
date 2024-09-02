@@ -76,7 +76,7 @@ class Act042SOExpressAdapter(
                 }
 
 
-                soLeftIcon.applyVisibilityIfSourceExists(R.drawable.ic_baseline_qr_code_2_24)
+                soLeftIcon.applyVisibilityIfSourceExists(com.namoa_digital.namoa_library.R.drawable.ic_baseline_qr_code_2_24)
                 setViewContentAndVisibility(soPipelineVal, soPackExpressLocal.pipeline_desc)
                 setViewContentAndVisibility(soSerialIdVal, soPackExpressLocal.serial_id)
                 midCardLayout.visibility = soSerialIdVal.visibility

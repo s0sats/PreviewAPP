@@ -1,22 +1,23 @@
 package com.namoadigital.prj001.model.trip
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
 data class FSTripEventEnv(
-    @SerializedName("tripPrefix") var tripPrefix: Int,
-    @SerializedName("tripCode") var tripCode: Int,
-    @SerializedName("scn") var scn: Int,
-    @SerializedName("eventSeq") val eventSeq: Int?,
-    @SerializedName("eventTypeCode") val eventTypeCode: Int,
+    @Expose @SerializedName("tripPrefix") var tripPrefix: Int,
+    @Expose @SerializedName("tripCode") var tripCode: Int,
+    @Expose @SerializedName("scn") var scn: Int,
+    @Expose @SerializedName("eventSeq") val eventSeq: Int?,
+    @Expose @SerializedName("eventTypeCode") val eventTypeCode: Int,
     val eventTypeDesc: String,
-    @SerializedName("eventStatus") val eventStatus: String,
-    @SerializedName("eventCost") val eventCost: Double?,
-    @SerializedName("eventComments") val eventComments: String?,
-    @SerializedName("eventPhoto") val eventPhoto: String?,
-    @SerializedName("eventStart") val eventStart: String?,
-    @SerializedName("eventEnd") val eventEnd: String?,
-    @SerializedName("changedPhoto") val changedPhoto: Int?
+    @Expose @SerializedName("eventStatus") val eventStatus: String,
+    @Expose @SerializedName("eventCost") val eventCost: Double?,
+    @Expose @SerializedName("eventComments") val eventComments: String?,
+    @Expose @SerializedName("eventPhoto") val eventPhoto: String?,
+    @Expose @SerializedName("eventStart") val eventStart: String?,
+    @Expose @SerializedName("eventEnd") val eventEnd: String?,
+    @Expose @SerializedName("changedPhoto") val changedPhoto: Int
 ){
     companion object{
         val WS_BUNDLE_KEY = FSTripEventEnv::class.java.name

@@ -103,7 +103,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
                 if (customId.contains("(")) {
                     SpannableString id_string = new SpannableString(item.get("full_desc"));
                     id_string.setSpan(
-                            new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
+                            new TextAppearanceSpan(context, com.namoa_digital.namoa_library.R.style.Base_TextAppearance_Material3_LabelSmall),
                             item.get("full_desc").indexOf("("),
                             item.get("full_desc").length(),
                             0

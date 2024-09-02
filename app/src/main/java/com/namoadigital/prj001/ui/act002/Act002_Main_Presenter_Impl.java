@@ -20,6 +20,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.SiteLicense;
@@ -538,6 +539,11 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         SM_SODao dao = new SM_SODao(context);
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
             && dao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    @Override
+    public void scheduleTicketCacheDownload() {
+         WorkerHelperKt.scheduleDownloadTicket(context.getApplicationContext());
     }
 
     private String getTicketConcatList(TK_TicketDao tk_ticketDao) {

@@ -7,8 +7,12 @@ import android.database.Cursor;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.extensions.FileHelperKt;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.sql.GE_File_Sql_006;
+import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -230,6 +234,31 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
         closeDB();
 
         return ge_files;
+    }
+
+    public boolean fromToImgProcess(String originalFileName, String new_name) {
+        if (FileHelperKt.copyAndCheckFile(context, originalFileName, new_name)) {
+            String fileCode = originalFileName.replace(".jpg", "").replace(".png", "");
+            GE_File geFile = getByString(
+                new GE_File_Sql_007(fileCode).toSqlQuery()
+            );
+            if (ConstantBaseApp.GE_FILE_STATUS_OPENED.equals(geFile.getFile_status())) {
+                //Atualiza path da imagem na lista de upload
+                addUpdate(
+                        new GE_File_Sql_006(
+                                fileCode,
+                                new_name
+                        ).toSqlQuery()
+                );
+            } else if (ConstantBaseApp.GE_FILE_STATUS_SENT.equals(geFile.getFile_status())) {
+                ToolBox_Inf.deleteFileWithRet(
+                        FileHelperKt.imgFileAbsolutePath(context, originalFileName)
+                );
+            }
+            //
+            return true;
+        }
+        return false;
     }
 
     private class CursorGE_FileMapper implements Mapper<Cursor, GE_File> {

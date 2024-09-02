@@ -24,6 +24,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_007;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
@@ -34,7 +35,11 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -1216,6 +1221,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         return daoObjReturn;
     }
 
+    public List<MD_Product_Serial> getListSerialsBySiteCode(int siteCode) {
+        List<MD_Product_Serial> values = query(
+                "SELECT * FROM " + TABLE + " WHERE " + SITE_CODE + " = " + siteCode
+        );
+
+        if (values.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return values;
+        }
+    }
+
 
     private class CursorMD_Product_SerialMapper implements Mapper<Cursor, MD_Product_Serial> {
         @Override
@@ -1629,5 +1646,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
             return contentValues;
         }
+    }
+
+    @Nullable
+    public MD_Product_Serial getSerial(
+            long customerCode,
+            long productCode,
+            int serialCode
+    ) {
+        return getByString(
+                new MD_Product_Serial_Sql_009(
+                        customerCode,
+                        productCode,
+                        serialCode
+                ).toSqlQuery()
+        );
     }
 }

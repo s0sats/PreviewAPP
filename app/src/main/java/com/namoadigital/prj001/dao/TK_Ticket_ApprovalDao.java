@@ -44,6 +44,14 @@ public class TK_Ticket_ApprovalDao extends BaseDao implements DaoWithReturn<TK_T
         this. toTK_Ticket_ApprovalMapper = new CursorToTK_Ticket_ApprovalMapper();
         this.toContentValuesMapper = new TK_Ticket_ApprovalToContentValueMapper();
     }
+    public TK_Ticket_ApprovalDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
+        this. toTK_Ticket_ApprovalMapper = new CursorToTK_Ticket_ApprovalMapper();
+        this.toContentValuesMapper = new TK_Ticket_ApprovalToContentValueMapper();
+    }
 
     @Override
     public DaoObjReturn addUpdate(TK_Ticket_Approval tk_ticket_approval) {

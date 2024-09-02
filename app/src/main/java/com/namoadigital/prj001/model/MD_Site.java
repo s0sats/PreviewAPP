@@ -34,6 +34,21 @@ public class MD_Site {
     @SerializedName("license_blocked") private int license_blocked;
     @SerializedName("email_nc") private String email_nc;
 
+    @SerializedName("country_code") private String countryCode;
+    @SerializedName("state") private String state;
+    @SerializedName("city") private String city;
+    @SerializedName("district") private String district;
+    @SerializedName("street") private String street;
+    @SerializedName("num") private String num;
+    @SerializedName("complement") private String complement;
+    @SerializedName("zipcode") private String zipCode;
+    @SerializedName("plus_code") private String plusCode;
+    @SerializedName("contact_name") private String contactName;
+    @SerializedName("contact_phone") private String contactPhone;
+    @SerializedName("region_code") private Integer regionCode;
+    @SerializedName("latitude") private String latitude;
+    @SerializedName("longitude") private String longitude;
+
     public long getCustomer_code() {
         return customer_code;
     }
@@ -252,5 +267,117 @@ public class MD_Site {
         return  mdSite != null
                 && mdSite.getCustomer_code() > 0
                 && ToolBox_Inf.convertStringToInt(mdSite.getSite_code()) > 0;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String number) {
+        this.num = number;
+    }
+
+    public String getComplement() {
+        return complement;
+    }
+
+    public void setComplement(String complement) {
+        this.complement = complement;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getPlusCode() {
+        return plusCode;
+    }
+
+    public void setPlusCode(String plusCode) {
+        this.plusCode = plusCode;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public Integer getRegionCode() {
+        return regionCode;
+    }
+
+    public void setRegionCode(Integer regionCode) {
+        this.regionCode = regionCode;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }

@@ -142,6 +142,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.ExceptionHelperKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.extensions.ImageMetadataHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
@@ -582,10 +583,10 @@ public class ToolBox_Inf {
      */
     @Nullable
     public static String uniqueIDv2(Context context){
-        Log.d("IMEI", "uniqueIDv2");
+//        Log.d("IMEI", "uniqueIDv2");
         String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UNIQUE_ID(context);
         //Se preferencia setada, a retorna
-        Log.d("IMEI", "getPreference_PHONE_UNIQUE_ID phone_uuid_code: " + phone_uuid_code);
+//        Log.d("IMEI", "getPreference_PHONE_UNIQUE_ID phone_uuid_code: " + phone_uuid_code);
         if(phone_uuid_code.trim().length() != 0){
             return phone_uuid_code;
         }else{
@@ -600,7 +601,7 @@ public class ToolBox_Inf {
 //            if(phone_uuid_code == null || phone_uuid_code.trim().isEmpty() ){
             phone_uuid_code = getPhoneUUID(context);
 //            }
-            Log.d("IMEI", " getPhoneUUID phone_uuid_code: " + phone_uuid_code);
+//            Log.d("IMEI", " getPhoneUUID phone_uuid_code: " + phone_uuid_code);
             //Grava valor na preferencia
             ToolBox_Con.setPreference_PHONE_UNIQUE_ID(context, phone_uuid_code != null ? phone_uuid_code : "");
             //Retorna preferencia.
@@ -1029,9 +1030,9 @@ public class ToolBox_Inf {
             ZipOutputStream zos = new ZipOutputStream(fos);
             File srcFile = new File(inputFolderPath);
             File[] files = srcFile.listFiles();
-            Log.d("ZIP", "Zip directory: " + srcFile.getName());
+//            Log.d("ZIP", "Zip directory: " + srcFile.getName());
             for (int i = 0; i < files.length; i++) {
-                Log.d("ZIP", "Adding file: " + files[i].getName());
+//                Log.d("ZIP", "Adding file: " + files[i].getName());
                 byte[] buffer = new byte[1024];
                 FileInputStream fis = new FileInputStream(files[i]);
                 zos.putNextEntry(new ZipEntry(files[i].getName()));
@@ -2327,28 +2328,28 @@ public class ToolBox_Inf {
                     boolean result_ok = true;
                     boolean has_changes = false;
                     if(ss_site.getmValue()!= null && ss_site.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                        ss_site.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                        ss_site.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                         has_changes = checkForChange(has_changes, original_site, ss_site);
                     }else{
                         result_ok = false;
-                        ss_site.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+                        ss_site.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     }
                     //
                     if(ss_zone.getVisibility() == View.VISIBLE){
                         if (ss_zone.getmValue() != null && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                            ss_zone.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                             has_changes = checkForChange(has_changes, original_zone, ss_zone);
                         } else {
                             result_ok = false;
-                            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+                            ss_zone.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                         }
                     }
                     //
                     if(ss_operation.getmValue()!= null && ss_operation.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                        ss_operation.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                        ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                         has_changes = checkForChange(has_changes, original_operation, ss_operation);
                     }else{
-                        ss_operation.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+                        ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                         result_ok = false;
                     }
 
@@ -2430,7 +2431,7 @@ public class ToolBox_Inf {
                 if(evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1){
                     textColor = R.color.namoa_color_danger_red;
                 }else{
-                    textColor = R.color.namoa_color_light_blue_lib;
+                    textColor = com.namoa_digital.namoa_library.R.color.namoa_color_light_blue_lib;
                 }
 
                 tv_user_global_level.setText(getLabelValueColorFormmated(
@@ -4373,6 +4374,9 @@ public class ToolBox_Inf {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+        if(exception!= null){
+            ExceptionHelperKt.firebaseRegisterException(exception);
+        }
         ToolBox.registerException(local,exception);
     }
 
@@ -4384,7 +4388,9 @@ public class ToolBox_Inf {
     public static void registerFatalException(Throwable exception) {
         String local = AppBase.class.getSimpleName();
         File exception_file = new File(Constant.SUPPORT_PATH, "fatal_excep_" + getDateHourStr() + ".txt");
-
+        if(exception!= null){
+            ExceptionHelperKt.firebaseRegisterException(exception);
+        }
         try {
             //Tenta Pega o primeiro item StackTrace elemente do "cause" e obtem o nome da classe onde
             //o erro se originou.
@@ -6030,50 +6036,50 @@ public class ToolBox_Inf {
     public static int getStatusColor(String status) {
         switch (status) {
             case Constant.SYS_STATUS_EDIT:
-                return R.color.namoa_status_edit;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_edit;
             case Constant.SYS_STATUS_STOP:
             case Constant.SYS_STATUS_REJECTED:
-                return R.color.namoa_status_stop;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_stop;
             case Constant.SYS_STATUS_PENDING:
-                return R.color.namoa_status_pending;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_pending;
             case Constant.SYS_STATUS_SCHEDULE:
-                return R.color.namoa_status_scheduled;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_IN_PROCESSING:
             case Constant.SYS_STATUS_PUT_AWAY:
             case Constant.SYS_STATUS_PICKING:
-                return R.color.namoa_status_process;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_process;
             case Constant.SYS_STATUS_PICKING_DONE:
             case Constant.SYS_STATUS_WAITING_APPROVAL:
-                return R.color.namoa_status_waiting_approval;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_waiting_approval;
             case Constant.SYS_STATUS_WAITING_BUDGET:
-                return R.color.namoa_status_waiting_budget;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_waiting_budget;
             case Constant.SYS_STATUS_WAITING_QUALITY:
-                return R.color.namoa_status_waiting_quality;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_waiting_quality;
             case Constant.SYS_STATUS_WAITING_CLIENT:
             case Constant.SYS_STATUS_WAITING_ACTION:
-                return R.color.namoa_status_waiting_client;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_waiting_client;
             case Constant.SYS_STATUS_DONE:
             case Constant.SYS_STATUS_FINALIZED://Remover após certeza que não é mais usado
-                return R.color.namoa_status_done;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
-                return R.color.namoa_status_not_executed;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_SENT://30/03/2020 - Ainda usado na O.S express
-                return R.color.namoa_status_sent;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_sent;
             case Constant.SYS_STATUS_CANCELLED:
             case Constant.SYS_STATUS_DELETED:
-                return R.color.namoa_status_cancelled;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_cancelled;
             case Constant.SYS_STATUS_INCONSISTENT:
-                return R.color.namoa_status_inconsistent;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_inconsistent;
             case Constant.SYS_STATUS_WAITING_SYNC:
-                return R.color.namoa_status_waiting_sync;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_waiting_sync;
             case Constant.SYS_STATUS_ERROR:
             case Constant.SYS_STATUS_IGNORED:
-                return R.color.namoa_status_error;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_error;
             case Constant.SYS_STATUS_ACTIVE:
-                return R.color.namoa_status_active;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_active;
             case Constant.SYS_STATUS_INACTIVE:
-                return R.color.namoa_status_inactive;
+                return com.namoa_digital.namoa_library.R.color.namoa_status_inactive;
             default:
                 return R.color.namoa_color_gray_4;
         }
@@ -8731,7 +8737,7 @@ public class ToolBox_Inf {
 
         ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
         int lblBgColor = context.getResources().getColor(R.color.namoa_pipeline_background_icon);
-        int lblColor = context.getResources().getColor(R.color.padrao_WHITE);
+        int lblColor = context.getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE);
         int btnBgColor = context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
         int iconColor = context.getResources().getColor(R.color.colorPrimary);
         fabMenuItems.clear();

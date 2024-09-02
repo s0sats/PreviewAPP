@@ -1025,7 +1025,7 @@ public class Act011_Main extends Base_Activity
         ImageView iv_error = view.findViewById(R.id.act011_dialog_iv_error);
 
 
-        drawable_ic = context.getResources().getDrawable(R.drawable.ic_error_black_24dp);
+        drawable_ic = context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_error_black_24dp);
         drawable_ic.setColorFilter(context.getResources().getColor(R.color.namoa_color_danger_red), PorterDuff.Mode.SRC_ATOP);
         iv_error.setImageDrawable(drawable_ic);
         tv_title.setText(hmAux_Trans.get("dialog_confirm_delete_ttl"));
@@ -2888,7 +2888,8 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public void defineFinalizeFlow() {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+        && !mPresenter.isTripInUpdateRequired()) {
             enableProgressDialog(
                     hmAux_Trans.get("alert_send_finish_ttl"),
                     hmAux_Trans.get("alert_send_finish_msg"),

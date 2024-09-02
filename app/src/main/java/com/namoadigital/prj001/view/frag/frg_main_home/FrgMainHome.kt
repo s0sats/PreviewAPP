@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.view.frag.frg_main_home
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,15 +15,16 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act005MainMenuTagAdapter
 import com.namoadigital.prj001.databinding.FrgMainHomeBinding
 import com.namoadigital.prj001.extensions.getColorStateListId
-import com.namoadigital.prj001.model.EV_User_Customer
+import com.namoadigital.prj001.extensions.sendCommandToServiceTripLocation
 import com.namoadigital.prj001.model.MainTagMenu
+import com.namoadigital.prj001.service.location.FsTripLocationService
+import com.namoadigital.prj001.service.location.util.LocationServiceConstants
 import com.namoadigital.prj001.ui.act005.OnResfreshUI
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgMainHomeInteract
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ActionByTagFilterDialog
-import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAltPresenter
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -201,6 +200,9 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if (FsTripLocationService.isTracking.value) {
+            context.sendCommandToServiceTripLocation(LocationServiceConstants.STOP_LOCATION)
+        }
         if (context is OnFrgMainHomeInteract) {
             mListener = context
         } else {

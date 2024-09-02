@@ -963,7 +963,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             if(mTicketCtrl.getAction().getAction_photo_name() == null) {
                 placeHolder = getNoPhotoDrawable();
             }else{
-                placeHolder = getResources().getDrawable(R.drawable.sand_watch_transp);
+                placeHolder = getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
             }
             //
             ivActionPhoto.setImageDrawable(placeHolder);
@@ -995,7 +995,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             final String finalPath = path;
             //
             Glide.with(context).asBitmap()
-                .placeholder(R.drawable.sand_watch_transp)
+                .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                 .load(path)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
@@ -1024,7 +1024,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     public void onLoadStarted(@Nullable Drawable placeholder) {
                         super.onLoadStarted(placeholder);
                         ivActionPhoto.setEnabled(false);
-                        ivActionPhoto.setImageDrawable(getResources().getDrawable(R.drawable.sand_watch_transp));
+                        ivActionPhoto.setImageDrawable(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp));
                     }
 
                     @Override
@@ -1050,7 +1050,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @NonNull
     private Drawable getNoPhotoDrawable() {
         Drawable placeHolder;
-        placeHolder = getResources().getDrawable(R.drawable.ic_foto_ns_black);
+        placeHolder = getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_foto_ns_black);
         placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
         return placeHolder;
     }

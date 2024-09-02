@@ -115,6 +115,7 @@ public class Constant extends ConstantBaseApp {
     public static String WS_TRIP_ORIGIN_SET;
     public static String WS_TRIP_DESTINATION_EDIT;
     public static String WS_TRIP_EVENT;
+    public static String WS_TRIP_UPDATE;
     public static String WS_HOST;
     public static int WS_PORT = 443;
     public static int WS_TIMEOUT = 3000;
@@ -218,5 +219,6 @@ public class Constant extends ConstantBaseApp {
         WS_TRIP_ORIGIN_SET = "https://" + WS_HOST + "/ws/prj001/trip/trip_origin_set.ws";
         WS_TRIP_DESTINATION_EDIT = "https://" + WS_HOST + "/ws/prj001/trip/trip_destination_edit.ws";
         WS_TRIP_EVENT = "https://" + WS_HOST + "/ws/prj001/trip/trip_event_set.ws";
+        WS_TRIP_UPDATE = "https://" + WS_HOST + "/ws/prj001/trip/trip_full_update.ws";
     }
 }

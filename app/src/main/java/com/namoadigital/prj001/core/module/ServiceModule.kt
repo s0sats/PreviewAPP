@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.service.location.module
+package com.namoadigital.prj001.core.module
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
@@ -12,7 +12,13 @@ import com.namoadigital.prj001.core.trip.data.position.TripPositionRepositoryImp
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.CheckNextStatusWhenNewDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
+import com.namoadigital.prj001.dao.GE_FileDao
+import com.namoadigital.prj001.dao.MD_SiteDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
+import com.namoadigital.prj001.dao.trip.FSTripEventDao
+import com.namoadigital.prj001.dao.trip.FSTripUserDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao
 import com.namoadigital.prj001.service.location.FsTripLocationService
@@ -28,7 +34,7 @@ import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
 @InstallIn(ServiceComponent::class)
-object LocationModule {
+object ServiceModule {
 
     @ServiceScoped
     @Provides
@@ -93,8 +99,20 @@ object LocationModule {
 
     @ServiceScoped
     @Provides
-    fun providesRepositoryTrip(@ApplicationContext app: Context, dao: FSTripDao): TripRepository =
-        TripRepositoryImp(app, dao, null, null)
+    fun providesRepositoryTrip(
+        @ApplicationContext app: Context,
+        dao: FSTripDao,
+        tripDestinationDao: FsTripDestinationDao,
+        ): TripRepository =
+        TripRepositoryImp(
+            app,
+            dao,
+            GE_FileDao(app),
+            MD_SiteDao(app),
+            FSTripEventDao(app),
+            FSTripUserDao(app),
+            tripDestinationDao,
+        )
 
     @ServiceScoped
     @Provides
@@ -105,4 +123,19 @@ object LocationModule {
     ): TripDestinationRepository {
         return TripDestinationRepositoryImp(app, dao, tripDao)
     }
+
+    @ServiceScoped
+    @Provides
+    fun providesSaveDestinationUseCase(
+        tripRepository: TripRepository,
+        fsTripDestinationRepository: TripDestinationRepository,
+    ): SaveDestinationUseCase {
+        return SaveDestinationUseCase(
+            fsTripDestinationRepository,
+            tripRepository,
+            CheckNextStatusWhenNewDestinationUseCase(fsTripDestinationRepository, tripRepository),
+        )
+    }
+
+
 }

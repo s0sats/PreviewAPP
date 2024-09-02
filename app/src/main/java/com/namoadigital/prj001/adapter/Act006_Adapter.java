@@ -69,7 +69,7 @@ public class Act006_Adapter extends BaseAdapter {
         tvSubItem.setVisibility(View.GONE);
 
         //Configura tvItem
-        tvItem.setTextColor(context.getResources().getColor(R.color.padrao_WHITE));
+        tvItem.setTextColor(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE));
         tvItem.setText(item.get(Act006_Main.LIST_LABEL));
 
         //Define cor do fundo

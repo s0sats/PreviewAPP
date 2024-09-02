@@ -1,19 +1,23 @@
 package com.namoadigital.prj001.ui.act005.trip
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.adapter.trip.model.Extract
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.LocationNotFound
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveDestinationDateUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveFleetDataUseCase.SaveFleetParams
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveOriginUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.SetDestinationStatusUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.TripStatusChangeUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.TripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveOverNightDestinationUseCase
+import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.trip.DestinationCounter
 import com.namoadigital.prj001.model.trip.DestinationStatus
@@ -21,11 +25,8 @@ import com.namoadigital.prj001.model.trip.FSEventType
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FsTripDestination
-import com.namoadigital.prj001.model.trip.FsTripDestination.Companion.OVER_NIGHT_DESTINATION_TYPE
-import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv
 import com.namoadigital.prj001.model.trip.TripPositionAlertType
 import com.namoadigital.prj001.model.trip.TripStatus
-import com.namoadigital.prj001.model.trip.TripStatusChangeEnv
 import com.namoadigital.prj001.model.trip.TripTarget
 import com.namoadigital.prj001.model.trip.toAlertType
 import com.namoadigital.prj001.model.trip.toDescription
@@ -42,9 +43,16 @@ import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.InputParams
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.OutputParams
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.TripUsersUseCase
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.Companion.WS_TRIP_OVER_NIGHT
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.SaveDestinationEdit
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.SaveOriginEdit
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.FSSaveEvent
+import com.namoadigital.prj001.ui.act005.trip.util.ProgressState
 import com.namoadigital.prj001.ui.act005.trip.util.TripState
+import com.namoadigital.prj001.util.NetworkConnectionException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -62,6 +70,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TripViewModel @Inject constructor(
+    savedState: SavedStateHandle = SavedStateHandle(),
     private val useCase: TripUseCase,
     private val destinationUseCase: DestinationUseCase,
     private val userUseCase: TripUsersUseCase,
@@ -76,7 +85,10 @@ class TripViewModel @Inject constructor(
     private var startTime: Date? = null
     val beforeTime = MutableStateFlow("")
     private var timerCount: Job? = null
-
+    private val isExtractFrag: Boolean by lazy {
+        ((savedState.get<Boolean?>("isExtract") != null)
+                && (savedState.get<Boolean?>("isExtract") == true))
+    }
 
     init {
         getCurrentTrip()
@@ -132,27 +144,29 @@ class TripViewModel @Inject constructor(
             )
         }
         val event = useCase.getEvent(Unit)
+        val listExtract = if (isExtractFrag) extractUseCase(Unit) else null
         //
+        initTimeEvent()
         _state.update {
-            it.copy(
+            TripState(
                 trip = trip,
                 destination = fsTripDestination,
                 counter = counter,
-                event = event
+                event = event,
+                listExtract = listExtract,
             )
         }
-
-        initTimeEvent()
 
     }
 
 
     private fun initTimeEvent() {
-        if (_state.value.event == null) {
+        val event = useCase.getEvent(Unit)
+        if (event == null) {
             stopCountTimer()
             return
         }
-        startCountTimer(_state.value.event?.eventStart!!)
+        startCountTimer(event.eventStart!!)
 
     }
 
@@ -205,129 +219,284 @@ class TripViewModel @Inject constructor(
     }
 
     fun addDestinationOverNight() {
-        state.value.trip?.let {
-            destinationUseCase.execSelectDestination?.invoke(
-                SelectDestinationUseCase.SelectDestinationParam(
-                    it.tripPrefix,
-                    it.tripCode,
-                    it.scn,
-                    OVER_NIGHT_DESTINATION_TYPE,
-                    currentLat = FsTripLocationService.LatLog.value.latitude,
-                    currentLon = FsTripLocationService.LatLog.value.longitude
+
+        viewModelScope.launch {
+            state.value.trip?.let {
+                destinationUseCase.saveOverNightDestinationUseCase?.invoke(
+                    SaveOverNightDestinationUseCase.Input(
+                        latitude = FsTripLocationService.LatLog.value.latitude,
+                        longitude = FsTripLocationService.LatLog.value.longitude
+                    )
+                )?.results(
+                    success = {
+                        _state.loadingState { ProgressState.Offline }
+                        _state.update { tripState ->
+                            tripState.copy(
+                                updateTripScreen = true
+                            )
+                        }
+                    },
+                    error = { errorMsg, exceptionError ->
+                        exceptionError?.let {
+                            _state.loadingState {
+                                ProgressState.Error(exceptionError, errorMsg = errorMsg)
+                            }
+                            if(exceptionError is NetworkConnectionException){
+                                _state.update { tripState ->
+                                    tripState.copy(
+                                        updateTripScreen = true
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    loading = { isOnlineMode, _ ->
+                        if (isOnlineMode) {
+                            _state.loadingState {
+                                ProgressState.Online(
+                                    process = WS_TRIP_OVER_NIGHT,
+                                    title = TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL,
+                                    message = TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG,
+                                )
+                            }
+                        } else {
+                            _state.loadingState {
+                                ProgressState.Offline
+                            }
+                        }
+                    },
+                    failed = {
+                        _state.loadingState { ProgressState.Offline }
+                    }
                 )
-            )
+            }
         }
+
     }
 
     fun saveFleetData(
-        fleetPlate: String? = null,
         odometer: Long?,
-        path: String? = null,
         changePhoto: Int,
         target: TripTarget,
+        progressTranslate: TripWsProgress,
+        fleetPlate: String? = null,
+        path: String? = null,
         destinationSeq: Int? = null,
         deletePhoto: Boolean = false,
     ) {
-        useCase.saveFleet(
-            SaveFleetParams(fleetPlate, odometer, path, changePhoto, target, destinationSeq, deletePhoto)
-        )
+        viewModelScope.launch {
+            useCase.saveFleet(
+                SaveFleetParams(
+                    fleetPlate,
+                    odometer,
+                    path,
+                    changePhoto,
+                    target,
+                    destinationSeq,
+                    deletePhoto
+                )
+            ).results(
+                success = {
+                    if (target == TripTarget.END) {
+                        setTripStatus(
+                            TripStatus.DONE,
+                            tripWsProgress = TripWsProgress(
+                                process = progressTranslate.process,
+                                title = progressTranslate.title,
+                                message = progressTranslate.message
+                            )
+                        )
+                        return@results
+                    }
+                    _state.loadingState { ProgressState.Offline }
+                    getCurrentTrip()
+                },
+                loading = { _, _ ->
+                    _state.loadingState {
+                        ProgressState.Online(
+                            process = progressTranslate.process,
+                            title = progressTranslate.title,
+                            message = progressTranslate.message
+                        )
+                    }
+                },
+                failed = { throwable ->
+                    _state.loadingState { ProgressState.Error(throwable) }
+                },
+                error = { errorMsg, exceptionError ->
+                    exceptionError?.let {
+                        _state.loadingState {
+                            ProgressState.Error(
+                                exceptionError,
+                                closeDialog = true,
+                                errorMsg = errorMsg
+                            )
+                        }
+
+                        if(exceptionError is NetworkConnectionException){
+                            getCurrentTrip()
+                        }
+                    }
+                }
+            )
+
+        }
 
     }
 
 
-    fun startTrip() {
-        //t
-        val tripStatus = state.value.destination?.let {
-            TripStatus.TRANSIT
-        } ?: TripStatus.TRANSFER
-        //
-        state.value.trip?.let {
-            if (!it.isRequireDestinationFleetData
-                || TripStatus.CANCELLED == tripStatus
-                || TripStatus.TRANSIT == tripStatus
-            ) {
-                setTripStatus(tripStatus)
+    /*    fun startTrip() {
+            //t
+            val tripStatus = state.value.destination?.let {
+                TripStatus.TRANSIT
+            } ?: TripStatus.TRANSFER
+            //
+            state.value.trip?.let {
+                if (!it.isRequireDestinationFleetData
+                    || TripStatus.CANCELLED == tripStatus
+                    || TripStatus.TRANSIT == tripStatus
+                ) {
+                    setTripStatus(tripStatus)
+                }
+            }
+            //
+        }*/
+
+    fun setTripStatus(
+        tripStatus: TripStatus,
+        tripWsProgress: TripWsProgress
+    ) {
+        viewModelScope.launch {
+            state.value.trip?.let {
+                useCase.statusChange(
+                    TripStatusChangeUseCase.Input(
+                        tripStatus,
+                    )
+                ).results(
+                    success = {
+                        _state.loadingState { ProgressState.Offline }
+                        getCurrentTrip()
+                        _state.update { tripState ->
+                            tripState.copy(
+                                updateTripScreen = true
+                            )
+                        }
+                    },
+                    failed = { throwable ->
+                        _state.loadingState {
+                            ProgressState.Error(throwable)
+                        }
+                    },
+                    error = { errorMsg, exceptionError ->
+                        exceptionError?.let {
+                            _state.loadingState {
+                                ProgressState.Error(exceptionError, errorMsg = errorMsg)
+                            }
+
+                            if(exceptionError is NetworkConnectionException){
+                                _state.update { tripState ->
+                                    tripState.copy(
+                                        updateTripScreen = true
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    loading = { isOnline, _ ->
+                        if (isOnline) {
+                            _state.loadingState {
+                                ProgressState.Online(
+                                    process = tripWsProgress.process,
+                                    title = tripWsProgress.title,
+                                    message = tripWsProgress.message
+                                )
+                            }
+                        } else {
+                            _state.loadingState { ProgressState.Offline }
+                        }
+                    }
+                )
             }
         }
-        //
-    }
-
-    fun setTripStatus(tripStatus: TripStatus, doneDate: String? = null) {
-        state.value.trip?.let {
-            val modelRequest = TripStatusChangeEnv(
-                tripPrefix = it.tripPrefix,
-                tripCode = it.tripCode,
-                scn = it.scn,
-                tripStatus = tripStatus.toDescription(),
-                doneDate = doneDate
-            )
-            //
-            useCase.statusChange(
-                modelRequest
-            )
-        }
-
     }
 
     fun getListSites(): List<HMAux> {
         return useCase.listSites(Unit)
     }
 
-    /**
-     *  BARRIONUEVO - 10-04-2024
-     *  Adicionada as HOFs(activateWsProgressDialog e locationNotFound) para tratativa
-     *  de edicao de origin, ajuste rapido devido ao tempo do projeto
-     */
     fun saveOriginSet(
         date: String,
         siteCode: Int? = null,
         siteDesc: String? = null,
         originType: OriginType,
-        activateWsProgressDialog: () -> Unit,
+        progressTranslate: TripWsProgress,
+        progressTranslateFleet: TripWsProgress,
+        chainOriginAndFleet: SaveOriginEdit.FLEET? = null,
         locationNotFound: () -> Unit,
     ) {
-        when (originType) {
-            OriginType.GPS -> {
-                viewModelScope.launch {
-                    FsTripLocationService.LatLog.value
-                        .let {
-                            if (!it.isDefault) {
-                                activateWsProgressDialog()
-                                useCase.saveOrigin(
-                                    SaveOriginUseCase.SaveOriginParam(
-                                        date = date,
-                                        type = originType,
-                                        coordinates = it
-                                    )
-                                )
-                            } else {
-                                locationNotFound()
-                            }
+        viewModelScope.launch {
+            useCase.saveOrigin(
+                SaveOriginUseCase.SaveOriginParam(
+                    date = date,
+                    type = originType,
+                    siteCode = siteCode,
+                    siteDesc = siteDesc
+                )
+            ).results(
+                success = {
+                    chainOriginAndFleet?.let {
+                        saveFleetData(
+                            fleetPlate = chainOriginAndFleet.fleet,
+                            odometer = chainOriginAndFleet.odometer.toLong(),
+                            path = chainOriginAndFleet.photoUpdate.path,
+                            changePhoto = chainOriginAndFleet.photoUpdate.isNew,
+                            deletePhoto = chainOriginAndFleet.photoUpdate.deletePhoto,
+                            target = TripTarget.START,
+                            progressTranslate = progressTranslateFleet
+                        )
+                        return@results
+                    }
+                    _state.loadingState { ProgressState.Offline }
+                    getCurrentTrip()
+                },
+                loading = { isOnlineMode, _ ->
+                    if (isOnlineMode) {
+                        _state.loadingState {
+                            ProgressState.Online(
+                                process = progressTranslate.process,
+                                title = progressTranslate.title,
+                                message = progressTranslate.message
+                            )
                         }
+
+                        return@results
+                    }
+
+                    _state.loadingState { ProgressState.Offline }
+                },
+                error = { errorMsg, exceptionError ->
+                    exceptionError?.let {
+                        _state.loadingState {
+                            ProgressState.Error(
+                                exceptionError,
+                                closeDialog = true,
+                                errorMsg = errorMsg
+                            )
+                        }
+                        if(exceptionError is NetworkConnectionException){
+                            getCurrentTrip()
+                        }
+                    }
+                },
+                failed = { throwable ->
+                    if (throwable is LocationNotFound) {
+                        _state.loadingState { ProgressState.Error(throwable) }
+                        locationNotFound()
+                        return@results
+                    }
+                    _state.loadingState { ProgressState.Error(throwable) }
                 }
-            }
-
-            OriginType.SITE -> {
-                activateWsProgressDialog()
-                useCase.saveOrigin(
-                    SaveOriginUseCase.SaveOriginParam(
-                        date = date,
-                        type = originType,
-                        siteCode = siteCode,
-                        siteDesc = siteDesc
-                    )
-                )
-            }
-
-            OriginType.EDIT -> {
-                activateWsProgressDialog()
-                useCase.saveOrigin(
-                    SaveOriginUseCase.SaveOriginParam(
-                        date = date,
-                        type = originType,
-                    )
-                )
-            }
+            )
         }
     }
 
@@ -335,34 +504,141 @@ class TripViewModel @Inject constructor(
         userUseCase.getUsers(Unit)
     }
 
-    fun editUser(user: TripUserEdit, userAction: UserAction) {
-        userUseCase.edit(ExecEditUserUseCase.ExecEditUserParams(user, userAction))
+    fun editUser(
+        user: TripUserEdit,
+        userAction: UserAction,
+        tripWsProgress: TripWsProgress
+    ) {
+        viewModelScope.launch {
+            userUseCase.edit(
+                ExecEditUserUseCase.ExecEditUserParams(user, userAction)
+            ).results(
+                success = {
+                    _state.loadingState { ProgressState.Offline }
+                    getCurrentTrip()
+                },
+                loading = { _, _ ->
+                    _state.loadingState {
+                        ProgressState.Online(
+                            process = tripWsProgress.process,
+                            title = tripWsProgress.title,
+                            message = tripWsProgress.message
+                        )
+                    }
+                },
+                failed = { throwable ->
+                    _state.loadingState {
+                        ProgressState.Error(throwable)
+                    }
+                    //
+                },
+                error = { errorMsg, exceptionError ->
+                    exceptionError?.let {
+                        _state.loadingState {
+                            ProgressState.Error(exceptionError, errorMsg = errorMsg)
+                        }
+                        if(exceptionError is NetworkConnectionException){
+                            getCurrentTrip()
+                        }
+                    }
+                }
+            )
+        }
     }
 
-    fun updateEvent(event: FSSaveEvent) {
-        eventUseCase.save(event)
+    fun updateEvent(
+        event: FSSaveEvent,
+        tripWsProgress: TripWsProgress
+    ) {
+        viewModelScope.launch {
+            eventUseCase.save(event)
+                .results(
+                    success = {
+                        _state.loadingState { ProgressState.Offline }
+                        getCurrentTrip()
+                    },
+                    loading = { _, _ ->
+                        _state.loadingState {
+                            ProgressState.Online(
+                                process = tripWsProgress.process,
+                                title = tripWsProgress.title,
+                                message = tripWsProgress.message
+                            )
+                        }
+
+                    },
+                    error = { errorMsg, exceptionError ->
+                        exceptionError?.let {
+                            _state.loadingState {
+                                ProgressState.Error(
+                                    exceptionError,
+                                    closeDialog = true,
+                                    errorMsg = errorMsg
+                                )
+                            }
+                        }
+                    },
+                    failed = { throwable ->
+                        _state.loadingState { ProgressState.Error(throwable) }
+                    }
+                )
+        }
     }
 
     fun setDestinationStatus(
         destinationStatus: DestinationStatus,
-        destination: FsTripDestination?
+        destination: FsTripDestination?,
+        tripWsProgress: TripWsProgress
     ) {
-        val modelEnv = state.value.trip?.let { trip ->
+        var isOnlineMode = false
+        viewModelScope.launch {
             destination?.let {
-                TripDestinationStatusChangeEnv(
-                    it.tripPrefix,
-                    it.tripCode,
-                    it.destinationSeq,
-                    trip.scn,
-                    destinationStatus.toDescription(),
+                destinationUseCase.setDestinationStatusUseCase?.invoke(
+                    SetDestinationStatusUseCase.Params(
+                        it.destinationSeq,
+                        destinationStatus,
+                    )
+                )?.results(
+                    success = { _ ->
+                        _state.loadingState { ProgressState.Offline }
+                        _state.update { tripState ->
+                            tripState.copy(
+                                updateTripScreen = true
+                            )
+                        }
+                    },
+                    loading = { _, _ ->
+                        _state.loadingState {
+                            ProgressState.Online(
+                                process = tripWsProgress.process,
+                                title = tripWsProgress.title,
+                                message = tripWsProgress.message
+                            )
+                        }
+                    },
+                    failed = { throwable ->
+                        _state.loadingState {
+                            ProgressState.Error(throwable)
+                        }
+
+                    },
+                    error = { errorMsg, exceptionError ->
+                        exceptionError?.let {
+                            _state.loadingState {
+                                ProgressState.Error(exceptionError, errorMsg = errorMsg)
+                            }
+                            if(exceptionError is NetworkConnectionException){
+                                _state.update { tripState ->
+                                    tripState.copy(
+                                        updateTripScreen = true
+                                    )
+                                }
+                            }
+                        }
+                    }
                 )
             }
         }
-        //
-        modelEnv?.let {
-            destinationUseCase.setDestinationStatusUseCase?.invoke(it)
-        }
-        //
     }
 
     private fun checkFleetData(trip: FSTrip): Boolean {
@@ -391,13 +667,9 @@ class TripViewModel @Inject constructor(
         return false
     }
 
-    fun getListExtract(): List<Extract<*>> {
-        return extractUseCase(Unit)
-    }
 
     fun getDestinationSeq() = _state.value.destination?.destinationSeq
 
-    fun getListOdometerArrived() = destinationUseCase.listOdometerArrived?.invoke(Unit)
     fun getTicketInfo(ticketPrefix: Int?, ticketCode: Int?): TK_Ticket? {
         return null
     }
@@ -405,17 +677,72 @@ class TripViewModel @Inject constructor(
     fun saveDestinationDate(
         dateStart: String,
         dateEnd: String,
-        destinationSeq: Int
+        destinationSeq: Int,
+        chainDestinationAndFleet: SaveDestinationEdit.ODOMETER? = null,
+        progressTranslate: TripWsProgress,
+        progressTranslateFleet: TripWsProgress? = null,
     ) {
 
-        destinationUseCase.saveDestinationDateUseCase?.invoke(
-            SaveDestinationDateUseCase.SaveDestinationDateParams(
-                dateStart,
-                dateEnd,
-                destinationSeq
-            )
-        )
+        viewModelScope.launch {
+            destinationUseCase.saveDestinationDateUseCase?.invoke(
+                SaveDestinationDateUseCase.SaveDestinationDateParams(
+                    dateStart,
+                    dateEnd,
+                    destinationSeq
+                )
+            )?.results(
+                success = {
+                    chainDestinationAndFleet?.let { chainDestinationAndFleet ->
+                        saveFleetData(
+                            odometer = chainDestinationAndFleet.odometer,
+                            path = chainDestinationAndFleet.photoUpdate.path,
+                            changePhoto = chainDestinationAndFleet.photoUpdate.isNew,
+                            destinationSeq = chainDestinationAndFleet.destinationSeq,
+                            target = TripTarget.DESTINATION,
+                            deletePhoto = chainDestinationAndFleet.photoUpdate.deletePhoto,
+                            progressTranslate = TripWsProgress(
+                                process = progressTranslateFleet!!.process,
+                                title = progressTranslateFleet.title,
+                                message = progressTranslateFleet.message,
+                            )
+                        )
+                        return@results
+                    }
+                    _state.loadingState { ProgressState.Offline }
+                    getCurrentTrip()
 
+                },
+                loading = { isOnline, _ ->
+                    _state.loadingState {
+
+                        ProgressState.Online(
+                            process = progressTranslate.process,
+                            title = progressTranslate.title,
+                            message = progressTranslate.message
+                        )
+                    }
+                },
+                failed = { throwable ->
+                    _state.loadingState { ProgressState.Error(throwable) }
+                },
+                error = { errorMsg, exceptionError ->
+                    exceptionError?.let {
+                        _state.loadingState {
+                            ProgressState.Error(
+                                exceptionError,
+                                closeDialog = true,
+                                errorMsg = errorMsg
+                            )
+                        }
+
+                        if(exceptionError is NetworkConnectionException){
+                            getCurrentTrip()
+                        }
+                    }
+
+                }
+            )
+        }
     }
 
     fun getDestinationThresholds(
@@ -463,48 +790,58 @@ class TripViewModel @Inject constructor(
         )
     }
 
-    fun getAlertTypeFromPreference(pref:CurrentTripPref, tripStatus: TripStatus): Int? {
+    fun getAlertTypeFromPreference(pref: CurrentTripPref, tripStatus: TripStatus): Int? {
         val model = pref.read()
 
         return when (model.last_alert_type.toAlertType()) {
             TripPositionAlertType.ARRIVED -> {
-                if(tripStatus == TripStatus.TRANSIT) {
+                if (tripStatus == TripStatus.TRANSIT) {
                     TripBaseFragment.TRIP_WARNING_ARRIVED_TO_SITE
-                }else{
+                } else {
                     TripBaseFragment.TRIP_WARNING_REMOVE
                 }
             }
+
             TripPositionAlertType.DEPARTED -> {
-                if(tripStatus == TripStatus.ON_SITE) {
+                if (tripStatus == TripStatus.ON_SITE) {
                     TripBaseFragment.TRIP_WARNING_DEPARTED_FROM_SITE
-                }else if(tripStatus == TripStatus.PENDING) {
+                } else if (tripStatus == TripStatus.PENDING) {
                     TripBaseFragment.TRIP_WARNING_DEPARTED_FROM_ORIGIN
-                }else{
+                } else {
                     TripBaseFragment.TRIP_WARNING_REMOVE
                 }
             }
+
             TripPositionAlertType.WAITING_DESTINATION -> {
-                if(tripStatus == TripStatus.WAITING_DESTINATION &&
-                    model.waiting_destination_date != null) {
+                if (tripStatus == TripStatus.WAITING_DESTINATION &&
+                    model.waiting_destination_date != null
+                ) {
                     TripBaseFragment.TRIP_WARNING_WAITING_DESTINATION
-                }else{
+                } else {
                     TripBaseFragment.TRIP_WARNING_REMOVE
                 }
             }
+
             TripPositionAlertType.PENDING -> {
-                if(tripStatus == TripStatus.PENDING) {
+                if (tripStatus == TripStatus.PENDING) {
                     TripBaseFragment.TRIP_WARNING_DEPARTED_FROM_ORIGIN
-                }else{
+                } else {
                     TripBaseFragment.TRIP_WARNING_REMOVE
                 }
             }
+
             TripPositionAlertType.NULL -> {
                 TripBaseFragment.TRIP_WARNING_REMOVE
             }
         }
     }
 
-    fun checkUserIntersection(userCode: Int, userSeq: Int?, startDateInMillis: Long, endDateInMillis: Long?): OutputParams {
+    fun checkUserIntersection(
+        userCode: Int,
+        userSeq: Int?,
+        startDateInMillis: Long,
+        endDateInMillis: Long?
+    ): OutputParams {
         return userUseCase.intersection(
             InputParams(userCode, userSeq, startDateInMillis, endDateInMillis)
         )
@@ -514,17 +851,42 @@ class TripViewModel @Inject constructor(
         customerCode: Long,
         tripPrefix: Int,
         tripCode: Int,
-    ):String?{
+    ): String? {
         return validateOrigin(
             GetFirstDateOnTripUseCase.InputParam(
-            customerCode,
-            tripPrefix,
-            tripCode,
+                customerCode,
+                tripPrefix,
+                tripCode,
             )
         ).dateError
     }
 
+    fun removeLoadingState() {
+        _state.loadingState { ProgressState.Hide(true) }
+    }
 
+    fun getOverNightDestination(fsTrip: FSTrip): FsTripDestination? {
+        return destinationUseCase.destinationByStatus?.invoke(
+            GetDestinationByStatusUseCase.GetDestinationParams(
+                fsTrip.customerCode,
+                fsTrip.tripPrefix,
+                fsTrip.tripCode,
+                DestinationStatus.ARRIVED
+            )
+        )
+    }
+
+    private inline fun <T> MutableStateFlow<T>.loadingState(block: (T) -> ProgressState) {
+        _state.update {
+            it.copy(
+                progressState = block(this.value)
+            )
+        }
+    }
+
+    fun hasTripWithUpdateRequired(): Boolean {
+        return useCase.hasTripWithUpdateRequired(Unit)
+    }
 
 
     companion object {

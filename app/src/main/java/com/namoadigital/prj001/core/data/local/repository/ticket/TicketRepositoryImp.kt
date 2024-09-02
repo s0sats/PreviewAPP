@@ -69,6 +69,8 @@ class TicketRepositoryImp @Inject constructor(
         siteCode: Int,
         isFocused: Int,
         multStepsLbl: String?,
+        productCode: Int?,
+        serialId: String?,
     ): List<HMAux> {
         return dao.query_HM(
             FsTripSqlTicketActions(
@@ -76,7 +78,9 @@ class TicketRepositoryImp @Inject constructor(
                 ToolBox_Con.getPreference_User_Code(app),
                 siteCode,
                 isFocused,
-                multStepsLbl
+                multStepsLbl,
+                serialId,
+                productCode,
             ).toSqlQuery()
         )
     }

@@ -303,28 +303,20 @@ public class Act027_Opc extends BaseFragment {
     private View.OnClickListener menuOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.act027_opc_ll_product:
-                    SELECTION_TYPE = Act027_Main.SELECTION_PRODUCT_LIST;
-                    break;
-                case R.id.act027_opc_ll_services:
-                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
-                    break;
-                case R.id.act027_opc_ll_serial:
-                    SELECTION_TYPE = Act027_Main.SELECTION_SERIAL;
-                    break;
-                case R.id.act027_opc_ll_header:
-                    SELECTION_TYPE = Act027_Main.SELECTION_HEADER;
-                    break;
-                case R.id.act027_opc_ll_approval:
-                    SELECTION_TYPE = Act027_Main.SELECTION_APPROVAL;
-                    break;
-                case R.id.act027_opc_ll_service_edition:
-                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICE_EDITION;
-                    break;
-                default:
-                    SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
-                    break;
+            if (v.getId() == R.id.act027_opc_ll_product) {
+                SELECTION_TYPE =Act027_Main.SELECTION_PRODUCT_LIST;
+            } else if (v.getId() == R.id.act027_opc_ll_services) {
+                SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
+            } else if (v.getId() == R.id.act027_opc_ll_serial) {
+                SELECTION_TYPE = Act027_Main.SELECTION_SERIAL;
+            } else if (v.getId() == R.id.act027_opc_ll_header) {
+                SELECTION_TYPE = Act027_Main.SELECTION_HEADER;
+            } else if (v.getId() == R.id.act027_opc_ll_approval) {
+                SELECTION_TYPE = Act027_Main.SELECTION_APPROVAL;
+            } else if (v.getId() == R.id.act027_opc_ll_service_edition) {
+                SELECTION_TYPE = Act027_Main.SELECTION_SERVICE_EDITION;
+            } else {
+                SELECTION_TYPE = Act027_Main.SELECTION_SERVICES;
             }
 
             if (delegate != null) {
@@ -658,7 +650,7 @@ public class Act027_Opc extends BaseFragment {
         menuPriority.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-                chip_os_priority.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                chip_os_priority.setBackgroundColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT));
             }
         });
 
@@ -694,7 +686,7 @@ public class Act027_Opc extends BaseFragment {
         menuStatus.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-                chip_os_status.setBackgroundColor(getResources().getColor(R.color.padrao_TRANSPARENT));
+                chip_os_status.setBackgroundColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT));
             }
         });
 
@@ -858,8 +850,8 @@ public class Act027_Opc extends BaseFragment {
         if (mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()) {
             drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
             iconColor = mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
-                    ? R.color.namoa_status_done
-                    : R.color.namoa_status_process;
+                    ? com.namoa_digital.namoa_library.R.color.namoa_status_done
+                    : com.namoa_digital.namoa_library.R.color.namoa_status_process;
         }
         //Seta filtro de cor no icone
         drawable.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);

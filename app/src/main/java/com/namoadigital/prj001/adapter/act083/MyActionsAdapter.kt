@@ -479,7 +479,7 @@ class MyActionsAdapter constructor(
                                 setTextColor(
                                     ContextCompat.getColor(
                                         context,
-                                        R.color.namoa_status_process
+                                        com.namoa_digital.namoa_library.R.color.namoa_status_process
                                     )
                                 )
                             }

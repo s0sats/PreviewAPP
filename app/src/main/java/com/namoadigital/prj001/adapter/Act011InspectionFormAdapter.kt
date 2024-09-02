@@ -321,7 +321,8 @@ class Act011InspectionFormAdapter(
 //                                ContextCompat.getColor(context,R.color.gray_colors_menu)
 //                            }
 //                        )
-                        setTextColor(ContextCompat.getColor(context,R.color.gray_colors_menu))
+                        setTextColor(ContextCompat.getColor(context,
+                            com.namoa_digital.namoa_library.R.color.gray_colors_menu))
                     }
                 }
                 //

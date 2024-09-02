@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.extensions.isCurrentTrip
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActionFilterParam
@@ -90,7 +91,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -157,11 +157,18 @@ class Act092Presenter constructor(
         )
     }
 
-    private fun loadFilter() {
-        _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
-        view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
-        view.focusState.value.mainUser = _serialModel.value.mainUserFocus
-        view.filterText.value = _serialModel.value.editFilter ?: ""
+    private fun loadFilter(context: Context) {
+        if(context.isCurrentTrip()){
+            _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
+            view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
+            view.focusState.value.mainUser = true
+            view.filterText.value = _serialModel.value.editFilter ?: ""
+        }else{
+            _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
+            view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
+            view.focusState.value.mainUser = _serialModel.value.mainUserFocus
+            view.filterText.value = _serialModel.value.editFilter ?: ""
+        }
 
 
         if (view.focusState.value.mainUser) {
@@ -215,7 +222,7 @@ class Act092Presenter constructor(
                 Pair(
                     serialModel.value.copy(
                         userFocus = userFocus
-                    ), view.focusState.value.mainUser
+                    ), view.focusState.value.mainUser || view.getContext().isCurrentTrip()
                 )
             ).catch { e ->
                 emit(loading(false))
@@ -1271,7 +1278,8 @@ class Act092Presenter constructor(
         if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
             firstSave()
         }
-        loadFilter()
+
+        loadFilter(view.getContext())
         getMyActionList()
     }
 

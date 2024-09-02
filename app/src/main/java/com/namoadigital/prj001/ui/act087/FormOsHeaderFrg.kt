@@ -461,7 +461,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         with(binding) {
             mketMachineSerialEdit.setText(serialBkp.serialId)
             clMachineEdit.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
+                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
             tilMketSerial.isHelperTextEnabled = false
             selectedBkpMachineSerialCode = serialBkp.serialCode
             selectedBkpMachineSerialId = serialBkp.serialId
@@ -662,9 +662,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isStartDateInvalid = if (!bypassMinValidation()) isValidStartDate().not() else false
             val isContinuousFormStartDateInvalid = if(isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
-                ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
+                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
             } else {
-                ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
+                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
             }
             val measureInvalid = mainMeasureTp?.let {
                 if (!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
@@ -1017,7 +1017,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                             tilMketSerial.isHelperTextEnabled = true
                             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
                             clMachineEdit.background =
-                                ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
+                                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
                         }
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
@@ -1063,9 +1063,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mketMachineSerialEdit.text = null
             selectedBkpMachineProduct = if (swMachine.isChecked) defaultBkpMachineProduct else null
             clMachineEdit.background = if (swMachine.isChecked) {
-                ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
+                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
             } else {
-                ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
+                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
             }
         }
     }

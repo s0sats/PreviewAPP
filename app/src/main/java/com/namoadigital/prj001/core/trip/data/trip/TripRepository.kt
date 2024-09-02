@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.core.trip.data.trip
 
 import com.namoadigital.prj001.adapter.trip.model.Extract
+import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
+import com.namoadigital.prj001.model.trip.FSTripFullUpdateEnv
 import com.namoadigital.prj001.model.trip.TripStatus
-import com.namoadigital.prj001.model.trip.TripStatusChangeEnv
 import com.namoadigital.prj001.model.trip.preference.CurrentTripPrefModel
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
 import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
+import kotlinx.coroutines.flow.Flow
 
 interface TripRepository {
     fun getPreference(): CurrentTripPrefModel
@@ -21,10 +23,17 @@ interface TripRepository {
 
     fun getTrip(): FSTrip?
 
-    fun getOriginCoordinates() : Coordinates?
+    fun getOriginCoordinates(): Coordinates?
 
     fun getTripStatus(): TripStatus?
-    fun setTripStatus(request: TripStatusChangeEnv)
+    fun setTripStatus(
+        tripStatus: TripStatus,
+        nextTripStatus: String,
+        destinationSeq: Int?,
+        destinationStatus: String?,
+        nextDestinationSeq: Int?,
+        nextDestinationStatus: String?,
+    ): Flow<IResult<Unit>>
     fun getPositionDistanceMin(): Double
 
     fun execCreateTrip(input: Coordinates?)
@@ -37,18 +46,24 @@ interface TripRepository {
         target: String,
         destinationSeq: Int? = null,
         deletePhoto: Boolean,
-    )
+    ): Flow<IResult<Unit>>
 
     fun getListSites(): List<OriginSites>
 
-    fun execOriginSet(
+    suspend fun execOriginSet(
         date: String,
         originType: OriginType,
         coordinates: Coordinates?,
         siteCode: Int?,
         siteDesc: String?
-    )
+    ): Flow<IResult<Unit>>
 
     fun getEvent(): FSTripEvent?
     fun getExtract(trip: FSTrip?): Extract<FSTrip>?
+    fun getTripByDestinationSeq(destinationSeq: Int): FSTrip?
+    fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv
+    fun sendTripFullUpdate()
+    fun getTripUpdateRequired(): Boolean
+    fun existsTripWithUpdateRequired(): Boolean
+    fun isTripOnline(it: FSTrip): Boolean
 }

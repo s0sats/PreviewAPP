@@ -16,9 +16,11 @@ import com.namoadigital.prj001.extensions.getColorStateListId
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.TripTarget
+import com.namoadigital.prj001.service.location.FsTripLocationService
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
@@ -74,7 +76,7 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()
@@ -111,7 +113,7 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
             }
             //
             btnReport.text = hmAuxTranslate[TripTranslate.TRIP_REPORT_BTN]
-            btnAddDestination.backgroundTintList = requireContext().getColorStateListId(R.color.padrao_TRANSPARENT)
+            btnAddDestination.backgroundTintList = requireContext().getColorStateListId(com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT)
             btnAddDestination.strokeWidth = 1
             btnAddDestination.strokeColor = requireContext().getColorStateListId(R.color.m3_namoa_primary)
             btnAddDestination.iconTint = requireContext().getColorStateListId(R.color.m3_namoa_primary)
@@ -182,30 +184,31 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
     }
 
     private fun callOverNightTrip() {
-        listener?.callTripWS(
-            WS_TRIP_OVER_NIGHT,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL]!!,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG]!!,
-        )
-        //
-        viewModel.addDestinationOverNight()
+        if (FsTripLocationService.LatLog.value.latitude != null
+            && FsTripLocationService.LatLog.value.longitude != null
+        ) {
+            viewModel.addDestinationOverNight()
+        }else{
+            ToolBox.alertMSG(
+                context,
+                hmAuxTranslate[ALERT_GPS_POSITION_NOT_FOUND_TTL],
+                hmAuxTranslate[ALERT_GPS_POSITION_NOT_FOUND_MSG],
+                null,
+                0
+            )
+        }
     }
 
     fun callEndTrip() {
-        listener?.callTripWS(
-            WS_TRIP_END,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_END_TTL]!!,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_END_MSG]!!,
-        )
         //
-        requireContext().sendBCStatus(
-            WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+        viewModel.setTripStatus(
+            TripStatus.DONE,
+            tripWsProgress = TripWsProgress(
+                process = WS_TRIP_END,
+                title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_END_TTL]!!,
                 message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_END_MSG]!!,
-                required = "0"
             )
         )
-        //
-        viewModel.setTripStatus(TripStatus.DONE, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))
     }
 
     companion object {
@@ -215,6 +218,8 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
         const val ALERT_CONFIRM_END_TRIP_MSG = "alert_confirm_end_trip_msg"
         const val ALERT_CONTAINS_EVENT_TTL = "alert_contains_event_ttl"
         const val ALERT_CONTAINS_EVENT_MSG = "alert_contains_event_msg"
+        const val ALERT_GPS_POSITION_NOT_FOUND_TTL = "alert_gps_position_not_found_ttl"
+        const val ALERT_GPS_POSITION_NOT_FOUND_MSG = "alert_gps_position_not_found_msg"
 
     }
 

@@ -196,7 +196,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
                         setImageDrawable(
                             ResourcesCompat.getDrawable(
                                 resources,
-                                R.drawable.ic_camera_check_circle,
+                                com.namoa_digital.namoa_library.R.drawable.ic_camera_check_circle,
                                 null
                             )
                         )

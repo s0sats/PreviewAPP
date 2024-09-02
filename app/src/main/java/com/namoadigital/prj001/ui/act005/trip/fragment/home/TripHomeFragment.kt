@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.FrgMainTripBinding
 import com.namoadigital.prj001.extensions.sendCommandToServiceTripLocation
 import com.namoadigital.prj001.extensions.showMaterialAlert
@@ -17,15 +15,21 @@ import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.service.location.util.LocationServiceConstants
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_HAS_TRIP_UPDATE_REQUIRED_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_CANCEL_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_CREATE_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.BTN_NEW_TRIP
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.CANCEL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PLACEHOLDER_TRIP_SUB_TTL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PLACEHOLDER_TRIP_TTL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_CREATE_NEW_TRIP_GET_LOCATION_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_CREATE_NEW_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_CREATE_NEW_TRIP_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SEND_BTN
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -85,6 +89,26 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
                         actionNeutralLbl = hmAuxTranslate[TRIP_GPS_OFF_CANCEL_BTN],
                         actionPositive = { _, _ ->
                             requireContext().startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        },
+                        actionNeutral = { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                        }
+                    ).show()
+                    return@setOnClickListener
+                }
+
+                if(viewModel.hasTripWithUpdateRequired()){
+                    requireContext().showMaterialAlert(
+                        title = hmAuxTranslate[ALERT_HAS_TRIP_UPDATE_REQUIRED_TTL] ?: "",
+                        msg = hmAuxTranslate[ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG] ?: "",
+                        actionPositiveLbl = hmAuxTranslate[SEND_BTN] ?: "",
+                        actionNeutralLbl = hmAuxTranslate[CANCEL] ?: "",
+                        actionPositive = { _, _ ->
+                            if(ToolBox_Con.isOnline(context)){
+                                listener?.sendTripUpdateRequired()
+                            }else{
+                                ToolBox_Inf.showNoConnectionDialog(context)
+                            }
                         },
                         actionNeutral = { dialogInterface, _ ->
                             dialogInterface.dismiss()

@@ -10,7 +10,9 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env
 import com.namoadigital.prj001.model.TkTicketCache
+import com.namoadigital.prj001.model.ticket.TkTicketToSync
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -297,6 +299,38 @@ class TkTicketCacheDao(
         return tkTicketCaches
     }
 
+    fun getSyncTicket(userCode: String):  List<TkTicketToSync> {
+        val query = query(
+            """
+            SELECT c.* 
+            FROM $TABLE c
+            WHERE
+                c.${KANBAN} = 1
+            AND c.${MAIN_USER} = $userCode    
+            AND NOT EXISTS(
+                SELECT 1
+                    FROM ${TK_TicketDao.TABLE} t
+                    WHERE t.${TK_TicketDao.CUSTOMER_CODE} = c.${CUSTOMER_CODE}
+                          and t.${TK_TicketDao.TICKET_PREFIX} = c.${TICKET_PREFIX}
+                          and t.${TK_TicketDao.TICKET_CODE} = c.${TICKET_CODE}
+           )
+           LIMIT 20
+        """.trimIndent()
+        )
+        return query.map {
+            TkTicketToSync(
+                it.customer_code.toString(),
+                it.ticket_prefix.toString(),
+                it.ticket_code.toString(),
+                "0",
+                it.open_product_code.toString(),
+                it.open_serial_id,
+                it.open_serial_id,
+            )
+        }
+
+    }
+
 
     fun getTicketKanban(prefix: Int, code: Int): TkTicketCache? {
         return getByString("""
@@ -304,6 +338,16 @@ class TkTicketCacheDao(
             FROM $TABLE
             WHERE $TICKET_PREFIX = $prefix
             AND $TICKET_CODE = $code
+            AND $KANBAN = 1
+        """.trimIndent())
+    }
+
+    fun removeCache(customerCode: Long, ticketPrefix: Int, ticketCode: Int) {
+        remove("""
+            DELETE FROM $TABLE
+            WHERE $CUSTOMER_CODE = $customerCode
+            AND $TICKET_PREFIX = $ticketPrefix
+            AND $TICKET_CODE = $ticketCode
             AND $KANBAN = 1
         """.trimIndent())
     }

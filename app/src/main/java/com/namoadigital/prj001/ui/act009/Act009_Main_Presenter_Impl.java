@@ -7,9 +7,12 @@ import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.sql.Sql_Act009_001;
+import com.namoadigital.prj001.sql.Sql_Act009_002;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,20 +46,41 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
         //
         FSTripDao tripDao = new FSTripDao(context);
         boolean isTripMode = tripDao.getTrip() != null;
-        List<HMAux> data =
-        custom_form_typeDao.query_HM(
-                new Sql_Act009_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        product_code,
-                        ToolBox_Con.getPreference_Translate_Code(context),
-                        ToolBox_Con.getPreference_Operation_Code(context),
-                        site_code_form_param,
-                        serial_id,
-                        blockSpontaneous,
-                        isTripMode || has_tk_ticket_is_form_off_hand,
-                        isTripMode
-                ).toSqlQuery()
-        );
+        List<HMAux> data = new ArrayList<>();
+        if(ToolBox_Inf.profileExists(
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_BLOCK_FORM_SPONTANEOUS
+        )) {
+            data.addAll(
+                    custom_form_typeDao.query_HM(
+                            new Sql_Act009_002(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    product_code,
+                                    ToolBox_Con.getPreference_Translate_Code(context),
+                                    ToolBox_Con.getPreference_Operation_Code(context),
+                                    site_code_form_param,
+                                    serial_id
+                            ).toSqlQuery()
+                    )
+            );
+        }else{
+            data.addAll(
+                    custom_form_typeDao.query_HM(
+                            new Sql_Act009_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    product_code,
+                                    ToolBox_Con.getPreference_Translate_Code(context),
+                                    ToolBox_Con.getPreference_Operation_Code(context),
+                                    site_code_form_param,
+                                    serial_id,
+                                    blockSpontaneous,
+                                    isTripMode || has_tk_ticket_is_form_off_hand,
+                                    isTripMode
+                            ).toSqlQuery()
+                    )
+            );
+        }
         //Se apenas um tipo, auto seleciona
         if(data != null && data.size() == 1){
             if(back_action == 1) {

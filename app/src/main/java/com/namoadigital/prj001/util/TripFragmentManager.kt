@@ -49,7 +49,7 @@ class TripFragmentManager(
                     R.id.action_frgMainHome_to_homeTripFragment
                 }
             }
-        }
+        } ?: run{null}
     }
 
     fun getCurrentTrip() = fsTripDao.getTrip()

@@ -88,11 +88,11 @@ class Act079ViewNcField(
             layoutParams = lParams
             if (answer.isNullOrEmpty()) {
                 text = emptyAnswerLabel
-                setTextColor(ContextCompat.getColor(context, R.color.namoa_status_not_executed))
+                setTextColor(ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.namoa_status_not_executed))
                 setTypeface(null,Typeface.ITALIC)
             } else {
                 text = answer
-                setTextColor(ContextCompat.getColor(context, R.color.namoa_status_pending))
+                setTextColor(ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.namoa_status_pending))
             }
             setPadding(18,0,0,0)
         }
@@ -108,10 +108,10 @@ class Act079ViewNcField(
             this.layoutParams = layoutParams
             //
             when(nc.getDataValue()){
-                TkTicketOriginNc.RATINGIMAGE_GREEN -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_happy))}
-                TkTicketOriginNc.RATINGIMAGE_YELLOW -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_neutro))}
-                TkTicketOriginNc.RATINGIMAGE_RED -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_sad))}
-                TkTicketOriginNc.RATINGIMAGE_NA -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_na))}
+                TkTicketOriginNc.RATINGIMAGE_GREEN -> {setImageDrawable(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.ic_face_happy))}
+                TkTicketOriginNc.RATINGIMAGE_YELLOW -> {setImageDrawable(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.ic_face_neutro))}
+                TkTicketOriginNc.RATINGIMAGE_RED -> {setImageDrawable(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.ic_face_sad))}
+                TkTicketOriginNc.RATINGIMAGE_NA -> {setImageDrawable(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.ic_na))}
             }
             setPadding(18,0,0,0)
         }
@@ -148,13 +148,13 @@ class Act079ViewNcField(
                     setmV_Line(0)
                 }
                 //
-                pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)?.isClickable = false
-                pictureFF.findViewById<TextView>(R.id.customff_tv_label)?.visibility = if(!pictureFF.getmLabel().isNullOrEmpty()) VISIBLE else GONE
+                pictureFF.findViewById<ImageViewCR>(com.namoa_digital.namoa_library.R.id.pictureff_icr_value)?.isClickable = false
+                pictureFF.findViewById<TextView>(com.namoa_digital.namoa_library.R.id.customff_tv_label)?.visibility = if(!pictureFF.getmLabel().isNullOrEmpty()) VISIBLE else GONE
                 //
                 binding.act079ViewNcFieldFrame.apply {
                     setOnClickListener {
                         reportPositionAndHighlightItem()
-                        pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)
+                        pictureFF.findViewById<ImageViewCR>(com.namoa_digital.namoa_library.R.id.pictureff_icr_value)
                             ?.performClick()
                     }
                     addView(pictureFF)
@@ -247,7 +247,7 @@ class Act079ViewNcField(
     private fun getWaitingImgDownloadIv(params: ViewGroup.LayoutParams): ImageView {
         return ImageView(context).apply {
             layoutParams = params
-            setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sand_watch_transp))
+            setImageDrawable(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.sand_watch_transp))
         }
     }
 

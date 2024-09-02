@@ -425,7 +425,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
     }
 
     private void setImagePlaceholder() {
-        Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+        Drawable dPlaceholder = getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
         iv_action_photo.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
         iv_action_photo.setImageDrawable(dPlaceholder);
     }

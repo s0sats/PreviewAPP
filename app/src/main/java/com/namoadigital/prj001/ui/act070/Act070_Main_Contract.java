@@ -107,6 +107,7 @@ public interface Act070_Main_Contract {
         void prepareSyncProcess(TK_Ticket mTicket, boolean allowOfflineSave);
 
         boolean checkOnlySyncNeeds(TK_Ticket mTicket);
+        boolean checkTripUpdateRequired();
 
         boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code);
 

@@ -120,7 +120,7 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
         val btn_ok = view.findViewById<TextView>(R.id.act011_dialog_btn_ok)
         val btn_cancel = view.findViewById<TextView>(R.id.act011_dialog_btn_cancel)
         val iv_error = view.findViewById<ImageView>(R.id.act011_dialog_iv_error)
-        drawable_ic = context.resources.getDrawable(R.drawable.ic_error_black_24dp)
+        drawable_ic = context.resources.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_error_black_24dp)
         drawable_ic.setColorFilter(
             context.resources.getColor(R.color.namoa_color_danger_red),
             PorterDuff.Mode.SRC_ATOP

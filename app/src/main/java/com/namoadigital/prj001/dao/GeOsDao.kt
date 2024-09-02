@@ -709,7 +709,7 @@ class GeOsDao(
                             && item.partitioned_execution == 0
                         ){
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-                        }
+                        } else { }
 
                 }
                 MdOrderType.DISPLAY_OPTION_SHOW_ONLY_CRITICAL ->{

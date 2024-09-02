@@ -10,6 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 
 import org.jetbrains.annotations.NotNull;
@@ -165,11 +166,19 @@ public interface Act005_Main_Presenter {
 
     boolean hasTripInProgress();
 
+    FSTrip hasTripWithUpdateRequired();
+
+    boolean hasTripUpdateRequired();
+
     boolean hasPositionUpdateRequired();
 
     void executePositionSave();
 
-    boolean hasTripUpdateRequired();
+    boolean hasTripSyncRequired();
 
     void executeTripDownload();
+
+    void executeTripSave();
+
+    boolean hasTicketForDownload();
 }

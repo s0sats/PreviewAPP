@@ -69,8 +69,8 @@ class Act086HistoricAlertVH(
 
                         Glide.with(root.context)
                             .load(item.photo1)
-                            .placeholder(R.drawable.sand_watch_transp)
-                            .error(R.drawable.sand_watch_transp)
+                            .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
+                            .error(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(frgAlertItemIvPhoto1)
@@ -86,8 +86,8 @@ class Act086HistoricAlertVH(
 
                         Glide.with(root.context)
                             .load(item.photo2)
-                            .placeholder(R.drawable.sand_watch_transp)
-                            .error(R.drawable.sand_watch_transp)
+                            .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
+                            .error(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(frgAlertItemIvPhoto2)
@@ -102,8 +102,8 @@ class Act086HistoricAlertVH(
 
                         Glide.with(root.context)
                             .load(item.photo3)
-                            .placeholder(R.drawable.sand_watch_transp)
-                            .error(R.drawable.sand_watch_transp)
+                            .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
+                            .error(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(frgAlertItemIvPhoto3)
@@ -118,8 +118,8 @@ class Act086HistoricAlertVH(
 
                         Glide.with(root.context)
                             .load(item.photo4)
-                            .placeholder(R.drawable.sand_watch_transp)
-                            .error(R.drawable.sand_watch_transp)
+                            .placeholder(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
+                            .error(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(frgAlertItemIvPhoto4)

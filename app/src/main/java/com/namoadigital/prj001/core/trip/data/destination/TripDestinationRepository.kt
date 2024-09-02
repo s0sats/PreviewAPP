@@ -2,21 +2,30 @@ package com.namoadigital.prj001.core.trip.data.destination
 
 import android.os.Bundle
 import com.namoadigital.prj001.adapter.trip.model.Extract
+import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.trip.domain.model.OdometerArrivedDestination
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FsTripDestination
-import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv
 import com.namoadigital.prj001.ui.act094.destination.domain.destination_availables.AvailableDestinationFilter
+import com.namoadigital.prj001.ui.act094.destination.domain.destination_availables.DestinationAvailables
 import com.namoadigital.prj001.ui.act094.destination.domain.select_destination.SelectDestinationRec
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
+import kotlinx.coroutines.flow.Flow
 
 interface TripDestinationRepository {
 
-    fun execServiceAvailableDestination(bundle: Bundle)
+    suspend fun getListExternalAddress() : List<DestinationAvailables>
+    suspend fun getListSiteAddress(): List<DestinationAvailables>
     fun execServiceSelectDestination(bundle: Bundle)
+    fun execServiceOvernightDestination(
+        trip:FSTrip?,
+        destinationType: String,
+        currentLat: Double?=null,
+        currentLon: Double?=null,
+    ):Flow<IResult<Unit>>
     fun saveFilterPreference(filter: AvailableDestinationFilter)
     fun getDestinationFilterPreference(): AvailableDestinationFilter
 
@@ -30,7 +39,7 @@ interface TripDestinationRepository {
     fun getTripLastDestinationCoordinate(customerCode: Long, tripPrefix: Int, tripCode:Int): Coordinates?
     fun getDestinationByStatus(customerCode: Long, tripPrefix: Int, tripCode:Int, status: DestinationStatus): FsTripDestination?
 
-    fun getDestinationStatus(
+    fun getLastDestinationStatus(
         tripPrefix: Int,
         tripCode: Int
     ): DestinationStatus
@@ -44,22 +53,30 @@ interface TripDestinationRepository {
 
     fun saveDestination(
         customerCode: Long,
-        response: String?,
-        destination: SelectionDestinationAvailable
+        remoteDestination: SelectDestinationRec,
+        destination: SelectionDestinationAvailable,
+        isOnlineFLow:Boolean = false
     ):Boolean
     fun saveOverNightDestination(
         customerCode: Long,
         remoteDestination: SelectDestinationRec,
+        isOnline: Boolean= true
     ):Boolean
 
-    fun setTripDestinationStatusChange(input: TripDestinationStatusChangeEnv)
+    suspend fun setTripDestinationStatusChange(
+        destinationSeq: Int,
+        status: String,
+        tripStatus: String
+    ): Flow<IResult<Unit>>
+
     fun getExtract(trip: FSTrip?): List<Extract<FsTripDestination>>
+    fun getListDestinations(tripPrefix: Int, tripCode: Int) : List<FsTripDestination>
     fun getListOdometerArrived() : List<OdometerArrivedDestination>
     fun saveDestinationDate(
         dateStart: String,
         dateEnd: String,
         destinationSeq: Int
-    )
+    ): Flow<IResult<Unit>>
 
     fun getPreviousValidDestination(
         customerCode: Long,
@@ -76,5 +93,7 @@ interface TripDestinationRepository {
         destinationSeq: Int?,
         type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType
     ): FsTripDestination?
+
+    fun getNextDestinationSeq(tripPrefix: Int, tripCode: Int): Int?
 
 }

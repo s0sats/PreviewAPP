@@ -178,14 +178,19 @@ class IActionSerialRepository constructor(
             )
         }
 
-    override fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
-        return serialDao.getByString(
-            MD_Product_Serial_Sql_002(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                productCode.toLong(),
-                serialId
-            ).toSqlQuery()
-        )
+    override fun getSerial(productCode: Int, serialId: String): MD_Product_Serial? {
+        try {
+            return serialDao.getByString(
+                MD_Product_Serial_Sql_002(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    productCode.toLong(),
+                    serialId
+                ).toSqlQuery()
+            )
+        } catch (ex: Exception) {
+            ToolBox_Inf.registerException(this::class.java.simpleName, ex)
+            return null
+        }
     }
 
     override suspend fun getProductInfo(productCode: Int): MD_Product {

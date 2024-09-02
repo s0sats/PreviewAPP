@@ -239,7 +239,7 @@ public class Act057_Inbound_Download_Adapter extends RecyclerView.Adapter<Recycl
             pv_done.setInnerText("\u2713");
             //pv_done.setTextColor(context.getResources().getColor(R.color.namoa_status_done));
             pv_done.setTextColor(context.getResources().getColor(R.color.font_normal));
-            pv_done.setPercentageBackgroundColor(context.getResources().getColor(R.color.namoa_status_done));
+            pv_done.setPercentageBackgroundColor(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_done));
             //pv_done.setMainBackgroundColor(context.getResources().getColor(android.R.color.transparent));
             pv_done.setMainBackgroundColor(context.getResources().getColor(R.color.namoa_icon_pressed_color));
             pv_done.setInnerBackgroundColor(context.getResources().getColor(R.color.namoa_color_gray));

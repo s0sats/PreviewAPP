@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
@@ -104,6 +105,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         ImageView icon_schedule = convertView.findViewById(R.id.so_left_icon);
         ImageView icon_clouds = convertView.findViewById(R.id.so_right_icon);
         TextView tv_site = convertView.findViewById(R.id.so_site_val);
+        LinearLayout layout_services = convertView.findViewById(R.id.so_service_layout);
+        TextView tv_service = convertView.findViewById(R.id.so_service_first);
         //
         //Seta Valores
         icon_clouds.setVisibility(View.GONE);
@@ -215,6 +218,18 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
             tv_pipeline_val.setVisibility(View.VISIBLE);
         } else {
             tv_pipeline_val.setVisibility(View.GONE);
+        }
+        //
+        layout_services.setVisibility(View.GONE);
+        //
+        if(item.getService() != null
+            && !item.getService().isEmpty()) {
+            String[] services = item.getService().split("\n");
+            boolean isOneService = services.length == 1;
+            if (isOneService) {
+                layout_services.setVisibility(View.VISIBLE);
+                tv_service.setText(services[0]);
+            }
         }
 
         create_date.setText(hmAux_Trans.get("create_date_lbl") + " " + ToolBox_Inf.millisecondsToString(

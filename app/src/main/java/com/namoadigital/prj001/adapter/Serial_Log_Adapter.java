@@ -175,7 +175,7 @@ public class Serial_Log_Adapter extends BaseAdapter {
             || checkStringValue(logObj.getFile_name())) {
                 if (logObj.isLog_downloaded()) {
                     drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
-                    drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
+                    drawable.setTint(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_done));
                     drawable.mutate();
                     iv_download.setImageDrawable(drawable);
                 } else {
@@ -226,7 +226,7 @@ public class Serial_Log_Adapter extends BaseAdapter {
             if(logObj.isLog_downloaded()){
                 //iv_download.setImageDrawable(context.getDrawable(R.drawable.ic_n_service2_24x24));
                 drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
-                drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
+                drawable.setTint(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_done));
                 drawable.mutate();
                 iv_download.setImageDrawable(drawable);
             }else{

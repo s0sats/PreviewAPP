@@ -377,6 +377,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_trip_update_ttl");
         transList.add("alert_trip_update_msg");
+        transList.add("alert_trip_update_required_ttl");
+        transList.add("alert_trip_update_required_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -837,20 +839,29 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        if (!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)) {
-            syncPipelineFlow(false);
-        } else {
+        if(mPresenter.checkTripUpdateRequired()){
             showAlert(
-                    hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
-                    hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            syncPipelineFlow(true);
-                        }
-                    },
-                    true
-            );
+                    hmAux_Trans.get("alert_trip_update_required_ttl"),
+                    hmAux_Trans.get("alert_trip_update_required_msg"),
+                    null,
+                    false
+                    );
+        }else{
+            if (!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)) {
+                syncPipelineFlow(false);
+            } else {
+                showAlert(
+                        hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
+                        hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                syncPipelineFlow(true);
+                            }
+                        },
+                        true
+                );
+            }
         }
     }
 
@@ -1441,8 +1452,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (preventSyncLoop) {
             preventSyncLoop = false;
         } else {
-            if ((mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
-                if (forceSendByFormExecution) {
+            if ((mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution)
+                    && ToolBox_Con.isOnline(context)
+                    && !mPresenter.checkTripUpdateRequired()) {
+                if (forceSendByFormExecution
+                ) {
                     forceSendByFormExecution = false;
                     mPresenter.prepareSyncProcess(mTicket, true);
                 } else {

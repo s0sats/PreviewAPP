@@ -476,10 +476,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 );
             }
             binding.tilPack.setHelperText(tilPackHelper);
-            binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
+            binding.tilPack.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_ok));
             //
         } else {
-            binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
+            binding.tilPack.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_error));
             binding.tilPack.setHelperText(null);
             binding.clSerialSearch.setVisibility(View.GONE);
             binding.clSerialSearchBtn.setEnabled(false);
@@ -694,7 +694,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             til.setHelperTextEnabled(true);
             til.setHelperText(helperText);
             til.setVisibility(View.VISIBLE);
-            til.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
+            til.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_ok));
             //Se required, seta borda de required e configura listener para aplicara e remover baseado
             //no conteudo digitado
             if(ConstantBaseApp.MASK_VIEW_TYPE_REQUIRED.equals(viewDef)){
@@ -702,8 +702,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     ContextCompat.getDrawable(
                         context,
                         mketAddInfo.getText() != null && mketAddInfo.getText().toString().trim().isEmpty()
-                        ? R.drawable.shape_error
-                        : R.drawable.shape_ok
+                        ? com.namoa_digital.namoa_library.R.drawable.shape_error
+                        : com.namoa_digital.namoa_library.R.drawable.shape_ok
                     )
                 );
                 //
@@ -1107,9 +1107,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private void applyBackgroundForRequireField(View til, boolean isStringNotEmpty) {
         if(isStringNotEmpty){
-            til.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_ok));
+            til.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_ok));
         }else{
-            til.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_error));
+            til.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_error));
         }
         //
         validateEnableFinalizeBtn();
@@ -1201,7 +1201,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     public void automationCleanForm() {
         //Reseta infos do serial
         binding.mketSerial.setText("");
-        binding.clSerial.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
+        binding.clSerial.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_error));
         binding.clSerialSearch.setVisibility(View.GONE);
         binding.clSerialSearchBtn.setEnabled(true);
         //Reseta infos de billing

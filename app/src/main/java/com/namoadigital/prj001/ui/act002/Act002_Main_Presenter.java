@@ -41,4 +41,6 @@ public interface Act002_Main_Presenter {
     void executeWSSoDownload();
 
     boolean checkSoSyncNeed();
+
+    void scheduleTicketCacheDownload();
 }

@@ -98,7 +98,7 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
                 break;
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
                 tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
-                drawable = context.getDrawable(R.drawable.ic_add_plus);
+                drawable = context.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_add_plus);
                 break;
         }
         if(drawable != null){

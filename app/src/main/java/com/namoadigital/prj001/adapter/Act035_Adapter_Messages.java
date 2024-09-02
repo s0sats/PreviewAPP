@@ -573,7 +573,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         tv_name.setText(hmAux.get("user_nick"));
 
         if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
-            iv_foto.setImageResource(R.drawable.sand_watch_transp);
+            iv_foto.setImageResource(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
         } else {
             iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
                 hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg", "") + "_thumb.jpg"
@@ -600,7 +600,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
         ImageView iv_badge = (ImageView) convertView.findViewById(R.id.act035_main_content_cell_iv_badge);
 
         if (hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL) == null || hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).isEmpty()) {
-            iv_foto.setImageResource(R.drawable.sand_watch_transp);
+            iv_foto.setImageResource(com.namoa_digital.namoa_library.R.drawable.sand_watch_transp);
         } else {
             iv_foto.setImageBitmap(BitmapFactory.decodeFile(Constant.THU_PATH + "/" +
                 hmAux.get(CH_MessageDao.MESSAGE_IMAGE_LOCAL).replace(".jpg", "") + "_thumb.jpg"

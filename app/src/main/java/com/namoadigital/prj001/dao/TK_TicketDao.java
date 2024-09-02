@@ -11,12 +11,16 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TkTicketOriginNc;
+import com.namoadigital.prj001.model.ticket.TkTicketToSync;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.sql.TkTicketOriginNcSql002;
 import com.namoadigital.prj001.util.Constant;
@@ -27,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     private final Mapper<TK_Ticket, ContentValues> toContentValuesMapper;
@@ -107,6 +112,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CLIENT_ID = "client_id";
     public static final String CLIENT_NAME = "client_name";
     public static final String ADDRESS_COUNTRY = "address_country";
+    public static final String ADDRESS_COUNTRY_ID = "address_country_id";
     public static final String ADDRESS_STATE = "address_state";
     public static final String ADDRESS_CITY = "address_city";
     public static final String ADDRESS_DISTRICT = "address_district";
@@ -116,6 +122,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String ADDRESS_ZIPCODE = "address_zipcode";
     public static final String ADDRESS_LAT = "address_lat";
     public static final String ADDRESS_LNG = "address_lng";
+    public static final String ADDRESS_PLUS_CODE = "address_plus_code";
     public static final String CONTRACT_CODE = "contract_code";
     public static final String CONTRACT_ID = "contract_id";
     public static final String CONTRACT_DESC = "contract_desc";
@@ -149,6 +156,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String IS_PRIORITY = "is_priority";
     public static final String HAS_OPEN_SO_PARTITION = "has_open_so_partition";
     public static final String HAS_ADDRESS = "has_address";
+    public static final String CONTACT_NAME = "contact_name";
+    public static final String CONTACT_PHONE = "contact_phone";
 
     public static final String KANBAN_STAGE_EXECUTION = "EXECUTION";
     public static final String KANBAN_STAGE_RELEASE_FOR_EXECUTION = "RELEASE_FOR_EXECUTION";
@@ -556,6 +565,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             db.delete(TK_Ticket_ApprovalDao.TABLE, sbWhere.toString(), null);
             db.delete(TK_Ticket_Approval_RejectionDao.TABLE, sbWhere.toString(), null);
             db.delete(TK_Ticket_MeasureDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_FormDao.TABLE, sbWhere.toString(), null);
             db.delete(TkTicketOriginNcDao.TABLE, sbWhere.toString(), null);
             //
             db.setTransactionSuccessful();
@@ -1071,6 +1081,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setAddress_country(cursor.getString(cursor.getColumnIndex(ADDRESS_COUNTRY)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_COUNTRY_ID))) {
+                tk_ticket.setAddress_countryId(null);
+            } else {
+                tk_ticket.setAddress_countryId(cursor.getString(cursor.getColumnIndex(ADDRESS_COUNTRY_ID)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(ADDRESS_STATE))) {
                 tk_ticket.setAddress_state(null);
             } else {
@@ -1115,6 +1130,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 tk_ticket.setAddress_lng(null);
             } else {
                 tk_ticket.setAddress_lng(cursor.getString(cursor.getColumnIndex(ADDRESS_LNG)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_PLUS_CODE))) {
+                tk_ticket.setAddress_plusCode(null);
+            } else {
+                tk_ticket.setAddress_plusCode(cursor.getString(cursor.getColumnIndex(ADDRESS_PLUS_CODE)));
             }
             if (cursor.isNull(cursor.getColumnIndex(CONTRACT_CODE))) {
                 tk_ticket.setContract_code(null);
@@ -1243,6 +1263,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setHas_open_so_partition(cursor.getInt(cursor.getColumnIndex(HAS_OPEN_SO_PARTITION)));
             tk_ticket.setHas_address(cursor.getInt(cursor.getColumnIndex(HAS_ADDRESS)));
 
+            tk_ticket.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
+            tk_ticket.setContactPhone(cursor.getString(cursor.getColumnIndex(CONTACT_PHONE)));
             return tk_ticket;
         }
     }
@@ -1428,6 +1450,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(CLIENT_CODE, tk_ticket.getClient_code());
             contentValues.put(CLIENT_ID, tk_ticket.getClient_id());
             contentValues.put(CLIENT_NAME, tk_ticket.getClient_name());
+            contentValues.put(ADDRESS_COUNTRY_ID, tk_ticket.getAddress_countryId());
             contentValues.put(ADDRESS_COUNTRY, tk_ticket.getAddress_country());
             contentValues.put(ADDRESS_STATE, tk_ticket.getAddress_state());
             contentValues.put(ADDRESS_CITY, tk_ticket.getAddress_city());
@@ -1438,6 +1461,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(ADDRESS_ZIPCODE, tk_ticket.getAddress_zipcode());
             contentValues.put(ADDRESS_LAT, tk_ticket.getAddress_lat());
             contentValues.put(ADDRESS_LNG, tk_ticket.getAddress_lng());
+            contentValues.put(ADDRESS_PLUS_CODE, tk_ticket.getAddress_plusCode());
             contentValues.put(CONTRACT_CODE, tk_ticket.getContract_code());
             contentValues.put(CONTRACT_ID, tk_ticket.getContract_id());
             contentValues.put(CONTRACT_DESC, tk_ticket.getContract_desc());
@@ -1475,24 +1499,68 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getHas_address() > -1) {
                 contentValues.put(HAS_ADDRESS, tk_ticket.getHas_address());
             }
+
+            contentValues.put(CONTACT_NAME, tk_ticket.getContactName());
+            contentValues.put(CONTACT_PHONE, tk_ticket.getContactPhone());
             //
             return contentValues;
         }
     }
 
 
-    public boolean hasSyncRequired(){
+    public List<TkTicketToSync> getSyncList(){
         ArrayList<HMAux> tickets = (ArrayList<HMAux>)  this.query_HM(
                 new Sql_Act068_002(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
         //
-        int qty = 0;
-        if (tickets != null) {
-            qty = tickets.size();
+        List<TkTicketToSync> syncTickets = new ArrayList<>();
+
+        for (HMAux ticket : tickets) {
+            //
+            syncTickets.add(new TkTicketToSync(
+                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Objects.requireNonNull(ticket.get(TICKET_PREFIX)),
+                    Objects.requireNonNull(ticket.get(TICKET_CODE)),
+                    Objects.requireNonNull(ticket.get(SCN)),
+                    ticket.get(OPEN_PRODUCT_CODE),
+                    ticket.get(OPEN_SERIAL_CODE),
+                    ticket.get(OPEN_SERIAL_ID)
+                )
+            );
+            //
+        }
+        return syncTickets;
+    }
+
+    public List<TK_Ticket> getSendList(long customer_code){
+        //
+        return (ArrayList<TK_Ticket>) query((
+                        new Sql_WS_TK_Ticket_Save_001(
+                                customer_code
+                        )
+                ).toSqlQuery()
+        );
+    }
+
+    //LUCHE - 23/03/2021 - Aplicado tratativa que faltava.
+    //No caso de satus erro, os ticket será setado como update required para
+    //um proximo envio.
+    public void forceScheduleTicketUpdateRequired(TK_Ticket ticket) {
+        ticket.setUpdate_required(1);
+        if(ticket.getStep() != null && ticket.getStep().size() > 0 ){
+            for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
+                tk_ticket_step.setUpdate_required(1);
+                //
+                if(tk_ticket_step.getCtrl() != null && tk_ticket_step.getCtrl().size() > 0){
+                    for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket_step.getCtrl()) {
+                        tk_ticket_ctrl.setUpdate_required(1);
+                    }
+                }
+            }
         }
         //
-        return qty > 0;
+        addUpdate(ticket);
     }
 }

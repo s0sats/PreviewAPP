@@ -114,7 +114,7 @@ class WsUserPosition : BaseWsIntentService("WsUserPosition", IntentServiceMode.U
                         checkResults(checkNewData, isCloudFlow)
                         //
                     },
-                    error = {
+                    error = { _, _->
                         if (positionItems.isNotEmpty()) {
                             positionItems.map { position ->
                                 dao.updateRequired(

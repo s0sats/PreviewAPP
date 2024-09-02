@@ -101,9 +101,9 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
         if( mTicketCtrl.getAction() != null
             && swithOnPhotoIcon()
         ){
-            ivPhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_on));
+            ivPhoto.setImageDrawable(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_camera_on));
         }else{
-            ivPhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_off));
+            ivPhoto.setImageDrawable(getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_camera_off));
         }
     }
 

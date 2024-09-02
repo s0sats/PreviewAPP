@@ -17,6 +17,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.onsite.TripOnSiteFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toListAdapter
 import com.namoadigital.prj001.model.trip.AvailableUsersRec
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.Companion.WS_TRIP_SEND_UPDATE
 
 class TripServiceCallbackManager constructor(
     private val fragmentNav: Fragment,
@@ -24,7 +25,8 @@ class TripServiceCallbackManager constructor(
     private val response: String,
     private val setTripFragment: () -> Unit,
     private val selectTrip: () -> Unit,
-    private val flowDownloadTrip: () -> Unit
+    private val flowDownloadTrip: () -> Unit,
+    private val flowCloud: () -> Unit,
 ){
     fun tripServiceSuccess(){
         when (wsProcess) {
@@ -84,6 +86,10 @@ class TripServiceCallbackManager constructor(
             WS_TRIP_DOWNLOAD -> {
                 fragmentNav.getFragment<TripBaseFragment<*>>()?.update()
                 flowDownloadTrip()
+            }
+            WS_TRIP_SEND_UPDATE -> {
+                setTripFragment()
+                flowCloud()
             }
             else -> {
                 fragmentNav.getFragment<TripBaseFragment<*>>()?.update()

@@ -4,9 +4,14 @@ object TripTranslate {
 
     const val CANCEL = "tv_cancel"
     const val SAVE = "tv_save"
+    const val SEND_BTN = "send_btn"
     const val SAVE_END_TRIP_BTN = "save_end_trip_btn"
     const val TRIP_SUCCESS_SEND_DATA = "trip_success_send_data"
     const val TRIP_SUCCESS_SEND_USER_DATA = "trip_success_send_user_data"
+
+    //TRIP OFFLINE
+    const val ALERT_TRIP_OFFLINE_TTL = "alert_trip_offline_ttl"
+    const val ALERT_TRIP_OFFLINE_MSG = "alert_trip_offline_msg"
     //Fleet Dialog
     const val FLEET_DIALOG_ORIGIN_TITLE = "fleet_dialog_origin_title"
     const val FLEET_DIALOG_DESTINATION_TITLE = "fleet_dialog_destination_title"
@@ -20,6 +25,19 @@ object TripTranslate {
     const val FLEET_LOW_ODOMETER_ERROR = "fleet_low_odometer_error"
     const val FLEET_PHOTO_DIALOG_REQUIRED = "fleet_photo_dialog_required"
     const val FLEET_PHOTO_DIALOG_ERROR_DOWNLOAD = "fleet_photo_dialog_error_download"
+
+
+    //OFFLINE
+    const val SAVE_TRIP_OFFLINE_TOAST = "save_trip_offline_toast"
+    const val ERROR_SAVE_OFFLINE_TITLE = "error_save_offline_title"
+    const val ERROR_SAVE_OFFLINE_MSG = "error_save_offline_msg"
+    const val ERROR_OFFLINE_GENERIC_TITLE = "error_offline_generic_title"
+    const val ERROR_OFFLINE_GENERIC_MSG = "error_offline_generic_msg"
+    const val ERROR_TRY_SAVE_ONLINE_TITLE = "error_try_save_online_ttl"
+    const val ERROR_TRY_SAVE_ONLINE_MSG = "error_try_save_online_msg"
+    const val ERROR_ADD_USER_TTL = "error_add_user_ttl"
+    const val ERROR_ADD_USER_MSG = "error_add_user_msg"
+
 
     //DIALOG ERROR
     const val DIALOG_ERROR_CLOSE_LBL = "dialog_error_btn_close"
@@ -71,6 +89,8 @@ object TripTranslate {
     const val PROGRESS_TRIP_DESTINATION_EDIT_MSG = "progress_trip_destination_edit_msg"
     const val ALERT_NEW_TRIP_LATLON_ERROR_TTL = "alert_new_trip_latlon_error_ttl"
     const val ALERT_NEW_TRIP_LATLON_ERROR_MSG = "alert_new_trip_latlon_error_msg"
+    const val ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG = "alert_has_trip_update_required_msg"
+    const val ALERT_HAS_TRIP_UPDATE_REQUIRED_TTL = "alert_has_trip_update_required_ttl"
     const val ALERT_NEW_TRIP_MSG = "alert_new_trip_msg"
     const val ALERT_NEW_TRIP_CREATE_BTN = "alert_new_trip_create_btn"
     const val ALERT_NEW_TRIP_CANCEL_BTN = "alert_new_trip_cancel_btn"

@@ -52,7 +52,7 @@ class Act040SOExpressPackServicesAdapter(
             if(position == highlightedPosition){
                 binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_myactions_blue_bg)
                 binding.clPackServicesCell.postDelayed(Runnable {
-                    binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.padrao_WHITE)
+                    binding.clPackServicesCell.background = binding.root.context.getDrawable(com.namoa_digital.namoa_library.R.color.padrao_WHITE)
                     highlightedPosition =-1
                 }, 500)
             }

@@ -313,30 +313,18 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         boolean filterScheduled = false;
 
         for ( CheckBox checkBox :checkBoxList ) {
-            switch (checkBox.getId() ){
-                case R.id.act013_chk_in_process:
-
-                    if( chk_processing.getVisibility() == View.VISIBLE
-                        && chk_processing.isChecked() ){
-                        filterInProcessing = true;
-                    }
-                    break;
-                case R.id.act013_chk_waiting_sync:
-
-                    if( chk_waiting_sync.getVisibility() == View.VISIBLE
-                        && chk_waiting_sync.isChecked() ){
-                        filterWaitingSync = true;
-                    }
-
-                    break;
-                case R.id.act013_chk_scheduled:
-                    if( chk_scheduled.getVisibility() == View.VISIBLE
-                        && chk_scheduled.isChecked() ){
-                        filterScheduled = true;
-                    }
-                    break;
-                default:
-                    break;
+            if (checkBox.getId() == R.id.act013_chk_in_process) {
+                if (chk_processing.getVisibility() == View.VISIBLE && chk_processing.isChecked()) {
+                    filterInProcessing = true;
+                }
+            } else if (checkBox.getId() == R.id.act013_chk_waiting_sync) {
+                if (chk_waiting_sync.getVisibility() == View.VISIBLE && chk_waiting_sync.isChecked()) {
+                    filterWaitingSync = true;
+                }
+            } else if (checkBox.getId() == R.id.act013_chk_scheduled) {
+                if (chk_scheduled.getVisibility() == View.VISIBLE && chk_scheduled.isChecked()) {
+                    filterScheduled = true;
+                }
             }
         }
 

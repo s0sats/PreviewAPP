@@ -8,6 +8,8 @@ sealed class SelectDestinationUiEvent {
     data class ListingDestinations(val list: List<SelectionDestinationAvailable>?) :
         SelectDestinationUiEvent()
 
+    object Loading : SelectDestinationUiEvent()
+
     data class OpenDialog(val dialogType: DialogType) : SelectDestinationUiEvent() {
 
         sealed class DialogType {

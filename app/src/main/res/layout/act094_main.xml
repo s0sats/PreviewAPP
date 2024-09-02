@@ -102,13 +102,23 @@
         android:layout_height="0dp"
         android:paddingHorizontal="12dp"
         android:paddingTop="12dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintTop_toBottomOf="@+id/act083_cv_header"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/select_destination_item" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="100dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/m3_namoa_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act083_cv_header" />
     <TextView
         android:id="@+id/empty_list"
         style="@style/TextAppearance.Material3.BodyLarge"

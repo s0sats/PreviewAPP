@@ -1217,6 +1217,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
     @Override
+    public boolean checkTripUpdateRequired(){
+        FSTripDao dao = new FSTripDao(context);
+        return dao.hasTripUpdateRequired();
+    }
+
+
+    @Override
     public boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code) {
         TK_Ticket aux = getTicketObj(ticket_prefix, ticket_code);
         if (aux != null

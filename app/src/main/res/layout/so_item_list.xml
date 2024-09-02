@@ -150,6 +150,7 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
+
                     <TextView
                         android:id="@+id/so_serial_id_val"
                         style="@style/TextAppearance.Material3.TitleLarge"
@@ -160,7 +161,6 @@
                         android:text="SERIAL NAME"
                         android:textAllCaps="true"
                         android:textColor="@color/m3_namoa_onSurface" />
-
 
                     <ImageView
                         android:id="@+id/so_block"
@@ -305,9 +305,30 @@
                     android:paddingTop="5dp"
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
                     tools:text="teste" />
-
+                
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/so_service_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp" />
+
+                <TextView
+                    android:id="@+id/so_service_first"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    tools:text="Um Texto" />
+
+            </LinearLayout>
+            
             <View
                 android:layout_width="match_parent"
                 android:layout_height="12dp" />

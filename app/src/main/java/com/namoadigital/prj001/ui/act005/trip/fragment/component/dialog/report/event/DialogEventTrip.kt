@@ -53,7 +53,7 @@ class DialogEventTrip constructor(
     private val eventType: FSEventType,
     private val onOpenCamera: OpenCamera,
     private val onSave: (HMAux, FSSaveEvent) -> Unit,
-    private val checkEventIntersectionDate: (startDateInMilis: Long,endDateInMilis: Long?, tripEvent: FSTripEvent?, waiting:Boolean) -> GetEventRestrictionDateUseCase.OutputParams,
+    private val checkEventIntersectionDate: (startDateInMilis: Long, endDateInMilis: Long?, tripEvent: FSTripEvent?, waiting: Boolean) -> GetEventRestrictionDateUseCase.OutputParams,
 ) : BaseTripDialog<DialogEventTripBinding>(trip) {
 
 
@@ -63,7 +63,6 @@ class DialogEventTrip constructor(
 
     private val isNewEvent = event == null
     private var eventTypeSelected: FSEventType? = null
-//    private lateinit var dialogFinish: EventDoneDialog
 
     init {
         getEventPhotoName()
@@ -81,7 +80,14 @@ class DialogEventTrip constructor(
 
                 initializeLabels()
                 initializeListeners()
-                observerPhoto()
+                if(!eventType.hidePhoto) {
+                    observerPhoto()
+                } else {
+                    photoLoading.visibility = View.GONE
+                    btnCamPhoto.visibility = View.GONE
+                    buttonRetryDownloadImage.visibility = View.GONE
+                    ivPhoto.visibility = View.GONE
+                }
             }
 
 
@@ -89,7 +95,7 @@ class DialogEventTrip constructor(
     }
 
     private fun DialogEventTripBinding.initializeLabels() {
-        tvTitle.text =  eventType.eventTypeDesc
+        tvTitle.text = eventType.eventTypeDesc
         //
         etLayoutCost.hint = hmAuxTranslate[DIALOG_EVENT_COST_HINT]
         etLayoutComment.hint = hmAuxTranslate[DIALOG_EVENT_COMMENT_HINT]
@@ -107,7 +113,7 @@ class DialogEventTrip constructor(
         etLayoutEndHour.hint = hmAuxTranslate[DIALOG_EVENT_HOUR_HINT]
         //
         eventType.let { fsEventType ->
-            if(!fsEventType.isWaitAllowed){
+            if (!fsEventType.isWaitAllowed) {
                 tvStartDate.visibility = View.GONE
             }
             event?.let { event ->
@@ -127,8 +133,9 @@ class DialogEventTrip constructor(
                 etStartDate.setText(startDate)
                 etStartHour.setText(startHour)
                 setEndDateSwitchLayout(fsEventType)
-                if(eventType.isWaitAllowed
-                    && isExtractFlow) {
+                if (eventType.isWaitAllowed
+                    && isExtractFlow
+                ) {
                     event.eventEnd?.let { date ->
                         val (endDate, endHour) = date.parseDatePair()
                         etEndDate.setText(endDate)
@@ -149,22 +156,23 @@ class DialogEventTrip constructor(
             }
         }
 
-//        if (isNewEvent) btnSaveToStyleFilled(true)
-
     }
 
     private fun DialogEventTripBinding.setEndDateSwitchLayout(fsEventType: FSEventType) {
         if (fsEventType.isWaitAllowed && !isExtractFlow) {
             clShowEndDate.visibility = View.VISIBLE
             tvShowEndDateLbl.text = hmAuxTranslate[DIALOG_EVENT_SHOW_END_DATE_OPT]
-        }else{
+        } else {
             clShowEndDate.visibility = View.GONE
         }
     }
 
-    private fun DialogEventTripBinding.initializeComments(event: FSTripEvent?, fsEventType: FSEventType) {
+    private fun DialogEventTripBinding.initializeComments(
+        event: FSTripEvent?,
+        fsEventType: FSEventType
+    ) {
         etLayoutComment.visibility = View.GONE
-        if(!fsEventType.hideComment) {
+        if (!fsEventType.hideComment) {
             etLayoutComment.visibility = View.VISIBLE
             updateFieldHintForRequiredStatus(etLayoutComment, fsEventType.isRequiredComment)
             event?.let {
@@ -175,12 +183,15 @@ class DialogEventTrip constructor(
         }
     }
 
-    private fun DialogEventTripBinding.initializeCost(event: FSTripEvent?, fsEventType: FSEventType) {
+    private fun DialogEventTripBinding.initializeCost(
+        event: FSTripEvent?,
+        fsEventType: FSEventType
+    ) {
         etLayoutCost.visibility = View.GONE
-        if(!fsEventType.hideCost) {
+        if (!fsEventType.hideCost) {
             etLayoutCost.visibility = View.VISIBLE
             updateFieldHintForRequiredStatus(etLayoutCost, fsEventType.isRequiredCost)
-            event?.let{
+            event?.let {
                 event.cost?.let {
                     val formattedValue = formatDouble(it)
                     formattedValue.replace(".", ",")
@@ -198,40 +209,6 @@ class DialogEventTrip constructor(
     } else {
         String.format("%.2f", it)
     }
-
-//    @SuppressLint("ResourceType")
-//    private fun DialogEventTripBinding.btnSaveToStyleFilled(isFilled: Boolean = false) {
-//        if (isFilled) {
-//            btnSave.strokeWidth = 0
-//            btnSave.backgroundTintList = ResourcesCompat.getColorStateList(
-//                context.resources,
-//                R.drawable.button_theme_primary,
-//                null
-//            )
-//            btnSave.setTextColor(
-//                ResourcesCompat.getColor(
-//                    context.resources,
-//                    R.color.m3_namoa_surface,
-//                    null
-//                )
-//            )
-//            return
-//        }
-//
-//        btnSave.strokeWidth = 1
-//        btnSave.backgroundTintList = ResourcesCompat.getColorStateList(
-//            context.resources,
-//            R.drawable.namoa_theme_button_outlined,
-//            null
-//        )
-//        btnSave.setTextColor(
-//            ResourcesCompat.getColor(
-//                context.resources,
-//                R.drawable.button_theme_primary,
-//                null
-//            )
-//        )
-//    }
 
     private fun DialogEventTripBinding.initializeListeners() {
         etCost.filters = arrayOf(object : InputFilter {
@@ -263,7 +240,7 @@ class DialogEventTrip constructor(
         btnClose.setOnClickListener { dismiss() }
 
         switchShowEndDate.setOnCheckedChangeListener { _, checkedId ->
-            if(checkedId){
+            if (checkedId) {
                 setEndDateInputLayout(View.VISIBLE)
                 btnFinish.text = hmAuxTranslate[DIALOG_EVENT_BTN_FINISH]
                 val currentDate = getCurrentDateApi()
@@ -272,7 +249,7 @@ class DialogEventTrip constructor(
                 etEndHour.setText(endHour)
                 isValidEndDate(false)
                 updateStateButtons()
-            }else{
+            } else {
                 clearInvalidEndDateLayout()
                 setEndDateInputLayout(View.GONE)
                 btnFinish.text = hmAuxTranslate[DIALOG_EVENT_BTN_SAVE]
@@ -292,10 +269,10 @@ class DialogEventTrip constructor(
 
         btnFinish.setOnClickListener {
             if (isExtractFlow) {
-                val validEndDate = if(!eventType.isWaitAllowed){
+                val validEndDate = if (!eventType.isWaitAllowed) {
                     //
                     "${etStartDate.text.toString()} ${etStartHour.text.toString()}"
-                }else {
+                } else {
                     "${etEndDate.text.toString()} ${etEndHour.text.toString()}"
                 }
                 showAlert(
@@ -305,8 +282,8 @@ class DialogEventTrip constructor(
                         sendEvent(EventStatus.DONE, validEndDate)
                     }
                 )
-            }else{
-                if(isSaveMode()) {
+            } else {
+                if (isSaveMode()) {
                     showAlert(
                         title = hmAuxTranslate[DIALOG_EVENT_ALERT_SAVE_TTL],
                         message = hmAuxTranslate[DIALOG_EVENT_ALERT_SAVE_MSG],
@@ -315,10 +292,10 @@ class DialogEventTrip constructor(
                         }
                     )
                     return@setOnClickListener
-                }else{
-                    val validEndDate = if(!eventType.isWaitAllowed){
+                } else {
+                    val validEndDate = if (!eventType.isWaitAllowed) {
                         "${etStartDate.text.toString()} ${etStartHour.text.toString()}"
-                    }else {
+                    } else {
                         "${etEndDate.text.toString()} ${etEndHour.text.toString()}"
                     }
                     showAlert(
@@ -331,16 +308,6 @@ class DialogEventTrip constructor(
                 }
             }
 
-//            dialogFinish = EventDoneDialog(
-//                context,
-//                trip,
-//                dateStart = "${etStartDate.text.toString()} ${etStartHour.text.toString()}",
-//                onSave = {
-//                    sendEvent(status = EventStatus.DONE, dateEnd = it)
-//                }
-//            )
-//
-//            dialogFinish.show()
         }
 
 
@@ -394,35 +361,12 @@ class DialogEventTrip constructor(
 
         etCost.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
-//
-//                val color =
-//                    if (eventTypeSelected?.isRequiredCost == true
-//                        && text?.isEmpty() == true
-//                    ) {
-//                        R.color.edit_text_color_required
-//                    } else {
-//                        R.drawable.edittext_theme
-//                    }
-//
-//                etLayoutCost.setBoxStrokeColorState(context, color)
-//                etLayoutCost.setHintTextColor(context, color)
-
                 updateStateButtons(checkRequiredRules())
             }
         )
 
         etComment.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
-//
-//                val color =
-//                    if (eventTypeSelected?.isRequiredComment == true && text?.isEmpty() == true) {
-//                        R.color.edit_text_color_required
-//                    } else {
-//                        R.drawable.edittext_theme
-//                    }
-//
-//                etLayoutComment.setBoxStrokeColorState(context, color)
-//                etLayoutComment.setHintTextColor(context, color)
 
                 updateStateButtons(checkRequiredRules())
             }
@@ -432,7 +376,7 @@ class DialogEventTrip constructor(
 
     private fun DialogEventTripBinding.checkRequiredRules() =
         !eventType.isWaitAllowed
-                ||  switchShowEndDate.isChecked
+                || switchShowEndDate.isChecked
                 || isExtractFlow
 
     private fun showAlert(
@@ -457,19 +401,23 @@ class DialogEventTrip constructor(
                 success = {
                     photoLoading.visibility = View.GONE
                     btnCamPhoto.visibility = View.GONE
-                    updatePhotoViews(getPhoto(), false)
+                    buttonRetryDownloadImage.visibility = View.GONE
+                    updatePhotoViews(getPhoto())
                 },
-                loading = {
-                    with(binding) {
-                        photoLoading.visibility = View.VISIBLE
-                        btnCamPhoto.visibility = View.GONE
-                        buttonRetryDownloadImage.visibility = View.GONE
-                    }
+                loading = { _, _ ->
+                    photoLoading.visibility = View.VISIBLE
+                    btnCamPhoto.visibility = View.GONE
+                    buttonRetryDownloadImage.visibility = View.GONE
+                },
+                error = { _, _ ->
+                    btnCamPhoto.visibility = View.VISIBLE
+                    buttonRetryDownloadImage.visibility = View.GONE
+                    photoLoading.visibility = View.GONE
                 },
                 failed = {
-                    binding.photoLoading.visibility = View.GONE
-                    binding.btnCamPhoto.visibility = View.GONE
-                    binding.buttonRetryDownloadImage.apply {
+                    photoLoading.visibility = View.GONE
+                    btnCamPhoto.visibility = View.GONE
+                    buttonRetryDownloadImage.apply {
                         visibility = View.VISIBLE
                         text = hmAuxTranslate[DIALOG_EVENT_RETRY_IMAGE_LBL]
                         setOnClickListener {
@@ -482,7 +430,10 @@ class DialogEventTrip constructor(
     }
 
     private var isFirstSelected = false
-    private fun DialogEventTripBinding.eventSelected(selected: FSEventType?, isFirstEvent: Boolean = false) {
+    private fun DialogEventTripBinding.eventSelected(
+        selected: FSEventType?,
+        isFirstEvent: Boolean = false
+    ) {
         selected?.let { type ->
             //
             if (etCost.text.toString().isNotEmpty() || isFirstEvent) {
@@ -505,7 +456,7 @@ class DialogEventTrip constructor(
             //
             if (isExtractFlow && type.isWaitAllowed) {
                 setEndDateInputLayout(View.VISIBLE)
-            }else{
+            } else {
                 setEndDateInputLayout(View.GONE)
             }
 
@@ -519,32 +470,32 @@ class DialogEventTrip constructor(
 //            btnSave.isEnabled = true
 
             btnDelete.visibility = when {
-                isExtractFlow && event?.isFinalized ?:false -> View.VISIBLE
+                isExtractFlow && event?.isFinalized ?: false -> View.VISIBLE
                 !isNewEvent || (isExtractFlow && !type.isWaitAllowed) -> View.VISIBLE
                 else -> View.INVISIBLE
             }
             //
-            btnCamPhoto.visibility = View.GONE
             if (!type.hidePhoto) {
-                btnCamPhoto.visibility = View.VISIBLE
                 btnCamPhoto.text = when {
                     type.isRequiredPhoto -> hmAuxTranslate[DIALOG_EVENT_BTN_PHOTO_LBL] + " *"
                     else -> hmAuxTranslate[DIALOG_EVENT_BTN_PHOTO_LBL]
                 }
                 //
-                if(type.isRequiredPhoto){
+                if (type.isRequiredPhoto) {
                     btnCamPhoto.backgroundTintList = ContextCompat.getColorStateList(
                         context,
                         R.color.m3_namoa_primary
                     )
                     btnCamPhoto.iconTint = ContextCompat.getColorStateList(
                         context,
-                        R.color.namoa_camera_white
+                        com.namoa_digital.namoa_library.R.color.namoa_camera_white
                     )
-                    btnCamPhoto.setTextColor(ContextCompat.getColorStateList(
-                        context,
-                        R.color.namoa_camera_white
-                    ))
+                    btnCamPhoto.setTextColor(
+                        ContextCompat.getColorStateList(
+                            context,
+                            com.namoa_digital.namoa_library.R.color.namoa_camera_white
+                        )
+                    )
                 }
                 //
                 btnCamPhoto.backgroundTintList = when {
@@ -552,6 +503,7 @@ class DialogEventTrip constructor(
                         context,
                         R.color.m3_namoa_primary
                     )
+
                     else -> ContextCompat.getColorStateList(
                         context,
                         android.R.color.transparent
@@ -589,34 +541,37 @@ class DialogEventTrip constructor(
             val isExistsPhoto = ivPhoto.visibility == View.VISIBLE
             val endDateExists = etLayoutEndDate.isVisible
             //
-            if(cost.isNullOrBlank() && checkRequired){
+            if (cost.isNullOrBlank() && checkRequired) {
                 updateFieldColorForRequiredStatus(etLayoutCost, type.isRequiredCost)
-            }else{
+            } else {
                 if (!cost.isNullOrBlank()) {
                     updateFieldColorForRequiredStatus(etLayoutCost, false)
                 }
             }
             //
-            if (comment.isNullOrBlank() && checkRequired){
+            if (comment.isNullOrBlank() && checkRequired) {
                 updateFieldColorForRequiredStatus(etLayoutComment, type.isRequiredComment)
-            }else{
+            } else {
                 if (!comment.isNullOrBlank()) {
                     updateFieldColorForRequiredStatus(etLayoutComment, false)
                 }
             }
             //
-            if(isSaveMode()){
+            if (isSaveMode()) {
                 btnFinish.isEnabled = when {
                     isNewEvent && isFirstSelected -> true
                     isNewEvent && !isValidStartDate(false) -> false
-                    !isNewEvent && (!isValidStartDate(false) || endDateExists && !isValidEndDate(false)) -> false
+                    !isNewEvent && (!isValidStartDate(false) || endDateExists && !isValidEndDate(
+                        false
+                    )) -> false
+
                     else -> if (!isNewEvent) {
                         checkFormState()
                     } else {
                         true
                     }
                 }
-            }else{
+            } else {
 
                 btnFinish.isEnabled = when {
                     !isValidStartDate(false) -> false
@@ -646,9 +601,9 @@ class DialogEventTrip constructor(
 
         val startNewDate = (etStartDate.text.toString() + " " + etStartHour.text.toString())
 
-        val dateEnd = event?.eventEnd?.let{
-            if(it.isNotBlank()) it.parseDate() else ""
-        }?:""
+        val dateEnd = event?.eventEnd?.let {
+            if (it.isNotBlank()) it.parseDate() else ""
+        } ?: ""
 
         val endNewDate = (etEndDate.text.toString() + " " + etEndHour.text.toString())
 
@@ -660,9 +615,9 @@ class DialogEventTrip constructor(
         val isEqualsComment = comment == (event?.comment ?: "")
         val isEqualsStartDate = startNewDate == (event?.eventStart?.parseDate() ?: "")
         val isEqualsEndDate =
-            if(eventType.isWaitAllowed){
+            if (eventType.isWaitAllowed) {
                 endNewDate == dateEnd
-            }else{
+            } else {
                 true
             }
 
@@ -737,12 +692,15 @@ class DialogEventTrip constructor(
         }
     }
 
-    private fun DialogEventTripBinding.updatePhotoViews(bitmap: Bitmap?, requiredFields: Boolean=true) {
+    private fun DialogEventTripBinding.updatePhotoViews(
+        bitmap: Bitmap?,
+    ) {
         ivPhoto.apply {
             visibility = if (bitmap == null || eventType.hidePhoto) View.GONE else View.VISIBLE
             setImageBitmap(bitmap)
         }
-        btnCamPhoto.visibility = if (bitmap == null && !eventType.hidePhoto) View.VISIBLE else View.GONE
+        btnCamPhoto.visibility =
+            if (bitmap == null && !eventType.hidePhoto) View.VISIBLE else View.GONE
         scrollView3.invalidate()
         updateStateButtons(checkRequiredRules())
 
@@ -752,6 +710,7 @@ class DialogEventTrip constructor(
         val (prefix, code) = trip.prefixAndCode
         val newPathFile = generateNewFilePath(context, prefix, code)
 
+        photoPathLoading()
         handlePhoto(context, event?.getEventPhoto() ?: FSTripPhoto(), newPathFile)
     }
 
@@ -771,7 +730,9 @@ class DialogEventTrip constructor(
             var sendEndDate: String? = null
 
             dateEnd?.let { dateEnd ->
-                val isEqualsDate = event?.eventEnd != null && event.eventEnd?.parseDate() == dateEnd
+                val isEqualsDate =
+                    event?.eventEnd != null && event.eventEnd?.takeIf { it.isNotEmpty() }
+                        ?.parseDate() == dateEnd
                 sendEndDate = if (isEqualsDate) event?.eventEnd else dateEnd.parseFullDate()
             }
 
@@ -834,7 +795,7 @@ class DialogEventTrip constructor(
             return false
         }
         //
-        if(getStartDateFormatted().isNotBlank()) {
+        if (getStartDateFormatted().isNotBlank()) {
             val startdateToMilliseconds =
                 ToolBox_Inf.dateToMilliseconds(getStartDateFormatted().parseFullDate())
 
@@ -852,7 +813,10 @@ class DialogEventTrip constructor(
             }.let { isEqual ->
                 if (isEqual) {
                     setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!)
-                    setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!, false)
+                    setEndDateErrorLayout(
+                        hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!,
+                        false
+                    )
                     btnFinish.isEnabled = false
                     return false
                 }
@@ -915,7 +879,7 @@ class DialogEventTrip constructor(
     }
 
     private fun scrollDownToError(scrollView3: ScrollView) {
-        scrollView3.postDelayed({scrollView3.fullScroll(ScrollView.FOCUS_DOWN)}, 100)
+        scrollView3.postDelayed({ scrollView3.fullScroll(ScrollView.FOCUS_DOWN) }, 100)
     }
 
     private fun DialogEventTripBinding.isValidEndDate(stateButtonValid: Boolean = true): Boolean {
@@ -957,32 +921,38 @@ class DialogEventTrip constructor(
             startdateToMilliseconds,
             dateToMilliseconds,
             event,
-            eventType.isWaitAllowed)
-        tripEventError.event?.let{
-            if(tripEventError.startDateError && !tripEventError.endDateError) {
-                setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                    FormatDateType.DateAndHour(it.eventStart ?: "")
-                ) + getEventEndDateErrorMsg(it))
+            eventType.isWaitAllowed
+        )
+        tripEventError.event?.let {
+            if (tripEventError.startDateError && !tripEventError.endDateError) {
+                setStartDateErrorLayout(
+                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
+                        FormatDateType.DateAndHour(it.eventStart ?: "")
+                    ) + getEventEndDateErrorMsg(it)
+                )
             }
             //
-            if(tripEventError.endDateError && !tripEventError.startDateError) {
-                setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
-                        context.formatDate(
-                            FormatDateType.DateAndHour(it.eventStart ?: "")
-                        ) + getEventEndDateErrorMsg(it), false
+            if (tripEventError.endDateError && !tripEventError.startDateError) {
+                setEndDateErrorLayout(
+                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
+                            context.formatDate(
+                                FormatDateType.DateAndHour(it.eventStart ?: "")
+                            ) + getEventEndDateErrorMsg(it), false
                 )
             }
-            if(tripEventError.endDateError && tripEventError.startDateError) {
+            if (tripEventError.endDateError && tripEventError.startDateError) {
                 //
-                setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                    FormatDateType.DateAndHour(it.eventStart ?: "")
-                ) + getEventEndDateErrorMsg(it)
+                setStartDateErrorLayout(
+                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
+                        FormatDateType.DateAndHour(it.eventStart ?: "")
+                    ) + getEventEndDateErrorMsg(it)
                 )
                 //
-                setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
-                        context.formatDate(
-                            FormatDateType.DateAndHour(it.eventStart ?: "")
-                        ) + getEventEndDateErrorMsg(it),
+                setEndDateErrorLayout(
+                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
+                            context.formatDate(
+                                FormatDateType.DateAndHour(it.eventStart ?: "")
+                            ) + getEventEndDateErrorMsg(it),
                     false
                 )
             }
@@ -1010,10 +980,10 @@ class DialogEventTrip constructor(
         return true
     }
 
-    private fun getEventEndDateErrorMsg(it: FSTripEvent):String {
-        if(!it.eventStart.isNullOrBlank()
+    private fun getEventEndDateErrorMsg(it: FSTripEvent): String {
+        if (!it.eventStart.isNullOrBlank()
             && !it.eventEnd.isNullOrBlank()
-        ){
+        ) {
             compareDates(
                 context.formatDate(
                     FormatDateType.DateAndHour(it.eventStart ?: "")
@@ -1021,24 +991,24 @@ class DialogEventTrip constructor(
                 context.formatDate(
                     FormatDateType.DateAndHour(it.eventEnd ?: "")
                 )
-            ){ startDate, endDate ->
+            ) { startDate, endDate ->
                 startDate == endDate
             }.let { isEqual ->
                 if (isEqual) {
-                   return ""
+                    return ""
                 }
             }
             return it.eventEnd?.let { end ->
                 " - " + context.formatDate(
                     FormatDateType.DateAndHour(end ?: "")
                 )
-            }?: ""
-        }else{
+            } ?: ""
+        } else {
             return it.eventEnd?.let { end ->
                 " - " + context.formatDate(
                     FormatDateType.DateAndHour(end ?: "")
                 )
-            }?: ""
+            } ?: ""
         }
 
     }
@@ -1053,7 +1023,7 @@ class DialogEventTrip constructor(
     }
 
     private fun DialogEventTripBinding.getEndDateFormatted() =
-            "${etEndDate.text.toString()} ${etEndHour.text.toString()}"
+        "${etEndDate.text.toString()} ${etEndHour.text.toString()}"
 
 
     private fun DialogEventTripBinding.getStartDateFormatted() =
@@ -1070,7 +1040,10 @@ class DialogEventTrip constructor(
         etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_theme)
     }
 
-    private fun DialogEventTripBinding.setEndDateErrorLayout(errorLbl: String, isErrorEnabled:Boolean) {
+    private fun DialogEventTripBinding.setEndDateErrorLayout(
+        errorLbl: String,
+        isErrorEnabled: Boolean
+    ) {
         tvDateEndInvalid.text = errorLbl
         etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_error)
         etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_error)
@@ -1106,7 +1079,7 @@ class DialogEventTrip constructor(
         binding.updatePhotoViews(updatePhoto())
     }
 
-    fun DialogEventTripBinding.isSaveMode():Boolean{
+    fun DialogEventTripBinding.isSaveMode(): Boolean {
         return !isExtractFlow
                 && eventType.isWaitAllowed
                 && !switchShowEndDate.isChecked
@@ -1141,7 +1114,8 @@ class DialogEventTrip constructor(
         const val DIALOG_EVENT_ALERT_FINISH_TTL = "dialog_event_alert_finish_ttl"
         const val DIALOG_EVENT_ALERT_FINISH_MSG = "dialog_event_alert_finish_msg"
         const val DIALOG_EVENT_SHOW_END_DATE_OPT = "dialog_event_show_end_date_opt"
-        const val DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL = "dialog_event_trip_date_conflict_error_lbl"
+        const val DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL =
+            "dialog_event_trip_date_conflict_error_lbl"
         const val DIALOG_EVENT_DATE_EQUAL_ERROR_LBL = "dialog_event_date_equal_error_lbl"
         fun loadTranslation(context: Context): HMAux = listOf(
             DIALOG_EVENT_TITLE_LBL,
@@ -1184,6 +1158,7 @@ class DialogEventTrip constructor(
 
 
 }
+
 data class FSSaveEvent(
     val type: FSEventType,
     val cost: Double? = null,

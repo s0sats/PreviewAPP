@@ -200,10 +200,10 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
     @Override
     public void loadMessage(FCMMessage fcmMessage) {
         if (fcmMessage.getType().equalsIgnoreCase("alert")) {
-            iv_icon.setImageResource(R.drawable.ic_alert_n);
+            iv_icon.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_alert_n);
         }
         if (fcmMessage.getType().equalsIgnoreCase("warning")) {
-            iv_icon.setImageResource(R.drawable.ic_problem_n);
+            iv_icon.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_problem_n);
         }
 
 //        switch (fcmMessage.getModule()){
@@ -242,10 +242,10 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
         try {
             if (fcmMessage.get("type").equalsIgnoreCase("alert")) {
-                iv_icon.setImageResource(R.drawable.ic_alert_n);
+                iv_icon.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_alert_n);
             }
             if (fcmMessage.get("type").equalsIgnoreCase("warning")) {
-                iv_icon.setImageResource(R.drawable.ic_problem_n);
+                iv_icon.setImageResource(com.namoa_digital.namoa_library.R.drawable.ic_problem_n);
             }
 
 //        switch (fcmMessage.getModule()){

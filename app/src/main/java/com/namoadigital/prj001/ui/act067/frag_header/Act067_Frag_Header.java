@@ -215,7 +215,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     }
 
     private void setIvStatus() {
-        ivEdit.setImageDrawable(inEdit ? context.getDrawable(R.drawable.ic_pencil) : context.getDrawable(R.drawable.ic_pencil_lock));
+        ivEdit.setImageDrawable(inEdit ? context.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_pencil) : context.getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_pencil_lock));
     }
 
     private void initActions() {
@@ -647,16 +647,16 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
     private boolean validateSave() {
         boolean validate = true;
         String msg = "";
-        ssToType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        ssToSite.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        ssPartner.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssToType.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        ssToSite.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
+        ssPartner.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
         //
         if (
                 ssToType == null
                         || ssToType.getmValue() == null
                         || (ssToType.getmValue() != null && !ssToType.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
             try {
-                ssToType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                ssToType.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             }catch (NullPointerException e ){
                 ToolBox_Inf.registerException(getClass().getName(),e);
             }
@@ -673,7 +673,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                                 || ssToSite.getmValue() == null
                                 || (ssToSite.getmValue() != null && !ssToSite.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
                     try {
-                        ssToSite.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                        ssToSite.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     }catch (NullPointerException e ){
                         ToolBox_Inf.registerException(getClass().getName(),e);
                     }
@@ -686,7 +686,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                                 || ssPartner.getmValue() == null
                                 || (ssPartner.getmValue() != null && !ssPartner.getmValue().hasConsistentValue(SearchableSpinner.CODE))) {
                     try {
-                        ssPartner.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                        ssPartner.setBackground(getContext().getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     }catch (NullPointerException e ){
                         ToolBox_Inf.registerException(getClass().getName(),e);
                     }

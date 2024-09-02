@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.dao;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_IN_PROCESSING;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_WAITING_SYNC;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -740,7 +741,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                         " AND d.trip_prefix = '"+tripPrefix+"'\n" +
                         " AND d.trip_code = '"+tripCode+"'\n" +
                         " AND d.destination_seq = '"+destinationSeq+"'\n" +
-                        " AND d.custom_form_status = '"+SYS_STATUS_IN_PROCESSING+"'"
+                        " AND d.custom_form_status IN ('"+SYS_STATUS_IN_PROCESSING+"', +'"+SYS_STATUS_WAITING_SYNC+"')"
 
                 );
     }

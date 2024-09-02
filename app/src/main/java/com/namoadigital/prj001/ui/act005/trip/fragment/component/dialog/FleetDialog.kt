@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
-class FleetDialog(
+class FleetDialog constructor(
     private val context: Context,
     private val hmAuxTranslate: HMAux,
     private val trip: FSTrip,
@@ -78,12 +78,17 @@ class FleetDialog(
                             binding.photoLoading.visibility = View.GONE
                             binding.updatePhotoViews(getPhoto(), true)
                         },
-                        loading = {
+                        loading = { _, _ ->
                             with(binding) {
                                 photoLoading.visibility = View.VISIBLE
                                 buttonOdometerPhoto.visibility = View.GONE
                                 buttonRetryDownloadImage.visibility = View.GONE
                             }
+                        },
+                        error = { _, _ ->
+                            buttonOdometerPhoto.visibility = View.VISIBLE
+                            photoLoading.visibility = View.GONE
+                            buttonRetryDownloadImage.visibility = View.GONE
                         },
                         failed = {
                             binding.photoLoading.visibility = View.GONE
@@ -203,16 +208,11 @@ class FleetDialog(
             }
             //
             if (isRequiredFields) {
-                edittextOdometerLayout.configureToRequiredInput(
-                    context,
-                    hmAuxTranslate[FLEET_DIALOG_ODOMETER] ?: "",
-                    etOdometer
-                )
+                setRequiredOdometerPhotoButton()
             } else {
-                edittextOdometerLayout.hint = hmAuxTranslate[FLEET_DIALOG_ODOMETER]
+                setOptionalOdometerPhotoButton()
             }
             //
-            buttonOdometerPhoto.text = getOdometerPhotoLabel(checkDataRequired(), hmAuxTranslate[FLEET_DIALOG_PHOTO]!!)
             btnCancel.text = hmAuxTranslate[CANCEL]
             btnSave.apply {
                 text = if(target == TripTarget.END){
@@ -252,6 +252,38 @@ class FleetDialog(
             R.color.m3_namoa_primary,
             null
         )
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(true, hmAuxTranslate[FLEET_DIALOG_PHOTO]!!)
+        edittextOdometerLayout.configureToRequiredInput(
+            context,
+            hmAuxTranslate[FLEET_DIALOG_ODOMETER] ?: "",
+            etOdometer
+        )
+    }
+
+    private fun TripDialogFleetBinding.setOptionalOdometerPhotoButton() {
+        buttonOdometerPhoto.iconTint = ResourcesCompat.getColorStateList(
+            context.resources,
+            R.color.m3_namoa_primary,
+            null
+        )
+        buttonOdometerPhoto.setTextColor(
+            ResourcesCompat.getColorStateList(
+                context.resources,
+                R.color.m3_namoa_primary,
+                null
+            )
+        )
+        buttonOdometerPhoto.backgroundTintList = ResourcesCompat.getColorStateList(
+            context.resources,
+            android.R.color.transparent,
+            null
+        )
+        buttonOdometerPhoto.text = getOdometerPhotoLabel(false, hmAuxTranslate[FLEET_DIALOG_PHOTO]!!)
+        edittextOdometerLayout.apply {
+            hint = hmAuxTranslate[FLEET_DIALOG_ODOMETER]
+            setBoxStrokeColorState(context, R.drawable.edittext_theme_outlined)
+            setHintTextColor(context, R.drawable.edittext_theme)
+        }
     }
 
     private fun checkDataRequired() =
@@ -317,9 +349,8 @@ class FleetDialog(
                                     isVisible
                                 )
                                 //
-                            } else {
-                                updateFieldErrors()
                             }
+                            updateFieldErrors()
                         }
                     }
 
@@ -442,7 +473,10 @@ class FleetDialog(
                 isEqualsFields() -> changeEnabledSave(false)
                 !shouldShowFleetPlateError && (visiblePhoto.not() || isValidOdometer.not()) -> changeEnabledSave(false)
                 shouldShowFleetPlateError && (visiblePhoto || isValidOdometer) -> changeEnabledSave(false)
-                odometerRestrictionValid.not() -> changeEnabledSave(false)
+                odometerRestrictionValid.not() -> {
+                    setRequiredOdometerPhotoButton()
+                    changeEnabledSave(false)
+                }
                 else -> changeEnabledSave(true)
             }
         }
@@ -484,10 +518,50 @@ class FleetDialog(
             val visiblePhoto = ivPhoto.isVisible
 
             when {
-                isValidOdometer && !visiblePhoto -> changeEnabledSave(false)
-                visiblePhoto && !isValidOdometer -> changeEnabledSave(false)
-                isEqualsFields() -> changeEnabledSave(false)
-                else -> changeEnabledSave(true)
+                isValidOdometer && !visiblePhoto -> {
+                    setRequiredOdometerPhotoButton()
+                    changeEnabledSave(false)
+                }
+                visiblePhoto && !isValidOdometer -> {
+                    setRequiredOdometerPhotoButton()
+                    setOdometerErrorLayout(
+                        context,
+                        edittextOdometerLayout,
+                        layoutOdometerInvalid,
+                        tvOdometerInvalid,
+                        hmAuxTranslate[ODOMETER_EDITTEXT_ERROR] ?: "",
+                        View.VISIBLE
+                    )
+                    changeEnabledSave(false)
+                }
+                isEqualsFields() -> {
+                    setOdometerErrorLayout(
+                        context,
+                        edittextOdometerLayout,
+                        layoutOdometerInvalid,
+                        tvOdometerInvalid,
+                        hmAuxTranslate[ODOMETER_EDITTEXT_ERROR] ?: "",
+                        View.GONE
+                    )
+                    setOptionalOdometerPhotoButton()
+                    changeEnabledSave(false)
+                }
+                else -> {
+                    setOdometerErrorLayout(
+                        context,
+                        edittextOdometerLayout,
+                        layoutOdometerInvalid,
+                        tvOdometerInvalid,
+                        hmAuxTranslate[ODOMETER_EDITTEXT_ERROR] ?: "",
+                        View.GONE
+                    )
+                    if(!isRequiredFields && isValidOdometer){
+                       setRequiredOdometerPhotoButton()
+                    }else{
+                        setOptionalOdometerPhotoButton()
+                    }
+                    changeEnabledSave(true)
+                }
             }
         }
     }

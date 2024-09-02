@@ -4,17 +4,16 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.trip.domain.model.FormStatus
 import com.namoadigital.prj001.core.trip.domain.model.TripSiteExtract
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao.*
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE
 import com.namoadigital.prj001.extensions.toIntOrNegative
 import com.namoadigital.prj001.extensions.toLongOrNegative
-import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
 import com.namoadigital.prj001.model.trip.FsTripDestinationAction
+import com.namoadigital.prj001.util.ConstantBaseApp
 
 fun HMAux.toTripForms() = TripSiteExtract(
-    formStatus = FormStatus.IN_PROCESS,
+    formStatus = if (this[CUSTOM_FORM_STATUS] == ConstantBaseApp.SYS_STATUS_WAITING_SYNC) FormStatus.WAITING_SYNC else FormStatus.IN_PROCESS,
     date = this[GE_Custom_Form_DataDao.DATE_START] ?: "",
     model = GE_Custom_Form_Local().also { model ->
         model.customer_code = this[CUSTOMER_CODE]?.toLongOrNegative() ?: -1L
@@ -38,8 +37,10 @@ fun HMAux.toTripForms() = TripSiteExtract(
         model.serial_id = this[SERIAL_ID]
         model.schedule_date_start_format = this[SCHEDULE_DATE_START_FORMAT]
         model.schedule_date_end_format = this[SCHEDULE_DATE_END_FORMAT]
-        model.schedule_date_start_format_ms = this[SCHEDULE_DATE_START_FORMAT_MS]?.toLongOrNegative() ?: -1L
-        model.schedule_date_end_format_ms = this[SCHEDULE_DATE_END_FORMAT_MS]?.toLongOrNegative() ?: -1L
+        model.schedule_date_start_format_ms =
+            this[SCHEDULE_DATE_START_FORMAT_MS]?.toLongOrNegative() ?: -1L
+        model.schedule_date_end_format_ms =
+            this[SCHEDULE_DATE_END_FORMAT_MS]?.toLongOrNegative() ?: -1L
         model.require_serial = this[REQUIRE_SERIAL]?.toIntOrNegative() ?: -1
         model.allow_new_serial_cl = this[ALLOW_NEW_SERIAL_CL]?.toIntOrNegative() ?: -1
         model.all_site = this[ALL_SITE]?.toIntOrNegative() ?: -1
@@ -85,8 +86,10 @@ fun HMAux.toTripForms() = TripSiteExtract(
         model.so_order_type_code_default = this[SO_ORDER_TYPE_CODE_DEFAULT]?.toIntOrNull()
         model.so_allow_change_order_type = this[SO_ALLOW_CHANGE_ORDER_TYPE]?.toIntOrNegative() ?: -1
         model.so_allow_backup = this[SO_ALLOW_BACKUP]?.toIntOrNegative() ?: -1
-        model.so_optional_justify_problem = this[SO_OPTIONAL_JUSTIFY_PROBLEM]?.toIntOrNegative() ?: -1
-        model.nc_recognize_email_in_comment = this[NC_RECOGNIZE_EMAIL_IN_COMMENT]?.toIntOrNegative() ?: -1
+        model.so_optional_justify_problem =
+            this[SO_OPTIONAL_JUSTIFY_PROBLEM]?.toIntOrNegative() ?: -1
+        model.nc_recognize_email_in_comment =
+            this[NC_RECOGNIZE_EMAIL_IN_COMMENT]?.toIntOrNegative() ?: -1
     }
 )
 

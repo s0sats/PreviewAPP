@@ -29,12 +29,31 @@ import com.namoadigital.prj001.adapter.SelectDestinationAdapter.Companion.BTN_SE
 import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.core.trip.domain.usecase.CheckStatusForReadOnlyUseCase
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
+import com.namoadigital.prj001.dao.Sync_ChecklistDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
-import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSiteInventory
 import com.namoadigital.prj001.service.trip.WsSelectDestination
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
@@ -55,12 +74,12 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_SELECTED_MSG
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -348,6 +367,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     )
                             )
                 ) {
+                    act083TabSerial.visibility = View.VISIBLE
                     act083TvNoResult.text = hmAux_Trans["no_connection_try_again_lbl"]
                     if (ToolBox_Con.getBooleanPreferencesByKey(
                             context,
@@ -554,15 +574,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
 
                     val colorsRequired = intArrayOf(
-                        resources.getColor(R.color.customff_required_on_color),
-                        resources.getColor(R.color.customff_required_on_color),
-                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.customff_required_on_color),
                     )
 
                     val colorsDefault = intArrayOf(
-                        resources.getColor(R.color.m3_namoa_outline),
-                        resources.getColor(R.color.m3_namoa_primary),
-                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.m3_namoa_outline),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.m3_namoa_primary),
+                        resources.getColor(com.namoa_digital.namoa_library.R.color.m3_namoa_primary),
                     )
 
 
@@ -1144,16 +1164,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         val removeLoading = if (!show) View.VISIBLE else View.GONE
 
 
-        val mainUserCircle =
-            if (!show) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
-                R.drawable.my_action_toogle_disable
-            )
-
-        val mainUserPerson = if (!show) R.color.my_action_toogle_circle
-        else R.color.namoa_color_disabled_gray
-
-
-
         with(binding.act083MainContent) {
             act083PbLoad.apply {
                 visibility = isLoading
@@ -1471,6 +1481,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         super.processError_1(mLink, mRequired)
         if (wsProcess == WsSerialSiteInventory::class.java.name) {
             handleConnectionProblemsForSiteInvetoryService()
+        } else if (wsProcess == WsSelectDestination::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            Toast.makeText(
+                context,
+                hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
+                Toast.LENGTH_SHORT
+            ).show()
+            mPresenter.selectionDestinationAvailable?.let {
+                mPresenter.saveDestination(context, null, it)
+            }
+
         } else {
             mPresenter.formButtonData = null
             progressDialog.dismiss()

@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
@@ -22,6 +21,7 @@ import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.onEach
 class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
     override lateinit var binding: FrgOverNightTripBinding
     protected var tripActionListener: OnFrgTripInteract? = null
-    private val overNightViewModel: TripOverNightViewModel by viewModels()
 
     override fun showGPSWarning(isVisible: Int) {
         tripCardWarningBinding?.cardWarning?.visibility = View.GONE
@@ -86,7 +85,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
                             isEnabled = true
                             icon = context.getDrawableId(R.drawable.ic_baseline_directions_car_24)
                             text = hmAuxTranslate[TripTranslate.TRIP_RETURN_TO_TRANSIT_LBL]
-                            iconTint = ResourcesCompat.getColorStateList(context.resources, R.color.padrao_WHITE, null)
+                            iconTint = ResourcesCompat.getColorStateList(context.resources, com.namoa_digital.namoa_library.R.color.padrao_WHITE, null)
                         }
                     }
                 } ?: run {
@@ -118,7 +117,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()
@@ -192,7 +191,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
             hmAuxTranslate[ALERT_CONFIRM_END_OVER_NIGHT_TRIP_TTL],
             hmAuxTranslate[ALERT_CONFIRM_END_OVER_NIGHT_TRIP_MSG],
             onConfirm = {
-                callChangeDesinationStatus()
+                callDepartedFromOvernight()
             }
         )
     }
@@ -230,17 +229,20 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
         }
     }
 
-    private fun callChangeDesinationStatus() {
-        listener?.callTripWS(
-            WS_TRIP_DESTINATION_CHANGE,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_CHANGE_TTL]!!,
-            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_CHANGE_MSG]!!,
-        )
+    private fun callDepartedFromOvernight() {
         //
         viewModel.state.value.trip?.let {
-            val overNightDestination = overNightViewModel.getOverNightDestination(it)
+            val overNightDestination = viewModel.getOverNightDestination(it)
             overNightDestination?.let { destination ->
-                overNightViewModel.endOverNightPeriod(destination, it.scn)
+                viewModel.setDestinationStatus(
+                    destinationStatus = DestinationStatus.DEPARTED,
+                    destination = destination,
+                    TripWsProgress(
+                        process = WS_TRIP_DESTINATION_CHANGE,
+                        title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_CHANGE_TTL]!!,
+                        message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_CHANGE_MSG]!!,
+                    )
+                )
             } ?: ToolBox.alertMSG(
                 context,
                 hmAuxTranslate[TripTranslate.PROGRESS_TRIP_ERROR_SYNC_APP_TTL],
@@ -255,6 +257,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
             null,
             0
         )
+
     }
 
     companion object {

@@ -403,6 +403,7 @@ class FSTripEventDao(
                         photoUrl = getStringOrNull(getColumnIndex(PHOTO_URL)),
                         photoLocal = getStringOrNull(getColumnIndex(PHOTO_LOCAL)),
                         photoName = getStringOrNull(getColumnIndex(PHOTO_NAME)),
+                        eventPhotoChanged = getInt(getColumnIndex(PHOTO_CHANGED)),
                         eventStart = getString(getColumnIndex(EVENT_START)),
                         eventEnd = getStringOrNull(getColumnIndex(EVENT_END)),
                     )
@@ -439,6 +440,7 @@ class FSTripEventDao(
                     put(EVENT_TIME, position.eventTime)
                     put(EVENT_TIME_ALERT, position.timeAlert)
                     put(EVENT_STATUS, position.eventStatus)
+                    put(PHOTO_CHANGED, position.eventPhotoChanged)
                 }
             }
 
@@ -478,6 +480,22 @@ class FSTripEventDao(
              AND $TRIP_CODE = '$tripCode'
              AND $EVENT_SEQ = '$seq'
         """.trimIndent(), dbInstance)
+
+        return if(value.isNotEmpty()) value[0]
+        else null
+    }
+
+    fun getEvent(
+        tripPrefix: Int,
+        tripCode: Int,
+        seq: Int
+    ): FSTripEvent? {
+        val value = query("""
+            SELECT * FROM $TABLE 
+            WHERE $TRIP_PREFIX = '$tripPrefix'
+             AND $TRIP_CODE = '$tripCode'
+             AND $EVENT_SEQ = '$seq'
+        """.trimIndent())
 
         return if(value.isNotEmpty()) value[0]
         else null
@@ -529,12 +547,13 @@ class FSTripEventDao(
                 eventEnd = it[EVENT_END]!!,
                 eventTime = it[EVENT_TIME]!!,
                 eventAllowedTime = it[EVENT_ALLOWED_TIME]!!,
-                eventTimeAlert = it[EVENT_TIME_ALERT]!!.toIntOrNull(),
-                cost = it[COST]!!.toDoubleOrNull(),
+                eventTimeAlert = it[EVENT_TIME_ALERT]?.toIntOrNull(),
+                cost = it[COST]?.toDoubleOrNull(),
                 comment = it[COMMENT]!!,
                 photoLocal = it[PHOTO_LOCAL]!!,
                 photoName = it[PHOTO_NAME]!!,
                 photoUrl = it[PHOTO_URL]!!,
+                eventPhotoChanged = it[PHOTO_CHANGED]?.toInt() ?: 0
                 )
             EventValidation(
                 event = fsTripEvent,
@@ -561,6 +580,34 @@ class FSTripEventDao(
         return if(value.isEmpty()) emptyList() else value
     }
 
+    fun listAllEvents(
+        tripPrefix: Int,
+        tripCode: Int,
+    ): List<FSTripEvent> {
+        val value = query("""
+            SELECT * FROM $TABLE
+            WHERE $TRIP_PREFIX = '$tripPrefix' 
+            AND $TRIP_CODE = '$tripCode'
+            ORDER BY $EVENT_START ASC
+        """.trimIndent())
+
+        return if(value.isEmpty()) emptyList() else value
+    }
+
+    fun getLastEvent(
+        tripPrefix: Int,
+        tripCode: Int
+    ): FSTripEvent? {
+        val value = query("""
+            SELECT * FROM $TABLE
+            WHERE $TRIP_PREFIX = '$tripPrefix' 
+            AND $TRIP_CODE = '$tripCode'
+            ORDER BY $EVENT_SEQ DESC
+        """.trimIndent())
+
+        return if(value.isEmpty()) null else value[0]
+    }
+
     companion object {
 
         const val TABLE = "fs_trip_event"
@@ -579,6 +626,7 @@ class FSTripEventDao(
         const val PHOTO_URL = "photo_url"
         const val PHOTO_NAME = "photo_name"
         const val PHOTO_LOCAL = "photo_local"
+        const val PHOTO_CHANGED = "photo_changed"
         const val EVENT_START = "event_start"
         const val EVENT_END = "event_end"
 

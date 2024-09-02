@@ -1061,9 +1061,9 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
             return true;
         }
         //Seta marcação de erro nos SS
-        ss_site.setBackground(context.getDrawable(R.drawable.shape_error));
-        ss_site_zone.setBackground(context.getDrawable(R.drawable.shape_error));
-        ss_site_zone_local.setBackground(context.getDrawable(R.drawable.shape_error));
+        ss_site.setBackground(context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
+        ss_site_zone.setBackground(context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
+        ss_site_zone_local.setBackground(context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
         //Pega posição do ultimo item e faz Scroll
         int x = (int) ss_site_zone_local.getX();
         int y = ss_site_zone_local.getTop() + ((View) ss_site_zone_local.getParent()).getTop();

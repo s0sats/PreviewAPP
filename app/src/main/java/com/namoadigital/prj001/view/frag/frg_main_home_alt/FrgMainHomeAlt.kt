@@ -12,6 +12,9 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.adapter.Act005MainMenuModuleAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.FrgMainHomeAltBinding
+import com.namoadigital.prj001.extensions.sendCommandToServiceTripLocation
+import com.namoadigital.prj001.service.location.FsTripLocationService
+import com.namoadigital.prj001.service.location.util.LocationServiceConstants
 import com.namoadigital.prj001.ui.act005.OnResfreshUI
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -128,6 +131,9 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View, OnResfreshU
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if (FsTripLocationService.isTracking.value) {
+            context.sendCommandToServiceTripLocation(LocationServiceConstants.STOP_LOCATION)
+        }
         if (context is OnFrgMainHomeAltInteract) {
             mListener = context
         } else {

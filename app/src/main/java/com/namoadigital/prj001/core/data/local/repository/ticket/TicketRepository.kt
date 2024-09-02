@@ -9,7 +9,7 @@ interface TicketRepository {
     fun getTicketTodayCntList(siteCode: Int): Int
     fun getTicketLateCntList(siteCode: Int): Int
     fun getTicketNextList(siteCode: Int): Int
-    fun getTicketActionList(siteCode: Int, isFocused: Int, multStepsLbl: String?): List<HMAux>
+    fun getTicketActionList(siteCode: Int, isFocused: Int, multStepsLbl: String?, productCode: Int?, serialId:String?): List<HMAux>
     fun getTicket(prefix: Int, code: Int): TK_Ticket?
     fun getTicketKanban(prefix: Int, code: Int): TK_Ticket?
 

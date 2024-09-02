@@ -23,9 +23,12 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_START_ERROR_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_TRIP_START_ERROR_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -126,7 +129,7 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()
@@ -224,12 +227,24 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                         actionNeutralLbl = hmAuxTranslate[TripTranslate.ALERT_TRIP_ABORT_CANCEL_BTN]
                             ?: "",
                         actionPositive = { _, _ ->
-                            listener?.callTripWS(
-                                WS_TRIP_ABORT_PENDING,
-                                hmAuxTranslate[TripTranslate.PROGRESS_ABORT_PENDING_TTL]!!,
-                                hmAuxTranslate[TripTranslate.PROGRESS_ABORT_PENDING_MSG]!!,
-                            )
-                            viewModel.setTripStatus(TripStatus.CANCELLED)
+                            viewModel.state.value.trip?.let{
+                                if(!it.hasUpdateRequired
+                                    && ToolBox_Con.isOnline(context)) {
+                                    viewModel.setTripStatus(
+                                        TripStatus.CANCELLED,
+                                        tripWsProgress = TripWsProgress(
+                                            process = WS_TRIP_ABORT_PENDING,
+                                            title = hmAuxTranslate[TripTranslate.PROGRESS_ABORT_PENDING_TTL]!!,
+                                            message = hmAuxTranslate[TripTranslate.PROGRESS_ABORT_PENDING_MSG]!!,
+                                        )
+                                    )
+                                }else{
+                                    ToolBox_Inf.showNoConnectionDialog(
+                                        context,
+                                    )
+                                }
+                            }
+
                         },
                         actionNeutral = { dialogInterface, _ ->
                             dialogInterface.dismiss()
@@ -274,13 +289,14 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
             )
         ) {
             //
-            listener?.callTripWS(
-                WS_TRIP_START,
-                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_TTL]!!,
-                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_MSG]!!,
+           viewModel.setTripStatus(
+                TripStatus.START,
+               tripWsProgress = TripWsProgress(
+                   process = WS_TRIP_START,
+                   title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_TTL]!!,
+                   message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_MSG]!!,
+               )
             )
-            //
-            viewModel.setTripStatus(TripStatus.START)
             //
         } else {
             ToolBox.alertMSG(

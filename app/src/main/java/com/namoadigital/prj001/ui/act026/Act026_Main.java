@@ -390,7 +390,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             Drawable drawable = DrawableCompat.wrap(
                     ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
             DrawableCompat.setTint(
-                    drawable.mutate(), ContextCompat.getColor(context, R.color.padrao_WHITE)
+                    drawable.mutate(), ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.padrao_WHITE)
             );
 
             zoneFilter.setImageDrawable(drawable);
@@ -454,7 +454,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             if(this.listSize >0){
                 tv_empty_state.setText(hmAux_Trans.get("empty_list_state_so_not_listed_msg"));
 
-                tv_empty_state.setTextColor(getResources().getColor(R.color.customff_background_error));
+                tv_empty_state.setTextColor(getResources().getColor(com.namoa_digital.namoa_library.R.color.customff_background_error));
             }
             tv_empty_state.setVisibility(View.VISIBLE);
         }else{

@@ -17,10 +17,12 @@ const val FS_TRIP_CREATE_SCRIPT =
         [fleet_start_photo] text collate nocase, 
         [fleet_start_photo_local] text collate nocase, 
         [fleet_start_photo_name] text collate nocase, 
+        [fleet_start_photo_changed] int not null default 0, 
         [fleet_end_odometer] int, 
         [fleet_end_photo] text collate nocase, 
         [fleet_end_photo_local] text collate nocase, 
         [fleet_end_photo_name] text collate nocase, 
+        [fleet_end_photo_changed] int not null default 0,
         [origin_type] text collate nocase, 
         [origin_site_code] int, 
         [origin_site_desc] text, 
@@ -32,6 +34,7 @@ const val FS_TRIP_CREATE_SCRIPT =
         [require_destination_fleet_data] int not null, 
         [position_date] text collate nocase, 
         [sync_required] int not null default 0, 
+        [update_required] int not null default 0, 
         [scn] int not null, 
         [distance_ref_minutes] int not null default 5, 
         [distance_ref_minutes_trans] int not null default 10, 
@@ -75,6 +78,7 @@ const val FS_TRIP_EVENT_CREATE_SCRIPT =
         [${FSTripEventDao.PHOTO_URL}] text collate nocase,
         [${FSTripEventDao.PHOTO_NAME}] text collate nocase,
         [${FSTripEventDao.PHOTO_LOCAL}] text collate nocase,
+        [${FSTripEventDao.PHOTO_CHANGED}] int not null default 0,
         [${FSTripEventDao.EVENT_START}] text not null collate nocase,
         [${FSTripEventDao.EVENT_END}] text collate nocase,
         CONSTRAINT [pk_fs_trip_event] 
@@ -142,6 +146,7 @@ const val FS_TRIP_DESTINATION_CREATE_SCRIPT =
         [arrived_fleet_photo] text collate nocase, 
         [arrived_fleet_photo_local] text collate nocase, 
         [arrived_fleet_photo_name] text collate nocase, 
+        [arrived_fleet_photo_changed] int not null default 0, 
         [departed_date] text collate nocase, 
         [departed_lat] real, 
         [departed_lon] real, 
@@ -162,6 +167,7 @@ const val FS_TRIP_DESTINATION_CREATE_SCRIPT =
         [serial_cnt] int not null default 0,  
         constraint [pk_fs_trip_destination] primary key ([customer_code],[trip_prefix],[trip_code],[destination_seq])
     );"""
+
 const val FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT =
 """ create table if not exists [fs_trip_destination_action]
     (

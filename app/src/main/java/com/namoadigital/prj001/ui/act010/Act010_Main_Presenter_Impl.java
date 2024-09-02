@@ -39,6 +39,7 @@ import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.sql.Sql_Act010_002;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -95,22 +96,28 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         FSTripDao tripDao = new FSTripDao(context);
         boolean isTripMode = tripDao.getTrip() != null;
 
-        List<HMAux> forms =
-                custom_formDao.query_HM(
-                        new Sql_Act010_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                tagCode,
-                                ToolBox_Con.getPreference_Translate_Code(context),
-                                String.valueOf(this.product_code),
-                                ToolBox_Con.getPreference_Operation_Code(context),
-                                site_code_form_param,
-                                serial_id,
-                                blockSpontaneous,
-                                has_tk_ticket_is_form_off_hand ? 0 : null,
-                                isTripMode
-                        ).toSqlQuery()
-                );
-
+        List<HMAux> forms = new ArrayList<>();
+        if(!ToolBox_Inf.profileExists(
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_BLOCK_FORM_SPONTANEOUS
+        )) {
+            forms.addAll(custom_formDao.query_HM(
+                            new Sql_Act010_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    tagCode,
+                                    ToolBox_Con.getPreference_Translate_Code(context),
+                                    String.valueOf(this.product_code),
+                                    ToolBox_Con.getPreference_Operation_Code(context),
+                                    site_code_form_param,
+                                    serial_id,
+                                    blockSpontaneous,
+                                    has_tk_ticket_is_form_off_hand ? 0 : null,
+                                    isTripMode
+                            ).toSqlQuery()
+                    )
+            );
+        }
         if(!has_tk_ticket_is_form_off_hand && !isTripMode) {
             List<HMAux> tickets =
                     tkTicketTypeDao.query_HM(
@@ -129,7 +136,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         if (forms != null && forms.size() == 1) {
             HMAux aux = forms.get(0);
             if(aux.hasConsistentValue(Act010_Main.IS_FORM)
-            && "1".equals(aux.get(Act010_Main.IS_FORM))) {
+                    && "1".equals(aux.get(Act010_Main.IS_FORM))) {
                 validateOpenForm(aux);
             }else{
                 mView.createTicketDialog(aux);
@@ -156,7 +163,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE)),
                 Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)),
                 Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
-                )
+        )
         ) {
             if(validateFormSORestriction(item)) {
                 if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
@@ -175,7 +182,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private void defineFormOrFormOsFlow(HMAux item) {
         if(isOsForm(item)) {
             if(osFormAlreadyExists(item)
-            && !mView.isHas_tk_ticket_is_form_off_hand()) {
+                    && !mView.isHas_tk_ticket_is_form_off_hand()) {
                 setAct011Call(item);
             }else{
                 if (serialHasStructure()) {
@@ -189,8 +196,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                     }
                 } else {
                     mView.showAlertMsg(
-                        hmAux_Trans.get("alert_os_form_ttl"),
-                        hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
+                            hmAux_Trans.get("alert_os_form_ttl"),
+                            hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
                     );
                 }
             }
@@ -201,14 +208,14 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
     private boolean osFormAlreadyExists(HMAux item) {
         GeOs geOs = geOsDao.getByString(
-            new GeOsSql_002(
-                item.get(GE_Custom_FormDao.CUSTOMER_CODE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
-                product_code,
-                serial_id
-            ).toSqlQuery()
+                new GeOsSql_002(
+                        item.get(GE_Custom_FormDao.CUSTOMER_CODE),
+                        item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE),
+                        item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
+                        item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
         );
         //
         return geOs != null && geOs.getCustom_form_data() > 0;
@@ -224,13 +231,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             //
             if(serial != null && serial.getHas_item_check() == 1){
                 ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
-                    serialTpDeviceDao.query(
-                        new MD_Product_Serial_Tp_Device_Sql_002(
-                            serial.getCustomer_code(),
-                            serial.getProduct_code(),
-                            serial.getSerial_code()
-                        ).toSqlQuery()
-                    );
+                        serialTpDeviceDao.query(
+                                new MD_Product_Serial_Tp_Device_Sql_002(
+                                        serial.getCustomer_code(),
+                                        serial.getProduct_code(),
+                                        serial.getSerial_code()
+                                ).toSqlQuery()
+                        );
                 //
                 return serialTpDevices != null && serialTpDevices.size() > 0;
             }
@@ -245,11 +252,11 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
      */
     private MD_Product_Serial getMd_product_serial() {
         MD_Product_Serial serial = serialDao.getByString(
-            new MD_Product_Serial_Sql_002(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                product_code,
-                serial_id
-            ).toSqlQuery()
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
         );
         return serial;
     }
@@ -263,17 +270,17 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         MD_Product_Serial md_product_serial = getMd_product_serial();
         Bundle bundle = mView.getBundle();
         bundle.putAll(
-            Act087Main.getBundleInstance(
-                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
-                String.valueOf(product_code),
-                serial_id,
-                String.valueOf(md_product_serial.getSerial_code()),
-                "-1",
-                "-1",
-                "-1"
-            )
+                Act087Main.getBundleInstance(
+                        item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE),
+                        item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
+                        item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
+                        String.valueOf(product_code),
+                        serial_id,
+                        String.valueOf(md_product_serial.getSerial_code()),
+                        "-1",
+                        "-1",
+                        "-1"
+                )
         );
         String orderTypeQuery = new MdOrderTypeSql_002(
                 ToolBox_Con.getPreference_Customer_Code(context)
@@ -392,13 +399,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 //
                 if (so_prefix.equals("") && so_code.equals("")
                         && formData.getSo_prefix() != null && formData.getSo_code() != null
-                        ) {
+                ) {
                     //msg de não e possivel abrir form pois ele ja existe para uma S.O
                     mView.showAlertMsg(
                             hmAux_Trans.get("alert_form_exits_with_so_ttl"),
                             hmAux_Trans.get("alert_form_exits_with_so_msg")
-                            + "\n" + hmAux_Trans.get("alert_so_lbl")
-                            + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
+                                    + "\n" + hmAux_Trans.get("alert_so_lbl")
+                                    + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
                     );
 
                     return false;
@@ -503,14 +510,14 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
     @Override
     public void validateGPSResource(HMAux item) {
-            if (ToolBox_Con.hasGPSResourceActive(context)) {
-                //setAct011Call(item);
-                //LUCHE - 22/10/2021
-                //Substituido pelo defineFormOrFormOsFlow, para validar se é um form ou form tipo o.s
-                defineFormOrFormOsFlow(item);
-            }else{
-                mView.alertActiveGPSResource(item);
-            }
+        if (ToolBox_Con.hasGPSResourceActive(context)) {
+            //setAct011Call(item);
+            //LUCHE - 22/10/2021
+            //Substituido pelo defineFormOrFormOsFlow, para validar se é um form ou form tipo o.s
+            defineFormOrFormOsFlow(item);
+        }else{
+            mView.alertActiveGPSResource(item);
+        }
     }
 
 }

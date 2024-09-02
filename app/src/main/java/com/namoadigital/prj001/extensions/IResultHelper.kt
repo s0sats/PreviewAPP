@@ -1,17 +1,57 @@
 package com.namoadigital.prj001.extensions
 
 import com.namoadigital.prj001.core.IResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 
 fun <DTO> IResult<DTO>.watchStatus(
     success: (data: DTO) -> Unit,
-    error: (error: String) -> Unit = {},
+    error: (error: String?, throwable: Throwable?) -> Unit = {_, _ ->},
     failed: (throwable: Throwable) -> Unit = {},
-    loading: (message: String) -> Unit = {}
+    loading: (isLoading: Boolean, message: String) -> Unit = {_, _ ->}
 ) {
     when (this) {
         is IResult.isSuccess -> success.invoke(this.response)
-        is IResult.isError -> error.invoke(this.error)
+        is IResult.isError -> error.invoke(this.message, this.exceptionError)
         is IResult.isFailed -> failed.invoke(this.exceptionError)
-        is IResult.isLoading -> loading.invoke(this.message)
+        is IResult.isLoading -> loading.invoke(this.isLoading, this.message)
     }
 }
+
+
+suspend fun <DTO> IResult<DTO>.results(
+    success: suspend (data: DTO) -> Unit,
+    error: suspend (error: String?, exceptionError:Throwable?) -> Unit = {_, _ ->},
+    failed: suspend (throwable: Throwable) -> Unit = {},
+    loading: suspend (isLoading: Boolean, message: String) -> Unit = {_, _ ->}
+) {
+    when (this) {
+        is IResult.isSuccess -> success.invoke(this.response)
+        is IResult.isError -> error.invoke(this.message, this.exceptionError)
+        is IResult.isFailed -> failed.invoke(this.exceptionError)
+        is IResult.isLoading -> loading.invoke(this.isLoading, this.message)
+    }
+}
+
+suspend fun <DTO> Flow<IResult<DTO>>.suspendResults(
+    success: suspend (data: DTO) -> Unit,
+    error: suspend (error: String?, exceptionError:Throwable?) -> Unit = {_, _ ->},
+    failed: suspend (throwable: Throwable) -> Unit = {},
+    loading: suspend (isLoading: Boolean, message: String) -> Unit = {_, _ ->}
+) {
+    this.collect {
+        it.results(
+            success = success,
+            error = error,
+            failed = failed,
+            loading = loading
+        )
+    }
+}
+
+suspend fun <DTO> Flow<IResult<DTO>>.results(
+    success:(data: DTO) -> Unit,
+    error: (error: String?, exceptionError: Throwable?) -> Unit = {_, _ ->},
+    failed: (throwable: Throwable) -> Unit = {},
+    loading: (isLoading: Boolean, message: String) -> Unit = { _, _ ->}
+) = this.collect { it.watchStatus(success, error, failed, loading) }

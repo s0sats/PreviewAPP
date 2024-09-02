@@ -17,6 +17,7 @@ import com.namoadigital.prj001.adapter.SelectDestinationAdapter
 import com.namoadigital.prj001.core.data.domain.model.SiteInventory
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.databinding.Act094MainBinding
@@ -40,6 +41,8 @@ import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvaila
 import com.namoadigital.prj001.ui.act094.domain.toAdapterList
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_SELECTED_MSG
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_MSG
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_TTL
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_TICKET_DOWNLOADED_MSG
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.DIALOG_FILTER_APPLY
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.DIALOG_FILTER_CANCEL
@@ -74,7 +77,8 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
             ),
             DestinationUseCase.selectDestinationUseCase(context),
             FSTripDao(context),
-            FsTripDestinationDao(context)
+            FsTripDestinationDao(context),
+            TK_TicketDao(context)
         )
     }
     var selectedDestination: SelectionDestinationAvailable? = null
@@ -95,10 +99,12 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
         setContentView(binding.root)
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        serialSiteInventoryUseCase = SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(this).savePreferenceAndDeleteFileUseCase()
+        serialSiteInventoryUseCase =
+            SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(this)
+                .savePreferenceAndDeleteFileUseCase()
         initView()
         presenter.setView(this)
-        presenter.execDestinationAvailable()
+        presenter.getListDestinationAvailable()
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
@@ -117,15 +123,24 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
             WsSelectDestination.NAME -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                Toast.makeText(context, hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG], Toast.LENGTH_SHORT).show()
-                selectedDestination?.let{
+                Toast.makeText(
+                    context,
+                    hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
+                    Toast.LENGTH_SHORT
+                ).show()
+                selectedDestination?.let {
                     presenter.saveDestination(context, mLink, it)
                 }
             }
+
             WS_TK_Ticket_Download::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                Toast.makeText(context, hmAux_Trans[ALERT_DESTINATION_TICKET_DOWNLOADED_MSG], Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    hmAux_Trans[ALERT_DESTINATION_TICKET_DOWNLOADED_MSG],
+                    Toast.LENGTH_SHORT
+                ).show()
                 callAct005()
             }
         }
@@ -143,14 +158,25 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
         if (wsProcess == WS_TK_Ticket_Download::class.java.name) {
             ToolBox.alertMSG(
                 context,
-                hmAux_Trans[""],
-                hmAux_Trans[""],
+                hmAux_Trans[ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_TTL],
+                hmAux_Trans[ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_MSG],
                 { dialogInterface, i ->
                     dialogInterface.dismiss()
                     callAct005()
                 },
                 0
             )
+        }else if (wsProcess == WsSelectDestination::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            Toast.makeText(
+                context,
+                hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
+                Toast.LENGTH_SHORT
+            ).show()
+            selectedDestination?.let {
+                presenter.saveDestination(context, mLink?.ifEmpty { null }, it, true)
+            }
         }
     }
 
@@ -159,14 +185,35 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
 
             is SelectDestinationUiEvent.ListingDestinations -> {
 //                changeBadgeVisibility()
+                loadingState(false)
                 state.list?.takeIf { it.isNotEmpty() }?.let { initRecyclerView(it) }
                     ?: checkSizeDestinationList()
+            }
+
+            is SelectDestinationUiEvent.Loading -> {
+                loadingState(true)
             }
 
             is SelectDestinationUiEvent.OpenDialog -> {
                 openDialog(state.dialogType)
             }
 
+        }
+    }
+
+    private fun loadingState(show: Boolean) {
+        with(binding) {
+            if (show) {
+                progressBar.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+                emptyList.visibility = View.GONE
+                edittextFilter.isEnabled = false
+            } else {
+                progressBar.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+                emptyList.visibility = View.GONE
+                edittextFilter.isEnabled = true
+            }
         }
     }
 
@@ -212,7 +259,7 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
                 list,
                 onSelectItem = { item ->
                     selectedDestination = item
-                    execSelectionItem(item.destinationType ?: "", item.siteCode, item.ticketPrefix, item.ticketCode)
+                    execSelectionItem(item)
                 },
                 onDetailItem = {
                     DestinationDetailDialog(
@@ -237,8 +284,15 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
 
     }
 
-    private fun goToAct083(item: SelectionDestinationAvailable){
-        serialSiteInventoryUseCase.savePreference?.invoke(SiteInventory(item.siteCode ?: -1, item.siteDesc ?: "", true))
+    private fun goToAct083(item: SelectionDestinationAvailable) {
+        serialSiteInventoryUseCase.deleteFile?.invoke()
+        serialSiteInventoryUseCase.savePreference?.invoke(
+            SiteInventory(
+                item.siteCode ?: -1,
+                item.siteDesc ?: "",
+                true
+            )
+        )
         val actionFilterParam = MyActionFilterParam(
             siteCode = "${item.siteCode}"
         )
@@ -305,7 +359,7 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
             text = hmAux_Trans[DIALOG_FILTER_APPLY]
             setOnClickListener { _ ->
                 dialog.dismiss()
-                presenter.execDestinationAvailable(
+                presenter.getListDestinationAvailable(
                     AvailableDestinationFilter(
                         showOnlySiteWithPlanning = switchShowOnlySitePlanned.isChecked,
                         showOnlyToday = switchShowOnlySiteToday.isChecked,
@@ -331,12 +385,9 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
     }
 
     private fun execSelectionItem(
-        destinationType: String,
-        siteCode: Int?,
-        ticketPrefix: Int?,
-        ticketCode: Int?
+        selection: SelectionDestinationAvailable
     ) {
-        presenter.execSelectDestination(destinationType, siteCode, ticketPrefix, ticketCode)
+        presenter.execSelectDestination(context, selection)
     }
 
 

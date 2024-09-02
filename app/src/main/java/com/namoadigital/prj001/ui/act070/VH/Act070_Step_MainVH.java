@@ -157,7 +157,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
             if ( stepMain.isCurrentStep()
                     && stepMain.isUser_focus()
                     && !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())){
-                tvDesc.setTextColor(context.getResources().getColor(R.color.namoa_status_process));
+                tvDesc.setTextColor(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.namoa_status_process));
             }
         }
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getForecastStartDate()) && ToolBox_Inf.hasConsistentValueString(stepMain.getForecastEndDate())){
@@ -274,7 +274,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
             if(StepMain.usesStatusColorInStep(stepMain.getStepStatus())){
                 stepColor = ToolBox_Inf.getStatusColorV2(context,stepMain.getStepStatus());
             }else if(stepMain.isCurrentStep()){
-                stepColor = ContextCompat.getColor(context,R.color.namoa_status_process);
+                stepColor = ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.namoa_status_process);
             }
             //
             tvStepNum.getBackground().setColorFilter(stepColor, PorterDuff.Mode.SRC_ATOP);

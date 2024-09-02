@@ -27,7 +27,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class WsOriginSet : BaseWsIntentService("WsOriginSet", IntentServiceMode.UPLOAD_DATA()) {
 
     lateinit var dao: FSTripDao
-    private val hmAuxTranslate by lazy { loadNetworkTranslate(this) }
+    private val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
 
     override fun onHandleIntent(intent: Intent?) {

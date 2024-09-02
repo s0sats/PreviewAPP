@@ -16,6 +16,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseC
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
@@ -421,7 +422,7 @@ class Act083_Main_Presenter(
 
     override fun processActionClick(myAction: MyActions) {
         when (myAction.actionType) {
-            MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_TICKET -> processCachedTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_SCHEDULE -> checkScheduleFlow(myAction)
             MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
@@ -572,6 +573,14 @@ class Act083_Main_Presenter(
     }
 
     private fun processCachedTicketClick(myAction: MyActions) {
+        val ticketSplit = myAction.processPk.split(".")
+        val containTicketLocal = actionUseCases.getTicket?.invoke(GetTicketUseCase.GetTicketParams(ticketSplit[0].toInt(), ticketSplit[1].toInt()))
+
+        containTicketLocal?.let {
+            processLocalTicketClick(myAction)
+            return
+        }
+
         if (ToolBox_Con.isOnline(context)) {
             mView.setProcess(WS_TK_Ticket_Download::class.java.name)
             mView.showPD(
@@ -2496,6 +2505,11 @@ class Act083_Main_Presenter(
         val dao = FSTripDao(context)
         val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
         dao.getTrip()?.let { trip ->
+
+            if(!ToolBox_Con.isOnline(context)){
+                saveDestination(context = context, destination = selectionDestinationAvailable!!)
+                return
+            }
 
             mView.setProcess(WsSelectDestination.NAME)
             mView.showPD(

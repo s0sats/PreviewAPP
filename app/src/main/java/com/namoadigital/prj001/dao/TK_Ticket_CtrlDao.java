@@ -21,6 +21,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -70,6 +71,16 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     public TK_Ticket_CtrlDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
+        //
+        this.toContentValuesMapper = new TK_Ticket_CtrlToContentValuesMapper();
+        this.toTK_Ticket_CtrlMapper = new CursorToTK_Ticket_CtrlMapper();
+    }
+
+    public TK_Ticket_CtrlDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
         //
         this.toContentValuesMapper = new TK_Ticket_CtrlToContentValuesMapper();
         this.toTK_Ticket_CtrlMapper = new CursorToTK_Ticket_CtrlMapper();
@@ -855,6 +866,17 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         closeDB();
 
         return tk_ticket_ctrls;
+    }
+
+    public TK_Ticket_Ctrl getDbTicketCtrl(int customer_code, int ticket_prefix, int ticket_code, int step_code, int ticket_seq_tmp) {
+        return getByString(
+                new TK_Ticket_Ctrl_Sql_004(
+                        customer_code,
+                        ticket_prefix,
+                        ticket_code,
+                        ticket_seq_tmp
+                ).toSqlQuery()
+        );
     }
 
     private class CursorToTK_Ticket_CtrlMapper implements Mapper<Cursor, TK_Ticket_Ctrl> {

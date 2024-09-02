@@ -7,6 +7,7 @@ import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SOS;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_DOWNLOAD;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_PREFIX;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
@@ -77,6 +78,7 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.extensions.ContextKt;
+import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -848,6 +850,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("progress_update_trip_ttl");
         transList.add("progress_update_trip_msg");
         //
+        transList.add("progress_send_update_trip_ttl");
+        transList.add("progress_send_update_trip_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -924,9 +929,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 new CH_MessageDao(context)
         );
         //
-
         mPresenter.checkUpdateAvailable(appUpdateManager);
 
+
+        if(mPresenter.hasTicketForDownload()){
+            WorkerHelperKt.scheduleDownloadTicket(context);
+        }
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -1252,7 +1260,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
             boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
             boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
-            boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
+            boolean hasTripUpdateRequired = mPresenter.hasTripSyncRequired();
 
             sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule, hasTripUpdateRequired);
 
@@ -1712,6 +1720,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             case WS_TRIP_DOWNLOAD:
                 alertTitle = hmAux_Trans.get("progress_update_trip_ttl");
                 alertMsg = hmAux_Trans.get("progress_update_trip_msg");
+                break;
+            case WS_TRIP_SEND_UPDATE:
+                alertTitle = hmAux_Trans.get("progress_send_update_trip_ttl");
+                alertMsg = hmAux_Trans.get("progress_send_update_trip_msg");
                 break;
             default:
                 break;
@@ -2204,7 +2216,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.executeWSSoSync();
             } else if (mPresenter.hasTicketSyncRequired()) {
                 mPresenter.executeWSTicketDownload();
-            } else if (mPresenter.hasTripUpdateRequired()) {
+            } else if (mPresenter.hasTripSyncRequired()) {
                 mPresenter.executeTripDownload();
             } else {
                 if (masterDataSyncFlow) {
@@ -2528,7 +2540,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             wsProcess = "";
             boolean productOutdate = false;
 
-            if (mPresenter.hasTripUpdateRequired()) {
+            if (mPresenter.hasTripSyncRequired()) {
                 mPresenter.executeTripDownload();
             } else if (masterDataSyncFlow) {
                 mPresenter.syncFlow(mPresenter.hasUpdateRequired());
@@ -2550,7 +2562,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             //
             if (mPresenter.hasTicketSyncRequired()) {
                 mPresenter.executeWSTicketDownload();
-            } else if (mPresenter.hasTripUpdateRequired()) {
+            } else if (mPresenter.hasTripSyncRequired()) {
                 mPresenter.executeTripDownload();
             } else {
                 if (masterDataSyncFlow) {
@@ -2582,7 +2594,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 wsProcess,
                 mLink,
                 () -> {
-                    setTripFragment();
+                    setTripFragment(getInitialTripFrag());
                     return null;
                 },
                 () -> {
@@ -2597,7 +2609,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         mPresenter.executeWSSoSync();
                     } else if (mPresenter.hasTicketSyncRequired()) {
                         mPresenter.executeWSTicketDownload();
-                    } else if (mPresenter.hasTripUpdateRequired()) {
+                    } else if (mPresenter.hasTripSyncRequired()) {
                         mPresenter.executeTripDownload();
                     } else {
                         if (masterDataSyncFlow) {
@@ -2606,6 +2618,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             refreshUiData();
                         }
                     }
+                    return null;
+                },
+                () -> {
+                    try {
+                        sendResumeDialog.updateResumeStatusTrip(true);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                    setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                    mPresenter.executeSerialSave();
                     return null;
                 }
         );
@@ -2637,7 +2661,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean isTripOverNight = (getTripBaseFragment() != null && getTripBaseFragment().isTripOverNightStatus());
         if (isGpsEnabled || isTripOverNight) {
             if (isFirstFragment || isGpsFragment) {
-                setTripFragment();
+                setTripFragment(getInitialTripFrag());
             }
         } else {
             if (getTripBaseFragment() != null) {
@@ -2650,6 +2674,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public boolean isEnabledGps() {
         return ContextKt.isGpsEnabled(context);
+    }
+
+    @Override
+    public void invalidateMenuOptions() {
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void sendTripUpdateRequired() {
+        showPD();
+        cleanUpResults();
+        mPresenter.executeTripSave();
     }
 
     @Override
@@ -2867,7 +2903,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     mPresenter.executeWSSoSync();
                 } else if (mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
-                } else if (mPresenter.hasTripUpdateRequired()) {
+                } else if (mPresenter.hasTripSyncRequired()) {
                     mPresenter.executeTripDownload();
                 } else {
                     if (masterDataSyncFlow) {
@@ -3136,7 +3172,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     checkGpsStateReceiver(isGpsEnabled && ContextKt.hasLocationPermission(context), true);
                     registerGpsReceiver();
                 } else {
-                    setTripFragment();
+                    setTripFragment(getInitialTripFrag());
                 }
             }
         }
@@ -3154,8 +3190,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         serialSiteInventoryUseCase.getDeleteFile().invoke();
     }
 
-    private void setTripFragment() {
-        Integer initialTripFrag = getInitialTripFrag();
+    private void setTripFragment(Integer initialTripFrag) {
+
         if (initialTripFrag != null) {
             ToolBox_Inf.schedule10MinutesLocationAvailabilityNotification(context);
             NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
@@ -3226,7 +3262,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @NonNull
     private SendResumeDialog getSendResumeDialog() {
-        return new SendResumeDialog(context, hmAux_Trans, mPresenter.hasPositionUpdateRequired(), new SendResumeDialog.OnDialogClickListener() {
+        return new SendResumeDialog(
+                context,
+                hmAux_Trans,
+                mPresenter.hasPositionUpdateRequired(),
+                mPresenter.hasTripWithUpdateRequired() != null,
+                new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
                 if (sendResumeDialog != null) {
@@ -3249,7 +3290,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             mPresenter.executeWSSoSync();
                         } else if (mPresenter.hasTicketSyncRequired()) {
                             mPresenter.executeWSTicketDownload();
-                        } else if (mPresenter.hasTripUpdateRequired()) {
+                        } else if (mPresenter.hasTripSyncRequired()) {
                             mPresenter.executeTripDownload();
                         }
                     }
@@ -3305,6 +3346,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
     }
 
+    private boolean checkSyncRequired() {
+        boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
+        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
+        boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
+        boolean hasTripSyncRequired = mPresenter.hasTripSyncRequired();
+
+        return (hasTripSyncRequired ||
+                hasTicketSyncRequiredCloudRule ||
+                hasSoSyncRequiredCloudRule ||
+                hasSerialStructureSyncRequiredCloudRule
+        );
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /*
@@ -3316,18 +3370,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          */
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
-        boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
-        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
-        boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
-        boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
         //
         Drawable wrappedDrawable = setSyncIcon(
                 iconColor,
                 hasUpdateRequired,
-                hasTicketSyncRequiredCloudRule,
-                hasSoSyncRequiredCloudRule,
-                hasSerialStructureSyncRequiredCloudRule,
-                hasTripUpdateRequired
+                checkSyncRequired()
         );
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
@@ -3357,21 +3404,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private Drawable setSyncIcon(
             int iconColor,
             boolean hasUpdateRequired,
-            boolean hasTicketSyncRequired,
-            boolean hasSoSyncRequired,
-            boolean hasSerialStructureSyncRequiredCloudRule,
-            boolean hasTripSyncRequired
+            boolean hasSyncRequired
     ) {
         int icon;
-        if (hasUpdateRequired && (hasTripSyncRequired || hasTicketSyncRequired || hasSoSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
+        if (hasUpdateRequired && hasSyncRequired) {
             icon = R.drawable.ic_sync_main_menu_data;
         } else if (hasUpdateRequired) {
             icon = R.drawable.ic_cloud_upload;
             iconColor = R.color.namoa_cancel_red;
-        } else if (hasTicketSyncRequired
-                || hasSoSyncRequired
-                || hasSerialStructureSyncRequiredCloudRule
-                || hasTripSyncRequired) {
+        } else if (hasSyncRequired) {
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         } else {
@@ -3402,7 +3443,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
-        boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
+        boolean hasTripSyncRequired = mPresenter.hasTripSyncRequired();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
@@ -3433,7 +3474,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule, hasTripUpdateRequired);
+                sendUpdateRequiredData(
+                        hasUpdateRequired,
+                        hasTicketSyncRequired,
+                        hasSoSyncRequiredCloudRule,
+                        hasSerialStructureSyncRequiredCloudRule,
+                        hasTripSyncRequired);
                 break;
             default:
                 return true;
@@ -3452,9 +3498,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return true;
     }
 
-    private void sendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule, boolean hasSerialStructureSyncRequiredCloudRule, boolean hasTripUpdateRequired) {
+    private void sendUpdateRequiredData(
+            boolean hasUpdateRequired,
+            boolean hasTicketSyncRequired,
+            boolean hasSoSyncRequiredCloudRule,
+            boolean hasSerialStructureSyncRequiredCloudRule,
+            boolean hasTripSyncRequired
+    ) {
         masterDataSyncFlow = false;
-        if (!hasUpdateRequired && (hasTripUpdateRequired || hasSoSyncRequiredCloudRule || hasTicketSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
+        if (!hasUpdateRequired &&
+                (hasTripSyncRequired ||
+                        hasSoSyncRequiredCloudRule ||
+                        hasTicketSyncRequired ||
+                        hasSerialStructureSyncRequiredCloudRule
+                )) {
             if (hasSerialStructureSyncRequiredCloudRule) {
                 mPresenter.executeSerialStructureUpdate();
             } else if (hasSoSyncRequiredCloudRule) {
@@ -3466,12 +3523,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             }
         } else if (hasUpdateRequired) {
             if (ToolBox_Con.isOnline(context)) {
-                setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-                showPD();
-                cleanUpResults();
                 //executeSaveProcess();
-                mPresenter.executeSerialSave();
+                if(mPresenter.hasTripWithUpdateRequired() != null){
+                    sendTripUpdateRequired();
+                }else{
+                    setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                    setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                    showPD();
+                    cleanUpResults();
+                    mPresenter.executeSerialSave();
+                }
             } else {
                 showNoConnectionDialog();
             }
@@ -3733,9 +3794,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectTrip() {
         Integer initialTripFrag = getInitialTripFrag();
         if (initialTripFrag == null) {
-            NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_homeTripFragment);
+            NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
+            if(mPresenter.isFieldServiceModeAble()) {
+                NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_homeTripFragment);
+            }
         } else {
-            setTripFragment();
+            setTripFragment(initialTripFrag);
         }
     }
 
@@ -3764,6 +3828,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
+    }
+
+    @Override
+    public void hideProgressWs() {
+        if (progressDialog != null) {
+            disableProgressDialog();
+        }
     }
 
     @Override

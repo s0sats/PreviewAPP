@@ -32,7 +32,7 @@ class   WsEvent : BaseWsIntentService("WsEvent", IntentServiceMode.UPLOAD_DATA()
 
     private lateinit var tripDao: FSTripDao
     private lateinit var dao: FSTripEventDao
-    private val hmAuxTranslate by lazy { loadNetworkTranslate(this) }
+    private val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
     override fun onHandleIntent(intent: Intent?) {
         try {
@@ -79,7 +79,12 @@ class   WsEvent : BaseWsIntentService("WsEvent", IntentServiceMode.UPLOAD_DATA()
                         DatabaseTransactionManager(this).executeTransaction { db ->
                             tripDao.updateScn(data.tripPrefix, data.tripCode, data.scn, db)
 
-                            val getEvent = dao.getEventFull(data.tripPrefix, data.tripCode, data.eventSeq, db)
+                            val getEvent = dao.getEventFull(
+                                data.tripPrefix,
+                                data.tripCode,
+                                data.eventSeq,
+                                db
+                            )
                             getEvent?.let { tripEvent ->
                                 tripEvent.apply {
                                     cost = request.eventCost
@@ -91,6 +96,7 @@ class   WsEvent : BaseWsIntentService("WsEvent", IntentServiceMode.UPLOAD_DATA()
                                     photoLocal = request.eventPhoto
                                     eventTypeCode = request.eventTypeCode
                                     eventTypeDesc = request.eventTypeDesc
+                                    eventPhotoChanged = request.changedPhoto
                                 }
                                 dao.update(tripEvent, db)
 
@@ -113,6 +119,7 @@ class   WsEvent : BaseWsIntentService("WsEvent", IntentServiceMode.UPLOAD_DATA()
                                     photoUrl = null,
                                     eventStart = request.eventStart ?: "",
                                     eventEnd = request.eventEnd ?: "",
+                                    eventPhotoChanged = request.changedPhoto
                                 ), db
                             )
                         }.success {

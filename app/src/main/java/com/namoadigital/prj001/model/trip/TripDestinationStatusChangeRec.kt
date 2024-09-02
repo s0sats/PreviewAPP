@@ -9,7 +9,7 @@ data class TripDestinationStatusChangeRec (
     @SerializedName("scn") var scn: Int,
     @SerializedName("destinationSeq") var destinationSeq: Int?,
     @SerializedName("destinationStatus") var destinationStatus: String?,
-    @SerializedName("nextDestinationSeq") var nextDestinationSeq: Int?,
-    @SerializedName("nextDestinationStatus") var nextDestinationStatus: String?,
+    @SerializedName("nextDestinationSeq") var nextDestinationSeq: Int? = null,
+    @SerializedName("nextDestinationStatus") var nextDestinationStatus: String? = null,
     @SerializedName("date") var date: String?,
 )

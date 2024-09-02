@@ -268,7 +268,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         ) {
             stepColor = ToolBox_Inf.getStatusColorV2(context, ticketStep.getStep_status());
         } else if (IsCurrentStep) {
-            stepColor = ContextCompat.getColor(context, R.color.namoa_status_process);
+            stepColor = ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.namoa_status_process);
         }
         return stepColor;
     }

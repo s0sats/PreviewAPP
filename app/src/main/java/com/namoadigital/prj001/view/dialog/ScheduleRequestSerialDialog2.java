@@ -287,7 +287,7 @@ public class ScheduleRequestSerialDialog2 extends AlertDialog {
             tilSerial.setHelperText(null);
         } else{
             searchIcon =  context.getResources().getDrawable(R.drawable.icon_lupa_ns);
-            searchIcon.setColorFilter(context.getResources().getColor(R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
+            searchIcon.setColorFilter(context.getResources().getColor(com.namoa_digital.namoa_library.R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
             mketSerial.setVisibility(View.VISIBLE);
             btnText =  hmAux_Trans.get("btn_search_serial");
             tilSerial.setHelperText(getFormattedRuleHelper());

@@ -516,27 +516,22 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 linearLayoutManager.scrollToPosition(0);
 
                 //
-                switch (checkedId) {
-                    case R.id.act074_tab_my_tickets:
-                        List<Act074_TicketVH> focusList = mPresenter.getFocusList();
-                        if(focusList!= null
-                        && !focusList.isEmpty()) {
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
-                        tab_other_tickets.setEnabled(false);
-                        tab_other_tickets.setClickable(false);
-                        loadTicketList(focusList, true);
-                        break;
-                    case R.id.act074_tab_other_tickets:
-                        List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
-                        if(unfocusList!= null
-                                && !unfocusList.isEmpty()) {
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
-                        tab_my_tickets.setEnabled(false);
-                        tab_my_tickets.setClickable(false);
-                        loadTicketList(unfocusList, false);
-                        break;
+                if (checkedId == R.id.act074_tab_my_tickets) {
+                    List<Act074_TicketVH> focusList = mPresenter.getFocusList();
+                    if(focusList != null && !focusList.isEmpty()) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    tab_other_tickets.setEnabled(false);
+                    tab_other_tickets.setClickable(false);
+                    loadTicketList(focusList, true);
+                } else if (checkedId == R.id.act074_tab_other_tickets) {
+                    List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
+                    if(unfocusList != null && !unfocusList.isEmpty()) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    tab_my_tickets.setEnabled(false);
+                    tab_my_tickets.setClickable(false);
+                    loadTicketList(unfocusList, false);
                 }
             }
         });

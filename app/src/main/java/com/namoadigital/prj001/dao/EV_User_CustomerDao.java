@@ -260,8 +260,10 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
                 ).toSqlQuery()
         );
         //
-        userCustomer.setSync_required(sync_required);
-        this.addUpdate(userCustomer);
+        if(userCustomer != null) {
+            userCustomer.setSync_required(sync_required);
+            this.addUpdate(userCustomer);
+        }
     }
 
     public EV_User_Customer getLoggedUserCustomer() {

@@ -63,6 +63,10 @@
         android:name="com.namoadigital.prj001.ui.act005.trip.fragment.extract.TripExtractFragment"
         android:label="frg_main_trip"
         tools:layout="@layout/frg_extract_trip" >
+        <argument
+            android:name="isExtract"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
 

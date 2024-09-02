@@ -2,16 +2,16 @@ package com.namoadigital.prj001.core.util
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.namoadigital.prj001.extensions.getToken
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
 
 data class TokenModel(
-    @SerializedName("token") var token: String?,
-    @SerializedName("parameters") var parameters: Any?
+    @Expose @SerializedName("token") var token: String?,
+    @Expose @SerializedName("parameters") var parameters: Any?,
 )
 class TokenManager <T> constructor(
     private val context: Context
@@ -43,11 +43,15 @@ class TokenManager <T> constructor(
 
     private fun generateToken() = ToolBox_Inf.getToken(context)
 
-    fun getToken(params: T): String {
+    fun getToken(params: T, getLastToken: Boolean = false): String {
+        if(getLastToken){
+            return model.token.orEmpty()
+        }
+        //
         if(model.parameters == params){
             return model.token.orEmpty()
         }
-
+        //
         val newToken = generateToken()
         model.token = newToken
         model.parameters = params

@@ -11,14 +11,19 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.TripReportBottomsheetBinding
 import com.namoadigital.prj001.extensions.getResourceCode
 import com.namoadigital.prj001.model.TranslateResource
+import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.Companion.WS_TRIP_GET_AVAILABLE_USERS
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.BaseTripDialog
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class ReportBottomSheet constructor(
+    private val trip: FSTrip,
     private val context: Context,
     private val callServiceUsers: () -> Unit,
     private val callWs: (process: String, title: String, message: String) -> Unit,
-    private val openDialogEvent: () -> Unit
+    private val openDialogEvent: () -> Unit,
+    private val showTripOffline: () -> Unit,
 ) : BottomSheetDialogFragment() {
 
     private val binding: TripReportBottomsheetBinding by lazy {
@@ -64,13 +69,19 @@ class ReportBottomSheet constructor(
             }
 
             this.btnTechnical.setOnClickListener {
-                this@ReportBottomSheet.dismiss()
-                callWs(
-                    WS_TRIP_GET_AVAILABLE_USERS,
-                    hmAuxTranslate[PROCESS_TRIP_GET_AVAILABLE_USERS_TTL] ?: "",
-                    hmAuxTranslate[PROCESS_TRIP_GET_AVAILABLE_USERS_MSG] ?: "",
+                if(ToolBox_Con.isOnline(requireContext()) && !trip.hasUpdateRequired) {
+                    this@ReportBottomSheet.dismiss()
+                    callWs(
+                        WS_TRIP_GET_AVAILABLE_USERS,
+                        hmAuxTranslate[PROCESS_TRIP_GET_AVAILABLE_USERS_TTL] ?: "",
+                        hmAuxTranslate[PROCESS_TRIP_GET_AVAILABLE_USERS_MSG] ?: "",
                     )
-                callServiceUsers()
+                    callServiceUsers()
+                    return@setOnClickListener
+                }
+
+                showTripOffline()
+                this@ReportBottomSheet.dismiss()
             }
         }
     }

@@ -130,7 +130,7 @@ interface Act083_Main_Contract {
         fun selectDestination()
         fun saveDestination(
             context: Context,
-            response: String?,
+            response: String? = null,
             destination: SelectionDestinationAvailable
         )
     }

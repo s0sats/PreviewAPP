@@ -52,12 +52,12 @@ public class Act070_Step_FooterVH extends RecyclerView.ViewHolder{
         int fontColor = ContextCompat.getColor(context,R.color.font_normal);
         Typeface typeface = tvEndDate.getTypeface();
         if(ConstantBaseApp.SYS_STATUS_DONE.equals(stepFooter.getTicketStatus())){
-            color = ContextCompat.getColor(context,R.color.namoa_status_done);
-            fontColor = ContextCompat.getColor(context,R.color.namoa_status_done);
+            color = ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.namoa_status_done);
+            fontColor = ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.namoa_status_done);
             typeface = Typeface.defaultFromStyle(Typeface.BOLD);
         }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(stepFooter.getTicketStatus())){
-            color = ContextCompat.getColor(context,R.color.namoa_status_not_executed);
-            fontColor = ContextCompat.getColor(context,R.color.namoa_status_not_executed);
+            color = ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.namoa_status_not_executed);
+            fontColor = ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.namoa_status_not_executed);
             typeface = Typeface.defaultFromStyle(Typeface.BOLD);
         }
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);

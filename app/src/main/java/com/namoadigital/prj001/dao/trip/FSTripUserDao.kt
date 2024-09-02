@@ -317,7 +317,7 @@ class FSTripUserDao(
 
 //    --------------- [QUERY] ---------------
 
-    fun getExtract(
+    fun listAllUsers(
         tripPrefix: Int,
         tripCode: Int,
     ): List<FSTripUser> {
@@ -340,7 +340,7 @@ class FSTripUserDao(
         tripPrefix: Int,
         tripCode: Int,
         seq: Int,
-        db: SQLiteDatabase
+        db: SQLiteDatabase? = null
     ) {
         remove(
             """
@@ -355,6 +355,7 @@ class FSTripUserDao(
         }
     }
 
+    @Throws(SQLiteException::class)
     fun updateUser(
         customerCode: Long,
         tripPrefix: Int,
@@ -364,7 +365,7 @@ class FSTripUserDao(
         userName: String,
         dateStart: String,
         dateEnd: String,
-        db: SQLiteDatabase
+        db: SQLiteDatabase? = null
     ) {
         addUpdate(
             FSTripUser(
@@ -376,8 +377,8 @@ class FSTripUserDao(
                 userName = userName,
                 dateStart = dateStart,
                 dateEnd = dateEnd
-            )
-        ).let { if (it.hasError()) SQLiteException(it.errorMsg) }
+            ), db
+        ).let { if (it.hasError()) throw SQLiteException(it.errorMsg) }
     }
 
     fun getByCode(code: Int): FSTripUser? {
@@ -401,6 +402,21 @@ class FSTripUserDao(
              AND $USER_CODE = $code
         """.trimIndent()
         )
+    }
+
+    fun getNextUserSeq(tripPrefix: Int, tripCode: Int): Int {
+        val value = getByStringHM(
+            """
+            SELECT ifnull(MAX($USER_SEQ), 0) + 1 AS $USER_SEQ FROM $TABLE
+            WHERE $TRIP_PREFIX = $tripPrefix
+            AND $TRIP_CODE = $tripCode
+        """.trimIndent()
+        )
+
+        value?.let {
+            return if(value.hasConsistentValue(USER_SEQ)) value[USER_SEQ]!!.toInt() else 1
+        }
+        return 1
     }
 
     class CursorToFSTripUser : Mapper<Cursor, FSTripUser> {

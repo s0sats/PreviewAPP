@@ -141,7 +141,6 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, forceExactSearch ? 1 : 0);
-            bundle.putBoolean(WS_Serial_Search.FORCE_SITE_RESTRICTION, FsTripHelperKt.isCurrentTrip(context));
             //
             mIntent.putExtras(bundle);
             //

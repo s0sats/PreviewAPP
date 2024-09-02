@@ -17,18 +17,21 @@ interface Contract {
 
     interface Presenter : BasePresenter<View> {
 
-        fun execDestinationAvailable(filter: AvailableDestinationFilter? = null)
+        fun getListDestinationAvailable(filter: AvailableDestinationFilter? = null)
 
         fun execSelectDestination(
-            destinationType: String,
-            siteCode: Int?,
-            ticketPrefix: Int?,
-            ticketCode: Int?
+            context: Context,
+            selectionDestinationAvailable: SelectionDestinationAvailable
         )
 
         fun getDestinationFilter(): AvailableDestinationFilter
 
-        fun saveDestination(context: Context, response: String?, destination: SelectionDestinationAvailable)
+        fun saveDestination(
+            context: Context,
+            response: String? = null,
+            destination: SelectionDestinationAvailable,
+            forceOfflineFlow: Boolean=false
+        )
 
     }
 }

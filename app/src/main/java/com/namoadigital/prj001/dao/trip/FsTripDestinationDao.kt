@@ -16,6 +16,9 @@ import com.namoadigital.prj001.core.trip.domain.model.OdometerArrivedDestination
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.dao.BaseDao
 import com.namoadigital.prj001.dao.DaoWithReturn
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.md.MDRegionDao
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
@@ -23,8 +26,12 @@ import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.toDescription
+import com.namoadigital.prj001.model.trip.toDestinationStatus
+import com.namoadigital.prj001.sql.trip.DestinationGetMax
 import com.namoadigital.prj001.sql.trip.FsTripDestinationSqlGetDestinationByStatus
+import com.namoadigital.prj001.ui.act094.destination.domain.destination_availables.DestinationAvailables
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import javax.inject.Inject
@@ -33,7 +40,8 @@ class FsTripDestinationDao @Inject constructor(
     val context: Context,
     mDB_NAME: String = ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
     mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
-) : BaseDao(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI), DaoWithReturn<FsTripDestination> {
+) : BaseDao(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
+    DaoWithReturn<FsTripDestination> {
     private val toFsTripDestination: Mapper<Cursor, FsTripDestination>
     private val toContentValuesMapper: Mapper<FsTripDestination, ContentValues>
 
@@ -132,7 +140,7 @@ class FsTripDestinationDao @Inject constructor(
         closeDB()
     }
 
-    fun addUpdate(sQuery: String?, dbInstance: SQLiteDatabase? = null) : DaoObjReturn{
+    fun addUpdate(sQuery: String?, dbInstance: SQLiteDatabase? = null): DaoObjReturn {
 
         val daoObjReturn = DaoObjReturn()
         if (dbInstance == null) {
@@ -156,40 +164,40 @@ class FsTripDestinationDao @Inject constructor(
     }
 
 
-    fun queryForUpdate(sQuery: String?, dbInstance: SQLiteDatabase?):DaoObjReturn {
+    fun queryForUpdate(sQuery: String?, dbInstance: SQLiteDatabase?): DaoObjReturn {
 
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        if(dbInstance== null){
+        if (dbInstance == null) {
             openDB()
-        }else{
-            db=dbInstance
+        } else {
+            db = dbInstance
         }
         //
-        if(dbInstance== null){
+        if (dbInstance == null) {
             db.beginTransaction()
         }
         //
         try {
             db.execSQL(sQuery)
             //
-            if(dbInstance== null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful()
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
-            if(dbInstance== null) {
+            if (dbInstance == null) {
                 db.endTransaction()
             }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        if(dbInstance== null) {
+        if (dbInstance == null) {
             closeDB()
         }
         return daoObjReturn
@@ -199,34 +207,34 @@ class FsTripDestinationDao @Inject constructor(
         remove(sQuery, null)
     }
 
-    fun remove(sQuery: String?, dbInstance: SQLiteDatabase?):DaoObjReturn {
+    fun remove(sQuery: String?, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         val curAction = DaoObjReturn.DELETE
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        }else{
+        } else {
             db = dbInstance
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             db.beginTransaction()
         }
 
         try {
             db.execSQL(sQuery)
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful()
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
             ToolBox_Inf.registerException(javaClass.name, e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction()
             }
             daoObjReturn.action = curAction
         }
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
         return daoObjReturn
@@ -339,48 +347,70 @@ class FsTripDestinationDao @Inject constructor(
         tripCode: Int,
         destinationSeq: Int,
     ): FsTripDestination? {
-        val value = query("""
+        val value = query(
+            """
             SELECT * 
               FROM $TABLE 
              WHERE $CUSTOMER_CODE = $customerCode 
                AND $TRIP_PREFIX =  $tripPrefix
                AND $TRIP_CODE =  $tripCode
                AND $DESTINATION_SEQ =  $destinationSeq
-        """.trimIndent())
+        """.trimIndent()
+        )
         if (value.isNotEmpty()) return value[0]
         return null
     }
 
 
-    fun getDestinationStatus(
-        customerCode: Long,
+    fun getLastDestinationStatus(
         tripPrefix: Int,
         tripCode: Int
-    ): String? {
-        val value = query("""
-            SELECT $DESTINATION_STATUS FROM $TABLE
-            WHERE $CUSTOMER_CODE = '$customerCode'
-            AND $TRIP_PREFIX = '$tripPrefix'
-            AND $TRIP_CODE = '$tripCode'
-        """.trimIndent())
-        return if(value.isNotEmpty()) value[0].destinationStatus else null
+    ): DestinationStatus? {
+        val value = query(
+            """
+            SELECT * FROM $TABLE d
+            WHERE d.$TRIP_PREFIX = '$tripPrefix'
+            AND d.$TRIP_CODE = '$tripCode'
+            ORDER BY d.$DESTINATION_SEQ DESC
+            LIMIT 1
+        """.trimIndent()
+        )
+        return if (value.isNotEmpty()) value[0].destinationStatus?.toDestinationStatus() else null
     }
 
-    fun getAllDestination(
+    fun getNextDestinationSeq(
+        tripPrefix: Int,
+        tripCode: Int
+    ): Int? {
+        val value = getByStringHM(
+            DestinationGetMax(
+                tripPrefix,
+                tripCode
+            ).toSqlQuery()
+        )
+        value?.let {
+            return if (value.hasConsistentValue(DESTINATION_SEQ)) value[DESTINATION_SEQ]!!.toInt() else null
+        }
+        return 1
+    }
+
+    fun listAllDestinations(
         customerCode: Long,
         tripPrefix: Int,
         tripCode: Int,
     ): List<FsTripDestination> {
 
-        val value = query("""
+        val value = query(
+            """
             SELECT * 
               FROM $TABLE 
              WHERE $CUSTOMER_CODE = $customerCode 
                AND $TRIP_PREFIX =  $tripPrefix
                AND $TRIP_CODE =  $tripCode
-        """.trimIndent())
+        """.trimIndent()
+        )
         if (value.isNotEmpty()) return value
-        return listOf()
+        return emptyList()
     }
 
 
@@ -388,7 +418,7 @@ class FsTripDestinationDao @Inject constructor(
         val dao = FSTripDao(context)
         val trip = dao.getTrip()
         trip?.let {
-            if(it.tripStatus == TripStatus.ON_SITE.toDescription()) {
+            if (it.tripStatus == TripStatus.ON_SITE.toDescription()) {
                 val value = query(
                     FsTripDestinationSqlGetDestinationByStatus(
                         it.customerCode,
@@ -411,13 +441,13 @@ class FsTripDestinationDao @Inject constructor(
         status: String,
     ): FsTripDestination? {
         val value = query(
-                FsTripDestinationSqlGetDestinationByStatus(
-                    customerCode,
-                    tripPrefix,
-                    tripCode,
-                    status,
-                ).toSqlQuery()
-            )
+            FsTripDestinationSqlGetDestinationByStatus(
+                customerCode,
+                tripPrefix,
+                tripCode,
+                status,
+            ).toSqlQuery()
+        )
         if (value.isNotEmpty()) return value[0]
         return null
     }
@@ -428,7 +458,7 @@ class FsTripDestinationDao @Inject constructor(
         destinationSeq: Int,
         status: String,
         dbInstance: SQLiteDatabase? = null
-    ):DaoObjReturn {
+    ): DaoObjReturn {
         return queryForUpdate(
             """
                 UPDATE $TABLE
@@ -440,6 +470,7 @@ class FsTripDestinationDao @Inject constructor(
             dbInstance
         )
     }
+
     fun updateDestinationArrivedStatus(
         tripPrefix: Int,
         tripCode: Int,
@@ -447,12 +478,13 @@ class FsTripDestinationDao @Inject constructor(
         status: String,
         date: String,
         dbInstance: SQLiteDatabase? = null
-    ):DaoObjReturn {
+    ): DaoObjReturn {
         return queryForUpdate(
             """
                 UPDATE $TABLE
                 SET $DESTINATION_STATUS = '$status',
-                    $ARRIVED_DATE = '$date'
+                    $ARRIVED_DATE = '$date',
+                    $ARRIVED_TYPE = 'MANUAL'
                 WHERE $TRIP_PREFIX = $tripPrefix
                 AND $TRIP_CODE = $tripCode
                 AND $DESTINATION_SEQ = $destinationSeq
@@ -460,6 +492,7 @@ class FsTripDestinationDao @Inject constructor(
             dbInstance
         )
     }
+
     fun updateDestinationDepartedStatus(
         tripPrefix: Int,
         tripCode: Int,
@@ -467,12 +500,13 @@ class FsTripDestinationDao @Inject constructor(
         status: String,
         date: String,
         dbInstance: SQLiteDatabase? = null
-    ):DaoObjReturn {
+    ): DaoObjReturn {
         return queryForUpdate(
             """
                 UPDATE $TABLE
                 SET $DESTINATION_STATUS = '$status',
-                    $DEPARTED_DATE = '$date'
+                    $DEPARTED_DATE = '$date',
+                    $DEPARTED_TYPE = 'MANUAL'
                 WHERE $TRIP_PREFIX = $tripPrefix
                 AND $TRIP_CODE = $tripCode
                 AND $DESTINATION_SEQ = $destinationSeq
@@ -484,37 +518,42 @@ class FsTripDestinationDao @Inject constructor(
     fun getExtract(
         tripPrefix: Int,
         tripCode: Int
-    ): List<FsTripDestination>{
-        val value = query("""
+    ): List<FsTripDestination> {
+        val value = query(
+            """
             SELECT * 
             FROM $TABLE
             WHERE $TRIP_PREFIX = '$tripPrefix'
             AND $TRIP_CODE = '$tripCode'
             AND $ARRIVED_DATE IS NOT NULL
             ORDER BY $ARRIVED_DATE ASC
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        return if(value.isEmpty()) emptyList() else value
+        return if (value.isEmpty()) emptyList() else value
     }
 
     fun getListOdometer(
         tripPrefix: Int,
         tripCode: Int,
-    ) : List<OdometerArrivedDestination>{
+    ): List<OdometerArrivedDestination> {
         val value = getExtract(tripPrefix, tripCode).map { it.toOdometerList() }
 
         return value.ifEmpty { emptyList() }
     }
 
 
-    fun addUpdate(fsTripDestination: FsTripDestination?, dbInstance: SQLiteDatabase?):DaoObjReturn {
+    fun addUpdate(
+        fsTripDestination: FsTripDestination?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB()
-        }else{
+        } else {
             db = dbInstance
         }
 
@@ -540,7 +579,7 @@ class FsTripDestinationDao @Inject constructor(
                 )
             }
             //
-            fsTripDestination?.let{
+            fsTripDestination?.let {
                 var actionSeq = 0
                 it.actions?.forEach { action ->
                     //Nao existe seq para action.
@@ -572,7 +611,7 @@ class FsTripDestinationDao @Inject constructor(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
         //
@@ -586,23 +625,25 @@ class FsTripDestinationDao @Inject constructor(
         destinationSeq: Int?,
         odometer: Long?,
         photoPath: String?,
+        photoChanged: Int,
         db: SQLiteDatabase,
     ) {
-        val imageQuery = if(!photoPath.isNullOrBlank()){
-                "$ARRIVED_FLEET_PHOTO_LOCAL = '$photoPath'"
-            }else{
-                "$ARRIVED_FLEET_PHOTO_LOCAL = null"
-            }
+        val imageQuery = if (!photoPath.isNullOrBlank()) {
+            "$ARRIVED_FLEET_PHOTO_LOCAL = '$photoPath'"
+        } else {
+            "$ARRIVED_FLEET_PHOTO_LOCAL = null, $ARRIVED_FLEET_PHOTO = null"
+
+        }
         //
-        val photoName = if(!photoPath.isNullOrBlank()){
+        val photoName = if (!photoPath.isNullOrBlank()) {
             "$ARRIVED_FLEET_PHOTO_NAME = '$photoPath'"
-        }else{
+        } else {
             "$ARRIVED_FLEET_PHOTO_NAME = null"
         }
         //
-        val odometerQuery = odometer?.let{
+        val odometerQuery = odometer?.let {
             "$ARRIVED_FLEET_ODOMETER = $odometer"
-        }?: "$ARRIVED_FLEET_ODOMETER = null"
+        } ?: "$ARRIVED_FLEET_ODOMETER = null"
         //
         addUpdate(
             """
@@ -610,14 +651,15 @@ class FsTripDestinationDao @Inject constructor(
                 SET
                 $odometerQuery,
                 $photoName,
-                $imageQuery
+                $imageQuery,
+                $ARRIVED_FLEET_PHOTO_CHANGED = $photoChanged
                 WHERE $TRIP_PREFIX = '$tripPrefix' 
                 AND $TRIP_CODE = '$tripCode'
                 AND $DESTINATION_SEQ = '$destinationSeq'
             """.trimIndent(),
             db
         ).let {
-            if(it.hasError()) throw SQLiteException(it.errorMsg)
+            if (it.hasError()) throw SQLiteException(it.errorMsg)
         }
     }
 
@@ -628,7 +670,7 @@ class FsTripDestinationDao @Inject constructor(
         destinationSeq: Int,
         arrivedDate: String,
         departedDate: String,
-        db: SQLiteDatabase
+        db: SQLiteDatabase?
     ) {
 
         addUpdate(
@@ -642,7 +684,7 @@ class FsTripDestinationDao @Inject constructor(
             """.trimIndent(),
             db
         ).let {
-            if(it.hasError()) throw SQLiteException(it.errorMsg)
+            if (it.hasError()) throw SQLiteException(it.errorMsg)
         }
 
     }
@@ -653,15 +695,16 @@ class FsTripDestinationDao @Inject constructor(
         tripCode: Int,
         destinationSeq: Int?,
         type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType
-    ):FsTripDestination? {
-        val destinationFilter = destinationSeq?.let{
+    ): FsTripDestination? {
+        val destinationFilter = destinationSeq?.let {
             "AND $DESTINATION_SEQ < '$destinationSeq'"
-        }?: ""
+        } ?: ""
 
-        val odometerFilter = when(type) {
+        val odometerFilter = when (type) {
             GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.ODOMETER_PREVIOUS,
             GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.ODOMETER_BOTH ->
                 "AND $ARRIVED_FLEET_ODOMETER is not null"
+
             else -> ""
         }
 
@@ -681,21 +724,23 @@ class FsTripDestinationDao @Inject constructor(
             """.trimIndent()
         )
     }
+
     fun nextDestination(
         customerCode: Long,
         tripPrefix: Int,
         tripCode: Int,
         destinationSeq: Int?,
         type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType
-    ):FsTripDestination? {
-        val destinationFilter = destinationSeq?.let{
+    ): FsTripDestination? {
+        val destinationFilter = destinationSeq?.let {
             "AND $DESTINATION_SEQ > '$destinationSeq'"
-        }?: ""
+        } ?: ""
 
-        val odometerFilter = when(type) {
+        val odometerFilter = when (type) {
             GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.ODOMETER_NEXT,
             GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.ODOMETER_BOTH ->
                 "AND $ARRIVED_FLEET_ODOMETER is not null"
+
             else -> ""
         }
 
@@ -716,6 +761,163 @@ class FsTripDestinationDao @Inject constructor(
         )
     }
 
+    fun getExternalAddressList(userCode: String, deviceGMT: String): List<DestinationAvailables> {
+        query_HM(
+            """
+            SELECT 
+             'TICKET' as destinationType,
+             s.${MD_SiteDao.SITE_CODE},
+             s.${MD_SiteDao.SITE_DESC},
+             t.${TK_TicketDao.TICKET_PREFIX},
+             t.${TK_TicketDao.TICKET_CODE},
+             t.${TK_TicketDao.OPEN_SERIAL_ID},
+             t.${TK_TicketDao.HAS_ADDRESS},
+             t.${TK_TicketDao.ADDRESS_COUNTRY},
+             t.${TK_TicketDao.ADDRESS_STATE},
+             t.${TK_TicketDao.ADDRESS_CITY},
+             t.${TK_TicketDao.ADDRESS_DISTRICT},
+             t.${TK_TicketDao.ADDRESS_STREET},
+             t.${TK_TicketDao.ADDRESS_NUM},
+             t.${TK_TicketDao.ADDRESS_COMPLEMENT},
+             t.${TK_TicketDao.ADDRESS_ZIPCODE},
+             t.${TK_TicketDao.ADDRESS_LAT},
+             t.${TK_TicketDao.ADDRESS_LNG},
+             t.${TK_TicketDao.ADDRESS_PLUS_CODE},
+             t.${TK_TicketDao.CONTACT_NAME},
+             t.${TK_TicketDao.CONTACT_PHONE},
+             r.${MDRegionDao.REGION_CODE},
+             r.${MDRegionDao.REGION_DESC},
+             t.${TK_TicketDao.KANBAN_DATE},
+              CASE WHEN t.${TK_TicketDao.IS_PRIORITY} = 1 THEN 1 ELSE 0 END as priorityCnt,
+              CASE WHEN strftime('%Y-%m-%d', t.${TK_TicketDao.KANBAN_DATE}, '$deviceGMT') = strftime('%Y-%m-%d', 'now', '$deviceGMT') THEN 1 ELSE 0 END as todayCnt,
+              CASE WHEN strftime('%Y-%m-%d', t.${TK_TicketDao.KANBAN_DATE}, '$deviceGMT') < strftime('%Y-%m-%d', 'now', '$deviceGMT') THEN 1 ELSE 0 END as lateCnt,
+              CASE WHEN strftime('%Y-%m-%d', t.${TK_TicketDao.KANBAN_DATE}, '$deviceGMT', '+7 days') > strftime('%Y-%m-%d', 'now', '$deviceGMT', '+7 days') THEN 1 ELSE 0 END as nextCnt
+              
+             FROM ${TK_TicketDao.TABLE} t
+                LEFT JOIN ${MD_SiteDao.TABLE} s ON t.${TK_TicketDao.OPEN_SITE_CODE} = s.${MD_SiteDao.SITE_CODE}
+                LEFT JOIN ${MDRegionDao.TABLE_NAME} r ON s.${MD_SiteDao.REGION_CODE} = r.${MDRegionDao.REGION_CODE}
+                LEFT JOIN $TABLE d ON t.${TK_TicketDao.TICKET_PREFIX} = d.$TICKET_PREFIX
+                AND t.${TK_TicketDao.TICKET_CODE} = d.$TICKET_CODE
+                AND d.$DESTINATION_STATUS = '${DestinationStatus.ARRIVED.toDescription()}'
+            WHERE t.${TK_TicketDao.KANBAN} = 1
+            AND d.$TICKET_PREFIX IS NULL
+            AND t.${TK_TicketDao.HAS_ADDRESS} = 1
+            AND t.${TK_TicketDao.MAIN_USER} = $userCode
+            AND t.${TK_TicketDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}', '${ConstantBaseApp.SYS_STATUS_PROCESS}')
+            AND t.${TK_TicketDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}')
+            
+        """.trimIndent()
+        ).let { query ->
+
+            return query.map { hmAux ->
+                DestinationAvailables(
+                    destinationType = hmAux["destinationType"],
+                    siteCode = hmAux[MD_SiteDao.SITE_CODE].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                    siteDesc = hmAux[MD_SiteDao.SITE_DESC],
+                    ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX].takeIf { !it.isNullOrEmpty() }
+                        ?.toInt(),
+                    ticketCode = hmAux[TK_TicketDao.TICKET_CODE].takeIf { !it.isNullOrEmpty() }
+                        ?.toInt(),
+                    serialId = hmAux[TK_TicketDao.OPEN_SERIAL_ID],
+                    address = hmAux[TK_TicketDao.HAS_ADDRESS].takeIf { !it.isNullOrEmpty() }
+                        ?.toInt(),
+                    countryId = hmAux[TK_TicketDao.ADDRESS_COUNTRY_ID],
+                    state = hmAux[TK_TicketDao.ADDRESS_STATE],
+                    city = hmAux[TK_TicketDao.ADDRESS_CITY],
+                    district = hmAux[TK_TicketDao.ADDRESS_DISTRICT],
+                    street = hmAux[TK_TicketDao.ADDRESS_STREET],
+                    streetnumber = hmAux[TK_TicketDao.ADDRESS_NUM],
+                    complement = hmAux[TK_TicketDao.ADDRESS_COMPLEMENT],
+                    zipcode = hmAux[TK_TicketDao.ADDRESS_ZIPCODE],
+                    plusCode = hmAux[TK_TicketDao.ADDRESS_PLUS_CODE],
+                    lat = hmAux[TK_TicketDao.ADDRESS_LAT].takeIf { !it.isNullOrEmpty() }
+                        ?.toDouble(),
+                    lon = hmAux[TK_TicketDao.ADDRESS_LNG].takeIf { !it.isNullOrEmpty() }
+                        ?.toDouble(),
+                    contactName = hmAux[TK_TicketDao.CONTACT_NAME],
+                    contactPhone = hmAux[TK_TicketDao.CONTACT_PHONE],
+                    regionCode = hmAux[MDRegionDao.REGION_CODE].takeIf { !it.isNullOrEmpty() }
+                        ?.toInt(),
+                    regionDesc = hmAux[MDRegionDao.REGION_DESC],
+                    minDate = hmAux[TK_TicketDao.KANBAN_DATE],
+                    priorityCnt = hmAux["priorityCnt"].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                    todayCnt = hmAux["todayCnt"].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                    lateCnt = hmAux["lateCnt"].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                    nextCnt = hmAux["nextCnt"].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                )
+            }
+
+        }
+    }
+
+    fun getSiteAddressList(): List<DestinationAvailables> {
+
+        query_HM(
+            """
+            SELECT 
+                'SITE' as destinationType,
+                s.${MD_SiteDao.SITE_CODE},
+                s.${MD_SiteDao.SITE_DESC},
+                s.${MD_SiteDao.COUNTRY_CODE},
+                s.${MD_SiteDao.STATE},
+                s.${MD_SiteDao.CITY},
+                s.${MD_SiteDao.DISTRICT},
+                s.${MD_SiteDao.STREET},
+                s.${MD_SiteDao.NUM},
+                s.${MD_SiteDao.COMPLEMENT},
+                s.${MD_SiteDao.ZIP_CODE},
+                s.${MD_SiteDao.PLUS_CODE},       
+                s.${MD_SiteDao.CONTACT_NAME},
+                s.${MD_SiteDao.CONTACT_PHONE},
+                s.${MD_SiteDao.LATITUDE},
+                s.${MD_SiteDao.LONGITUDE},
+                r.${MDRegionDao.REGION_CODE},
+                r.${MDRegionDao.REGION_DESC},
+                min(t.${TK_TicketDao.KANBAN_DATE}) as minDate
+                FROM ${MD_SiteDao.TABLE} s
+                      LEFT JOIN ${MDRegionDao.TABLE_NAME} r
+                      ON s.${MD_SiteDao.REGION_CODE} = r.${MDRegionDao.REGION_CODE}
+                      LEFT JOIN ${TK_TicketDao.TABLE} t
+                      ON s.${MD_SiteDao.SITE_CODE} = t.${TK_TicketDao.OPEN_SITE_CODE}
+                      AND t.${TK_TicketDao.HAS_ADDRESS} = 0
+                      AND t.${TK_TicketDao.KANBAN} = 1
+                      LEFT JOIN $TABLE d
+                      ON s.${MD_SiteDao.SITE_CODE} = d.${DESTINATION_SITE_CODE}
+                      AND d.${DESTINATION_STATUS} = '${DestinationStatus.ARRIVED.toDescription()}'
+                      AND d.${DESTINATION_TYPE} = 'SITE'
+                WHERE d.$DESTINATION_SITE_CODE IS NULL
+                GROUP BY  s.${MD_SiteDao.SITE_CODE}
+        """.trimIndent()
+        ).let { query ->
+
+            return query.map { hmAux ->
+                DestinationAvailables(
+                    destinationType = hmAux["destinationType"],
+                    siteCode = hmAux[MD_SiteDao.SITE_CODE].takeIf { !it.isNullOrEmpty() }?.toInt(),
+                    siteDesc = hmAux[MD_SiteDao.SITE_DESC],
+                    address = 1,
+                    countryId = hmAux[MD_SiteDao.COUNTRY_CODE],
+                    state = hmAux[MD_SiteDao.STATE],
+                    city = hmAux[MD_SiteDao.CITY],
+                    district = hmAux[MD_SiteDao.DISTRICT],
+                    street = hmAux[MD_SiteDao.STREET],
+                    streetnumber = hmAux[MD_SiteDao.NUM],
+                    complement = hmAux[MD_SiteDao.COMPLEMENT],
+                    zipcode = hmAux[MD_SiteDao.ZIP_CODE],
+                    plusCode = hmAux[MD_SiteDao.PLUS_CODE],
+                    contactName = hmAux[MD_SiteDao.CONTACT_NAME],
+                    contactPhone = hmAux[MD_SiteDao.CONTACT_PHONE],
+                    lat = hmAux[MD_SiteDao.LATITUDE].takeIf { !it.isNullOrEmpty() }?.toDouble(),
+                    lon = hmAux[MD_SiteDao.LONGITUDE].takeIf { !it.isNullOrEmpty() }?.toDouble(),
+                    regionCode = hmAux[MDRegionDao.REGION_CODE].takeIf { !it.isNullOrEmpty() }
+                        ?.toInt(),
+                    regionDesc = hmAux[MDRegionDao.REGION_DESC],
+                    minDate = hmAux["minDate"]
+                )
+            }
+        }
+    }
+
     class CursorToFsTripDestination : Mapper<Cursor, FsTripDestination> {
         @SuppressLint("Range")
         override fun map(from: Cursor?): FsTripDestination? {
@@ -730,7 +932,11 @@ class FsTripDestinationDao @Inject constructor(
                         destinationSiteCode = getIntOrNull(getColumnIndex(DESTINATION_SITE_CODE)),
                         destinationSiteDesc = getStringOrNull(getColumnIndex(DESTINATION_SITE_DESC)),
                         destinationRegionCode = getIntOrNull(getColumnIndex(DESTINATION_REGION_CODE)),
-                        destinationRegionDesc = getStringOrNull(getColumnIndex(DESTINATION_REGION_DESC)),
+                        destinationRegionDesc = getStringOrNull(
+                            getColumnIndex(
+                                DESTINATION_REGION_DESC
+                            )
+                        ),
                         ticketPrefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
                         ticketCode = getIntOrNull(getColumnIndex(TICKET_CODE)),
                         ticketId = getStringOrNull(getColumnIndex(TICKET_ID)),
@@ -743,8 +949,17 @@ class FsTripDestinationDao @Inject constructor(
                         arrivedType = getStringOrNull(getColumnIndex(ARRIVED_TYPE)),
                         arrivedFleetOdometer = getLongOrNull(getColumnIndex(ARRIVED_FLEET_ODOMETER)),
                         arrivedFleetPhoto = getStringOrNull(getColumnIndex(ARRIVED_FLEET_PHOTO)),
-                        arrivedFleetPhotoLocal = getStringOrNull(getColumnIndex(ARRIVED_FLEET_PHOTO_LOCAL)),
-                        arrivedFleetPhotoName = getStringOrNull(getColumnIndex(ARRIVED_FLEET_PHOTO_NAME)),
+                        arrivedFleetPhotoLocal = getStringOrNull(
+                            getColumnIndex(
+                                ARRIVED_FLEET_PHOTO_LOCAL
+                            )
+                        ),
+                        arrivedFleetPhotoName = getStringOrNull(
+                            getColumnIndex(
+                                ARRIVED_FLEET_PHOTO_NAME
+                            )
+                        ),
+                        arrivedFleetPhotoChanged = getInt(getColumnIndex(ARRIVED_FLEET_PHOTO_CHANGED)),
                         departedDate = getStringOrNull(getColumnIndex(DEPARTED_DATE)),
                         departedLat = getDoubleOrNull(getColumnIndex(DEPARTED_LAT)),
                         departedLon = getDoubleOrNull(getColumnIndex(DEPARTED_LON)),
@@ -780,7 +995,10 @@ class FsTripDestinationDao @Inject constructor(
                     if (destination.customerCode > -1) put(CUSTOMER_CODE, destination.customerCode)
                     if (destination.tripPrefix > -1) put(TRIP_PREFIX, destination.tripPrefix)
                     if (destination.tripCode > -1) put(TRIP_CODE, destination.tripCode)
-                    if (destination.destinationSeq > -1) put(DESTINATION_SEQ, destination.destinationSeq)
+                    if (destination.destinationSeq > -1) put(
+                        DESTINATION_SEQ,
+                        destination.destinationSeq
+                    )
                     put(DESTINATION_TYPE, destination.destinationType)
                     put(DESTINATION_SITE_CODE, destination.destinationSiteCode)
                     put(DESTINATION_SITE_DESC, destination.destinationSiteDesc)
@@ -800,6 +1018,7 @@ class FsTripDestinationDao @Inject constructor(
                     put(ARRIVED_FLEET_PHOTO, destination.arrivedFleetPhoto)
                     put(ARRIVED_FLEET_PHOTO_LOCAL, destination.arrivedFleetPhotoLocal)
                     put(ARRIVED_FLEET_PHOTO_NAME, destination.arrivedFleetPhotoName)
+                    put(ARRIVED_FLEET_PHOTO_CHANGED, destination.arrivedFleetPhotoChanged)
                     put(DEPARTED_DATE, destination.departedDate)
                     put(DEPARTED_LAT, destination.departedLat)
                     put(DEPARTED_LON, destination.departedLon)
@@ -817,7 +1036,7 @@ class FsTripDestinationDao @Inject constructor(
                     put(CONTACT_PHONE, destination.contactPhone)
                     put(SITE_MAIN_USER, destination.siteMainUser)
                     put(MIN_DATE, destination.minDate)
-                    if(destination.serialCnt > -1)put(SERIAL_CNT, destination.serialCnt)
+                    if (destination.serialCnt > -1) put(SERIAL_CNT, destination.serialCnt)
                 }
             }
 
@@ -853,6 +1072,7 @@ class FsTripDestinationDao @Inject constructor(
         const val ARRIVED_FLEET_PHOTO = "arrived_fleet_photo"
         const val ARRIVED_FLEET_PHOTO_LOCAL = "arrived_fleet_photo_local"
         const val ARRIVED_FLEET_PHOTO_NAME = "arrived_fleet_photo_name"
+        const val ARRIVED_FLEET_PHOTO_CHANGED = "arrived_fleet_photo_changed"
         const val DEPARTED_DATE = "departed_date"
         const val DEPARTED_LAT = "departed_lat"
         const val DEPARTED_LON = "departed_lon"

@@ -138,7 +138,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         //ficando sem clique
         clBackground.setOnClickListener(onVhClickListener);
         //
-        int backgroundColor = R.color.padrao_TRANSPARENT;
+        int backgroundColor = com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
         if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus)

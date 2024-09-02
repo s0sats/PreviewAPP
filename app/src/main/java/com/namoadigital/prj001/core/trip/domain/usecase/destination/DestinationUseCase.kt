@@ -1,11 +1,16 @@
 package com.namoadigital.prj001.core.trip.domain.usecase.destination
 
 import android.content.Context
+import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepositoryImp
+import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepositoryImp
+import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveDestinationDateUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SetDestinationStatusUseCase
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 
@@ -21,26 +26,32 @@ data class DestinationUseCase(
     val setDestinationStatusUseCase: SetDestinationStatusUseCase? = null,
     val listOdometerArrived: ListOdometerArrivedUseCase? = null,
     val saveDestinationDateUseCase: SaveDestinationDateUseCase? = null,
-    val getDestinationForThresholdValidationUseCase: GetDestinationForThresholdValidationUseCase? = null
+    val getDestinationForThresholdValidationUseCase: GetDestinationForThresholdValidationUseCase? = null,
+    val saveOverNightDestinationUseCase: SaveOverNightDestinationUseCase? = null
 ) {
 
 
     companion object INSTANCE {
 
         fun selectDestinationUseCase(context: Context): DestinationUseCase {
-
+            val tripDao = FSTripDao(context)
             val tripDestinationRepository = TripDestinationRepositoryImp(
                 context,
                 FsTripDestinationDao(context),
-                FSTripDao(context)
+                tripDao
             )
 
+            val tripRepository = TripRepositoryImp(context, tripDao)
+
             return DestinationUseCase(
-                GetAvailablesDestinationsUseCase(tripDestinationRepository),
+                GetAvailablesDestinationsUseCase(
+                    tripDestinationRepository,
+                    TicketRepositoryImp(context, TK_TicketDao(context)),
+                    SerialRepositoryImp(MD_Product_SerialDao(context))),
                 SelectDestinationUseCase(tripDestinationRepository),
                 GetFilterPreferenceUseCase(tripDestinationRepository),
                 SaveDestinationFilterUseCase(tripDestinationRepository),
-                saveDestination = SaveDestinationUseCase(tripDestinationRepository),
+                saveDestination = SaveDestinationUseCase(tripDestinationRepository, tripRepository, CheckNextStatusWhenNewDestinationUseCase(tripDestinationRepository, tripRepository)),
                 getDestinationForThresholdValidationUseCase = GetDestinationForThresholdValidationUseCase(tripDestinationRepository),
             )
         }

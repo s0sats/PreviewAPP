@@ -17,6 +17,8 @@ class FsTripSqlTicketActions(
     private val siteCode: Int,
     private val isFocused: Int,
     private val multStepsLbl: String?,
+    private val serialId: String?,
+    private val productCode: Int?,
 ): Specification {
 
     private val INNER_UPDATE_REQUIRED = "INNER_UPDATE_REQUIRED"
@@ -25,6 +27,18 @@ class FsTripSqlTicketActions(
     private val FORECAST_END_FOCUS = "FORECAST_END_FOCUS"
     private val FORECAST_END_N_FOCUS = "FORECAST_END_N_FOCUS"
     private val deviceGMT = ToolBox.getDeviceGMT(false)
+    private var serialFilter = ""
+
+    init {
+        if(productCode != null && serialId != null) {
+            serialFilter = """ 
+            and (
+                t.${TK_TicketDao.OPEN_PRODUCT_CODE}  = $productCode 
+                and t.${TK_TicketDao.OPEN_SERIAL_ID}  = '$serialId'                            
+              )
+        """.trimIndent()
+        }
+    }
 
     override fun toSqlQuery() = """
         SELECT t.*,
@@ -125,6 +139,7 @@ class FsTripSqlTicketActions(
            AND t.${TK_TicketDao.HAS_ADDRESS} = 0
            and  (strftime('%Y-%m-%d', t.${TK_TicketDao.KANBAN_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT','+7 days'))
            AND t.${TK_TicketDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')  
-           AND t.${TK_TicketDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}') 
+           AND t.${TK_TicketDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}')
+           $serialFilter
     """.trimIndent()
 }

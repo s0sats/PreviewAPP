@@ -57,7 +57,7 @@ class WsAvailablesDestinations : BaseWsIntentService("WsAvailablesDestinations",
         siteCode: Int
     ) {
 
-        val gson = GsonBuilder().serializeNulls().create()
+        val gson = GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create()
 
         val env = DestinationAvailableEnv(
             parameters = DestinationAvailableEnv.Parameters(
@@ -86,7 +86,8 @@ class WsAvailablesDestinations : BaseWsIntentService("WsAvailablesDestinations",
             )
         )
 
-        val rec = gson.fromJson(result, DestinationAvailableRec::class.java)
+        val gsonParse = GsonBuilder().create()
+        val rec = gsonParse.fromJson(result, DestinationAvailableRec::class.java)
 
 
         if (!ToolBox_Inf.processWSCheckValidation(

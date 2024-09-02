@@ -22,9 +22,12 @@ interface OnFrgMainHomeInteract {
     fun getChatBadgeQty(): Int
     fun showHomeBtn(): Boolean
     fun callTripWS(wsProcess: String, ttl: String, msg: String)
+    fun hideProgressWs()
     fun checkGPSPermission()
     fun onSelectExtract()
 
     fun isEnabledGps() : Boolean
+    fun invalidateMenuOptions()
+    fun sendTripUpdateRequired()
 
 }

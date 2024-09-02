@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
@@ -73,7 +74,7 @@ class TripWaitingDestinationFragment : TripBaseFragment<FrgWaitingDestinationTri
                             }
                         )
                     )
-                }.launchIn(CoroutineScope(Dispatchers.Main + SupervisorJob()))
+                }.launchIn(lifecycleScope)
 
             } ?: run {
                 binding.cardEvent.closeNotification()
@@ -139,13 +140,14 @@ class TripWaitingDestinationFragment : TripBaseFragment<FrgWaitingDestinationTri
                     hmAuxTranslate[ALERT_CONFIRM_WAITING_DESTINATION_TRIP_TTL],
                     hmAuxTranslate[ALERT_CONFIRM_WAITING_DESTINATION_TRIP_MSG],
                     onConfirm = {
-                        listener?.callTripWS(
-                            WS_TRIP_TRANSFER,
-                            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_TRANSFER_TTL]!!,
-                            hmAuxTranslate[TripTranslate.PROGRESS_TRIP_TRANSFER_MSG]!!,
+                        viewModel.setTripStatus(
+                            TripStatus.TRANSFER,
+                            tripWsProgress = TripWsProgress(
+                                process = WS_TRIP_TRANSFER,
+                                title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_TRANSFER_TTL]!!,
+                                message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_TRANSFER_MSG]!!,
+                            )
                         )
-                        //
-                        viewModel.setTripStatus(TripStatus.TRANSFER)
                     }
                 )
 

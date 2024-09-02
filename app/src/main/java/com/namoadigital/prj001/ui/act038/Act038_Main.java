@@ -966,7 +966,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         HMAux aux = ss_status.getmValue();
 
         if (aux.isEmpty()) {
-            ss_status.setBackground(context.getDrawable(R.drawable.shape_error));
+            ss_status.setBackground(context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
             return false;
         } else {
             ss_status.setBackground(null);
@@ -987,7 +987,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     if (mUser.get(SearchableSpinner.CODE) == null ||
                             mUser.get(SearchableSpinner.CODE) == "null" ||
                             mUser.get(SearchableSpinner.CODE).isEmpty()) {
-                        ss_users.setBackground(context.getDrawable(R.drawable.shape_error));
+                        ss_users.setBackground(context.getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     } else {
                         ss_users.setBackground(null);
                     }

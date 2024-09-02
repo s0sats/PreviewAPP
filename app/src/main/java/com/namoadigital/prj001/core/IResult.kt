@@ -4,7 +4,8 @@ sealed class IResult<out DTO> {
 
     data class isSuccess<out DTO>(val response: DTO) : IResult<DTO>()
 
-    data class isError(val error: String) : IResult<Nothing>()
+    data class isError(val message: String? = null, val exceptionError: Throwable? = null) :
+        IResult<Nothing>()
 
     data class isFailed(val exceptionError: Throwable) : IResult<Nothing>() {
         val message = exceptionError.message
@@ -18,9 +19,9 @@ sealed class IResult<out DTO> {
         fun <OUT> success(data: OUT) = isSuccess(data)
 
         fun failed(exceptionError: Throwable) = isFailed(exceptionError)
-        fun error(error: String) = isError(error)
+        fun error(message: String? = null, exceptionError: Throwable? = null) = isError(message, exceptionError)
 
-        fun loading(isLoading: Boolean, message: String = "Waiting...") =
+        fun loading(isLoading: Boolean = true, message: String = "Waiting...") =
             isLoading(isLoading, message)
 
         suspend fun <DTO> IResult<DTO>.isSuccess(block: suspend (DTO) -> Unit) = apply {
@@ -49,17 +50,17 @@ sealed class IResult<out DTO> {
                 }
             }
 
-        suspend fun <DTO> IResult<DTO>.isError(block: suspend (error: String) -> Unit) =
+        suspend fun <DTO> IResult<DTO>.isError(block: suspend (message: String?, exceptionError: Throwable?) -> Unit) =
             apply {
                 if (this is isError) {
-                    block(this.error)
+                    block(this.message, this.exceptionError)
                 }
             }
 
-        fun <DTO> IResult<DTO>.error(block: (error: String) -> Unit) =
+        fun <DTO> IResult<DTO>.error(block: (error: String?, exceptionError: Throwable?) -> Unit) =
             apply {
                 if (this is isError) {
-                    block(this.error)
+                    block(this.message, this.exceptionError)
                 }
             }
 

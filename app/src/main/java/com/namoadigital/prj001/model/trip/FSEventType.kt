@@ -1,16 +1,17 @@
 package com.namoadigital.prj001.model.trip
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class FSEventType(
-    @SerializedName("customer_code") var customerCode: Long,
-    @SerializedName("event_type_code") var eventTypeCode: Int,
-    @SerializedName("event_type_desc") var eventTypeDesc: String,
-    @SerializedName("conf_cost") var confCost: String,
-    @SerializedName("conf_comments") var confComments: String,
-    @SerializedName("conf_photo") var confPhoto: String,
-    @SerializedName("wait_allowed") var waitAllowed: Int,
-    @SerializedName("wait_max_minutes") var waitMaxMinutes: Int?,
+    @Expose @SerializedName("customer_code") var customerCode: Long,
+    @Expose @SerializedName("event_type_code") var eventTypeCode: Int,
+    @Expose @SerializedName("event_type_desc") var eventTypeDesc: String,
+    @Expose @SerializedName("conf_cost") var confCost: String,
+    @Expose @SerializedName("conf_comments") var confComments: String,
+    @Expose @SerializedName("conf_photo") var confPhoto: String,
+    @Expose @SerializedName("wait_allowed") var waitAllowed: Int,
+    @Expose @SerializedName("wait_max_minutes") var waitMaxMinutes: Int?,
 ){
 
     val isRequiredCost = confCost == CONFIGURE_FIELD_REQUIRED

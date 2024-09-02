@@ -36,7 +36,7 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
 
     lateinit var dao: FSTripDao
     lateinit var destinationDao: FsTripDestinationDao
-    private  val hmAuxTranslate by lazy { loadNetworkTranslate(this) }
+    private  val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
     override fun onHandleIntent(intent: Intent?) {
 
@@ -97,12 +97,13 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
                             when(request.target.toTripTarget()){
                                 TripTarget.DESTINATION -> {
                                     destinationDao.updateArrivedFleet(
-                                        data.tripPrefix,
-                                        data.tripCode,
-                                        request.destinationSeq,
-                                        request.odometer,
-                                        image,
-                                        db
+                                        tripPrefix = data.tripPrefix,
+                                        tripCode = data.tripCode,
+                                        destinationSeq = request.destinationSeq,
+                                        odometer = request.odometer,
+                                        photoPath = image,
+                                        photoChanged = request.imageChanged,
+                                        db = db
                                     )
                                 }
                                 else -> {
@@ -113,6 +114,7 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
                                         request.odometer,
                                         request.target.toTripTarget(),
                                         image,
+                                        request.photoChanged,
                                         db
                                     )
                                 }

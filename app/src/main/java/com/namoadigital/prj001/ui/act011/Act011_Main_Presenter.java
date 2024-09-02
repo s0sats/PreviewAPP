@@ -159,6 +159,9 @@ public interface Act011_Main_Presenter {
     List<String> getSiteEmailList(int site_code);
 
     void executeStructureUpdate();
+
+    boolean isTripInUpdateRequired();
+
     void executeTripUpdate();
     boolean isUserOnSyncRequiredTrip();
 

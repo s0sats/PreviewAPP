@@ -8,7 +8,12 @@ import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.extensions.isCurrentTrip
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -36,7 +41,7 @@ class ListMyActionUseCases constructor(
             with(serialModel) {
                 copy(
                     customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
+                    siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Site_Code(
                         context
                     ) else null,
                     multStepsLbl = hmAux?.get("other_steps_available_lbl")
@@ -44,9 +49,11 @@ class ListMyActionUseCases constructor(
 
                     emit(loading(true))
                     //
-                    var ticketList: List<MyActionsBase> = emptyList()
+                    var ticketList: List<MyActionsBase>
                     var scheduleList: List<MyActionsBase> = emptyList()
-                    var formList: List<MyActionsBase> = emptyList()
+                    var formList: List<MyActionsBase>
+                    val processList = mutableListOf<MyActionsBase>()
+                    var unfocusList : List<MyActionsBase>
                     if(tripRepository.getTrip() == null){
                         ticketList = setTicketList(localTicket, mainUser, serialModel)
                         scheduleList = setScheduleList(localTicket, mainUser, serialModel)
@@ -54,17 +61,35 @@ class ListMyActionUseCases constructor(
                     }else{
                         ticketList = getTicketUseCase(
                             GetTicketActionUseCase.Params(
-                                localTicket.siteCode?.toInt() ?: -1,
-                                mainUser, null
+                                siteCode = ToolBox_Con.getPreference_Site_Code(
+                                    context
+                                ).toInt(),
+                                mainUser,
+                                null,
+                                serialModel.productCode,
+                                serialModel.serialId
                             )
                         ).tickets.map {
                             val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
                             TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
                         }
                         formList = setFormList(localTicket, mainUser, serialModel)
+                        unfocusList = if(serialModel.userFocus == 0){
+                            repository.getUnfocusAndHistorical(
+                                serialModel.productCode ?: -1,
+                                (serialModel.serialCode ?: -1).toLong(),
+                                serialModel.serialId ?: "",
+                                null
+                            ).filter {
+                                it.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                                        || it.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE
+                            }
+                        }else{
+                            emptyList()
+                        }
+                        processList.addAll(unfocusList)
                     }
                     //
-                    val processList = mutableListOf<MyActionsBase>()
                     processList.addAll(ticketList)
                     processList.addAll(scheduleList)
                     processList.addAll(formList)
@@ -98,7 +123,10 @@ class ListMyActionUseCases constructor(
                         actionBaseList.addAll(filterDone)
                     }
                    //
-                    val actions = if (mainUser)
+                    val actions = if(context.isCurrentTrip()){
+                        actionBaseList.map { m -> m as MyActions }
+                            .filter { f -> !f.doneDate.isNullOrEmpty() || f.isMainUserTicket } as MutableList<MyActionsBase>
+                    } else if (mainUser)
                         actionBaseList.map { m -> m as MyActions }
                             .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
                     else actionBaseList
