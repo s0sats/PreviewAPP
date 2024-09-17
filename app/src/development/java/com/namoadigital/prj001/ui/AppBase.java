@@ -145,7 +145,7 @@ public class AppBase extends Application {
 
         DB_PREFIX_BASE = "namoa_sms";
         DB_NAME_BASE = DB_PREFIX_BASE + DB_SUFIX;
-        DB_VERSION_BASE = 13;
+        DB_VERSION_BASE = 14;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX ;

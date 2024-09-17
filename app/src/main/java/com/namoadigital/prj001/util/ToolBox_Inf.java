@@ -142,6 +142,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.EvUserCustomerKt;
 import com.namoadigital.prj001.extensions.ExceptionHelperKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.extensions.ImageMetadataHelperKt;
@@ -2447,10 +2448,13 @@ public class ToolBox_Inf {
             //endregion
         }
 
+
+        setOperationFooterLayout(context, editMode, hmDialogInfo, ss_operation,ll_operation, tv_operation_lbl, tv_operation_value);
+
         if(editMode && !FsTripHelperKt.isCurrentTrip(context)){
-            setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);
+            setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone);
         }else {
-            setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value, ll_operation, tv_operation_lbl, tv_operation_value);
+            setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value);
         }
 
 //        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
@@ -2551,9 +2555,9 @@ public class ToolBox_Inf {
         return has_changes;
     }
 
-    private static void setEnableUserInfo(Context context, HMAux hmDialogInfo,SearchableSpinner ss_site,SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
-        setmCanClean(ss_site, ss_zone, ss_operation);
-        setmSSAction(context, ss_site, ss_zone, ss_operation);
+    private static void setEnableUserInfo(Context context, HMAux hmDialogInfo,SearchableSpinner ss_site,SearchableSpinner ss_zone) {
+        setmFooterSiteCanClean(ss_site, ss_zone);
+        setmSSAction(context, ss_site, ss_zone);
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
@@ -2586,21 +2590,6 @@ public class ToolBox_Inf {
         } else {
             ss_zone.setVisibility(View.GONE);
         }
-        //
-        MD_OperationDao operationDao = new MD_OperationDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-        //
-        ArrayList<HMAux> ssOperationOption = (ArrayList<HMAux>) operationDao.query_HM(
-                new MD_Operation_Sql_SS(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-        HMAux ssOperationValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_OPERATION), ssOperationOption);
-        setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
-        ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
         //
     }
 
@@ -2642,7 +2631,7 @@ public class ToolBox_Inf {
         return 0;
     }
 
-    private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
+    private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value) {
         tv_site_lbl.setText(hmDialogInfo.get(Constant.FOOTER_SITE_LBL));
         tv_site_value.setText(hmDialogInfo.get(Constant.FOOTER_SITE));
         ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
@@ -2650,10 +2639,34 @@ public class ToolBox_Inf {
         tv_zone_lbl.setText(hmDialogInfo.get(Constant.FOOTER_ZONE_LBL));
         tv_zone_value.setText(hmDialogInfo.get(Constant.FOOTER_ZONE));
         ll_zone.setVisibility(hmDialogInfo.get(Constant.FOOTER_ZONE) == null || hmDialogInfo.get(Constant.FOOTER_ZONE).length() <= 0 ? View.GONE : View.VISIBLE);
+    }
 
-        tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
-        tv_operation_value.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION));
-        ll_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+    private static void setOperationFooterLayout(Context context, boolean editMode, HMAux hmDialogInfo, SearchableSpinner ss_operation, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
+
+        if(editMode
+        && !EvUserCustomerKt.hasAutomaticOperationRestriction(context)
+        && !FsTripHelperKt.isCurrentTrip(context)){
+            ss_operation.setmCanClean(false);
+            MD_OperationDao operationDao = new MD_OperationDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            ArrayList<HMAux> ssOperationOption = (ArrayList<HMAux>) operationDao.query_HM(
+                    new MD_Operation_Sql_SS(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            );
+            HMAux ssOperationValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_OPERATION), ssOperationOption);
+            setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
+            ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+        }else {
+            ss_operation.setVisibility(View.GONE);
+            tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
+            tv_operation_value.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION));
+            ll_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+        }
     }
 
 
@@ -2667,7 +2680,7 @@ public class ToolBox_Inf {
         );
     }
 
-    private static void setmSSAction(final Context context, SearchableSpinner ss_site, final SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
+    private static void setmSSAction(final Context context, SearchableSpinner ss_site, final SearchableSpinner ss_zone) {
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
@@ -2696,10 +2709,9 @@ public class ToolBox_Inf {
         return null;
     }
 
-    private static void setmCanClean(SearchableSpinner ss_site, SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
+    private static void setmFooterSiteCanClean(SearchableSpinner ss_site, SearchableSpinner ss_zone) {
         ss_site.setmCanClean(false);
         ss_zone.setmCanClean(false);
-        ss_operation.setmCanClean(false);
     }
 
     private static void setSSs(SearchableSpinner searchableSpinner, String label, HMAux mValue, ArrayList<HMAux> mOption) {

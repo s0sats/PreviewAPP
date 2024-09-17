@@ -33,6 +33,8 @@ public class EV_User_Customer {
     @SerializedName("automatic_site_code") private Integer automatic_site_code;
     @SerializedName("field_service") private int field_service;
     @SerializedName("field_service_mode_only") private int field_service_mode_only;
+    @SerializedName("automatic_operation_code") private Long automatic_operation_code;
+    @SerializedName("automatic_operation_restriction") private int automatic_operation_restriction;
 
     public long getUser_code() {
         return user_code;
@@ -232,5 +234,21 @@ public class EV_User_Customer {
 
     public void setField_service_mode_only(int field_service_mode_only) {
         this.field_service_mode_only = field_service_mode_only;
+    }
+
+    public Long getAutomatic_operation_code() {
+        return automatic_operation_code;
+    }
+
+    public void setAutomatic_operation_code(Long automatic_operation_code) {
+        this.automatic_operation_code = automatic_operation_code;
+    }
+
+    public int getAutomatic_operation_restriction() {
+        return automatic_operation_restriction;
+    }
+
+    public void setAutomatic_operation_restriction(int automatic_operation_restriction) {
+        this.automatic_operation_restriction = automatic_operation_restriction;
     }
 }

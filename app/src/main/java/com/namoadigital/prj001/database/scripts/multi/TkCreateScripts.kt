@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.database.scripts
+package com.namoadigital.prj001.database.scripts.multi
 
 const val TK_TICKET_FORM_CREATE_SCRIPT =
     """ CREATE TABLE IF NOT EXISTS [tk_ticket_form] 

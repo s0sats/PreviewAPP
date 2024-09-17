@@ -77,7 +77,7 @@ import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.extensions.ListHelperKt;
-import com.namoadigital.prj001.database.scripts.masterdata.RegionScript;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;

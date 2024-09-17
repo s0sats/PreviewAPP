@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.database.scripts
+package com.namoadigital.prj001.database.scripts.multi
 
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 

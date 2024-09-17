@@ -1,6 +1,4 @@
-package com.namoadigital.prj001.database.scripts
-
-import com.namoadigital.prj001.model.GE_Custom_Form
+package com.namoadigital.prj001.database.scripts.multi
 
 
 const val GE_CUSTOM_FORM_FORM_CREATE_SCRIPT =

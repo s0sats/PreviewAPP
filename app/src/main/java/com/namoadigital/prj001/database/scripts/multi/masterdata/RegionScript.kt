@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.database.scripts.masterdata
+package com.namoadigital.prj001.database.scripts.multi.masterdata
 
 import com.namoadigital.prj001.dao.md.MDRegionDao.Companion.CUSTOMER_CODE
 import com.namoadigital.prj001.dao.md.MDRegionDao.Companion.REGION_CODE

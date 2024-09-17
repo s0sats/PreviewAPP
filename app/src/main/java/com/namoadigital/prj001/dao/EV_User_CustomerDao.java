@@ -55,6 +55,8 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String AUTOMATIC_SITE_CODE = "automatic_site_code";
     public static final String FIELD_SERVICE = "field_service";
     public static final String FIELD_SERVICE_MODE_ONLY = "field_service_mode_only";
+    public static final String AUTOMATIC_OPERATION_CODE = "automatic_operation_code";
+    public static final String AUTOMATIC_OPERATION_RESTRICTION = "automatic_operation_restriction";
 
     public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING, SYNC_REQUIRED,TIMEZONE, LICENSE_CONTROL_TYPE, AUTOMATIC_SITE_CODE, FIELD_SERVICE, FIELD_SERVICE_MODE_ONLY};
 
@@ -347,6 +349,11 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
                 contentValues.put(FIELD_SERVICE_MODE_ONLY, ev_user_customer.getField_service_mode_only());
             }
             //
+            contentValues.put(AUTOMATIC_OPERATION_CODE, ev_user_customer.getAutomatic_operation_code());
+            if (ev_user_customer.getAutomatic_operation_restriction() > -1) {
+                contentValues.put(AUTOMATIC_OPERATION_RESTRICTION, ev_user_customer.getAutomatic_operation_restriction());
+            }
+            //
             return contentValues;
         }
     }
@@ -413,6 +420,12 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setField_service(cursor.getInt(cursor.getColumnIndex(FIELD_SERVICE)));
             ev_user_customer.setField_service_mode_only(cursor.getInt(cursor.getColumnIndex(FIELD_SERVICE_MODE_ONLY)));
             //
+            if (cursor.isNull(cursor.getColumnIndex(AUTOMATIC_OPERATION_CODE))) {
+                ev_user_customer.setAutomatic_operation_code(null);
+            }else{
+                ev_user_customer.setAutomatic_operation_code(cursor.getLong(cursor.getColumnIndex(AUTOMATIC_OPERATION_CODE)));
+            }
+            ev_user_customer.setAutomatic_operation_restriction(cursor.getInt(cursor.getColumnIndex(AUTOMATIC_OPERATION_RESTRICTION)));
             return ev_user_customer;
         }
     }

@@ -7,15 +7,14 @@ import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.database.MigrationSQLite
-import com.namoadigital.prj001.database.scripts.FS_TRIP_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_DESTINATION_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_POSITION_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.FS_TRIP_USER_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.masterdata.RegionScript
-import com.namoadigital.prj001.model.trip.FsTripDestination
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_DESTINATION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2) {

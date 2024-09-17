@@ -10,11 +10,11 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.namoadigital.prj001.database.scripts.FSCreateScriptKt;
-import com.namoadigital.prj001.database.scripts.GeCustomFormCreateScriptsKt;
-import com.namoadigital.prj001.database.scripts.masterdata.RegionScript;
-import com.namoadigital.prj001.database.scripts.TkCreateScriptsKt;
-import com.namoadigital.prj001.database.scripts.masterdata.SiteScript;
+import com.namoadigital.prj001.database.scripts.multi.FSCreateScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.GeCustomFormCreateScriptsKt;
+import com.namoadigital.prj001.database.scripts.multi.TkCreateScriptsKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScript;
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
