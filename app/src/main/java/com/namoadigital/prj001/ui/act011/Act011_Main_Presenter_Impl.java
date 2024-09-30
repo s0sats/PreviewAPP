@@ -51,13 +51,16 @@ import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
+import com.namoadigital.prj001.extensions.FileHelperKt;
 import com.namoadigital.prj001.extensions.FloatHelperKt;
+import com.namoadigital.prj001.extensions.ListHelperKt;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.Act011FormTabStatus;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
@@ -79,6 +82,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.auxiliar.FormLocalSiteZoneObj;
+import com.namoadigital.prj001.model.auxiliar.GeCustomFormDataFieldExtras;
 import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.model.trip.FsTripDestination;
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
@@ -1845,7 +1849,44 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
         );
+        //
+        /***
+         *     BARRIONUEVO 20-09-2024
+         *     Este codigo é um remendo para garantir que as imagens vao para o upload.
+         *     Sera necessario uma analise mais minunciosa para identificar a real causa de nao ter
+         *     as fotos das respostas e do dots na tabela de upload, o caso ocorreu na BAUKO.
+          */
+        List<GE_File> filesTemp = new ArrayList<>();
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            String sFile_v = df.getValue();
+            String valueExtra = df.getValue_extra();
+            GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
+            //
+            GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
 
+            if(FileHelperKt.hasFileForFileName(sFile_v)
+            && !ListHelperKt.findFilePath(geFiles, sFile_v)){
+                filesTemp.add(setGE_FileForCurrentForm(sFile_v));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto1())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto1())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto1()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto2())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto2())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto2()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto3())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto3())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto3()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto4())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto4())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto4()));
+            }
+            //
+        }
+        geFiles.addAll(filesTemp);
         geFileDao.addUpdate(geFiles, false);
         //LUCHE - 26/06/2020 - Substituido IntentService pel worker de upload de imagem
         ToolBox_Inf.scheduleUploadImgWork(context);
@@ -1875,6 +1916,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.defineFinalizeFlow();
             }
         }
+    }
+
+    private GE_File setGE_FileForCurrentForm(String photoCode) {
+        GE_File temp = new GE_File();
+        temp.setFile_code(photoCode.replace(Act011_Main.PNG_EXTENSION, "").replace(Act011_Main.JPG_EXTENSION, ""));
+        temp.setFile_path(photoCode);
+        temp.setFile_status(GE_File.OPENED);
+        temp.setFile_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
+
+        return temp;
+    }
+
+    private GeCustomFormDataFieldExtras getGeCustomFormDataFieldExtras(String valueExtra) {
+        Gson gson = new Gson();
+        return gson.fromJson(valueExtra, GeCustomFormDataFieldExtras.class);
     }
 
     /**

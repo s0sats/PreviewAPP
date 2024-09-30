@@ -3163,6 +3163,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void setFragments() {
         if (mPresenter.hasSOProfile()) {
+            NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
             NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_frgMainHomeAlt);
         } else {
             if (mPresenter.isFieldServiceModeAble()) {

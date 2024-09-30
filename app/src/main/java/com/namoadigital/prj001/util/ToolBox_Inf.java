@@ -2350,8 +2350,10 @@ public class ToolBox_Inf {
                         ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                         has_changes = checkForChange(has_changes, original_operation, ss_operation);
                     }else{
-                        ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
-                        result_ok = false;
+                        if(!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
+                            ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
+                            result_ok = false;
+                        }
                     }
 
                     if(!has_changes){
@@ -2362,7 +2364,9 @@ public class ToolBox_Inf {
                         && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                             ToolBox_Con.setPreference_Zone_Code(context, Integer.parseInt(ss_zone.getmValue().get(SearchableSpinner.CODE)));
                         }
-                        ToolBox_Con.setPreference_Operation_Code(context, Long.parseLong(ss_operation.getmValue().get(SearchableSpinner.CODE)));
+                        if(!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
+                            ToolBox_Con.setPreference_Operation_Code(context, Long.parseLong(ss_operation.getmValue().get(SearchableSpinner.CODE)));
+                        }
                         Intent mIntent = new Intent(ToolBox.SW_TYPE_BR_REFRESH);
                         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
                         //
