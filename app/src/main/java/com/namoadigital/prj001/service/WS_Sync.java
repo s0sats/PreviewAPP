@@ -482,7 +482,7 @@ public class WS_Sync extends BaseWsIntentService {
                 false
             ) ? 1 : 0
         );
-
+        env.setPreference_site_code(getPreferenceSiteCodeForSync());
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
         //LUCHE - 07/06/2019
         //Adicionado passagem de timeout como parametro
@@ -2276,6 +2276,14 @@ public class WS_Sync extends BaseWsIntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private Integer getPreferenceSiteCodeForSync() {
+        String preferenceSiteCode = ToolBox_Con.getPreference_Site_Code(getApplicationContext());
+        if(!preferenceSiteCode.equals("-1")){
+            return Integer.valueOf(preferenceSiteCode);
+        }
+        return null;
     }
 
     private void handleFilesWaiting() {

@@ -12,6 +12,7 @@ public class TSync_Env extends Main_Header_Env {
     @SerializedName("status_jump") private int status_jump;
     @SerializedName("current_time") private String current_time;
     @SerializedName("valid_time") private int valid_time;
+    @SerializedName("preference_site_code") private Integer preference_site_code;
 
     public DataPackage getData_package() {
         return data_package;
@@ -43,5 +44,13 @@ public class TSync_Env extends Main_Header_Env {
 
     public void setValid_time(int valid_time) {
         this.valid_time = valid_time;
+    }
+
+    public Integer getPreference_site_code() {
+        return preference_site_code;
+    }
+
+    public void setPreference_site_code(Integer preference_site_code) {
+        this.preference_site_code = preference_site_code;
     }
 }
