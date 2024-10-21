@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.dao;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_CANCELLED;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,11 +13,15 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
@@ -519,9 +525,53 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 }
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
-                if(tk_ticket_ctrl.getForm() != null) {
-                    tk_ticket_ctrl.getForm().setPK(tk_ticket_ctrl);
-                    daoObjReturn = tryAddUpdateForm(tk_ticket_ctrl.getForm(), db,useTmpMethod);
+                TK_Ticket_Form tkForm = tk_ticket_ctrl.getForm();
+                if(tkForm != null) {
+                    //
+                    tkForm.setPK(tk_ticket_ctrl);
+                    //
+                    if(Constant.SYS_STATUS_CANCELLED.equals(tk_ticket_ctrl.getCtrl_status())){
+                        //
+                        GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(context);
+                        GE_Custom_Form_Local formLocal = geCustomFormLocalDao.getByString(
+                                new GE_Custom_Form_Local_Sql_019(
+                                        String.valueOf(tkForm.getCustomer_code()),
+                                        String.valueOf(tkForm.getCustom_form_type()),
+                                        String.valueOf(tkForm.getCustom_form_code()),
+                                        String.valueOf(tkForm.getCustom_form_version()),
+                                        "0",
+                                        tk_ticket_ctrl.getProduct_code().toString(),
+                                        tk_ticket_ctrl.getSerial_id().toString().toUpperCase(),
+                                        tkForm.getTicket_prefix(),
+                                        tkForm.getTicket_code(),
+                                        tkForm.getTicket_seq(),
+                                        tkForm.getStep_code()
+                                ).toSqlQuery()
+                        );
+                        if(formLocal != null) {
+                            formLocal.setCustom_form_status(SYS_STATUS_CANCELLED);
+                            geCustomFormLocalDao.addUpdateThrowExceptionWithSharedDbInstance(formLocal, db);
+
+                            //
+                            GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(context);
+                            GE_Custom_Form_Data formData = formDataDao.getByString(
+                                    new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                                            String.valueOf(tkForm.getCustomer_code()),
+                                            String.valueOf(tkForm.getCustom_form_type()),
+                                            String.valueOf(tkForm.getCustom_form_code()),
+                                            String.valueOf(tkForm.getCustom_form_version()),
+                                            String.valueOf(formLocal.getCustom_form_data())
+                                    ).toSqlQuery()
+                            );
+                            if (formData != null) {
+                                formData.setCustom_form_status(SYS_STATUS_CANCELLED);
+                                formDataDao.addUpdateWithReturnAndSharedDbInstance(formData, db);
+                            }
+                        }
+                        //
+                    }
+                    //
+                    daoObjReturn = tryAddUpdateForm(tkForm, db,useTmpMethod);
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
                         throw new Exception(daoObjReturn.getRawMessage());

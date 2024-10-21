@@ -2,7 +2,26 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.MD_All_ProductDao
+import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.SM_SODao
+import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao
+import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
@@ -765,7 +784,7 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
             db.checkIfFieldExist(
                 MD_SiteDao.TABLE,
                 column
-            ){
+            ) {
                 addColumn(
                     MD_SiteDao.TABLE,
                     column,
@@ -777,7 +796,7 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
         db.checkIfFieldExist(
             MD_SiteDao.TABLE,
             MD_SiteDao.REGION_CODE
-        ){
+        ) {
             addColumn(
                 MD_SiteDao.TABLE,
                 MD_SiteDao.REGION_CODE,
@@ -801,7 +820,7 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
         db.checkIfFieldExist(
             FsTripDestinationDao.TABLE,
             FsTripDestinationDao.ARRIVED_FLEET_PHOTO_CHANGED
-        ){
+        ) {
             addColumn(
                 FsTripDestinationDao.TABLE,
                 FsTripDestinationDao.ARRIVED_FLEET_PHOTO_CHANGED,
@@ -817,7 +836,7 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
             db.checkIfFieldExist(
                 FSTripDao.TABLE,
                 column
-            ){
+            ) {
                 addColumn(
                     FSTripDao.TABLE,
                     column,
@@ -835,7 +854,7 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
             db.checkIfFieldExist(
                 TK_TicketDao.TABLE,
                 column
-            ){
+            ) {
                 addColumn(
                     TK_TicketDao.TABLE,
                     column,
@@ -845,6 +864,18 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
         }
 
 
+    }
+}
+
+val migrationV13 = object : MigrationSQLite(13, 14) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.checkIfFieldExist(MD_ProductDao.TABLE, MD_ProductDao.IS_CLASS_REQUIRED) {
+            addColumn(
+                MD_ProductDao.TABLE,
+                MD_ProductDao.IS_CLASS_REQUIRED,
+                "int not null default 0"
+            )
+        }
     }
 }
 

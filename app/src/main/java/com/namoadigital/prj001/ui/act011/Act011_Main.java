@@ -3359,6 +3359,7 @@ public class Act011_Main extends Base_Activity
     @Override
     public void callSignature() {
         canSave = false;
+        saveV2(false);
         try {
             Bundle bundleN = new Bundle();
             bundleN.putInt(ConstantBase.PID, -1);

@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.sql.SqlAct083_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -22,6 +23,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class TK_Ticket implements Cloneable, Serializable {
     @Expose
@@ -1649,6 +1652,30 @@ public class TK_Ticket implements Cloneable, Serializable {
         if (getStep() != null) {
             for (TK_Ticket_Step ticketStep : getStep()) {
                 //
+                if(Objects.equals(ticketStep.getStep_status(), ConstantBaseApp.SYS_STATUS_CANCELLED)
+                || Objects.equals(ticketStep.getStep_status(), ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)){
+                    TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+                    //
+                    List<TK_Ticket_Ctrl> dbTicketCtrl = ticketCtrlDao.query(
+                            new TK_Ticket_Ctrl_Sql_002(
+                                    ticketStep.getCustomer_code(),
+                                    ticketStep.getTicket_prefix(),
+                                    ticketStep.getTicket_code(),
+                                    ticketStep.getStep_code()
+                            ).toSqlQuery()
+                    );
+                    for (TK_Ticket_Ctrl tkTicketCtrl : dbTicketCtrl) {
+                        if (tkTicketCtrl.getTicket_seq() == 0) {
+                            tkTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                            ticketStep.getCtrl().add(tkTicketCtrl);
+                        }
+                    }
+                }
+                //
                 if (ticketStep.getCtrl() != null) {
                     for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
                         switch (ticketCtrl.getCtrl_type()) {
@@ -1659,6 +1686,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                                 break;
                         }
                     }
+                    //
                 }
             }
         }

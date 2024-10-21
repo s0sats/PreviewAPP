@@ -13,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.namoadigital.prj001.database.scripts.multi.FSCreateScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.TkCreateScriptsKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductScript;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScript;
 import com.namoadigital.prj001.migrations.MigrationsKt;
@@ -65,7 +66,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [ge_custom_form_sites]([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [site_code] int not null, constraint pk_ge_custom_form_sites primary key([customer_code], [custom_form_type], [custom_form_code], [custom_form_version], [site_code]));");
             script.append("create table if not exists [ge_files]([file_code] text not null DEFAULT '' COLLATE NOCASE, [file_path] text not null DEFAULT '' COLLATE NOCASE,[file_path_new] text collate nocase, [file_status] text not null DEFAULT '' COLLATE NOCASE, [file_date] text not null DEFAULT '' COLLATE NOCASE, primary key(file_code));");
 
-            script.append("create table if not exists [md_products] ([customer_code] int not null,[product_code] int not null,[product_id] text not null DEFAULT '' COLLATE NOCASE,[product_desc] text not null DEFAULT '' COLLATE NOCASE,[require_serial] int not null,[allow_new_serial_cl] int not null,[un] text COLLATE nocase,[sketch_code] int,[sketch_url] text COLLATE nocase,[sketch_url_local] text not null DEFAULT '' COLLATE nocase,[sketch_lines] int,[sketch_columns] int,[sketch_color] text COLLATE nocase,[flag_offline] int not null default 0,[local_control] int not null default 0,[io_control] int not null default 0,[serial_rule] text collate nocase,[serial_min_length] int,[serial_max_length] int,[site_restriction] int not null default 0,[product_icon_name] text COLLATE nocase,[product_icon_url] text COLLATE nocase,[product_icon_url_local] text not null DEFAULT '' COLLATE nocase, [spare_part] int not null default 0, [has_group] int not null default 0,constraint pk_md_products primary key(customer_code, product_code));");
+            script.append(ProductScript.CREATE_SCRIPT);
             script.append("create table if not exists [md_product_groups]( [customer_code] int not null,  [group_code] int not null, [recursive_code] int not null, [recursive_code_father] int, [group_id] text not null DEFAULT '' COLLATE NOCASE,  [group_desc] text not null DEFAULT '' COLLATE NOCASE, [spare_part] int not null default 0,  constraint pk_md_product_groups primary key(customer_code, group_code));");
             script.append("create table if not exists [md_product_group_products]( [customer_code] int not null,  [group_code] int not null, [product_code] int not null,  constraint pk_md_product_group_products primary key(customer_code, group_code,product_code));");
             script.append("create table if not exists [md_product_serials]([customer_code] int not null,[product_code] int not null,[product_id] text not null,[product_desc] text not null,[serial_code] int not null,[serial_tmp] int not null,[serial_id] text not null collate nocase,[site_code] int,[site_id] text collate nocase,[site_desc] text collate nocase, [site_reason_code] int, [zone_code] int,[zone_id] text collate nocase,[zone_desc] text collate nocase,[local_code] int ,[local_id] text collate nocase,[site_code_owner] int,[brand_code] int,[brand_id] text collate nocase,[brand_desc] text collate nocase,[model_code] int,[model_id] text collate nocase,[model_desc] text collate nocase,[color_code] int,[color_id] text collate nocase,[color_desc] text collate nocase,[segment_code] int,[segment_id] text collate nocase,[segment_desc] text collate nocase,[category_price_code] int,[category_price_id] text collate nocase,[category_price_desc] text collate nocase,[add_inf1] text COLLATE NOCASE,[add_inf2] text COLLATE NOCASE,[add_inf3] text COLLATE NOCASE,[update_required] int not null default 0,[only_position] int,[flag_offline] int not null default 0,[sync_process] int not null default 0,[class_code] int,[class_id] text collate nocase,[class_type] text collate nocase,[class_color] text collate nocase,[class_available] int,[inbound_prefix] int,[inbound_code] int,[inbound_id] text collate nocase,[inbound_conf_date] text collate nocase,[move_prefix] int,[move_code] int,[move_group_code] int,[outbound_prefix] int,[outbound_code] int,[outbound_id] text collate nocase,[product_io_control] int default 0,[local_control] int default 0,[site_io_control] int default 0,[inbound_auto_create] int default 0,[site_restriction] int default 0, [edit_mode] text COLLATE NOCASE,[profile] text COLLATE NOCASE, [reason_code] int, [has_item_check] int not null default 0, [scn_item_check] int, [measure_tp_code] int, [device_tp_code_main] int, [last_measure_value] real, [last_measure_date] text collate nocase,[last_cycle_value] real, [last_cycle_date] text collate nocase, [log_date] text COLLATE NOCASE,constraint [pk_md_product_serials] primary key([customer_code],[product_code],[serial_tmp]));");
@@ -146,7 +147,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("CREATE TABLE IF NOT EXISTS [tk_ticket_brief] ([customer_code] int not null, [ticket_prefix] int not null, [ticket_code] int not null,  [ticket_id] text NOT NULL COLLATE nocase, [scn] int not null, [open_site_code] int not null, [open_site_desc] text not null collate nocase, [open_product_desc] text not null collate nocase, [open_serial_id] text not null collate nocase, [current_step_order] int, [ticket_status] text not null collate nocase, [origin_desc] text not null collate nocase, [step_desc] text COLLATE NOCASE, [step_order_seq] text COLLATE NOCASE, [forecast_start] text COLLATE NOCASE, [forecast_end] text COLLATE NOCASE, [step_count] int, [fcm] int not null default 0, [client_code] int, [client_name] text COLLATE nocase, [contract_code] int, [contract_desc] text COLLATE nocase, CONSTRAINT [pk_tk_ticket_brief] PRIMARY KEY([customer_code], [ticket_prefix], [ticket_code]));");
             script.append("CREATE TABLE IF NOT EXISTS [tk_ticket_origin_nc] ([customer_code] int not null, [ticket_prefix] int not null, [ticket_code] int not null, [page] int not null, [custom_form_order] int not null, [custom_form_data_type] text not null COLLATE NOCASE, [description] text not null COLLATE NOCASE, [data_value] text COLLATE NOCASE, [data_value_txt] text COLLATE NOCASE, [data_value_local] text COLLATE NOCASE, [data_photo1_url] text COLLATE NOCASE, [data_photo1_url_local] text COLLATE NOCASE, [data_photo2_url] text  COLLATE NOCASE, [data_photo2_url_local] text COLLATE NOCASE, [data_photo3_url] text COLLATE NOCASE, [data_photo3_url_local] text COLLATE NOCASE, [data_photo4_url] text COLLATE NOCASE, [data_photo4_url_local] text COLLATE NOCASE, [data_comment] text COLLATE NOCASE, [picture_lines] int, [picture_columns] int, [picture_color]  text COLLATE NOCASE, [picture_url] text COLLATE NOCASE, [picture_url_local] text COLLATE NOCASE, constraint pk_tk_ticket_origin_nc primary key(customer_code,ticket_prefix,ticket_code,page,custom_form_order));");
             //Tabelas Agendamento 2.0
-            script.append("CREATE TABLE IF NOT EXISTS [md_schedule_exec] ( [customer_code] int NOT NULL, [schedule_prefix] int NOT NULL, [schedule_code] int NOT NULL, [schedule_exec] int NOT NULL, [schedule_desc] text NOT NULL COLLATE nocase, [schedule_type] text NOT NULL COLLATE nocase, [status] text not null default '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' COLLATE nocase,[tag_operational_code] int NOT NULL, [tag_operational_id] text collate nocase, [tag_operational_desc] text collate nocase, [site_code] int NOT NULL, [site_id] text COLLATE nocase, [site_desc] text COLLATE nocase, [zone_code] int, [zone_id] text COLLATE nocase, [zone_desc] text COLLATE nocase, [operation_code] int NOT NULL, [operation_id] text COLLATE nocase, [operation_desc] text COLLATE nocase,  [product_code] int NOT NULL, [product_id] text COLLATE nocase, [product_desc] text COLLATE nocase, [serial_code] int, [serial_id] text COLLATE nocase, [custom_form_type] int, [custom_form_code] int , [custom_form_version] int , [custom_form_desc] text COLLATE NOCASE, [ticket_type] int , [ticket_type_id] text COLLATE NOCASE, [ticket_type_desc] text COLLATE NOCASE, [local_control] int NOT NULL DEFAULT 0, [io_control] int NOT NULL DEFAULT 0, [serial_rule] text COLLATE nocase, [serial_min_length] int, [serial_max_length] int, [site_restriction] int NOT NULL DEFAULT 0,   [product_icon_name] text COLLATE nocase, [product_icon_url] text COLLATE nocase, [product_icon_url_local] text NOT NULL DEFAULT '' COLLATE nocase, [require_location] int NOT NULL DEFAULT 0, [date_start] text NOT NULL COLLATE nocase, [date_end] text NOT NULL COLLATE nocase, [comments] text COLLATE nocase, [require_serial] int not null default 0,[allow_new_serial_cl] int not null default 0,[require_serial_done] int not null default 0,[sync_process] int not null default 0, [fcm_new_status] text default null COLLATE nocase, [fcm_user_nick] text default null COLLATE nocase, [schedule_erro_msg] text default null COLLATE nocase, [close_date] text default NULL COLLATE nocase, [serial_defined_by_server] int NOT NULL default 0, [is_so] int NOT NULL default 0, CONSTRAINT [pk_md_schedule_exec] PRIMARY KEY( [customer_code] , [schedule_prefix] , [schedule_code] , [schedule_exec] ));");
+            script.append("CREATE TABLE IF NOT EXISTS [md_schedule_exec] ( [customer_code] int NOT NULL, [schedule_prefix] int NOT NULL, [schedule_code] int NOT NULL, [schedule_exec] int NOT NULL, [schedule_desc] text NOT NULL COLLATE nocase, [schedule_type] text NOT NULL COLLATE nocase, [status] text not null default '" + ConstantBaseApp.SYS_STATUS_SCHEDULE + "' COLLATE nocase,[tag_operational_code] int NOT NULL, [tag_operational_id] text collate nocase, [tag_operational_desc] text collate nocase, [site_code] int NOT NULL, [site_id] text COLLATE nocase, [site_desc] text COLLATE nocase, [zone_code] int, [zone_id] text COLLATE nocase, [zone_desc] text COLLATE nocase, [operation_code] int NOT NULL, [operation_id] text COLLATE nocase, [operation_desc] text COLLATE nocase,  [product_code] int NOT NULL, [product_id] text COLLATE nocase, [product_desc] text COLLATE nocase, [serial_code] int, [serial_id] text COLLATE nocase, [custom_form_type] int, [custom_form_code] int , [custom_form_version] int , [custom_form_desc] text COLLATE NOCASE, [ticket_type] int , [ticket_type_id] text COLLATE NOCASE, [ticket_type_desc] text COLLATE NOCASE, [local_control] int NOT NULL DEFAULT 0, [io_control] int NOT NULL DEFAULT 0, [serial_rule] text COLLATE nocase, [serial_min_length] int, [serial_max_length] int, [site_restriction] int NOT NULL DEFAULT 0,   [product_icon_name] text COLLATE nocase, [product_icon_url] text COLLATE nocase, [product_icon_url_local] text NOT NULL DEFAULT '' COLLATE nocase, [require_location] int NOT NULL DEFAULT 0, [date_start] text NOT NULL COLLATE nocase, [date_end] text NOT NULL COLLATE nocase, [comments] text COLLATE nocase, [require_serial] int not null default 0,[allow_new_serial_cl] int not null default 0,[require_serial_done] int not null default 0,[sync_process] int not null default 0, [fcm_new_status] text default null COLLATE nocase, [fcm_user_nick] text default null COLLATE nocase, [schedule_erro_msg] text default null COLLATE nocase, [close_date] text default NULL COLLATE nocase, [serial_defined_by_server] int NOT NULL default 0, [is_so] int NOT NULL default 0, CONSTRAINT [pk_md_schedule_exec] PRIMARY KEY( [customer_code] , [schedule_prefix] , [schedule_code] , [schedule_exec] ));");
             //Review UI 4.0 the beggining of the end
             script.append("CREATE TABLE IF NOT EXISTS [md_tag] ([customer_code] int not null, [tag_code] int not null,[tag_id] text not null collate nocase,[tag_desc] text not null collate nocase, constraint [pk_md_tag] primary key(customer_code,tag_code));");
             script.append(TkCreateScriptsKt.TK_TICKET_CACHE_CREATE_SCRIPT);
@@ -225,7 +226,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             }
 
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             setMigrationError(true);
         }
     }
@@ -233,8 +234,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //
-        try{
-            switch (oldVersion){
+        try {
+            switch (oldVersion) {
                 case 1:
                     MigrationsKt.getMigrationV1().migrate(db);
                 case 2:
@@ -259,18 +260,20 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV11().migrate(db);
                 case 12:
                     MigrationsKt.getMigrationV12().migrate(db);
+                case 13:
+                    MigrationsKt.getMigrationV13().migrate(db);
                     break;
             }
 
             updateSyncUser();
             sendFCMStatus();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             setMigrationError(true);
         }
     }
 
-    private void updateSyncUser(){
+    private void updateSyncUser() {
         ToolBox_Inf.updateUserCustomerSync(
                 context,
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -283,12 +286,12 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
         Intent mIntent = new Intent();
         mIntent.setAction(Constant.WS_FCM);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        mIntent.putExtra(ConstantBaseApp.SW_TYPE,FCM_MODULE_SYNC);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE, FCM_MODULE_SYNC);
         //
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
 
-    private void setMigrationError(boolean hasError){
+    private void setMigrationError(boolean hasError) {
         ToolBox_Con.setBooleanPreference(
                 context,
                 DB_MULTI_STATUS_ERROR,

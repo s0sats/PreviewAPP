@@ -4161,6 +4161,13 @@ public class ToolBox_Inf {
     }
 
 
+    public static boolean checkTicketForServerUpdate(Context context, TK_Ticket tkTicket, TK_Ticket dbTicket) {
+        return tkTicket.getTicket_status().equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                || tkTicket.getTicket_status().equals(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)
+                || !ToolBox_Inf.hasOffHandFormInProcess(context, dbTicket.getTicket_prefix(), dbTicket.getTicket_code());
+    }
+
+
     public static boolean hasOffHandFormInProcess(Context context, int ticket_prefix, int ticket_code) {
         long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         TK_Ticket_CtrlDao tkTicketCtrlDao = new TK_Ticket_CtrlDao(

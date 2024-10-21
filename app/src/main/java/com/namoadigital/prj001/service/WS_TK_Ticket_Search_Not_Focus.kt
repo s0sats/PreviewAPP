@@ -195,7 +195,7 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                                         dbTicket.ticket_code,
                                 ).toSqlQuery()
                         )
-                        if (!ToolBox_Inf.hasOffHandFormInProcess(applicationContext, dbTicket.ticket_prefix, dbTicket.ticket_code)
+                        if (ToolBox_Inf.checkTicketForServerUpdate(applicationContext, tkTicket, dbTicket)
                                 && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED))
                                 && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED_PRODUCT))
                                 && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED_STATUS))

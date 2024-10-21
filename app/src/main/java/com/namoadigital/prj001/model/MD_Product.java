@@ -11,32 +11,59 @@ import java.io.Serializable;
 
 public class MD_Product implements Serializable {
     private static final long serialVersionUID = 3795156977263223642L;
-    
-    @SerializedName("customer_code") private long customer_code;
-    @SerializedName("product_code") private long product_code;
-    @SerializedName("product_id") private String product_id;
-    @SerializedName("product_desc") private String product_desc;
-    @SerializedName("require_serial") private int require_serial;
-    @SerializedName("allow_new_serial_cl") private int allow_new_serial_cl;
-    @SerializedName("un") private String un;
-    @SerializedName("sketch_code") private Integer sketch_code;
-    @SerializedName("sketch_url") private String sketch_url;
-    @SerializedName("sketch_url_local") private String sketch_url_local;
-    @SerializedName("sketch_lines") private Integer sketch_lines;
-    @SerializedName("sketch_columns") private Integer sketch_columns;
-    @SerializedName("sketch_color") private String sketch_color;
-    @SerializedName("flag_offline") private int flag_offline;
-    @SerializedName("local_control") private int local_control;
-    @SerializedName("io_control") private int io_control;
-    @SerializedName("serial_rule") private String serial_rule;
-    @SerializedName("serial_min_length") private Integer serial_min_length;
-    @SerializedName("serial_max_length") private Integer serial_max_length;
-    @SerializedName("site_restriction") private int site_restriction;
-    @SerializedName("product_icon_name") private String product_icon_name;
-    @SerializedName("product_icon_url") private String product_icon_url;
-    @SerializedName("product_icon_url_local") private String product_icon_url_local;
-    @SerializedName("spare_part") private int spare_part;
-    @SerializedName("has_group") private int has_group;
+
+    @SerializedName("customer_code")
+    private long customer_code;
+    @SerializedName("product_code")
+    private long product_code;
+    @SerializedName("product_id")
+    private String product_id;
+    @SerializedName("product_desc")
+    private String product_desc;
+    @SerializedName("require_serial")
+    private int require_serial;
+    @SerializedName("allow_new_serial_cl")
+    private int allow_new_serial_cl;
+    @SerializedName("un")
+    private String un;
+    @SerializedName("sketch_code")
+    private Integer sketch_code;
+    @SerializedName("sketch_url")
+    private String sketch_url;
+    @SerializedName("sketch_url_local")
+    private String sketch_url_local;
+    @SerializedName("sketch_lines")
+    private Integer sketch_lines;
+    @SerializedName("sketch_columns")
+    private Integer sketch_columns;
+    @SerializedName("sketch_color")
+    private String sketch_color;
+    @SerializedName("flag_offline")
+    private int flag_offline;
+    @SerializedName("local_control")
+    private int local_control;
+    @SerializedName("io_control")
+    private int io_control;
+    @SerializedName("serial_rule")
+    private String serial_rule;
+    @SerializedName("serial_min_length")
+    private Integer serial_min_length;
+    @SerializedName("serial_max_length")
+    private Integer serial_max_length;
+    @SerializedName("site_restriction")
+    private int site_restriction;
+    @SerializedName("product_icon_name")
+    private String product_icon_name;
+    @SerializedName("product_icon_url")
+    private String product_icon_url;
+    @SerializedName("product_icon_url_local")
+    private String product_icon_url_local;
+    @SerializedName("spare_part")
+    private int spare_part;
+    @SerializedName("has_group")
+    private int has_group;
+    @SerializedName("is_class_required")
+    private int isClassRequired;
 
     public long getCustomer_code() {
         return customer_code;
@@ -238,9 +265,9 @@ public class MD_Product implements Serializable {
         this.has_group = has_group;
     }
 
-    public MD_Product_Serial createNewSerialForThisProduct(String serial_id){
+    public MD_Product_Serial createNewSerialForThisProduct(String serial_id) {
         MD_Product_Serial mdProductSerial = null;
-        if(this.customer_code > -1 && this.product_code > 0 && this.product_id != null && serial_id != null && !serial_id.trim().isEmpty() ) {
+        if (this.customer_code > -1 && this.product_code > 0 && this.product_id != null && serial_id != null && !serial_id.trim().isEmpty()) {
             mdProductSerial = new MD_Product_Serial();
             //
             mdProductSerial.setCustomer_code(getCustomer_code());
@@ -255,5 +282,13 @@ public class MD_Product implements Serializable {
             mdProductSerial.setSite_restriction(getSite_restriction());
         }
         return mdProductSerial;
+    }
+
+    public int getIsClassRequired() {
+        return isClassRequired;
+    }
+
+    public void setIsClassRequired(int isClassRequired) {
+        this.isClassRequired = isClassRequired;
     }
 }

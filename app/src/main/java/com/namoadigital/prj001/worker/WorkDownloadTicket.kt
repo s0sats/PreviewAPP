@@ -174,18 +174,13 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
                     tkTicket.ticket_prefix,
                     tkTicket.ticket_code
                 )
-
+                var saveTicket = true
                 dbTicket?.let{
                     /*
                         Barrionuevo - 2020-11-13
                         Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
                      */
-                    if (!ToolBox_Inf.hasOffHandFormInProcess(
-                            applicationContext,
-                            dbTicket.ticket_prefix,
-                            dbTicket.ticket_code
-                        )
-                    ) {
+                    if (ToolBox_Inf.checkTicketForServerUpdate(applicationContext, tkTicket, dbTicket)) {
                         //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
                         //for alterado, o que significa que mudaram a foto no server...
                         TK_Ticket.checkActionPhotoResetNeeds(
@@ -202,6 +197,8 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
                         if (daoObjReturn.hasError()) {
                             return false
                         }
+                    }else{
+                        saveTicket = false
                     }
                 }
                 //
@@ -253,7 +250,9 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
                         }
                     }
                 }
-                tickets.add(tkTicket)
+                if(saveTicket) {
+                    tickets.add(tkTicket)
+                }
                 //
             }
             //

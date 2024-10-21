@@ -148,9 +148,9 @@ public class AppBase extends Application {
         DB_VERSION_BASE = 14;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
-        DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
+        DB_NAME_CUSTOM = "cc" + DB_SUFIX;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 13;
+        DB_VERSION_CUSTOM = 14;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -194,7 +194,7 @@ public class AppBase extends Application {
     private void registerConnectionsChanges() {
         WBR_Connections_Change connectionsChange = new WBR_Connections_Change();
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(connectionsChange,intentFilter);
+        registerReceiver(connectionsChange, intentFilter);
     }
 
 }

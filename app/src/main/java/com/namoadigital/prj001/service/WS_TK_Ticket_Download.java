@@ -204,13 +204,15 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
                 TK_Ticket dbTicket = getDbTicket(tkTicket);
-
+                boolean saveTicket = true;
                 if(dbTicket != null) {
                     /*
                         Barrionuevo - 2020-11-13
-                        Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
+                            - Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
+                        Barrionuevo - 2024-10-09
+                            - Adicionado status CANCELLED ou NOT_EXECUTED para atualizar ticket e cancelar forms espontaneos em processo.
                      */
-                    if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                    if(ToolBox_Inf.checkTicketForServerUpdate(getApplicationContext(), tkTicket, dbTicket)) {
                         //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
                         //for alterado, o que significa que mudaram a foto no server...
                         TK_Ticket.checkActionPhotoResetNeeds(
@@ -227,11 +229,11 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
                         if(daoObjReturn.hasError()) {
                             break;
                         }
+                    }else{
+                        saveTicket = false;
                     }
                 }
-//                else{
-//                    tickets.add(tkTicket);
-//                }
+
                 //tratativa para serial e sua estrutura.
                 if(!tkTicket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tkTicket.getSerial()){
@@ -262,7 +264,10 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
                         }
                     }
                 }
-                tickets.add(tkTicket);
+                //
+                if(saveTicket) {
+                    tickets.add(tkTicket);
+                }
                 //
             }
             //

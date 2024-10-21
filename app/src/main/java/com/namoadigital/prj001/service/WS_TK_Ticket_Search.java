@@ -157,7 +157,7 @@ public class WS_TK_Ticket_Search extends IntentService {
                         Barrionuevo - 2020-11-13
                         Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
                      */
-                        if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                        if(ToolBox_Inf.checkTicketForServerUpdate(getApplicationContext(), tkTicket, dbTicket)) {
                             //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
                             //for alterado, o que significa que mudaram a foto no server...
                             TK_Ticket.checkActionPhotoResetNeeds(

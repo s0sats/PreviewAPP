@@ -222,7 +222,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_REQUESTING_ACT = "main_requesting_act";
     public static final String MAIN_SERIAL_TRACKING = "main_serial_tracking";
     public static final String MAIN_SERIAL_CREATION = "main_serial_creation";
-    public static final String MAIN_HMAUX_TRANS_KEY ="main_hmaux_trans_key";
+    public static final String MAIN_HMAUX_TRANS_KEY = "main_hmaux_trans_key";
 
     //Constante de concatenação
     public static final String MAIN_CONCAT_STRING = "@##N@M0@##@";
@@ -422,7 +422,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_TRACKING_SEARCH_TRACKING = "serial_tracking_search_tracking";
     public static final String WS_SERIAL_TRACKING_SEARCH_SITE_CODE = "serial_tracking_search_site_code";
 
-     /**
+    /**
      * WS User Search
      */
     public static final String WS_PROFILE_CHECK_FIELD = "ws_profile_check_field";
@@ -491,11 +491,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT068_TAB_SELECTED = "act068_tab_selected";
     public static final String DATETIME_IS_VALID = "DATETIME_IS_VALID";
     public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
-    public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
-    public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE= "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
+    public static final String DATETIME_TOLERANCE = "DATETIME_TOLERANCE";
+    public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE = "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
     public static final String PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED = "PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED";
     public static final String PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW = "PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW";
-    public static final String PREFERENCE_SERIAL_OFFLINE_FLOW= "PREFERENCE_SERIAL_OFFLINE_FLOW";
+    public static final String PREFERENCE_SERIAL_OFFLINE_FLOW = "PREFERENCE_SERIAL_OFFLINE_FLOW";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
@@ -546,7 +546,7 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String TYPE_BR_AP_OK = "AP_OK";
     public static final String TYPE_BR_AP_ERROR = "AP_ERROR";
-    public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND="SECOND";
+    public static final String DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND = "SECOND";
     //
     public static final String N_FORM_PDF_PREFIX = "form_";
     public static final String WS_CONNECTION_TIMEOUT = "WS_CONNECTION_TIMEOUT";
@@ -636,7 +636,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_PROFILE_SERIAL_OCR_VIN = "SERIAL_OCR_VIN";
     public static final String PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF = "SERIAL_OCR_MOSOLF";
 
-     //Profiles IO
+    //Profiles IO
     public static final String PROFILE_MENU_IO = "PRJ001_IO";
     public static final String PROFILE_MENU_IO_PARAM_BLIND_MOVE = "BLIND_MOVE";
     public static final String PROFILE_MENU_IO_PARAM_INBOUND = "INBOUND";
@@ -722,8 +722,8 @@ public class ConstantBaseApp extends ConstantBase {
 
 
     /*
-    * Constantes I/O
-    */
+     * Constantes I/O
+     */
     public static final String IO_PROCESS_IN_CONF = "IN_CONF";
     public static final String IO_PROCESS_IN_PUT_AWAY = "IN_PUT_AWAY";
     public static final String IO_PROCESS_MOVE_PLANNED = "MOVE_PLANNED";
@@ -746,19 +746,19 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String IO_ACTION_SAVE_ITEM = "IO_ACTION_SAVE_ITEM";
 
     /*
-    * Constantes Ticket
-    */
-    public static final String TK_TICKET_CRTL_TYPE_ACTION ="OBJ_ACTION";
-    public static final String TK_TICKET_CRTL_TYPE_FORM ="OBJ_FORM";
-    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="OBJ_SERVICE";
-    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="OBJ_MEASURE";
-    public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
-    public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
-    public static final String TK_TICKET_PREX_IMG ="tk_";
+     * Constantes Ticket
+     */
+    public static final String TK_TICKET_CRTL_TYPE_ACTION = "OBJ_ACTION";
+    public static final String TK_TICKET_CRTL_TYPE_FORM = "OBJ_FORM";
+    public static final String TK_TICKET_CRTL_TYPE_SERVICE = "OBJ_SERVICE";
+    public static final String TK_TICKET_CRTL_TYPE_MEASURE = "OBJ_MEASURE";
+    public static final String TK_TICKET_CRTL_TYPE_APPROVAL = "OBJ_APPROVAL";
+    public static final String TK_TICKET_CRTL_TYPE_NONE = "OBJ_NONE";
+    public static final String TK_TICKET_PREX_IMG = "tk_";
     public static final String TK_TICKET_JUSTIFY_SUFIX = "_justify";
-    public static final String TK_TICKET_NC_PREX_IMG ="tk_nc";
+    public static final String TK_TICKET_NC_PREX_IMG = "tk_nc";
     //Ticket Origin Type
-    public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";
+    public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE = "SCHEDULE";
     public static final String TK_TICKET_ORIGIN_TYPE_MANUAL = "MANUAL";
     public static final String TK_TICKET_ORIGIN_TYPE_BARCODE = "BARCODE";
     public static final String TK_TICKET_ORIGIN_TYPE_MEASURE = "MEASURE";
@@ -770,8 +770,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_START_DATE_AND_HEADER = "START_DATE_AND_HEADER";
     public static final String TK_TICKET_START_DATE = "START_DATE";
     public static final String TK_TICKET_FORECAST_DATE_AND_HEADER = "FORECAST_DATE_AND_HEADER";
-    public static final String TK_TICKET_FORECAST_DATE =  "FORECAST_DATE";
-    public static final String TK_TICKET_FORECAST_TIME_AND_HEADER ="FORECAST_TIME_AND_HEADER";
+    public static final String TK_TICKET_FORECAST_DATE = "FORECAST_DATE";
+    public static final String TK_TICKET_FORECAST_TIME_AND_HEADER = "FORECAST_TIME_AND_HEADER";
     public static final String TK_TICKET_FORECAST_TIME = "FORECAST_TIME";
     public static final String TK_TICKET_EDIT_HEADER = "EDIT_HEADER";
     //BROADCAST DE PARA
@@ -917,8 +917,8 @@ public class ConstantBaseApp extends ConstantBase {
     /**
      * BARRIONUEVO - 10-02-2021
      * Constantes do servico de chat
-     *  CHAT_SERVICE_MODE_LOGIN - Utilizado no processo de sincronia de mensagens no login
-     *  CHAT_SERVICE_MODE_ACTIVED - Utilizado nas telas 34, 35 e worker.
+     * CHAT_SERVICE_MODE_LOGIN - Utilizado no processo de sincronia de mensagens no login
+     * CHAT_SERVICE_MODE_ACTIVED - Utilizado nas telas 34, 35 e worker.
      */
     public static final String CHAT_SERVICE_MODE = "CHAT_SERVICE_MODE";
     public static final String CHAT_SERVICE_MODE_LOGIN = "CHAT_SERVICE_MODE_LOGIN";
