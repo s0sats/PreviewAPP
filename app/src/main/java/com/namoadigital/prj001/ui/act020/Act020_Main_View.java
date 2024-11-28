@@ -19,7 +19,7 @@ public interface Act020_Main_View {
 
     void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list);
 
-    void showQtyExceededMsg(long record_page ,long record_count);
+    void showQtyExceededMsg(long record_page, long record_count);
 
     void callAct006(Context context);
 
@@ -30,6 +30,7 @@ public interface Act020_Main_View {
     void callAct011(Context context, Bundle bundle);
 
     void setWs_process(String ws_process);
+
     //
     boolean isSerial_creation();
 
@@ -50,6 +51,12 @@ public interface Act020_Main_View {
     Bundle getAct083Bundle();
 
     String getOriginFlow();
+
+    String nServiceFlow();
+
+    void callAct021();
+
+    void callAct040();
 
     //void closeDrawer();
 

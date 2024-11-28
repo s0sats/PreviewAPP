@@ -125,6 +125,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -278,6 +279,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery()
         );
         return serial.size() > 0;
+    }
+
+    @Override
+    public void clearTicketDownloadSingleton() {
+        TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
+    }
+
+    @Override
+    public void setTicketDownloadSingleton(int mTkPrefix, int mTkCode) {
+        TicketDownloadRestriction.INSTANCE.setTicketDownloadRestrictionInitialized(mTkPrefix, mTkCode);
     }
 
     @Override
@@ -620,6 +631,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //LUCHE - 24/08/2020
                 //Atualiza TicketCtrl se form for do ticket
                 if (isTicketProcess) {
+                    setTicketDownloadSingleton(customFormLocal.getTicket_prefix(), customFormLocal.getTicket_code());
                     if (bNew) {
                         if (mView.isOffHandForm()) {
                             createTicketCtrlObj(customFormLocal,

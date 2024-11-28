@@ -355,6 +355,13 @@ class WS_Product_Serial_Structure : BaseWsIntentService("WS_Product_Serial_Struc
             it.last_cycle_value = serialStructure.last_cycle_value
             it.last_cycle_date = serialStructure.last_cycle_date
             it.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+            it.horimeter = serialStructure.horimeter
+            it.horimeter_date = serialStructure.horimeter_date
+            it.horimeter_supplier_uid = serialStructure.horimeter_supplier_uid
+            it.horimeter_supplier_desc = serialStructure.horimeter_supplier_desc
+            it.measure_block_input_time = serialStructure.measure_block_input_time
+            it.measure_alert_input_time = serialStructure.measure_alert_input_time
+            it.unavailability_reason_option = serialStructure.unavailability_reason_option
             //
             serialDao.addUpdate(it)
         }

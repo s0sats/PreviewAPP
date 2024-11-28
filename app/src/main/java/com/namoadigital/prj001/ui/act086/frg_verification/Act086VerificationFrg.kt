@@ -303,24 +303,28 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             lastSelectedRdoId = id
                         }
                     }
+
                     GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
                         act086VerificationFrgRdoAnswerFixed.run {
                             isChecked = true
                             lastSelectedRdoId = id
                         }
                     }
+
                     GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
                         act086VerificationFrgRdoAnswerAlreadyDone.run {
                             isChecked = true
                             lastSelectedRdoId = id
                         }
                     }
+
                     GeOsDeviceItem.EXEC_TYPE_ALERT -> {
                         act086VerificationFrgRdoAnswerAlert.run {
                             isChecked = true
                             lastSelectedRdoId = id
                         }
                     }
+
                     GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> {
                         act086VerificationFrgRdoAnswerNotVerified.run {
                             isChecked = true
@@ -417,18 +421,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
                 rdoAdjustNotVerified = View.GONE
             }
+
             GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT -> {
                 rdoAdjustAlreadyOk = View.GONE
             }
+
             else -> {
                 if (isNewVerification) {
                     rdoAdjustDone = View.VISIBLE
                     rdoAdjustAlreadyOk = View.GONE
                     rdoAdjustHasProblem = View.VISIBLE
                     rdoAdjustNotVerified = View.GONE
+                } else {
+                    if (geOsDeviceItem.isCritical && geOsDeviceItem.item_check_status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED) {
+                        rdoAdjustAlreadyOk = View.GONE
+                    }
                 }
             }
         }
+
         //
         with(binding) {
             act086VerificationFrgRdoAnswerFixed.visibility = rdoAdjustDone
@@ -460,7 +471,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun setLabels() {
         with(binding) {
-            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
+            act086VerificationFrgRdoAnswerFixed.text =
+                getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
             act086VerificationFrgRdoAnswerAlreadyDone.text = hmAux_Trans["already_checked_lbl"]
             act086VerificationFrgRdoAnswerAlert.text = getAlertAnswerLbl()
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
@@ -578,9 +590,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             answerId == -1 -> {
                 R.color.namoa_pipeline_header_icon
             }
+
             isCommentRequired() -> {
                 R.color.namoa_color_highlight_required_item
             }
+
             else -> {
                 R.color.namoa_dark_blue
             }
@@ -630,10 +644,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         it.applyTintColor(materialColor)
                         it.isEnabled = materialEnabled
                     }
+
                     is TextView -> {
                         it.setTextColor(ContextCompat.getColor(it.context, materialColor))
                         it.isEnabled = materialEnabled
                     }
+
                     else -> {
                     }
                 }
@@ -663,10 +679,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         it.applyTintColor(photoColor)
                         it.isEnabled = photoEnabled
                     }
+
                     is TextView -> {
                         it.setTextColor(ContextCompat.getColor(it.context, photoColor))
                         it.isEnabled = photoEnabled
                     }
+
                     else -> {
                     }
                 }
@@ -726,7 +744,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         date == null -> {
             measure
         }
-        else -> {"$measure ${hmAux_Trans["sys_alert_or"]} $date"}
+
+        else -> {
+            "$measure ${hmAux_Trans["sys_alert_or"]} $date"
+        }
     }
 
 
@@ -763,47 +784,50 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
-
     private fun showAlertMessage(
         title: String,
         message: String,
         type: String,
         checkedId: Int
-    ){
+    ) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsFixedAdjustFrgAlertDialogBinding.inflate(layoutInflater)
         val geOs = mPresenter.getGeOs(geOsDeviceItem)
-        with(dialogBinding){
+        with(dialogBinding) {
             //
             tvAlertMsg.text = message
             //
             gpMeasure.visibility = geOsDeviceItem.next_cycle_measure?.let {
                 tvCurrentMeasureLb.text = hmAux_Trans["alert_current_measure_lbl"]
                 tvNextCycleMeasureLbl.text = hmAux_Trans["alert_next_cycle_measure_lbl"]
-                tvCurrentMeasureVal.text =  mPresenter.getFormattedLastMeasureInfo(mPresenter.getMaxMeasureValue(geOsDeviceItem), geOs.value_sufix)
-                tvNextCycleMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(it, geOsDeviceItem.value_sufix)
+                tvCurrentMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(
+                    mPresenter.getMaxMeasureValue(geOsDeviceItem), geOs.value_sufix
+                )
+                tvNextCycleMeasureVal.text =
+                    mPresenter.getFormattedLastMeasureInfo(it, geOsDeviceItem.value_sufix)
                 View.VISIBLE
-            }?: View.GONE
+            } ?: View.GONE
             //
             gpLimitDate.visibility = geOsDeviceItem.next_cycle_limit_date?.let {
                 tvOsStartDateLbl.text = hmAux_Trans["alert_start_date_lbl"]
                 tvNextCycleLimitDateLbl.text = hmAux_Trans["alert_limit_date_lbl"]
-                tvOsStartDateVal.text = geOs.date_start?.let{
+                tvOsStartDateVal.text = geOs.date_start?.let {
                     SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)?.let {
                         SimpleDateFormat("dd/MM/yyyy").format(it)
                     }
                 }
-                tvNextCycleLimitDateVal.text = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)?.let {
-                    SimpleDateFormat("dd/MM/yyyy").format(it)
-                }
+                tvNextCycleLimitDateVal.text =
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)?.let {
+                        SimpleDateFormat("dd/MM/yyyy").format(it)
+                    }
                 //
                 View.VISIBLE
-            }?: View.GONE
+            } ?: View.GONE
             //
         }
 
         builder.apply {
-            setTitle(spanStyleWith(title){
+            setTitle(spanStyleWith(title) {
                 customText = listOf(title)
                 applyColor {
                     requireContext().resources.getColor(R.color.namoa_color_red)
@@ -828,7 +852,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun setLastSelection(lastSelection: Int) =
         with(binding) {
-            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
+            act086VerificationFrgRdoAnswerFixed.text =
+                getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
             when (lastSelection) {
                 act086VerificationFrgRdoAnswerFixed.id -> {
                     act086VerificationFrgRdoAnswerFixed.run {
@@ -836,24 +861,28 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         lastSelectedRdoId = id
                     }
                 }
+
                 act086VerificationFrgRdoAnswerAlreadyDone.id -> {
                     act086VerificationFrgRdoAnswerAlreadyDone.run {
                         isChecked = true
                         lastSelectedRdoId = id
                     }
                 }
+
                 act086VerificationFrgRdoAnswerAlert.id -> {
                     act086VerificationFrgRdoAnswerAlert.run {
                         isChecked = true
                         lastSelectedRdoId = id
                     }
                 }
+
                 act086VerificationFrgRdoAnswerNotVerified.id -> {
                     act086VerificationFrgRdoAnswerNotVerified.run {
                         isChecked = true
                         lastSelectedRdoId = id
                     }
                 }
+
                 else -> clearData()
             }
         }
@@ -882,7 +911,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 geOsDeviceItem.change_adjust == 1
             ) {
                 openBottomSheet(lastSelectedRdoId)
-            }else if (mPresenter.hasMaterialPlanned(geOsDeviceItem) && geOsDeviceItem.change_adjust == 0){
+            } else if (mPresenter.hasMaterialPlanned(geOsDeviceItem) && geOsDeviceItem.change_adjust == 0) {
                 onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
             }
         }
@@ -891,7 +920,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             with(binding) {
                 if (act086VerificationFrgRdoAnswerFixed.id == checkedId &&
                     act086VerificationFrgRdoAnswerFixed.isPressed &&
-                    geOsDeviceItem.change_adjust == 1) {
+                    geOsDeviceItem.change_adjust == 1
+                ) {
                     openBottomSheet(checkedId)
                     return@setOnCheckedChangeListener
                 }
@@ -949,6 +979,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         deleteManualItem()
                     }
                 }
+
                 else -> {
                     ttl = hmAux_Trans["alert_clear_item_data_ttl"]
                     msg = hmAux_Trans["alert_clear_item_data_confirm"]
@@ -1130,7 +1161,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         message: String?,
         yesClick: DialogInterface.OnClickListener? = null,
         noClick: DialogInterface.OnClickListener? = null,
-    ){
+    ) {
         ToolBox.alertMSG_YES_NO(
             context,
             title ?: "",
@@ -1234,30 +1265,30 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
-    private fun getMaintenanceLbl(exec_type: String = "") : SpannableString {
+    private fun getMaintenanceLbl(exec_type: String = ""): SpannableString {
 
         val maintenance = hmAux_Trans["action_done_lbl"]!!
         val changelbl = hmAux_Trans["change_lbl"]!!
         val adjustlbl = hmAux_Trans["adjust_lbl"]!!
 
-        with(binding){
-            return when(exec_type){
+        with(binding) {
+            return when (exec_type) {
                 GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                    if(geOsDeviceItem.change_adjust == 1){
-                        spanStyleWith("$maintenance\n$changelbl"){
+                    if (geOsDeviceItem.change_adjust == 1) {
+                        spanStyleWith("$maintenance\n$changelbl") {
                             customText = listOf(changelbl)
                             applyColor {
                                 context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
                             }
                             fontSize { 0.9f }
                         }
-                    }else{
+                    } else {
                         SpannableString(maintenance)
                     }
                 }
 
-                GeOsDeviceItem.EXEC_TYPE_ADJUST ->{
-                    spanStyleWith("$maintenance\n$adjustlbl"){
+                GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                    spanStyleWith("$maintenance\n$adjustlbl") {
                         customText = listOf(adjustlbl)
                         applyColor {
                             context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
@@ -1282,6 +1313,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     }
                 }
             }
+
             act086VerificationFrgRdoAnswerAlreadyDone.id -> GeOsDeviceItem.EXEC_TYPE_ALREADY_OK
             act086VerificationFrgRdoAnswerAlert.id -> GeOsDeviceItem.EXEC_TYPE_ALERT
             act086VerificationFrgRdoAnswerNotVerified.id -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
@@ -1289,25 +1321,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
-    fun onPhotoItemClick(photoName: String,position: Int){
-        callCameraAct(photoName,true)
+    fun onPhotoItemClick(photoName: String, position: Int) {
+        callCameraAct(photoName, true)
     }
 
-    fun onProductItemClick(position: Int, materialItem: Act086MaterialItem){
+    fun onProductItemClick(position: Int, materialItem: Act086MaterialItem) {
         callProductEditDialog(
             position,
             materialItem
         )
     }
 
-    fun onDeleteIconClick(position: Int){
+    fun onDeleteIconClick(position: Int) {
         showAlertFrg(
             hmAux_Trans["alert_remove_product_ttl"],
             hmAux_Trans["alert_remove_product_confirm"]!!,
             (DialogInterface.OnClickListener { _, _ ->
                 val materialUIItem = materialFragList[position]
-                if(materialUIItem.materialPlanned == 1){
-                    mPresenter.resetMaterialPlanned(geOsDeviceItem.materialList,materialUIItem)
+                if (materialUIItem.materialPlanned == 1) {
+                    mPresenter.resetMaterialPlanned(geOsDeviceItem.materialList, materialUIItem)
                 }
                 materialFragList.removeAt(position)
                 materialFragAdapter.notifyItemRemoved(position)
@@ -1317,8 +1349,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         )
     }
 
-    fun onSetAppliedLabel() :String {
-        if(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id)){
+    fun onSetAppliedLabel(): String {
+        if (lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id)) {
             return hmAux_Trans["request_qty_lbl"]!!
         }
         return hmAux_Trans["applied_qty_lbl"]!!
@@ -1357,17 +1389,21 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         ).apply {
             onApplyClick = ::onApplyProductClick
             onCancelClick = ::onCancelProductClick
-        }.show(requireActivity().supportFragmentManager,"teste")
+        }.show(requireActivity().supportFragmentManager, "teste")
     }
 
-    fun onApplyProductClick(productIndex: Int, materialItem: Act086MaterialItem, isAddProcess: Boolean ){
-        if(productIndex > -1){
+    fun onApplyProductClick(
+        productIndex: Int,
+        materialItem: Act086MaterialItem,
+        isAddProcess: Boolean
+    ) {
+        if (productIndex > -1) {
             //Atualiza item na lista
             materialFragList[productIndex] = materialItem
             //Informa adapter qual posição atualizar
             materialFragAdapter.notifyItemChanged(productIndex)
             //
-            handleViewScrollNeeds(binding.act086VerificationFrgRvMaterial,productIndex)
+            handleViewScrollNeeds(binding.act086VerificationFrgRvMaterial, productIndex)
             //
             binding.act086VerificationFrgRvMaterial.requestFocus()
             //
@@ -1379,7 +1415,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         binding.act086VerificationFrgTvMaterialTtl.text = getMaterialLbl()
     }
 
-    private fun getMaterialLbl() : String {
+    private fun getMaterialLbl(): String {
         with(binding) {
             return when (act086VerificationFrgRgAnswers.checkedRadioButtonId) {
                 act086VerificationFrgRdoAnswerAlert.id -> hmAux_Trans["request_material_lbl"]!!
@@ -1399,23 +1435,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
      * sendo atualizado para aguardar de maneira apropriada.
      */
     private fun handleViewScrollNeeds(recyclerView: RecyclerView, viewIndex: Int) {
-        val linearLayoutManager = if(recyclerView.id == binding.act086VerificationFrgRvMaterial.id){
-            recyclerView.layoutManager as LinearLayoutManager
-        }else{
-            recyclerView.layoutManager as GridLayoutManager
-        }
+        val linearLayoutManager =
+            if (recyclerView.id == binding.act086VerificationFrgRvMaterial.id) {
+                recyclerView.layoutManager as LinearLayoutManager
+            } else {
+                recyclerView.layoutManager as GridLayoutManager
+            }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if(linearLayoutManager is GridLayoutManager ) {
+            if (linearLayoutManager is GridLayoutManager) {
                 delay(200)
             }
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 //Tenta resgatar o item recem atualizado
                 linearLayoutManager.getChildAt(viewIndex)?.let {
                     //Tenta o calcular o tamanho do ajusta a altura da view.
                     //Pega o maior entre a soma dos paddingTop e Bottom ou a conversão de 40px pra dp.
                     //40dp foi o numero magico baseado em testes. A maior soma de paddings foi 36dp e não era suficiente.
-                    val adjustHeight = ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
+                    val adjustHeight =
+                        ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
                     //Soma altura do card  + ajutes calculado
                     val finalHeight = it.height + adjustHeight
                     //Pega bottom do recycle e tb adiciona o ajuste(Necessario pq nem tudo é tao preciso kkk)
@@ -1427,9 +1465,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
-    fun onCancelProductClick(productIndex: Int, isAddProcess: Boolean){
-        if(productIndex > -1){
-            if(isAddProcess && materialFragList.indices.contains(productIndex) ){
+    fun onCancelProductClick(productIndex: Int, isAddProcess: Boolean) {
+        if (productIndex > -1) {
+            if (isAddProcess && materialFragList.indices.contains(productIndex)) {
                 materialFragList.removeAt(productIndex)
                 materialFragAdapter.notifyItemRemoved(productIndex)
                 tryHideKeyboard()
@@ -1465,7 +1503,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
         )
         //
-        if(photoList.indexOf(photoName) == -1) {
+        if (photoList.indexOf(photoName) == -1) {
             photoList.add(photoName)
         }
     }
@@ -1477,17 +1515,17 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun onPause() {
         super.onPause()
-        if(!inReadOnly && !skipSave) {
+        if (!inReadOnly && !skipSave) {
             saveData()
         }
     }
 
     override fun updatePhotoListIntoAdapter() {
         photoAdapter.notifyDataSetChanged()
-        if(isPhotoAction){
+        if (isPhotoAction) {
             isPhotoAction = false
-            with(binding){
-                handleViewScrollNeeds(act086VerificationFrgRvPhotos ,photoList.lastIndex)
+            with(binding) {
+                handleViewScrollNeeds(act086VerificationFrgRvPhotos, photoList.lastIndex)
                 //Remove foco do comentario(Acontece no 8.1)
                 act086VerificationFrgMketComment.clearFocus()
                 //Seta foco no recycle
@@ -1515,10 +1553,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //
-        if(requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
+        if (requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
             && resultCode == Base_Activity_Frag.RESULT_OK
-        ){
-            mPresenter.processProductSelecionResult(data,geOsDeviceItem.materialList)
+        ) {
+            mPresenter.processProductSelecionResult(data, geOsDeviceItem.materialList)
         }
     }
 
@@ -1570,7 +1608,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
         private const val IS_OS_PARTIAL = "IS_OS_PARTIAL"
 
-        fun getFragTranslationsVars() : List<String>{
+        fun getFragTranslationsVars(): List<String> {
             return listOf(
                 "action_done_lbl",
                 "select_type_maintenance_lbl",

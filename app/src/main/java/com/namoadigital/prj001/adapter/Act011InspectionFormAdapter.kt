@@ -209,11 +209,17 @@ class Act011InspectionFormAdapter(
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.btnInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                    if (!InspectionCell.MANUAL_ALERT.equals(inspection.status)) {
-                        binding.tvAutoAlreadyOk.visibility = View.VISIBLE
-                    } else {
-                        binding.tvAutoAlreadyOk.visibility = View.GONE
+                    when(inspection.status){
+                        InspectionCell.CRITICAL_FORECAST,
+                        InspectionCell.MANUAL_ALERT -> {
+                            binding.tvAutoAlreadyOk.visibility = View.GONE
+                        }
+
+                        else -> {
+                            binding.tvAutoAlreadyOk.visibility = View.VISIBLE
+                        }
                     }
+
                     if (partitionedExecution == 1 && !read_only) {
                         binding.ivPartitionExecution.visibility = View.VISIBLE
                     } else {

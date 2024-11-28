@@ -654,6 +654,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, serial_id);
         bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
         bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page);
+        bundle.putString(Constant.MAIN_REQUESTING_PROCESS, Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS);
         //
         mView.callAct048(context, bundle);
         //}

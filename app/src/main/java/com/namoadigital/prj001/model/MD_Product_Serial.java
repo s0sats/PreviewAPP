@@ -122,6 +122,13 @@ public class MD_Product_Serial implements Serializable {
     private String last_cycle_date;
     @SerializedName("device_tp_code_main")
     private Integer device_tp_code_main;
+    @SerializedName("horimeter") private Double horimeter;
+    @SerializedName("horimeter_date") private String horimeter_date;
+    @SerializedName("horimeter_supplier_uid") private String horimeter_supplier_uid;
+    @SerializedName("horimeter_supplier_desc") private String horimeter_supplier_desc;
+    @SerializedName("measure_block_input_time") private Long measure_block_input_time;
+    @SerializedName("measure_alert_input_time") private Long measure_alert_input_time;
+    @SerializedName("unavailability_reason_option") private int unavailability_reason_option;
     @Expose
     @SerializedName("structure")
     private List<MD_Product_Serial_Structure> structure = new ArrayList<>();
@@ -786,6 +793,62 @@ public class MD_Product_Serial implements Serializable {
 
     public void setLast_cycle_value(Float last_cycle_value) {
         this.last_cycle_value = last_cycle_value;
+    }
+
+    public Double getHorimeter() {
+        return horimeter;
+    }
+
+    public void setHorimeter(Double horimeter) {
+        this.horimeter = horimeter;
+    }
+
+    public String getHorimeter_date() {
+        return horimeter_date;
+    }
+
+    public void setHorimeter_date(String horimeter_date) {
+        this.horimeter_date = horimeter_date;
+    }
+
+    public String getHorimeter_supplier_uid() {
+        return horimeter_supplier_uid;
+    }
+
+    public void setHorimeter_supplier_uid(String horimeter_supplier_uid) {
+        this.horimeter_supplier_uid = horimeter_supplier_uid;
+    }
+
+    public String getHorimeter_supplier_desc() {
+        return horimeter_supplier_desc;
+    }
+
+    public void setHorimeter_supplier_desc(String horimeter_supplier_desc) {
+        this.horimeter_supplier_desc = horimeter_supplier_desc;
+    }
+
+    public Long getMeasure_block_input_time() {
+        return measure_block_input_time;
+    }
+
+    public void setMeasure_block_input_time(Long measure_block_input_time) {
+        this.measure_block_input_time = measure_block_input_time;
+    }
+
+    public Long getMeasure_alert_input_time() {
+        return measure_alert_input_time;
+    }
+
+    public void setMeasure_alert_input_time(Long measure_alert_input_time) {
+        this.measure_alert_input_time = measure_alert_input_time;
+    }
+
+    public int getUnavailability_reason_option() {
+        return unavailability_reason_option;
+    }
+
+    public void setUnavailability_reason_option(int unavailability_reason_option) {
+        this.unavailability_reason_option = unavailability_reason_option;
     }
 
     public List<MD_Product_Serial_Structure> getStructure() {

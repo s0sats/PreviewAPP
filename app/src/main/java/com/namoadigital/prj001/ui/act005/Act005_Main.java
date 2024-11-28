@@ -142,6 +142,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.util.TripFragmentManager;
+import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome;
 import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAlt;
@@ -933,6 +934,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
 
         if(mPresenter.hasTicketForDownload()){
+            TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
             WorkerHelperKt.scheduleDownloadTicket(context);
         }
         //

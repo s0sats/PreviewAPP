@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
@@ -11,7 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -121,6 +124,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         return -1;
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -131,7 +135,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         HMAux item = source.get(position);
 
-        LinearLayout ll_bg = convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
+        CardView ll_bg = convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
         MaterialButton btn_clip = convertView.findViewById(R.id.act027_services_content_cell_btn_clip);
         //TextView exec_seq_oper =  (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_exec_seq_oper);
 //        LinearLayout ll_express = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_express);
@@ -178,10 +182,10 @@ public class Act027_Services_Adapter extends BaseAdapter {
         //tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
         //06/08/18 - Se site do serviço diferente do site do logado, muda cor de fundo.
         if (item.get(SM_SO_ServiceDao.SITE_CODE) != null && !item.get(SM_SO_ServiceDao.SITE_CODE).isEmpty() && !item.get(SM_SO_ServiceDao.SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))) {
-            ll_bg.setBackground(context.getDrawable(R.drawable.namoa_orange_bg_bordered));
+            ll_bg.setCardBackgroundColor(ResourcesCompat.getColorStateList(context.getResources(), R.color.namoa_color_orange_light, null));
         } else {
             //
-            ll_bg.setBackground(context.getDrawable(R.drawable.namoa_cell_8));
+            ll_bg.setCardBackgroundColor(ResourcesCompat.getColorStateList(context.getResources(), R.color.m3_namoa_neutral95, null));
         }
         //
         if ((item.get(SM_SO_ServiceDao.SITE_CODE) != null && item.get(SM_SO_ServiceDao.SITE_CODE).length() > 0)) {

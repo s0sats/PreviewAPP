@@ -103,6 +103,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction;
 import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
 import com.namoadigital.prj001.view.dialog.PipelineRejectionListDialog;
 
@@ -3432,6 +3433,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked(String originFlow) {
+        //
+        clearTicketDownloadSingleton();
+        //
         switch (originFlow) {
             case ConstantBaseApp.ACT084:
                 mView.callAct084();
@@ -3445,6 +3449,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             default:
                 mView.callAct005();
         }
+    }
+
+    @Override
+    public void clearTicketDownloadSingleton() {
+        TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
+    }
+
+    @Override
+    public void setTicketDownloadSingleton(int mTkPrefix, int mTkCode) {
+        TicketDownloadRestriction.INSTANCE.setTicketDownloadRestrictionInitialized(mTkPrefix, mTkCode);
     }
 
     @Override

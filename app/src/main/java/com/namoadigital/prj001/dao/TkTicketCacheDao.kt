@@ -314,7 +314,7 @@ class TkTicketCacheDao(
                           and t.${TK_TicketDao.TICKET_PREFIX} = c.${TICKET_PREFIX}
                           and t.${TK_TicketDao.TICKET_CODE} = c.${TICKET_CODE}
            )
-           LIMIT 20
+           LIMIT 10
         """.trimIndent()
         )
         return query.map {

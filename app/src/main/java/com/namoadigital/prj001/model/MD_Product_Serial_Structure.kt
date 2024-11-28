@@ -13,6 +13,13 @@ class MD_Product_Serial_Structure(
     @SerializedName("last_measure_date") val last_measure_date: String?,
     @SerializedName("last_cycle_value") val last_cycle_value: Float?,
     @SerializedName("last_cycle_date") val last_cycle_date: String?,
+    @SerializedName("horimeter") val  horimeter:Double?,
+    @SerializedName("horimeter_date") val  horimeter_date:String?,
+    @SerializedName("horimeter_supplier_uid") val  horimeter_supplier_uid:String?,
+    @SerializedName("horimeter_supplier_desc") val  horimeter_supplier_desc:String?,
+    @SerializedName("measure_block_input_time") val  measure_block_input_time:Long?,
+    @SerializedName("measure_alert_input_time") val  measure_alert_input_time:Long?,
+    @SerializedName("unavailability_reason_option") val  unavailability_reason_option:Int,
     @SerializedName("device_tp") val device_tp: MutableList<MD_Product_Serial_Tp_Device> = mutableListOf()
 ){
     fun setPk(md_product_serial: MD_Product_Serial) {

@@ -166,4 +166,8 @@ public interface Act011_Main_Presenter {
     boolean isUserOnSyncRequiredTrip();
 
     boolean hasSerialStructurePending();
+
+    void clearTicketDownloadSingleton();
+
+    void setTicketDownloadSingleton(int mTkPrefix, int mTkCode);
 }

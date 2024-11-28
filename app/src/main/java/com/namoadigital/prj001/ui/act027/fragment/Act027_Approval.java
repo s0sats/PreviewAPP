@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +29,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
@@ -45,6 +49,8 @@ import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.HashMap;
 
 /**
  * Created by neomatrix on 05/09/17.
@@ -105,10 +111,10 @@ public class Act027_Approval extends BaseFragment {
     private RadioButton rb_user;
     private RadioButton rb_other;
 
-    private Button approvalApprovalUser;
+    private MaterialButton approvalApprovalUser;
     private ButtonNFC approvalNFC;
-    private Button approvalUser_Password;
-    private Button approvalApproval;
+    private MaterialButton approvalUser_Password;
+    private MaterialButton approvalApproval;
 
     private ImageView iv_signature;
 
@@ -222,6 +228,8 @@ public class Act027_Approval extends BaseFragment {
         //
         View view = inflater.inflate(R.layout.act027_approval_content, container, false);
         //
+        recoverBundleInfo();
+        //
         iniVar(view);
         iniAction();
         //
@@ -250,12 +258,34 @@ public class Act027_Approval extends BaseFragment {
         }
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
 
         loadScreenToData();
+    }
+
+    private void recoverBundleInfo() {
+        if (getArguments() != null) {
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        }
+    }
+
+
+    @Override
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        super.setHmAux_Trans(hmAux_Trans);
+        updateFragArgs();
+    }
+
+    private void updateFragArgs() {
+        Bundle args = getArguments();
+        if(args == null){
+            args = new Bundle();
+        }
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        //
+        this.setArguments(args);
     }
 
     private void iniVar(View view) {
@@ -319,9 +349,9 @@ public class Act027_Approval extends BaseFragment {
         approvalNFC.setmLogin(true);
         approvalNFC.setmProgressClose(true);
 
-        approvalApprovalUser = (Button) view.findViewById(R.id.act027_approval_content_btn_approval_user);
-        approvalUser_Password = (Button) view.findViewById(R.id.act027_approval_content_btn_user_password);
-        approvalApproval = (Button) view.findViewById(R.id.act027_approval_content_btn_approval);
+        approvalApprovalUser =  view.findViewById(R.id.act027_approval_content_btn_approval_user);
+        approvalUser_Password =  view.findViewById(R.id.act027_approval_content_btn_user_password);
+        approvalApproval =  view.findViewById(R.id.act027_approval_content_btn_approval);
 
         iv_signature = (ImageView) view.findViewById(R.id.act027_approval_content_iv_signature);
 
@@ -416,17 +446,18 @@ public class Act027_Approval extends BaseFragment {
         final TextView tv_title_lbl = (TextView) view.findViewById(R.id.act027_dialog_user_password_tv_title_lbl);
         tv_title_lbl.setText(hmAux_Trans.get("dialog_user_author_ttl"));
 
-        final TextView tv_user_lbl = (TextView) view.findViewById(R.id.act027_dialog_user_password_tv_user_lbl);
-        tv_user_lbl.setText(hmAux_Trans.get("dialog_user_author_lbl"));
+        final TextInputLayout tv_user_lbl =  view.findViewById(R.id.act027_dialog_user_password_tv_user_lbl);
+        tv_user_lbl.setHint(hmAux_Trans.get("dialog_user_author_lbl"));
 
         final MKEditTextNM mk_user_value = (MKEditTextNM) view.findViewById(R.id.act027_dialog_user_password_mk_user);
 
-        final TextView tv_password_lbl = (TextView) view.findViewById(R.id.act027_dialog_user_password_tv_password_lbl);
-        tv_password_lbl.setText(hmAux_Trans.get("dialog_user_author_pwd_lbl"));
+        final TextInputLayout tv_password_lbl =  view.findViewById(R.id.act027_dialog_user_password_tv_password_lbl);
+        tv_password_lbl.setHint(hmAux_Trans.get("dialog_user_author_pwd_lbl"));
 
-        final EditText mk_password_value = (EditText) view.findViewById(R.id.act027_dialog_user_password_mk_password);
+        final TextInputEditText mk_password_value = view.findViewById(R.id.act027_dialog_user_password_mk_password);
+        mk_password_value.setTransformationMethod(new PasswordTransformationMethod());
 
-        final Button btn_validate = (Button) view.findViewById(R.id.act027_dialog_user_password_btn_validate);
+        final MaterialButton btn_validate = view.findViewById(R.id.act027_dialog_user_password_btn_validate);
         btn_validate.setText(hmAux_Trans.get("dialog_user_author_btn"));
 
         builder.setView(view);

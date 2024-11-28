@@ -54,6 +54,7 @@ import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act042.Act042_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
@@ -1168,7 +1169,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void callAct048(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act048_Main.class);
+        Intent mIntent = new Intent(context, Act020_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         if(bundle == null){

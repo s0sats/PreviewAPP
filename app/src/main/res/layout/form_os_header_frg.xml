@@ -244,7 +244,7 @@
                         android:id="@+id/tv_os_main_measure_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="4. Horimetro" />
@@ -256,13 +256,42 @@
                         android:hint="Digite o valor atual"
                         android:inputType="numberDecimal"
                         app:mInputType="NUMBER"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_os_main_measure_lbl"
-                        app:mBARCODE="true"
+                        app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false"
                         app:mOCRVin="false" />
+
+                    <TextView
+                        android:id="@+id/tv_horimeter_alert_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginStart="16dp"
+                        android:text="Alerta de medicao"
+                        android:visibility="gone"
+                        android:textColor="@color/text_red"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/mket_os_main_measure_val"
+                         />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ib_telemetry"
+                        app:icon="@drawable/ic_telemetry"
+                        app:iconTint="@color/namoa_color_black"
+                        android:backgroundTint="@color/namoa_color_gray_divider"
+                        android:foregroundTint="@color/namoa_color_black"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        style="@style/NamoaTheme3.Button.Icon.Filled"
+                        android:visibility="visible"
+                        />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

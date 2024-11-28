@@ -28,9 +28,9 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.sql.SM_SO_Sql_019;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act023.Act023_Main;
-import com.namoadigital.prj001.ui.act025.Act025_Main;
 import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act047.Act047_Main;
@@ -326,7 +326,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                 || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
                 || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
 
-                ) {
+        ) {
             mPresenter.executeSerialSearch(
                     optionsInfo.get(Frg_Serial_Search.PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
@@ -365,27 +365,27 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     /**
      * LUCHE - 16/01/2020
-     *
-     *  Modificado metodo para verificar se existe pendencia de envio de serial ou s.o.
-     *  Caso exista, exibe msg de necessidade de sincronia e volta para o menu principal.
+     * <p>
+     * Modificado metodo para verificar se existe pendencia de envio de serial ou s.o.
+     * Caso exista, exibe msg de necessidade de sincronia e volta para o menu principal.
      *
      * @param optionsInfo
      */
     private void processServiceList(HMAux optionsInfo) {
         if (ToolBox_Con.isOnline(context)) {
 
-            if(ToolBox_Inf.checkSerialTokenURStatus(context) || mPresenter.checkForSoToSend()){
+            if (ToolBox_Inf.checkSerialTokenURStatus(context) || mPresenter.checkForSoToSend()) {
                 showMsg(
-                    hmAux_Trans.get("alert_serial_or_so_to_send_title"),
-                    hmAux_Trans.get("alert_serial_or_so_to_send_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            onBackPressed();
+                        hmAux_Trans.get("alert_serial_or_so_to_send_title"),
+                        hmAux_Trans.get("alert_serial_or_so_to_send_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onBackPressed();
+                            }
                         }
-                    }
                 );
-            } else{
+            } else {
                 callAct047(context);
             }
         } else {
@@ -408,16 +408,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void showMsg(String ttl, String msg) {
-        showMsg(ttl, msg,null);
+        showMsg(ttl, msg, null);
     }
 
-    private void showMsg(String ttl, String msg,@Nullable DialogInterface.OnClickListener listener) {
+    private void showMsg(String ttl, String msg, @Nullable DialogInterface.OnClickListener listener) {
         ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            listener,
-            0
+                context,
+                ttl,
+                msg,
+                listener,
+                0
         );
     }
 
@@ -520,11 +520,12 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         finish();
 
     }
+
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -564,7 +565,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void callAct025(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act025_Main.class);
+        Intent mIntent = new Intent(context, Act020_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle == null) {
             bundle = new Bundle();
@@ -918,6 +919,7 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
             }
         }
     }
+
     /*
         BARRIONUEVO 17-04-2020
         Atualiza info do footer

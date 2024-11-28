@@ -571,4 +571,20 @@
         <item name="colorContainer">@color/m3_namoa_primaryContainer</item>
     </style>
 
+   <style name="TelemetryTitle" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="TelemetryBody" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="TelemetrySupplierTitle" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="TelemetrySupplierBody" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
 </resources>

@@ -6,8 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,8 +14,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,9 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -41,7 +40,6 @@ import com.namoadigital.prj001.dao.MD_BrandDao;
 import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
-import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
@@ -75,6 +73,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -87,8 +86,7 @@ public class Act027_Services extends BaseFragment {
 
 
     private Context context;
-    private TextView tv_filter_lbl;
-    private SwitchCompat sw_filter;
+    private ImageView sw_filter;
     private CardView cardStatus;
     private ImageView iv_remove_card;
     private TextView tv_status_card;
@@ -102,7 +100,6 @@ public class Act027_Services extends BaseFragment {
     private String lastServiceUpdated = "";
     private int original_update_required;
     private Act027_Main mMain;
-    private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
     private TextView tv_header_add_info_1;
@@ -112,20 +109,22 @@ public class Act027_Services extends BaseFragment {
     private TextView tv_header_add_info_5;
     private TextView tv_header_add_info_6;
     private TextView tv_empty_list;
-    private View v_divider;
     private ImageView iv_editable_serial;
-    private View listHeader;
+    private CardView cardProductSerial;
     private View cvlistHeaderProductSerial;
-    private Button btn_approval_shortcut;
-    private Button btn_product_event_shortcut;
+    private MaterialButton btn_approval_shortcut;
+    private MaterialButton btn_product_event_shortcut;
     private SM_SODao sm_soDao;
+    private boolean switchState;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
+        updateFragArgs(mSm_so);
     }
 
     public interface IAct027_Services {
         void onServiceSelected(HMAux sService);
+
         void selectDrawerOption(String selection_type);
     }
 
@@ -166,6 +165,8 @@ public class Act027_Services extends BaseFragment {
         }
         View view = inflater.inflate(R.layout.act027_services_content, container, false);
         //
+        recoverBundleInfo();
+        //
         sm_soDao = new SM_SODao(getContext());
         //
         iniVar(view);
@@ -202,6 +203,39 @@ public class Act027_Services extends BaseFragment {
         loadScreenToData();
     }
 
+    private void recoverBundleInfo() {
+        if (getArguments() != null) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+            this.mSm_so = gson.fromJson(getArguments().getString(SM_SODao.TABLE), SM_SO.class);
+        }
+    }
+
+
+    @Override
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        super.setHmAux_Trans(hmAux_Trans);
+        updateFragArgs(null);
+    }
+
+    private void updateFragArgs(SM_SO sm_so) {
+        Bundle args = getArguments();
+        if(args == null){
+            args = new Bundle();
+        }
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        if(!args.containsKey(Constant.MAIN_HMAUX_TRANS_KEY)){
+            args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        }
+
+        if(sm_so != null){
+            args.putString(SM_SODao.TABLE, gson.toJson(mSm_so));
+        }
+        //
+        this.setArguments(args);
+    }
+
     @SuppressLint("SetTextI18n")
     private void iniVar(View view) {
         context = getActivity();
@@ -229,21 +263,17 @@ public class Act027_Services extends BaseFragment {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         cvlistHeaderProductSerial = inflater.inflate(R.layout.act027_service_list_header, null);
-        tv_filter_lbl = view.findViewById(R.id.act027_services_content_tv_filter_lbl);
-
-        listHeader = cvlistHeaderProductSerial.findViewById(R.id.cv_product_serial_card);
+        cardProductSerial = view.findViewById(R.id.cv_product_serial_card);
         tv_header_add_info_1 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_1);
         tv_header_add_info_2 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_2);
         tv_header_add_info_3 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_3);
         tv_header_add_info_4 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_4);
         tv_header_add_info_5 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_5);
         tv_header_add_info_6 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_6);
-        v_divider = cvlistHeaderProductSerial.findViewById(R.id.act027_v_divider);
 
-        iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
-        tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
-        tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
-        iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
+        tv_product_serial_id = view.findViewById(R.id.tv_product_serial_id);
+        tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
+        iv_editable_serial = view.findViewById(R.id.iv_editable_serial);
         lv_services = view.findViewById(R.id.act027_services_content_lv_services);
         btn_approval_shortcut = view.findViewById(R.id.act027_services_content_btn_quality_approval);
         btn_product_event_shortcut = view.findViewById(R.id.act027_services_content_btn_product_event_shortcut);
@@ -260,18 +290,22 @@ public class Act027_Services extends BaseFragment {
 
 
         iv_editable_serial.setVisibility(View.VISIBLE);
-        iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
+
         lv_services.addHeaderView(cvlistHeaderProductSerial);
-        listHeader.setOnClickListener(new View.OnClickListener() {
+        iv_editable_serial.setOnClickListener(clickProductSerial());
+        cardProductSerial.setOnClickListener(clickProductSerial());
+        loadApprovalState();
+
+        setLabels();
+    }
+
+    private View.OnClickListener clickProductSerial() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delegate.selectDrawerOption(Act027_Main.SELECTION_SERIAL);
             }
-        });
-
-        loadApprovalState();
-
-        setLabels();
+        };
     }
 
 
@@ -395,7 +429,6 @@ public class Act027_Services extends BaseFragment {
     }
 
     private void setAddInfo() {
-        v_divider.setVisibility(View.GONE);
         handleAddInfoLayout("1", mSm_so.getAdd_inf1(), tv_header_add_info_1);
         handleAddInfoLayout("2", mSm_so.getAdd_inf2(), tv_header_add_info_2);
         handleAddInfoLayout("3", mSm_so.getAdd_inf3(), tv_header_add_info_3);
@@ -405,11 +438,10 @@ public class Act027_Services extends BaseFragment {
     }
 
     private void handleAddInfoLayout(String prefix, String add_info, TextView tv_add_info) {
-        if(add_info!= null && !add_info.trim().isEmpty()) {
+        if (add_info != null && !add_info.trim().isEmpty()) {
             tv_add_info.setVisibility(View.VISIBLE);
-            v_divider.setVisibility(View.VISIBLE);
             tv_add_info.setText(prefix + ": " + add_info.trim());
-        }else{
+        } else {
             tv_add_info.setVisibility(View.GONE);
         }
     }
@@ -442,17 +474,55 @@ public class Act027_Services extends BaseFragment {
     }
 
     private void iniAction() {
-
-        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+        switchState = getSwitchState();
+        sw_filter.setOnClickListener(switchOnClickListener());
     }
 
-    private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            setSwitchState(isChecked);
-            setServiceAdapter(isChecked);
+    private View.OnClickListener switchOnClickListener() {
+        return l -> {
+            switchState = !switchState;
+            changeSwitchState();
+            swToastMessage();
+        };
+    }
+
+    private void swToastMessage() {
+        String message = switchState ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl");
+        Toast.makeText(
+                        context,
+                        message,
+                        Toast.LENGTH_LONG)
+                .show();
+    }
+
+
+    private void changeSwitchState() {
+        if (switchState) {
+            sw_filter.setImageDrawable(null);
+            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_pressed));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.padrao_WHITE)
+            );
+
+            sw_filter.setImageDrawable(drawable);
+            sw_filter.postInvalidate();
+        } else {
+            sw_filter.setImageDrawable(null);
+            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_default));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.outline_wrong_location_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, R.color.m3_namoa_secondary)
+            );
+
+            sw_filter.setImageDrawable(drawable);
+            sw_filter.postInvalidate();
         }
-    };
+        setSwitchState(switchState);
+        setServiceAdapter(switchState);
+    }
 
     public void loadDataToScreen() {
         if (bStatus) {
@@ -461,14 +531,14 @@ public class Act027_Services extends BaseFragment {
                 //
                 original_update_required = mSm_so.getUpdate_required();
                 //
-                tv_filter_lbl.setText(hmAux_Trans.get("filter_lbl"));
-                //
                 //sw_filter.setChecked(true);
                 //
 
-                sw_filter.setOnCheckedChangeListener(null);
-                sw_filter.setChecked(getSwitchState());
-                sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+
+                sw_filter.setOnClickListener(null);
+                switchState = getSwitchState();
+                changeSwitchState();
+                sw_filter.setOnClickListener(switchOnClickListener());
                 //
                 setServiceAdapter(getSwitchState());
                 setSerialInfo();
@@ -492,7 +562,6 @@ public class Act027_Services extends BaseFragment {
         );
 
         try {
-            iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
             if (product_serial_content.hasConsistentValue(SM_SODao.SERIAL_ID)) {
                 tv_product_serial_id.setText(product_serial_content.get(SM_SODao.SERIAL_ID));
             }
@@ -503,40 +572,26 @@ public class Act027_Services extends BaseFragment {
             }
             if (product_serial_content.hasConsistentValue(MD_Brand_ModelDao.MODEL_DESC)
                     && !product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC).isEmpty()) {
-                if(serial_bmd.isEmpty()){
+                if (serial_bmd.isEmpty()) {
                     serial_bmd = product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC);
-                }else {
+                } else {
                     serial_bmd = serial_bmd + " | " + product_serial_content.get(MD_Brand_ModelDao.MODEL_DESC);
                 }
             }
             if (product_serial_content.hasConsistentValue(MD_Brand_ColorDao.COLOR_DESC)
                     && !product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC).isEmpty()) {
-                if(serial_bmd.isEmpty()){
+                if (serial_bmd.isEmpty()) {
                     serial_bmd = product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC);
-                }else {
+                } else {
                     serial_bmd = serial_bmd + " | " + product_serial_content.get(MD_Brand_ColorDao.COLOR_DESC);
                 }
             }
             tv_product_serial_infos.setText(serial_bmd);
             tv_product_serial_infos.setVisibility(View.VISIBLE);
-            if(serial_bmd.isEmpty()){
+            if (serial_bmd.isEmpty()) {
                 tv_product_serial_infos.setVisibility(View.GONE);
             }
 
-            if(product_serial_content.hasConsistentValue(MD_ProductDao.PRODUCT_ICON_NAME)
-                    && !product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).isEmpty()){
-                if(ToolBox_Inf.verifyDownloadFileInf(product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), Constant.CACHE_PATH)){
-                    File imgFile = new  File(Constant.CACHE_PATH + "/" + product_serial_content.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase());
-                    if(imgFile.exists()){
-                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        iv_product_serial_id.setImageBitmap(myBitmap);
-                    }
-                }
-            }else{
-                iv_product_serial_id.setVisibility(View.INVISIBLE);
-                tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-                tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-            }
         } catch (NullPointerException e) {
             tv_product_serial_infos.setText("");
             tv_product_serial_infos.setVisibility(View.GONE);
@@ -622,7 +677,7 @@ public class Act027_Services extends BaseFragment {
                 if (getListFromService(false).isEmpty()) {
                     mMain.openDrawerInternally();
                 }
-            }else{
+            } else {
                 lv_services.setVisibility(View.VISIBLE);
                 tv_empty_list.setVisibility(View.GONE);
             }
@@ -817,8 +872,8 @@ public class Act027_Services extends BaseFragment {
         //
         if (sm_so_service.getExec_type().equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
             //
-            if(item.hasConsistentValue(NAVIGATE_ACT028)
-            && "0".equalsIgnoreCase(item.get(NAVIGATE_ACT028))) {
+            if (item.hasConsistentValue(NAVIGATE_ACT028)
+                    && "0".equalsIgnoreCase(item.get(NAVIGATE_ACT028))) {
                 ServiceExecConfirmationDialog serviceExecConfirmationDialog = new ServiceExecConfirmationDialog(context,
                         new ServiceExecConfirmationDialog.OnServiceTypeSelectListener() {
                             @Override
@@ -840,7 +895,7 @@ public class Act027_Services extends BaseFragment {
                         item
                 );
                 serviceExecConfirmationDialog.show();
-            }else{
+            } else {
                 SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
                 //
                 SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
@@ -1136,11 +1191,11 @@ public class Act027_Services extends BaseFragment {
         }
     }
 
-    private boolean getSwitchState(){
+    private boolean getSwitchState() {
         return ToolBox_Con.getBooleanPreferencesByKey(requireContext(), Constant.ACT027_SWITCH_STATE, true);
     }
 
-    private void setSwitchState(boolean isChecked){
+    private void setSwitchState(boolean isChecked) {
         ToolBox_Con.setBooleanPreference(requireContext(), Constant.ACT027_SWITCH_STATE, isChecked);
     }
 }

@@ -60,13 +60,13 @@
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone">
+
         <TextView
             android:id="@+id/act027_product_list_content_tv_empty_lbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="Empty List"
-            />
+            android:text="Empty List" />
     </LinearLayout>
 
     <LinearLayout
@@ -77,14 +77,13 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/act027_product_list_btn_add_event"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/namoa_cell_11_states"
-            tools:text="Add Event"
-            android:textColor="@color/padrao_WHITE" />
+            style="@style/NamoaTheme3.Button.Icon.Center"
+            tools:text="Add Event" />
 
     </LinearLayout>
 
@@ -96,17 +95,15 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/act027_product_list_btn_service_preview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_namoa_main_states"
-            tools:text="Service Search"
-            android:textColor="@color/padrao_WHITE" />
+            style="@style/NamoaTheme3.Button.Outlined.Center.Icon"
+            tools:text="Service Search" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

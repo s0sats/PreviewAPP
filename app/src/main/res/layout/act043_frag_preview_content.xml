@@ -91,16 +91,16 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/act043_frag_preview_btn_search_service"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/namoa_cell_11_states"
-            android:text="Add Service"
-            android:textColor="@color/padrao_WHITE" />
+            style="@style/NamoaTheme3.Button.Icon.Center"
+            android:text="Add Service" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -109,14 +109,13 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/act043_frag_preview_btn_product_event"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_namoa_main_states"
-            android:text="Produto Evento"
-            android:textColor="@color/padrao_WHITE" />
+            style="@style/NamoaTheme3.Button.Outlined.Center.Icon"
+            android:text="Produto Evento" />
 
     </LinearLayout>
 </LinearLayout>

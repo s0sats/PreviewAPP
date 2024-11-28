@@ -862,8 +862,46 @@ val MigrationV12 = object : MigrationSQLite(12, 13) {
                 )
             }
         }
+    }
+}
 
+val migrationV13 = object : MigrationSQLite(13, 14) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.checkIfFieldExist(MD_ProductDao.TABLE, MD_ProductDao.IS_CLASS_REQUIRED) {
+            addColumn(
+                MD_ProductDao.TABLE,
+                MD_ProductDao.IS_CLASS_REQUIRED,
+                "int not null default 0"
+            )
+        }
+    }
+}
 
+val MigrationV14 = object : MigrationSQLite(14, 15) {
+    override fun migrate(db: SQLiteDatabase) {
+
+        db.addMissingColumnsIfNecessary(tableName = MD_Product_SerialDao.TABLE) {
+            mapOf(
+                MD_Product_SerialDao.HORIMETER to "real",
+                MD_Product_SerialDao.HORIMETER_DATE to "text COLLATE NOCASE",
+                MD_Product_SerialDao.HORIMETER_SUPPLIER_UID to "text COLLATE NOCASE",
+                MD_Product_SerialDao.HORIMETER_SUPPLIER_DESC to "text COLLATE NOCASE",
+                MD_Product_SerialDao.MEASURE_BLOCK_INPUT_TIME to "int",
+                MD_Product_SerialDao.MEASURE_ALERT_INPUT_TIME to "int",
+                MD_Product_SerialDao.UNAVAILABILITY_REASON_OPTION to "int not null default 0",
+            )
+        }
+    }
+}
+
+fun SQLiteDatabase.addMissingColumnsIfNecessary(
+    tableName: String,
+    columnsToAdd: () -> Map<String, String>
+) {
+    columnsToAdd().forEach { (column, type) ->
+        this@addMissingColumnsIfNecessary.checkIfFieldExist(tableName, column) {
+            addColumn(tableName, column, type)
+        }
     }
 }
 

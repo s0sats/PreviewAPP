@@ -9,6 +9,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.absoluteValue
 
 fun getCurrentDateApi() = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
 
@@ -87,3 +88,6 @@ fun calculateMinutesBetweenDates(
     }
 }
 
+fun String.getDateDiferenceInMinutes(secoundDate:String):Long{
+    return (ToolBox_Inf.getDateDiferenceInMilliseconds(this, secoundDate) /60000).absoluteValue
+}

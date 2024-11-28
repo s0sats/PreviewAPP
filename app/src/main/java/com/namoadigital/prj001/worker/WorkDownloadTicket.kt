@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.gson.GsonBuilder
@@ -8,7 +9,6 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
-import com.namoadigital.prj001.dao.EV_User_CustomerDao
 import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
@@ -19,7 +19,6 @@ import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
-import com.namoadigital.prj001.extensions.isCurrentTrip
 import com.namoadigital.prj001.extensions.sendFCMStatus
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
 import com.namoadigital.prj001.model.DaoObjReturn
@@ -35,6 +34,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.NetworkConnectionException
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction
 
 
 class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
@@ -56,39 +56,42 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
     private var reSend: Boolean = true
     private val ticketToSend = java.util.ArrayList<TK_Ticket>()
     override fun doWork(): Result {
-//        Log.d("WorkDownloadTicket", "doWork")
+        Log.d("WorkDownloadTicket", "doWork")
+        //
+        if(ToolBox_Con.getPreference_Customer_Code(context) == -1L
+            || ToolBox_Con.getPreference_User_Code(context).isBlank()){
+            return Result.success()
+        }
         //
         try {
-            //
-            val evUserCustomerdao =
-                EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE)
-            val userInfo = evUserCustomerdao.loggedUserCustomer
-
-            if (userInfo.field_service == 0
-                && !context.isCurrentTrip()
-            ) {
-                return Result.success()
-            }
-
-            var result = false
+            var result = true
             //
             val syncList = ticketDao.syncList
             syncList.addAll(getSyncList())
             //
-            if (syncList.isNotEmpty()){
-               result = syncTickets(syncList)
+            val tkTicketToSyncs = if(TicketDownloadRestriction.isTicketDownloadRestrictionInitialized()) {
+                syncList.filter {
+                    !(it.ticketPrefix == TicketDownloadRestriction.ticketPrefixRestriction
+                            && it.ticketCode == TicketDownloadRestriction.ticketCodeRestriction)
+                }
+            }else{
+                syncList
+            }.take(10)
+            //
+            if (tkTicketToSyncs.isNotEmpty()){
+               result = syncTickets(tkTicketToSyncs)
             }
             //
             return if (result){
-                context.sendFCMStatus(ConstantBaseApp.FCM_MODULE_SYNC)
-                val hasTicketAfterDownload = getSyncList().isNotEmpty()
+                context.sendFCMStatus(ConstantBaseApp.FCM_MODULE_TICKET)
+                val hasTicketAfterDownload = getSyncList().isNotEmpty() || ticketDao.syncList.isNotEmpty()
                 if(hasTicketAfterDownload){
                     Result.retry()
                 }else {
                     Result.success()
                 }
             }else{
-                Result.retry()
+                Result.failure()
             }
             //
         } catch (httpException: NetworkConnectionException){
@@ -129,13 +132,13 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
         return true
     }
     @Throws(Exception::class)
-    private fun syncTickets(syncList: MutableList<TkTicketToSync>):Boolean {
+    private fun syncTickets(tkTicketToSyncs: List<TkTicketToSync>):Boolean {
         val env = T_TK_Ticket_Download_Env()
         env.app_code = Constant.PRJ001_CODE
         env.app_version = Constant.PRJ001_VERSION
         env.session_app = ToolBox_Con.getPreference_Session_App(applicationContext)
         env.app_type = Constant.PKG_APP_TYPE_DEFAULT
-        env.ticket.addAll(getTicketToEnv(syncList))
+        env.ticket.addAll(getTicketToEnv(tkTicketToSyncs))
         env.login = 0
         //
         val gson = GsonBuilder().serializeNulls().create()
@@ -294,8 +297,12 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
         }
     }
 
-    private fun getTicketToEnv(syncList: List<TkTicketToSync>): List<T_TK_Ticket_Download_PK_Env> {
-        return syncList.map {
+    private fun getTicketToEnv(tkTicketToSyncs: List<TkTicketToSync>): List<T_TK_Ticket_Download_PK_Env> {
+
+
+
+
+        return tkTicketToSyncs.map {
             val tTkTicketDownloadPkEnv = T_TK_Ticket_Download_PK_Env()
             tTkTicketDownloadPkEnv.customer_code = it.customerCode
             tTkTicketDownloadPkEnv.ticket_prefix = it.ticketPrefix

@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ArrayAdapter
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -25,12 +27,22 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
+import com.namoadigital.prj001.databinding.FormSupplierDialogBinding
+import com.namoadigital.prj001.extensions.date.getDateDiferenceInMinutes
 import com.namoadigital.prj001.extensions.formatTo
 import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.Act011FormTab
+import com.namoadigital.prj001.model.Act011FormTabStatus
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
+import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
 import com.namoadigital.prj001.ui.act011.FormOsHeaderFrgMeasureInteraction
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
+import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -38,7 +50,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
+import java.util.Locale
 import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
@@ -70,6 +82,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var calculatedExecCycle: Float = -1f
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
+    private var initialSerialState: InitialSerialState? = null
 
     //Var usada somente na criação, se isso mudar, deve ser revisto sua inicialização.
     private val formRequiresGPS: Boolean by lazy {
@@ -90,7 +103,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             scheduleDesc: String?,
             scheduleComments: String?,
             formOsHeader: GeOs,
-            isOsCreation: Boolean = false
+            isOsCreation: Boolean = false,
+            initialSerialState: InitialSerialState? = null,
         ) = FormOsHeaderFrg()
             .apply {
                 this.hmAuxTrans = hmAuxTrans
@@ -102,6 +116,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 this.formOsHeader = formOsHeader
                 this.isOsCreation = isOsCreation
                 this.isFormOs = true
+                this.initialSerialState = initialSerialState
                 //
                 arguments = Bundle().apply {
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
@@ -151,10 +166,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_form_turn_gps_on_title",
                 "alert_form_turn_gps_on_msg",
                 "allow_measure_in_the_past_lbl",
+                "alert_horimeter_type_lbl",
                 "alert_measure_error_ttl",
                 "alert_measure_invalid_value_msg",
                 "form_os_partition_headline_lbl",
-                "alert_invalid_start_date_partition_error_msg"
+                "alert_invalid_start_date_partition_error_msg",
+                "telemetry_horimeter_lbl",
+                "telemetry_horimeter_date_lbl",
+                "telemetry_supplier_uid_lbl",
+                "telemetry_supplier_desc_lbl",
             )
         }
     }
@@ -212,6 +232,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
+            tvHorimeterAlertLbl.text = hmAuxTrans["alert_horimeter_type_lbl"]
+
+
             ticketForm?.let {
                 notificationPartial.apply {
                     val date = it.start_date.formatTo(
@@ -461,7 +484,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         with(binding) {
             mketMachineSerialEdit.setText(serialBkp.serialId)
             clMachineEdit.background =
-                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    com.namoa_digital.namoa_library.R.drawable.shape_ok
+                )
             tilMketSerial.isHelperTextEnabled = false
             selectedBkpMachineSerialCode = serialBkp.serialCode
             selectedBkpMachineSerialId = serialBkp.serialId
@@ -495,6 +521,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun iniMainMeasure() {
         with(binding) {
+            mketOsMainMeasureVal.setEnableCommaLocale(true)
             if (isContinuosFormPartition()) {
                 clMainMeasure.visibility =
                     if (ticketForm!!.measure_tp_code != null) View.VISIBLE else View.GONE
@@ -581,8 +608,72 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     )
                 }
             }
+            //
+            ibTelemetry.visibility = View.GONE
+            //
+            initialSerialState?.let {
+                if (isOsCreation) {
+                    ibTelemetry.visibility =
+                        if (isContinuosFormPartition()) View.GONE else View.VISIBLE
+                    if (!isContinuosFormPartition()) {
+                        it.horimeter?.let { horimeter ->
+                            val validHorimeter = if (checkLateTelemetryMeasureDate(
+                                    it.horimeter_date,
+                                    formOsHeader.last_measure_date
+                                )
+                            ) {
+                                formOsHeader.last_measure_value
+                            } else {
+                                horimeter.toFloat()
+                            }
+                            mketOsMainMeasureVal.setText(
+                                ToolBox_Inf.formatLastMeaseureInfo(
+                                    context,
+                                    null,
+                                    validHorimeter,
+                                    null
+                                )
+                            )
+                        }
+                    }
+                }
+                val currentTime = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+
+                val diffTime =
+                    it.horimeter_date?.getDateDiferenceInMinutes(currentTime) ?: Long.MAX_VALUE
+
+                it.measure_block_input_time?.let { block_input ->
+                    if (isBlockInputTime(diffTime, block_input)) {
+                        mketOsMainMeasureVal.isEnabled = false
+                    }
+                }
+                it.measure_alert_input_time?.let { alert_input ->
+                    if (diffTime >= alert_input
+                        && isOsCreation
+                        && !isContinuosFormPartition()
+                    ) {
+                        tvHorimeterAlertLbl.visibility = View.VISIBLE
+                        mketOsMainMeasureVal.setText("")
+                    } else {
+                        tvHorimeterAlertLbl.visibility = View.GONE
+                    }
+                }
+            }
         }
     }
+
+
+    private fun checkLateTelemetryMeasureDate(
+        horimeterDate: String?,
+        lastMeasureDate: String?
+    ): Boolean {
+        if (horimeterDate != null && lastMeasureDate != null) {
+            return ToolBox_Inf.getDateDiferenceInMilliseconds(horimeterDate, lastMeasureDate) < 0
+        }
+        return false
+    }
+
+    private fun isBlockInputTime(diffTime: Long, block_input: Long) = diffTime < block_input
 
     private fun getMainMeasureTp(it: Int, customer_code: Long) =
         mCreationListener?.getMeasure(it)
@@ -602,7 +693,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun iniLastMeasureInfo() {
         with(binding) {
-            if(!isContinuosFormPartition()) {
+            if (!isContinuosFormPartition()) {
                 tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(
                     context,
                     formOsHeader.value_sufix,
@@ -612,7 +703,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 clLastMeasure.visibility = if (!tvOsLastMeasureVal.text.toString()
                         .isNullOrEmpty() && mainMeasureTp != null && mainMeasureTp?.without_measure == 0
                 ) View.VISIBLE else View.GONE
-            }else{
+            } else {
                 clLastMeasure.visibility = View.GONE
             }
         }
@@ -631,7 +722,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun checkSave() {
         with(binding) {
-            val measure = mketOsMainMeasureVal.text
+            val measure = mketOsMainMeasureVal.commaFormatted
 
             if (!isMeasureValNumeric()
                 || measure.toString().toFloat() < 0
@@ -651,6 +742,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             validateSave()
         }
     }
+
     private fun validateSave() {
         with(binding) {
             val isOrderTypeInvalid =
@@ -660,15 +752,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isMachineTheSame =
                 (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
             val isStartDateInvalid = if (!bypassMinValidation()) isValidStartDate().not() else false
-            val isContinuousFormStartDateInvalid = if(isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
+            val isContinuousFormStartDateInvalid =
+                if (isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
-                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    com.namoa_digital.namoa_library.R.drawable.shape_error
+                )
             } else {
-                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    com.namoa_digital.namoa_library.R.drawable.shape_ok
+                )
             }
             val measureInvalid = mainMeasureTp?.let {
-                if (!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
-                    val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toDouble()
+                if (!binding.mketOsMainMeasureVal.commaFormatted.isNullOrEmpty() && isMeasureValNumeric()) {
+                    val typedMeasure = binding.mketOsMainMeasureVal.commaFormatted.toDouble()
                     it.isMeasureRestrictionInvalid(
                         bypassMinValidation(),
                         typedMeasure,
@@ -685,9 +784,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             //
             //Verifica se a OS é uma continuação e se for ele continua para a próxima tela
             //Se for continuação da OS e a data estiver invalida ele mostra um dialog pro user
-            if(isContinuosFormPartition()){
-                if(isStartDateInvalid
-                    || isContinuousFormStartDateInvalid){
+            if (isContinuosFormPartition()) {
+                if (isStartDateInvalid
+                    || isContinuousFormStartDateInvalid
+                ) {
                     showSaveErroDialog(
                         startDateInvalid = isStartDateInvalid,
                         continuousFormStartDateInvalid = isContinuousFormStartDateInvalid
@@ -704,9 +804,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     },
                     1
                 )
-            }else{
-                val isInvalid = isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid
-                if(isInvalid){
+            } else {
+                val isInvalid =
+                    isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid
+                if (isInvalid) {
                     showSaveErroDialog(
                         osTypeInvalid = isOrderTypeInvalid,
                         bkpMachineEmpty = isMachineEmpty,
@@ -753,20 +854,24 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     /**
      * Valida se data iniicio informada é valida, não é no futuro e é maior que a data da ultima medição.
      */
-    private fun isValidStartDate() :Boolean {
-       return with(binding){
-           (mkdtStartDate.isValid
-           && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
-           && (formOsHeader.last_measure_date == null
-               || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
-              )
-          )
-       }
+    private fun isValidStartDate(): Boolean {
+        return with(binding) {
+            (mkdtStartDate.isValid
+                    && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+                    && (formOsHeader.last_measure_date == null
+                    || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(
+                mkdtStartDate.getmValue()
+            )
+                    )
+                    )
+        }
     }
 
-    private fun isValidContinuosFormStartDate():Boolean{
-        return with(binding){
-            ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()) > ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date)
+    private fun isValidContinuosFormStartDate(): Boolean {
+        return with(binding) {
+            ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()) > ToolBox_Inf.dateToMilliseconds(
+                ticketForm?.partition_min_date
+            )
         }
     }
 
@@ -817,7 +922,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale(
+        return BigDecimal(binding.mketOsMainMeasureVal.commaFormatted).setScale(
             mainMeasureTp?.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
             RoundingMode.HALF_DOWN
         ).toFloat()
@@ -855,12 +960,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
         val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
         if (isPreventiveCycledOs(mdOrderType)) {
-            if (binding.mketOsMainMeasureVal.text.isNullOrEmpty() || !isMeasureValNumeric()) {
+            if (binding.mketOsMainMeasureVal.commaFormatted.isNullOrEmpty() || !isMeasureValNumeric()) {
                 return false
             } else {
                 var lastCycle = formOsHeader.last_cycle_value ?: 0f
                 //Valor inserido
-                calculatedExecMeasureValue = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                calculatedExecMeasureValue = binding.mketOsMainMeasureVal.commaFormatted.toFloat()
                 //divide valor atual pelo tam do ciclo e arredonda pra cima, pra identificar o fator
                 //de multiplicação do proxmo ciclo
                 var tamDoCiclo = mainMeasureTp!!.valueCycleSize!!
@@ -887,8 +992,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
 //    private fun isMeasureRestrictionInvalid(): Boolean {
 //        mainMeasureTp?.let{
-//            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()){
-//                val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
+//            return if(!binding.mketOsMainMeasureVal.commaFormatted.isNullOrEmpty() && isMeasureValNumeric()){
+//                val typedMeasure = binding.mketOsMainMeasureVal.commaFormatted.toFloat()
 //                when(it.restrictionType){
 //                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> it.isMeasureRestrictionValueValid(typedMeasure,formOsHeader.last_measure_value).not()
 //                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> it.isMeasureRestrictionValueByDayValid(typedMeasure,it).not()
@@ -907,7 +1012,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      */
     private fun isMeasureValNumeric(): Boolean {
         return try {
-            binding.mketOsMainMeasureVal.text.toString().toFloat()
+            binding.mketOsMainMeasureVal.commaFormatted.toFloat()
             true
         } catch (e: Exception) {
             false
@@ -994,6 +1099,42 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 updateBkpMachineVisibility()
                 resetBkpMachineProductSerial()
             }
+            if (isOsCreation) {
+                ibTelemetry.setOnClickListener {
+                    ToolBox_Inf.hideSoftKeyboard(context, binding.root)
+                    val popupView = FormSupplierDialogBinding.inflate(layoutInflater)
+
+                    initLayout(popupView)
+                    // Crie o diálogo
+                    // Create the popup window
+                    val popupWindow = PopupWindow(
+                        popupView.root,
+                        WindowManager.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        true
+                    )
+                    val popupMargin = if (isOsCreation) {
+                        -190
+                    } else {
+                        -125
+                    }
+                    popupWindow.showAsDropDown(
+                        ibTelemetry,
+                        0,
+                        ToolBox.dbToPixel(context, popupMargin)
+                    )
+
+//                binding.svMain.fullScroll(View.FOCUS_DOWN)
+                }
+                //
+                swAllowFormSoInThePast.setOnCheckedChangeListener { _, _ ->
+                    if (swAllowFormSoInThePast.isChecked) {
+                        mketOsMainMeasureVal.isEnabled = true
+                    } else {
+                        mketOsMainMeasureVal.isEnabled = checkOsMainMeasureValEnable()
+                    }
+                }
+            }
             //
             if (isOsCreation
                 && !isContinuosFormPartition()
@@ -1017,7 +1158,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                             tilMketSerial.isHelperTextEnabled = true
                             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
                             clMachineEdit.background =
-                                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
+                                ContextCompat.getDrawable(
+                                    requireContext(),
+                                    com.namoa_digital.namoa_library.R.drawable.shape_error
+                                )
                         }
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
@@ -1047,6 +1191,106 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
     }
 
+    private fun checkOsMainMeasureValEnable(): Boolean {
+        val diffTime =
+            initialSerialState?.horimeter_date?.getDateDiferenceInMinutes(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))
+                ?: Long.MAX_VALUE
+        val isBlockInput = initialSerialState?.measure_block_input_time?.let {
+            isBlockInputTime(diffTime, it)
+        } ?: false
+        //
+        if (isBlockInput) {
+            initialSerialState?.horimeter?.let { horimeter ->
+                binding.mketOsMainMeasureVal.setText(
+                    ToolBox_Inf.formatLastMeaseureInfo(
+                        context,
+                        null,
+                        horimeter.toFloat(),
+                        null
+                    )
+                )
+            }
+        }
+        //
+        return isOsCreation
+                && ticketForm?.measure_value == null
+                && !isBlockInput
+    }
+
+    private fun initLayout(popupView: FormSupplierDialogBinding) {
+        initialSerialState?.let { initialSerialState ->
+
+            val horimeterFormatted = if (isOsCreation) {
+                initialSerialState.horimeter?.let {
+                    val horimeterAndSfix = ToolBox_Inf.convertFloatToBigDecimalString(
+                        it,
+                        true
+                    ) + " " + (mainMeasureTp?.valueSufix ?: "")
+                    if (initialSerialState.horimeter_date != null) {
+                        "$horimeterAndSfix  - ${
+                            ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(initialSerialState.horimeter_date),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            )
+                        }"
+                    } else {
+                        horimeterAndSfix
+                    }
+                } ?: run {
+                    ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(initialSerialState.horimeter_date),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                }
+            } else {
+                null
+            }
+            //
+            addTelemetryInfo(
+                popupView.tvHorimeterLabel,
+                popupView.tvHorimeterValue,
+                hmAuxTrans["telemetry_horimeter_lbl"],
+                horimeterFormatted
+            )
+            //
+            val supplierDescFormatted = initialSerialState.horimeter_supplier_uid?.let {
+                if (initialSerialState.horimeter_supplier_desc != null) {
+                    "${initialSerialState.horimeter_supplier_uid} - ${initialSerialState.horimeter_supplier_desc}"
+                } else {
+                    initialSerialState.horimeter_supplier_uid
+                }
+            } ?: run {
+                initialSerialState.horimeter_supplier_desc
+            }
+            //
+            addTelemetryInfo(
+                popupView.tvHorimeterSupplierDescLabel,
+                popupView.tvHorimeterSupplierDescValue,
+                hmAuxTrans["telemetry_supplier_desc_lbl"],
+                supplierDescFormatted
+            )
+            //
+        }
+    }
+
+    private fun addTelemetryInfo(
+        tvLabel: TextView,
+        tvValue: TextView,
+        label: String?,
+        value: String?
+    ) {
+
+        tvLabel.visibility = View.GONE
+        tvValue.visibility = View.GONE
+        value?.let {
+            tvLabel.visibility = View.VISIBLE
+            tvValue.visibility = View.VISIBLE
+            tvLabel.text = label ?: "-"
+            tvValue.text = value
+        }
+
+    }
+
     private fun callProductSelection() {
         val mIntent = Intent(context, Act_Product_Selection::class.java)
         val bundle = Bundle()
@@ -1063,9 +1307,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mketMachineSerialEdit.text = null
             selectedBkpMachineProduct = if (swMachine.isChecked) defaultBkpMachineProduct else null
             clMachineEdit.background = if (swMachine.isChecked) {
-                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_error)
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    com.namoa_digital.namoa_library.R.drawable.shape_error
+                )
             } else {
-                ContextCompat.getDrawable(requireContext(), com.namoa_digital.namoa_library.R.drawable.shape_ok)
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    com.namoa_digital.namoa_library.R.drawable.shape_ok
+                )
             }
         }
     }
@@ -1176,7 +1426,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvStarDateInvalidMsg.apply {
-                visibility = if(startDateInvalid) View.VISIBLE else View.GONE
+                visibility = if (startDateInvalid) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_star_date_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }

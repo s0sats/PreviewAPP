@@ -93,7 +93,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         mView.loadProductSerialList(rec.getRecord());
         //Se qtd 1, chama proxima define flow
         if (rec.getRecord().size() == 1) {
-            defineFlow(rec.getRecord().get(0),false);
+            defineFlow(rec.getRecord().get(0), false);
         } else if (rec.getRecord_count() > rec.getRecord_page()) {
             //Se qtd de registro maior que o total retornado,
             //exibe msg para refinar a busca.
@@ -107,6 +107,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
      * fluxo não é sem serial, o usr avança dessa tela para a act008 que fará a validação la em caso
      * de novo form ou, se o usr for para a lista de actions,então a validação de baixar forms só
      * deve ser feita no clique do botão criar form.
+     *
      * @param productSerial
      * @param no_serial
      */
@@ -115,50 +116,50 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         //
         tProductSerial = productSerial;
         //
-        if(mView.isScheduleFlow()){
+        if (mView.isScheduleFlow()) {
             prepareAct008();
-        } else{
+        } else {
             //
-            if(mView.hasTk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
+            if (mView.hasTk_ticket_is_form_off_hand() && !mView.isOffHandForm()) {
                 prepareAct008();
-            }else {
+            } else {
                 //LUCHE - 08/06/2021
                 //AGORA SOMENTE FAZ SYNC DE FORM AQUI SE FOR FORM SEM SERIAL.
                 if (no_serial) {
                     if (!hasSyncRegister()) {
                         if (ToolBox_Con.isOnline(context)) {
                             executeSyncProcess();
-                        }else{
+                        } else {
                             ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
-                                hmAux_Trans.get("alert_no_form_found_msg"),
-                                null,
-                                0
+                                    context,
+                                    hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
+                                    hmAux_Trans.get("alert_no_form_found_msg"),
+                                    null,
+                                    0
                             );
                         }
-                    }else{
-                        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
-                            && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
+                    } else {
+                        if (ToolBox_Inf.isConcurrentBySiteLicense(context)
+                                && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
                             ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
-                                hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
-                                        //VERIFICAR O QUE FAZER.
-                                        onBackPressedClicked();
-                                    }
-                                },
-                                1
+                                    context,
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
+                                            //VERIFICAR O QUE FAZER.
+                                            onBackPressedClicked();
+                                        }
+                                    },
+                                    1
                             );
-                        }else {
+                        } else {
                             prepareAct009();
                         }
                     }
-                }else{
+                } else {
                     prepareAct008();
                 }
                 //region IF ANTIGO COM FORM SYNC
@@ -304,7 +305,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
             //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para bauko
-            bundle.putInt(Constant.WS_CONNECTION_TIMEOUT,  ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
+            bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
 
             mIntent.putExtras(bundle);
             //
@@ -336,15 +337,15 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
         //bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID,tProductSerial.getSerial_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, tProductSerial.getSerial_id());
         //bundle.putString(Constant.MAIN_SERIAL_ID,tProductSerial.getSerial_id());
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, tProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
-        if(!mView.isScheduleFlow()){
+        if (!mView.isScheduleFlow()) {
             //bundle for NForm loop creation process
-            if((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
-                && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty()) {
+            if ((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
+                    && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty()) {
                 bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
                 bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
                 bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
@@ -358,7 +359,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         //LUCHE - 08/06/2021 - Caso o usr tenha buscado somente pelo serial, atualiza informações.
         Bundle act083Bundle = mView.getAct083Bundle();
         String originFlow = mView.getOriginFlow();
-        if(act083Bundle != null && !act083Bundle.isEmpty() && ConstantBaseApp.ACT006.equals(originFlow)) {
+        if (act083Bundle != null && !act083Bundle.isEmpty() && ConstantBaseApp.ACT006.equals(originFlow)) {
             MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
             if (myActionFilterParam.getProductCode() == null) {
                 //Atualiza infos de param no bundle da act083
@@ -368,13 +369,13 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 myActionFilterParam.setSerialId(tProductSerial.getSerial_id());
                 //
                 act083Bundle.putSerializable(
-                    MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-                    myActionFilterParam
+                        MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                        myActionFilterParam
                 );
             }
         }
         //
-        mView.callAct008(context,bundle);
+        mView.callAct008(context, bundle);
     }
 
     @Override
@@ -383,40 +384,40 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
         //bundle.putString(Constant.MAIN_PRODUCT_CODE, String.valueOf(mdProduct.getProduct_code()));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID,serial_id);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         //bundle.putString(Constant.MAIN_SERIAL_ID,serial_id);
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, mdProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
         //
-        mView.callAct008(context,bundle);
+        mView.callAct008(context, bundle);
     }
 
     @Override
     public void prepareAct009() {
 
-        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),tProductSerial.getProduct_code());
-        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), tProductSerial.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), ToolBox_Con.getPreference_Operation_Code(context));
         boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
                 context,
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
         );
         //
-        if(formXProductExist && formXOperationExists && formXSiteExists){
+        if (formXProductExist && formXOperationExists && formXSiteExists) {
             Bundle bundle = new Bundle();
             bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tProductSerial.getProduct_code()));
             bundle.putString(MD_ProductDao.PRODUCT_DESC, tProductSerial.getProduct_desc());
             bundle.putString(MD_ProductDao.PRODUCT_ID, tProductSerial.getProduct_id());
 
-            if(ToolBox_Inf.hasForceNotShowSerialInfo(context)){
+            if (ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
                 bundle.putString(MD_Product_SerialDao.SERIAL_ID, tProductSerial.getSerial_id());
-            }else {
+            } else {
                 bundle.putString(MD_Product_SerialDao.SERIAL_ID, !tProductSerial.getSerial_id().equals(Constant.KEY_NO_SERIAL) ? tProductSerial.getSerial_id() : "");
             }
 
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
-            bundle.putString(MD_SiteDao.SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code())  : ToolBox_Con.getPreference_Site_Code(context));
+            bundle.putString(MD_SiteDao.SITE_CODE, tProductSerial.getSite_code() != null ? String.valueOf(tProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
 
 
             mView.callAct009(context, bundle);
@@ -442,18 +443,18 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     @Override
     public void prepareAct011() {
 
-        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context,ToolBox_Con.getPreference_Customer_Code(context),tProductSerial.getProduct_code());
-        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context,ToolBox_Con.getPreference_Customer_Code(context),ToolBox_Con.getPreference_Operation_Code(context));
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), tProductSerial.getProduct_code());
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), ToolBox_Con.getPreference_Operation_Code(context));
         boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
                 context,
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
         );
         //
-        if(formXProductExist && formXOperationExists && formXSiteExists){
+        if (formXProductExist && formXOperationExists && formXSiteExists) {
             Bundle bundle = this.bundleForNFormFinishPlusNew;
             bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-            bundle.putString(MD_Product_SerialDao.SERIAL_ID,tProductSerial.getSerial_id());
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, tProductSerial.getSerial_id());
             mView.callAct011(context, bundle);
         } else {
 
@@ -476,16 +477,17 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     /**
      * LUCHE - 06/11/2020
      * Metodo que retorna ticket id + step desc formatada.
+     *
      * @param act081Bundle
      * @return
      */
     @Override
     public String getFormattedTicketInfo(Bundle act081Bundle) {
-        if(act081Bundle == null) {
+        if (act081Bundle == null) {
             return "";
         }
-        return  act081Bundle.getString(TK_TicketDao.TICKET_ID, "")
-            +" - "+ act081Bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+        return act081Bundle.getString(TK_TicketDao.TICKET_ID, "")
+                + " - " + act081Bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
     }
 
     @Override
@@ -532,15 +534,14 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     }
 
     @Override
-    public void goToNextScreen(MD_Product_Serial selectedProductSerial) {
-        if(selectedProductSerial.getHas_item_check() == 1
-                && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)){
+    public void goToNextScreen(MD_Product_Serial selectedProductSerial, boolean no_serial) {
+        if (selectedProductSerial.getHas_item_check() == 1
+                && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             callWsSerialStructure(selectedProductSerial);
-        }else {
-            defineFlow(selectedProductSerial, false);
+        } else {
+            defineFlow(selectedProductSerial, no_serial);
         }
     }
-
 
 
     /**
@@ -558,13 +559,22 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        if(mView.isScheduleFlow()){
+        if (mView.isScheduleFlow()) {
             mView.callAct083(context);
-        }else {
-            if(mView.hasTk_ticket_is_form_off_hand()) {
+        } else {
+            if (mView.hasTk_ticket_is_form_off_hand()) {
                 mView.callAct081(context);
-            }else {
-                mView.callAct006(context);
+            } else {
+                switch (mView.nServiceFlow()){
+                    case Constant.MODULE_SO:
+                        mView.callAct021();
+                        break;
+                    case Constant.MODULE_SO_SEARCH_SERIAL_EXPRESS:
+                        mView.callAct040();
+                        break;
+                    default:
+                        mView.callAct006(context);
+                }
             }
         }
     }

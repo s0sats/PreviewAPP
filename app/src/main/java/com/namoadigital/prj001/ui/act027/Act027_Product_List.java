@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.material.button.MaterialButton;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -48,8 +48,8 @@ public class Act027_Product_List extends BaseFragment {
     private LinearLayout ll_event_list;
     private LinearLayout ll_empty_list;
     private MKEditTextNM mket_product_search;
-    private Button btn_add_event;
-    private Button btn_service_preview;
+    private MaterialButton btn_add_event;
+    private MaterialButton btn_service_preview;
     private ListView lv_events;
     private TextView tv_empty_lbl;
     private Act027_Product_List_Adapter mAdapter;
@@ -106,7 +106,7 @@ public class Act027_Product_List extends BaseFragment {
     }
 
     private void recoverBundleInfo() {
-        if(getArguments() != null){
+        if (getArguments() != null) {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
         }
     }
@@ -119,10 +119,10 @@ public class Act027_Product_List extends BaseFragment {
 
     private void updateFragArgs() {
         Bundle args = getArguments();
-        if(args == null){
+        if (args == null) {
             args = new Bundle();
         }
-        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         //
         this.setArguments(args);
     }
@@ -171,9 +171,9 @@ public class Act027_Product_List extends BaseFragment {
     }
 
     private void iniAction() {
-        if(mSm_so == null || hmAux_Trans == null){
+        if (mSm_so == null || hmAux_Trans == null) {
             delegate.callAct005();
-        } else{
+        } else {
             mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
                 @Override
                 public void reportTextChange(String s) {
@@ -236,6 +236,7 @@ public class Act027_Product_List extends BaseFragment {
         //
         loadDataToScreen();
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -279,7 +280,7 @@ public class Act027_Product_List extends BaseFragment {
                 //
                 loadEventList();
                 loadCardStatus();
-            }else{
+            } else {
                 delegate.callAct005();
             }
         }

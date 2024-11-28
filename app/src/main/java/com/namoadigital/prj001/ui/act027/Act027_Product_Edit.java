@@ -160,7 +160,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void recoverBundleInfo() {
-        if(getArguments() != null){
+        if (getArguments() != null) {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
         }
     }
@@ -173,10 +173,10 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private void updateFragArgs() {
         Bundle args = getArguments();
-        if(args == null){
+        if (args == null) {
             args = new Bundle();
         }
-        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         //
         this.setArguments(args);
     }
@@ -221,7 +221,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void iniVar(View view) {
-        if(isSmSoDataEmpty()){
+        if (isSmSoDataEmpty()) {
             delegate.callAct005();
         } else {
             context = getActivity();
@@ -261,48 +261,48 @@ public class Act027_Product_Edit extends BaseFragment {
             md_all_productDao = new MD_All_ProductDao(context);
 
             sm_so_product_eventDao = new SM_SO_Product_EventDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
             );
 
             sm_so_product_event_fileDao = new SM_SO_Product_Event_FileDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
             );
 
             sm_so_product_event_sketchDao = new SM_SO_Product_Event_SketchDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
             );
 
             if (mProductCode != -1 && mSeqTmp != -1) {
                 mSm_so_product_event = sm_so_product_eventDao.getByString(
-                    new SM_SO_Product_Event_Sql_003(
-                        mSm_so.getCustomer_code(),
-                        mSm_so.getSo_prefix(),
-                        mSm_so.getSo_code(),
-                        mSeqTmp
-                    ).toSqlQuery()
+                        new SM_SO_Product_Event_Sql_003(
+                                mSm_so.getCustomer_code(),
+                                mSm_so.getSo_prefix(),
+                                mSm_so.getSo_code(),
+                                mSeqTmp
+                        ).toSqlQuery()
                 );
 
             } else {
                 md_all_product = md_all_productDao.getByString(
-                    new MD_All_Product_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        (long) mProductCode
+                        new MD_All_Product_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                (long) mProductCode
 
-                    ).toSqlQuery()
+                        ).toSqlQuery()
                 );
 
                 HMAux hmTmp = sm_so_product_eventDao.getByStringHM(
-                    new SM_SO_Product_Event_Sql_002(
-                        mSm_so.getCustomer_code(),
-                        mSm_so.getSo_prefix(),
-                        mSm_so.getSo_code()
-                    ).toSqlQuery()
+                        new SM_SO_Product_Event_Sql_002(
+                                mSm_so.getCustomer_code(),
+                                mSm_so.getSo_prefix(),
+                                mSm_so.getSo_code()
+                        ).toSqlQuery()
                 );
 
                 int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
@@ -382,14 +382,14 @@ public class Act027_Product_Edit extends BaseFragment {
 
                 if (bFirst) {
                     sSketchs.append(sm_so_product_event_sketch.getLine())
-                        .append(",")
-                        .append(sm_so_product_event_sketch.getCol());
+                            .append(",")
+                            .append(sm_so_product_event_sketch.getCol());
                     bFirst = false;
                 } else {
                     sSketchs.append("#");
                     sSketchs.append(sm_so_product_event_sketch.getLine())
-                        .append(",")
-                        .append(sm_so_product_event_sketch.getCol());
+                            .append(",")
+                            .append(sm_so_product_event_sketch.getCol());
                 }
             }
 
@@ -401,17 +401,17 @@ public class Act027_Product_Edit extends BaseFragment {
                 pff_sketch.setmFName(mSm_so_product_event.getSketch_url_local());
 
                 sbOptions.append("{\"CONTENT\":[{\"LINES\":")
-                    .append(mSm_so_product_event.getSketch_lines())
-                    .append(" ,\"COLUMNS\":")
-                    .append(mSm_so_product_event.getSketch_columns())
-                    .append(",\"COLOR\":\"")
-                    .append(mSm_so_product_event.getSketch_color())
-                    .append("\"}]}");
+                        .append(mSm_so_product_event.getSketch_lines())
+                        .append(" ,\"COLUMNS\":")
+                        .append(mSm_so_product_event.getSketch_columns())
+                        .append(",\"COLOR\":\"")
+                        .append(mSm_so_product_event.getSketch_color())
+                        .append("\"}]}");
 
                 pff_sketch.setmOption(sbOptions.toString());
 
                 pff_sketch.setmValue(
-                    ToolBox.converterToJson(sSketchs.toString())
+                        ToolBox.converterToJson(sSketchs.toString())
                 );
 
             }
@@ -461,10 +461,10 @@ public class Act027_Product_Edit extends BaseFragment {
                 //
                 tv_nick.setText(mSm_so_product_event.getDone_user_nick());
                 tv_date.setText(
-                    ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getDone_date() != null ? mSm_so_product_event.getDone_date() : "", ""),
-                        ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                    )
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getDone_date() != null ? mSm_so_product_event.getDone_date() : "", ""),
+                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
                 );
             } else {
                 if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
@@ -477,10 +477,10 @@ public class Act027_Product_Edit extends BaseFragment {
                     //
                     tv_nick.setText(mSm_so_product_event.getCreate_user_nick());
                     tv_date.setText(
-                        ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getCreate_date() != null ? mSm_so_product_event.getCreate_date() : "", ""),
-                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                        )
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getCreate_date() != null ? mSm_so_product_event.getCreate_date() : "", ""),
+                                    ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                            )
                     );
                 }
             }
@@ -505,12 +505,12 @@ public class Act027_Product_Edit extends BaseFragment {
             if ((Constant.SYS_STATUS_PENDING.equals(mSm_so_product_event.getStatus())
                     || Constant.SYS_STATUS_DONE.equals(mSm_so_product_event.getStatus()))
                     && (Constant.SYS_STATUS_PENDING.equals(mSm_so.getStatus())
-                        || Constant.SYS_STATUS_PROCESS.equals(mSm_so.getStatus())
-                        || Constant.SYS_STATUS_WAITING_BUDGET.equals(mSm_so.getStatus())
-                        || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
-                        && mSm_so.getEdit_user() != null
-                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
-                    )
+                    || Constant.SYS_STATUS_PROCESS.equals(mSm_so.getStatus())
+                    || Constant.SYS_STATUS_WAITING_BUDGET.equals(mSm_so.getStatus())
+                    || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
+                    && mSm_so.getEdit_user() != null
+                    && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
+            )
             ) {
                 ll_delete_prod_event.setVisibility(View.VISIBLE);
                 btn_delete_prod_event.setVisibility(View.VISIBLE);
@@ -522,15 +522,16 @@ public class Act027_Product_Edit extends BaseFragment {
     /**
      * BARRIONUEVO 18-05-2020
      * METODO CRIADO NA CORRERIA PARA ATENDER UM PROJETO ESQUECIDO PELO DEMANDANTE.
-     * @return
+     *
      * @param mSm_so_refreshed
+     * @return
      */
     private boolean isSoWithinTokenFile(SM_SO mSm_so_refreshed) {
         try {
             File[] soToken =
                     ToolBox_Inf.getListOfFiles_v5(
                             ConstantBaseApp.TOKEN_PATH,
-                            ToolBox_Inf.buildTokenPrefixWithCustomer(context,ConstantBaseApp.TOKEN_SO_PREFIX)
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
                     );
             if (soToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
@@ -571,9 +572,9 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void iniAction() {
-        if(isSmSoDataEmpty()) {
+        if (isSmSoDataEmpty()) {
             return;
-        }else{
+        } else {
             arff_applyrepair.setOnSelectionChangedListener(new ApplyRepairImageFF.IApplyRepairImageFF() {
                 @Override
                 public void selectionChanged(String status) {
@@ -606,15 +607,15 @@ public class Act027_Product_Edit extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     ToolBox.alertMSG(context,
-                        hmAux_Trans.get("alert_cancel_product_event_ttl"),
-                        hmAux_Trans.get("alert_cancel_product_event_confirm"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                cancelProdEventFlow();
-                            }
-                        },
-                        1
+                            hmAux_Trans.get("alert_cancel_product_event_ttl"),
+                            hmAux_Trans.get("alert_cancel_product_event_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    cancelProdEventFlow();
+                                }
+                            },
+                            1
                     );
                 }
             });
@@ -624,6 +625,7 @@ public class Act027_Product_Edit extends BaseFragment {
     /**
      * LUCHE - 13/04/2021
      * Metodo que valida de dados necessario para criação da tela estão ok.
+     *
      * @return
      */
 
@@ -632,11 +634,11 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void cancelProdEventFlow() {
-        if(mSm_so_product_event.getSeq() == 0){
+        if (mSm_so_product_event.getSeq() == 0) {
             DaoObjReturn daoObjReturn = sm_so_product_eventDao.removeByTmp(mSm_so_product_event);
-            if(!daoObjReturn.hasError()) {
+            if (!daoObjReturn.hasError()) {
                 removeEventPhotosOnLeave();
-                if(getActivity() != null && getActivity() instanceof Act027_Main){
+                if (getActivity() != null && getActivity() instanceof Act027_Main) {
                     Act027_Main mMain = (Act027_Main) getActivity();
                     //O refresh da tela é necessario para atualizar o "status" de update_required no drawer
                     mMain.refreshUI();
@@ -645,27 +647,27 @@ public class Act027_Product_Edit extends BaseFragment {
                 }
             } else {
                 ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_error_on_cancel_product_event_ttl"),
-                    hmAux_Trans.get("alert_error_on_cancel_product_event_msg"),
-                    null,
-                    0
+                        context,
+                        hmAux_Trans.get("alert_error_on_cancel_product_event_ttl"),
+                        hmAux_Trans.get("alert_error_on_cancel_product_event_msg"),
+                        null,
+                        0
                 );
             }
-        }else {
-            if(ToolBox_Con.isOnline(context)) {
+        } else {
+            if (ToolBox_Con.isOnline(context)) {
                 SM_SO mSm_so_refreshed = getSm_so_updated();
                 if (mSm_so_refreshed.getSync_required() == 0 && mSm_so_refreshed.getUpdate_required() == 0 && !isSoWithinTokenFile(mSm_so_refreshed)) {
                     callProdEventDeleteService();
                 } else {
                     ToolBox.alertMSG(context,
-                        hmAux_Trans.get("alert_sync_before_cancel_product_event_ttl"),
-                        hmAux_Trans.get("alert_sync_before_cancel_product_event_msg"),
-                        null,
-                        0
+                            hmAux_Trans.get("alert_sync_before_cancel_product_event_ttl"),
+                            hmAux_Trans.get("alert_sync_before_cancel_product_event_msg"),
+                            null,
+                            0
                     );
                 }
-            }else{
+            } else {
                 ToolBox_Inf.showNoConnectionDialog(context);
             }
         }
@@ -673,8 +675,8 @@ public class Act027_Product_Edit extends BaseFragment {
 
     /**
      * BARRIONUEVO 18-05-2020
-     *     - Metodo que consulta objeto de OS mais atual, como nao ha tempo habil, nao foi possivel
-     *     reaproeitar o objeto padrao da OS (mSm_so)
+     * - Metodo que consulta objeto de OS mais atual, como nao ha tempo habil, nao foi possivel
+     * reaproeitar o objeto padrao da OS (mSm_so)
      *
      * @return
      */
@@ -710,7 +712,7 @@ public class Act027_Product_Edit extends BaseFragment {
         bundle.putInt(SM_SO_Product_EventDao.SO_PREFIX, mSm_so_product_event.getSo_prefix());
         bundle.putInt(SM_SO_Product_EventDao.SO_CODE, mSm_so_product_event.getSo_code());
         int prodEventSeq = mSm_so_product_event.getSeq();
-        if(prodEventSeq == 0){
+        if (prodEventSeq == 0) {
             prodEventSeq = mSm_so_product_event.getSeq_tmp();
         }
         bundle.putInt(SM_SO_Product_EventDao.SEQ, prodEventSeq);
@@ -803,12 +805,12 @@ public class Act027_Product_Edit extends BaseFragment {
         } else {
             iv_gallery.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_camera_on));
             int mPhoto_amount = countPhotoAmount(((String) iv_gallery.getTag()));
-            if(mPhoto_amount >0){
+            if (mPhoto_amount > 0) {
                 String mPhoto_amount_formatted;
-                mPhoto_amount_formatted= String.valueOf(mPhoto_amount);
+                mPhoto_amount_formatted = String.valueOf(mPhoto_amount);
                 tv_photo_amount.setText(mPhoto_amount_formatted);
                 tv_photo_amount.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 tv_photo_amount.setVisibility(View.GONE);
             }
         }
@@ -825,12 +827,13 @@ public class Act027_Product_Edit extends BaseFragment {
      * BARRIONUEVO 20-03-2020
      * Envia lista de nomes de imagens para calcular quantidade, mesmo parametro usado para
      * contar total de imagem na galeria v1.
+     *
      * @param photos
      * @return
      */
-    private int countPhotoAmount(String photos){
+    private int countPhotoAmount(String photos) {
         String[] photoArray = photos.split("#");
-        if( photoArray != null && !photoArray[0].isEmpty()){
+        if (photoArray != null && !photoArray[0].isEmpty()) {
             return photoArray.length;
         }
         return 0;
@@ -1187,7 +1190,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
     public String getEventStatus() {
         if ((mSm_so_product_event == null || mSm_so_product_event.getStatus().isEmpty() || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING))
-        && !hasSOStatusStopOrEdit()) {
+                && !hasSOStatusStopOrEdit()) {
             return EVENT_EDIT_MODE;
         } else {
             return mSm_so_product_event.getStatus();
@@ -1196,8 +1199,8 @@ public class Act027_Product_Edit extends BaseFragment {
 
     /**
      * BARRIONUEVO 19-05-2020
-     *  Quando em Roma, aja como romanos.
-     *  Metodo que garante que nao havera mensagem de confirmacao de perda de dados na saida da lista
+     * Quando em Roma, aja como romanos.
+     * Metodo que garante que nao havera mensagem de confirmacao de perda de dados na saida da lista
      */
     public void setStatusCancelled() {
         mSm_so_product_event.setStatus(Constant.SYS_STATUS_CANCELLED);

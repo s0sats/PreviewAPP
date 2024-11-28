@@ -16,6 +16,7 @@ import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ScheduleFormFatory
@@ -729,6 +730,19 @@ class Act087MainPresenter(
             )
         }else{
             return null
+        }
+    }
+
+    override fun getInitialSerialState(): InitialSerialState? {
+        return serialObj.horimeter?.let{
+            return InitialSerialState(
+                horimeter = serialObj.horimeter,
+                horimeter_date = serialObj.horimeter_date,
+                horimeter_supplier_uid = serialObj.horimeter_supplier_uid,
+                horimeter_supplier_desc = serialObj.horimeter_supplier_desc,
+                measure_block_input_time = serialObj.measure_block_input_time,
+                measure_alert_input_time = serialObj.measure_alert_input_time,
+            )
         }
     }
 }

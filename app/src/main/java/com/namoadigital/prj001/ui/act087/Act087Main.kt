@@ -235,6 +235,7 @@ class Act087Main : Base_Activity_Frag(),
      */
     private fun setFormOsHeaderFrg() {
         val osHeaderObj = mPresenter.getOsHeaderObj()
+        val initialSerialState = mPresenter.getInitialSerialState()
         //
         formOsHeaderFrg = FormOsHeaderFrg.newInstance(
             hmAuxTrans = mPresenter.getTranslation(),
@@ -242,6 +243,7 @@ class Act087Main : Base_Activity_Frag(),
             scheduleDesc = mScheduleObj?.schedule_desc,
             scheduleComments =  mScheduleObj?.comments,
             formOsHeader = osHeaderObj ,
+            initialSerialState = initialSerialState,
             isOsCreation = true
         )
         //

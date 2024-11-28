@@ -677,6 +677,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("lbl_sync_data");
         transList.add("msg_so_results_ok");
         //
+        transList.add("apply_zone_on_lbl");
+        transList.add("apply_zone_off_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

@@ -38,7 +38,7 @@ firebaseCrashlytics = "2.9.2"
 lifecycleExtensions = "2.2.0"
 gson = "2.10.1"
 workRuntime = "2.7.1"
-namoaLib = "2.6.7"
+namoaLib = "2.6.8"
 safeArgs = "2.7.7"
 
 [libraries]
@@ -89,12 +89,12 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 lottie-airbnb = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseServices"}
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseServices" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 androidx-lifecycle-extensions = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "lifecycleExtensions" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-namoa-library = { group = "com.namoa_digital", name = "library", version.ref = "namoaLib"}
+namoa-library = { group = "com.namoa_digital", name = "library", version.ref = "namoaLib" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

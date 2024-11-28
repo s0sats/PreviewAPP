@@ -193,5 +193,9 @@ public interface Act070_Main_Contract {
         boolean isUserOnSyncRequiredTrip();
 
         void callTripUpdate();
+
+        void clearTicketDownloadSingleton();
+
+        void setTicketDownloadSingleton(int mTkPrefix, int mTkCode);
     }
 }

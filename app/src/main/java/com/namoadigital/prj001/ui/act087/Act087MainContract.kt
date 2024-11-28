@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 
 interface Act087MainContract {
 
@@ -48,5 +49,6 @@ interface Act087MainContract {
         fun checkFormExists(): Boolean
         fun hasPassedDay(): Int
         fun getTkTicketForm(): TK_Ticket_Form?
+        fun getInitialSerialState(): InitialSerialState?
     }
 }

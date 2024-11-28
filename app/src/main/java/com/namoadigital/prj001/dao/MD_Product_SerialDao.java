@@ -28,6 +28,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_011;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_012;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_013;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_004;
@@ -38,7 +39,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,6 +124,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String LAST_CYCLE_VALUE = "last_cycle_value";
     public static final String LAST_CYCLE_DATE = "last_cycle_date";
 
+    public static final String HORIMETER = "horimeter";
+    public static final String HORIMETER_DATE = "horimeter_date";
+    public static final String HORIMETER_SUPPLIER_UID = "horimeter_supplier_uid";
+    public static final String HORIMETER_SUPPLIER_DESC = "horimeter_supplier_desc";
+    public static final String MEASURE_BLOCK_INPUT_TIME = "measure_block_input_time";
+    public static final String MEASURE_ALERT_INPUT_TIME = "measure_alert_input_time";
+    public static final String UNAVAILABILITY_REASON_OPTION = "unavailability_reason_option";
+
+    public static final String NOT_FOUND_ERROR = "not_found_error";
+
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
@@ -133,7 +143,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
-            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE,
+            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE,HORIMETER, HORIMETER_DATE, HORIMETER_SUPPLIER_UID, HORIMETER_SUPPLIER_DESC, MEASURE_BLOCK_INPUT_TIME,
+            MEASURE_ALERT_INPUT_TIME, UNAVAILABILITY_REASON_OPTION
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -1233,6 +1244,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         }
     }
 
+    public List<MD_Product_Serial> getProductSerialById(
+            long customerCode,
+            long productCode,
+            String serialId
+    ) {
+         return query(new MD_Product_Serial_Sql_016(
+                 customerCode,
+                 productCode,
+                 serialId
+         ).toSqlQuery());
+    }
+
 
     private class CursorMD_Product_SerialMapper implements Mapper<Cursor, MD_Product_Serial> {
         @Override
@@ -1527,6 +1550,43 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 md_product_serial.setLast_cycle_date(cursor.getString(cursor.getColumnIndex(LAST_CYCLE_DATE)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(HORIMETER))) {
+                md_product_serial.setHorimeter(null);
+            } else {
+                md_product_serial.setHorimeter(cursor.getDouble(cursor.getColumnIndex(HORIMETER)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(HORIMETER_DATE))) {
+                md_product_serial.setHorimeter_date(null);
+            } else {
+                md_product_serial.setHorimeter_date(cursor.getString(cursor.getColumnIndex(HORIMETER_DATE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(HORIMETER_SUPPLIER_UID))) {
+                md_product_serial.setHorimeter_supplier_uid(null);
+            } else {
+                md_product_serial.setHorimeter_supplier_uid(cursor.getString(cursor.getColumnIndex(HORIMETER_SUPPLIER_UID)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(HORIMETER_SUPPLIER_DESC))) {
+                md_product_serial.setHorimeter_supplier_desc(null);
+            } else {
+                md_product_serial.setHorimeter_supplier_desc(cursor.getString(cursor.getColumnIndex(HORIMETER_SUPPLIER_DESC)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_BLOCK_INPUT_TIME))) {
+                md_product_serial.setMeasure_block_input_time(null);
+            } else {
+                md_product_serial.setMeasure_block_input_time(cursor.getLong(cursor.getColumnIndex(MEASURE_BLOCK_INPUT_TIME)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_ALERT_INPUT_TIME))) {
+                md_product_serial.setMeasure_alert_input_time(null);
+            } else {
+                md_product_serial.setMeasure_alert_input_time(cursor.getLong(cursor.getColumnIndex(MEASURE_ALERT_INPUT_TIME)));
+            }
+
+            md_product_serial.setUnavailability_reason_option(cursor.getInt(cursor.getColumnIndex(UNAVAILABILITY_REASON_OPTION)));
             //
             return md_product_serial;
         }
@@ -1643,6 +1703,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(LAST_CYCLE_DATE, md_product_serial.getLast_cycle_date());
             contentValues.put(LAST_MEASURE_VALUE, md_product_serial.getLast_measure_value());
             contentValues.put(LAST_MEASURE_DATE, md_product_serial.getLast_measure_date());
+
+            contentValues.put(HORIMETER, md_product_serial.getHorimeter());
+            contentValues.put(HORIMETER_DATE, md_product_serial.getHorimeter_date());
+            contentValues.put(HORIMETER_SUPPLIER_UID, md_product_serial.getHorimeter_supplier_uid());
+            contentValues.put(HORIMETER_SUPPLIER_DESC, md_product_serial.getHorimeter_supplier_desc());
+            contentValues.put(MEASURE_BLOCK_INPUT_TIME, md_product_serial.getMeasure_block_input_time());
+            contentValues.put(MEASURE_ALERT_INPUT_TIME, md_product_serial.getMeasure_alert_input_time());
+            if(md_product_serial.getUnavailability_reason_option() > -1) {
+                contentValues.put(UNAVAILABILITY_REASON_OPTION, md_product_serial.getUnavailability_reason_option());
+            }
 
             return contentValues;
         }

@@ -95,6 +95,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
@@ -422,6 +423,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             updateTicketData();
             //o metodo estah aqui pois o metodo updateTicketData() recupera o valor do ticket.
             if (mTicket != null) {
+                //
+                mPresenter.setTicketDownloadSingleton(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                //
                 if (fabMenu != null
                         && (fabMenu.getmButtons() == null || fabMenu.getmButtons().size() <= 0)) {
                     setFabMenu();

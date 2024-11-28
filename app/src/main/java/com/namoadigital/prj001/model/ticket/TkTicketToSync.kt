@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model.ticket
 
-class TkTicketToSync(
+data class TkTicketToSync(
     val customerCode:String,
     val ticketPrefix:String,
     val ticketCode:String,

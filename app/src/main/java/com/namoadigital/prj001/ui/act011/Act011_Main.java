@@ -1360,28 +1360,31 @@ public class Act011_Main extends Base_Activity
         //
         if (mPresenter.isaTicketFlowForm()) {
             callAct070();
-        } else if (ConstantBaseApp.ACT084.equals(requestingAct)) {
-            callAct084();
-        } else if (ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)) {
-            nservCall();
-        } else {
-            if (serial_id != null && !serial_id.isEmpty()) {
-                //
-                if (requestingAct.equals(ConstantBaseApp.ACT092)) {
-                    callAct092();
-                } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
-                    callAct005(context);
-                } else {
-                    callAct083();
-                }
+        } else{
+            mPresenter.clearTicketDownloadSingleton();
+            if (ConstantBaseApp.ACT084.equals(requestingAct)) {
+                callAct084();
+            } else if (ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)) {
+                nservCall();
             } else {
-                //LUCHE - 22/06/2021
-                //Modificado fluxo para voltar act006
-                // callAct005(context);
-                if (requestingAct.equals(ConstantBaseApp.ACT083)) {
-                    callAct083();
+                if (serial_id != null && !serial_id.isEmpty()) {
+                    //
+                    if (requestingAct.equals(ConstantBaseApp.ACT092)) {
+                        callAct092();
+                    } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
+                        callAct005(context);
+                    } else {
+                        callAct083();
+                    }
                 } else {
-                    callAct006(context, false);
+                    //LUCHE - 22/06/2021
+                    //Modificado fluxo para voltar act006
+                    // callAct005(context);
+                    if (requestingAct.equals(ConstantBaseApp.ACT083)) {
+                        callAct083();
+                    } else {
+                        callAct006(context, false);
+                    }
                 }
             }
         }
@@ -1891,7 +1894,8 @@ public class Act011_Main extends Base_Activity
                 mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                 mdScheduleExec != null ? mdScheduleExec.getComments() : null,
                 geOs,
-                false
+                false,
+                null
         );
         //
         tabs.add(formOsHeaderFrg.getTabObj(includeField));
@@ -2965,6 +2969,9 @@ public class Act011_Main extends Base_Activity
             nservCall();
             return;
         }
+        //
+        mPresenter.clearTicketDownloadSingleton();
+        //
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
                 if (isOffHandForm && !mPresenter.isFormTicketKanban(formLocal.getTicket_prefix(), formLocal.getTicket_code())) {
@@ -3280,15 +3287,18 @@ public class Act011_Main extends Base_Activity
     private void checkBackFlow() {
         if (mPresenter.isaTicketFlowForm()) {
             callAct070();
-        } else if (requestingAct.equals(ConstantBaseApp.ACT092)) {
-            callAct092();
-        } else if (ConstantBaseApp.ACT084.equals(requestingAct)
-                || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
-            callAct084();
-        } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
-            callAct005(context);
         } else {
-            callAct083();
+            mPresenter.clearTicketDownloadSingleton();
+            if (requestingAct.equals(ConstantBaseApp.ACT092)) {
+                callAct092();
+            } else if (ConstantBaseApp.ACT084.equals(requestingAct)
+                    || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
+                callAct084();
+            } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
+                callAct005(context);
+            } else {
+                callAct083();
+            }
         }
     }
 

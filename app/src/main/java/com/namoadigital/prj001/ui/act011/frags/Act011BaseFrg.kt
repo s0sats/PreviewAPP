@@ -204,20 +204,9 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
 
                 }
             }
-            //REsgata o bitmap do icone
-            val productIconBmp = mNavListener.getProductIconBmp()
-            //Se difernete de nulo, coloca icone
-            //Se for null, e tiver dados do serial, centraliza os dados do serial. Se serial tb vazio esconde tudo.
-            if(productIconBmp != null){
-              ivProductSerialId.setImageBitmap(productIconBmp)
-            }else{
-                ivProductSerialId.visibility = View.GONE
-                if(serialInfo.serial_id.isNullOrEmpty()){
-                    tvProductSerialId.visibility = View.GONE
-                    cvProductSerialCard.visibility = View.GONE
-                }
-                tvProductSerialId.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-                tvProductSerialInfos.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+            if(serialInfo.serial_id.isNullOrEmpty()){
+                tvProductSerialId.visibility = View.GONE
+                cvProductSerialCard.visibility = View.GONE
             }
         }
     }

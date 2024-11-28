@@ -112,10 +112,10 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         boolean hasTokenFile = false;
         try {
             File[] soToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    ToolBox_Inf.buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SO_PREFIX)
-                );
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
 
             if (soToken != null && soToken.length > 0) {
                 hasTokenFile = true;
@@ -169,7 +169,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct!= null ?  String.valueOf(mdProduct.getProduct_code()) : null );
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct != null ? String.valueOf(mdProduct.getProduct_code()) : null);
             //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
@@ -265,6 +265,7 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
 
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProduct != null ? mdProduct.getProduct_id() : "");
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
+            bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id != null ? mSerial_id : "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
 
             mView.callAct025(context, bundle);

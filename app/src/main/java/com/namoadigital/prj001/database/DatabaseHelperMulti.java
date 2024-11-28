@@ -14,6 +14,7 @@ import com.namoadigital.prj001.database.scripts.multi.FSCreateScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.TkCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductScript;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductSerialScript;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScript;
 import com.namoadigital.prj001.migrations.MigrationsKt;
@@ -69,7 +70,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append(ProductScript.CREATE_SCRIPT);
             script.append("create table if not exists [md_product_groups]( [customer_code] int not null,  [group_code] int not null, [recursive_code] int not null, [recursive_code_father] int, [group_id] text not null DEFAULT '' COLLATE NOCASE,  [group_desc] text not null DEFAULT '' COLLATE NOCASE, [spare_part] int not null default 0,  constraint pk_md_product_groups primary key(customer_code, group_code));");
             script.append("create table if not exists [md_product_group_products]( [customer_code] int not null,  [group_code] int not null, [product_code] int not null,  constraint pk_md_product_group_products primary key(customer_code, group_code,product_code));");
-            script.append("create table if not exists [md_product_serials]([customer_code] int not null,[product_code] int not null,[product_id] text not null,[product_desc] text not null,[serial_code] int not null,[serial_tmp] int not null,[serial_id] text not null collate nocase,[site_code] int,[site_id] text collate nocase,[site_desc] text collate nocase, [site_reason_code] int, [zone_code] int,[zone_id] text collate nocase,[zone_desc] text collate nocase,[local_code] int ,[local_id] text collate nocase,[site_code_owner] int,[brand_code] int,[brand_id] text collate nocase,[brand_desc] text collate nocase,[model_code] int,[model_id] text collate nocase,[model_desc] text collate nocase,[color_code] int,[color_id] text collate nocase,[color_desc] text collate nocase,[segment_code] int,[segment_id] text collate nocase,[segment_desc] text collate nocase,[category_price_code] int,[category_price_id] text collate nocase,[category_price_desc] text collate nocase,[add_inf1] text COLLATE NOCASE,[add_inf2] text COLLATE NOCASE,[add_inf3] text COLLATE NOCASE,[update_required] int not null default 0,[only_position] int,[flag_offline] int not null default 0,[sync_process] int not null default 0,[class_code] int,[class_id] text collate nocase,[class_type] text collate nocase,[class_color] text collate nocase,[class_available] int,[inbound_prefix] int,[inbound_code] int,[inbound_id] text collate nocase,[inbound_conf_date] text collate nocase,[move_prefix] int,[move_code] int,[move_group_code] int,[outbound_prefix] int,[outbound_code] int,[outbound_id] text collate nocase,[product_io_control] int default 0,[local_control] int default 0,[site_io_control] int default 0,[inbound_auto_create] int default 0,[site_restriction] int default 0, [edit_mode] text COLLATE NOCASE,[profile] text COLLATE NOCASE, [reason_code] int, [has_item_check] int not null default 0, [scn_item_check] int, [measure_tp_code] int, [device_tp_code_main] int, [last_measure_value] real, [last_measure_date] text collate nocase,[last_cycle_value] real, [last_cycle_date] text collate nocase, [log_date] text COLLATE NOCASE,constraint [pk_md_product_serials] primary key([customer_code],[product_code],[serial_tmp]));");
+            script.append(ProductSerialScript.CREATE_TABLE);
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_trackings]([customer_code] int not null,[product_code] int not null,[serial_code] int not null,[serial_tmp] int not null,[tracking] text not null COLLATE NOCASE,constraint [pk_md_product_serial_trackings] primary key([customer_code],[product_code],[serial_tmp],[tracking]));");
             script.append("create table if not exists [md_operations] ([customer_code] int not null, [operation_code] int not null, [operation_id] text not null DEFAULT '' COLLATE NOCASE, [operation_desc] text not null DEFAULT '' COLLATE NOCASE, [alias_service_oper] int not null, [alias_service_com] int not null, constraint pk_md_operations primary key(customer_code, operation_code));");
             script.append(SiteScript.CREATE_TABLE);
@@ -262,6 +263,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV12().migrate(db);
                 case 13:
                     MigrationsKt.getMigrationV13().migrate(db);
+                case 14:
+                    MigrationsKt.getMigrationV14().migrate(db);
                     break;
             }
 

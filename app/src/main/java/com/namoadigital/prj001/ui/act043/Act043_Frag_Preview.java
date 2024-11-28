@@ -10,7 +10,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.material.button.MaterialButton;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -50,7 +50,7 @@ public class Act043_Frag_Preview extends BaseFragment {
     private boolean bStatus = false;
     private SM_SO mSm_so;
     private SM_SO_ServiceDao mSm_So_ServiceDao;
-    private Button btn_search_service;
+    private MaterialButton btn_search_service;
     private TextView tv_service_pack_ttl;
     private TextView tv_total_lbl;
     private TextView tv_total_val;
@@ -60,7 +60,7 @@ public class Act043_Frag_Preview extends BaseFragment {
     private boolean isDialogOpen = false;
     private DialogInterface.OnDismissListener dismissListener;
     onSmSoRequestObject delegateSmSo;
-    private Button btn_product_event;
+    private MaterialButton btn_product_event;
     private CardView cardStatus;
     private ImageView iv_remove_card;
     private TextView tv_status_card;
@@ -140,9 +140,9 @@ public class Act043_Frag_Preview extends BaseFragment {
         btn_search_service.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ToolBox_Con.isOnline(context)){
+                if (ToolBox_Con.isOnline(context)) {
                     executeWS_SO_Service_Search();
-                }else{
+                } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
@@ -167,14 +167,14 @@ public class Act043_Frag_Preview extends BaseFragment {
         Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
         Bundle bundle = new Bundle();
         //
-        bundle.putInt(SM_SODao.CONTRACT_CODE,mSm_so.getContract_code());
-        bundle.putInt(SM_SODao.PRODUCT_CODE,mSm_so.getProduct_code());
-        bundle.putInt(SM_SODao.SERIAL_CODE,mSm_so.getSerial_code());
-        bundle.putInt(SM_SODao.CATEGORY_PRICE_CODE,mSm_so.getCategory_price_code());
-        bundle.putInt(SM_SODao.SEGMENT_CODE,mSm_so.getSegment_code());
-        bundle.putInt(SM_SODao.SITE_CODE,mSm_so.getSite_code());
-        bundle.putInt(SM_SODao.OPERATION_CODE,mSm_so.getOperation_code());
-        bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE,0);
+        bundle.putInt(SM_SODao.CONTRACT_CODE, mSm_so.getContract_code());
+        bundle.putInt(SM_SODao.PRODUCT_CODE, mSm_so.getProduct_code());
+        bundle.putInt(SM_SODao.SERIAL_CODE, mSm_so.getSerial_code());
+        bundle.putInt(SM_SODao.CATEGORY_PRICE_CODE, mSm_so.getCategory_price_code());
+        bundle.putInt(SM_SODao.SEGMENT_CODE, mSm_so.getSegment_code());
+        bundle.putInt(SM_SODao.SITE_CODE, mSm_so.getSite_code());
+        bundle.putInt(SM_SODao.OPERATION_CODE, mSm_so.getOperation_code());
+        bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE, 0);
         //
         mIntent.putExtras(bundle);
         //
@@ -182,21 +182,21 @@ public class Act043_Frag_Preview extends BaseFragment {
     }
 
     protected void executeWSServiceCancel(HMAux hmAux) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             //
             SM_SO realtimeSmSo = delegateSmSo.getRealtimeSmSo(mSm_so.getSo_prefix(), mSm_so.getSo_code());
             //
-            if(realtimeSmSo != null){
+            if (realtimeSmSo != null) {
                 mMain.setIsSyncSerialNeeded(realtimeSmSo.getSync_required() == 1);
-            }else{
+            } else {
                 mMain.setIsSyncSerialNeeded(false);
             }
             //
             mMain.setWs_process(WS_SO_Service_Cancel.class.getName());
             //
             mMain.showPD(
-                hmAux_Trans.get("dialog_service_cancel_start"),
-                hmAux_Trans.get("dialog_service_cancel_msg")
+                    hmAux_Trans.get("dialog_service_cancel_start"),
+                    hmAux_Trans.get("dialog_service_cancel_msg")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Service_Cancel.class);
@@ -216,7 +216,7 @@ public class Act043_Frag_Preview extends BaseFragment {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -231,7 +231,7 @@ public class Act043_Frag_Preview extends BaseFragment {
         if (bStatus) {
             if (mSm_so != null) {
                 setContentIntoView();
-            }else{
+            } else {
                 mSm_so = delegateSmSo.getSmSo();
                 hmAux_Trans = delegateSmSo.getHMAux_Trans();
                 setContentIntoView();
@@ -251,16 +251,16 @@ public class Act043_Frag_Preview extends BaseFragment {
         btn_product_event_label = getBtnProductEventLabel(btn_product_event_label);
         btn_product_event.setText(btn_product_event_label);
 
-        if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
-            || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-            || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
-            || (
-                    mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
-                    && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0":mSm_so.getEdit_user().toString())
-                )
-        ){
+        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
+                || (
+                mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString())
+        )
+        ) {
             btn_search_service.setEnabled(true);
-        }else{
+        } else {
             btn_search_service.setEnabled(false);
         }
         //
@@ -284,16 +284,16 @@ public class Act043_Frag_Preview extends BaseFragment {
             @Override
             public void OnRemoveClick(final HMAux service) {
                 ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("alert_service_cancel_ttl"),
-                    hmAux_Trans.get("alert_service_cancel_confirm"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            executeWSServiceCancel(service);
-                        }
-                    },
-                    1
+                        context,
+                        hmAux_Trans.get("alert_service_cancel_ttl"),
+                        hmAux_Trans.get("alert_service_cancel_confirm"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                executeWSServiceCancel(service);
+                            }
+                        },
+                        1
                 );
             }
         });
@@ -303,13 +303,13 @@ public class Act043_Frag_Preview extends BaseFragment {
 
     private String getBtnProductEventLabel(String btn_product_event_label) {
         int productEventPendancy = getProductEventPendancy();
-        if(productEventPendancy > 0){
+        if (productEventPendancy > 0) {
             btn_product_event_label = btn_product_event_label + " (" + productEventPendancy + ")";
         }
         return btn_product_event_label;
     }
 
-    private String getTotalPrice(){
+    private String getTotalPrice() {
         String totalVal = "-1";
 
         HMAux hmAux = mSm_So_ServiceDao.getByStringHM(
@@ -320,7 +320,7 @@ public class Act043_Frag_Preview extends BaseFragment {
                 ).toSqlQuery()
         );
         //
-        if(hmAux != null && hmAux.size() > 0){
+        if (hmAux != null && hmAux.size() > 0) {
             totalVal = hmAux.get(Sql_Act043_002.TOTAL_PRICE);
         }
         //
@@ -350,24 +350,25 @@ public class Act043_Frag_Preview extends BaseFragment {
 
     /**
      * Metodo que retorna a lista já processada para o adapter.
+     *
      * @return
      */
-    private ArrayList<HMAux> getPackServiceList(){
+    private ArrayList<HMAux> getPackServiceList() {
         //
         return generatePackServiceExecList(
-                        (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-                            new Sql_Act043_001(
+                (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
+                        new Sql_Act043_001(
                                 mSm_so.getCustomer_code(),
                                 mSm_so.getSo_prefix(),
                                 mSm_so.getSo_code()
-                            ).toSqlQuery()
-                        )
-                );
+                        ).toSqlQuery()
+                )
+        );
     }
 
     /**
      * LUCHE - 16/10/2019
-     *
+     * <p>
      * Metodo que recebe a lista de serviços e pacotes da O.S e retorna lista transformando
      * serviços em execuções.*
      *
@@ -379,41 +380,40 @@ public class Act043_Frag_Preview extends BaseFragment {
         //Executa loop na lista de pacotes e serviços.
         for (HMAux hmAux : rawList) {
             //Se tipo for serviço, pega qtd e gera lista de execuções.
-            if( hmAux.hasConsistentValue(Act043_Main.TYPE_PS)
-                && Act043_Main.TYPE_PS_SERVICE.equals(hmAux.get(Act043_Main.TYPE_PS)))
-            {
+            if (hmAux.hasConsistentValue(Act043_Main.TYPE_PS)
+                    && Act043_Main.TYPE_PS_SERVICE.equals(hmAux.get(Act043_Main.TYPE_PS))) {
                 int qty = hmAux.hasConsistentValue(SM_SO_ServiceDao.QTY) ? ToolBox_Inf.convertStringToInt(hmAux.get(SM_SO_ServiceDao.QTY)) : 0;
                 //Lista de execuções do serviço.
                 ArrayList<HMAux> execs = (ArrayList<HMAux>) mSm_So_ServiceDao.query_HM(
-                    new Sql_Act043_003(
-                        String.valueOf(mSm_so.getCustomer_code()),
-                        hmAux.get(SM_SO_ServiceDao.SO_PREFIX),
-                        hmAux.get(SM_SO_ServiceDao.SO_CODE),
-                        hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
-                        hmAux.get(SM_SO_ServiceDao.PACK_CODE),
-                        hmAux.get(SM_SO_ServiceDao.PACK_SEQ),
-                        hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
-                        hmAux.get(SM_SO_ServiceDao.SERVICE_CODE),
-                        hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ)
-                    ).toSqlQuery()
+                        new Sql_Act043_003(
+                                String.valueOf(mSm_so.getCustomer_code()),
+                                hmAux.get(SM_SO_ServiceDao.SO_PREFIX),
+                                hmAux.get(SM_SO_ServiceDao.SO_CODE),
+                                hmAux.get(SM_SO_ServiceDao.PRICE_LIST_CODE),
+                                hmAux.get(SM_SO_ServiceDao.PACK_CODE),
+                                hmAux.get(SM_SO_ServiceDao.PACK_SEQ),
+                                hmAux.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE),
+                                hmAux.get(SM_SO_ServiceDao.SERVICE_CODE),
+                                hmAux.get(SM_SO_ServiceDao.SERVICE_SEQ)
+                        ).toSqlQuery()
                 );
                 //A lista sempre deverá retornar ao menos 1 resultado,
                 //mesmo assim,verifica se a lista <> de null e tem resultado.
-                if(execs != null && execs.size() > 0){
+                if (execs != null && execs.size() > 0) {
                     //Executa loop base na QTD de execuções definida no serviço
-                    for (int i = 0; i < qty ; i++) {
+                    for (int i = 0; i < qty; i++) {
                         //Se o indice existir na lista de execuções, pega o item da lista de execuções
                         //Se Não, cria execução "fake" para exibir na lista e tornando possivel o cancelamento.
-                        if( i <= execs.size() - 1 ){
+                        if (i <= execs.size() - 1) {
                             packServiceList.add(execs.get(i));
-                        }else{
+                        } else {
                             packServiceList.add(
-                                getPendingFakeExec(execs.get(0))
+                                    getPendingFakeExec(execs.get(0))
                             );
                         }
                     }
                 }
-            }else{
+            } else {
                 packServiceList.add(hmAux);
             }
         }
@@ -423,6 +423,7 @@ public class Act043_Frag_Preview extends BaseFragment {
 
     /**
      * Metodo que gera execução "fake" baseada na primeira execução retornada.
+     *
      * @param hmAux - Execução de origem.
      * @return Execução fake
      */

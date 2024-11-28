@@ -1,242 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="12dp"
     android:paddingVertical="8dp">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/act027_services_content_cell_ll_bg"
+        style="@style/Widget.Material3.CardView.Filled"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingEnd="16dp"
-        android:paddingVertical="16dp"
-        android:background="@drawable/namoa_cell_8_states">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/mid_card_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp">
-
-            <TextView
-                android:id="@+id/act027_services_content_cell_tv_service_val"
-                style="@style/TextAppearance.Material3.TitleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Descrição do serviço"
-                android:textColor="@color/m3_namoa_onSurface"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-            <TextView
-                android:id="@+id/act027_services_content_cell_tv_comment_val"
-                style="@style/TextAppearance.Material3.BodyMedium"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:textColor="@color/m3_namoa_onSurface"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act027_services_content_cell_tv_service_val"
-                tools:text="Comentário do serviço" />
-
-            <ImageView
-                android:id="@+id/act027_services_content_cell_iv_flag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_engrenagens_ns"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/m3_namoa_secondary" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:minHeight="80dp"
+        app:cardBackgroundColor="@color/m3_namoa_neutral95"
+        app:cardCornerRadius="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingStart="16dp">
+            android:paddingVertical="16dp"
+            android:paddingEnd="16dp">
 
-            <LinearLayout
-                android:id="@+id/act027_services_content_cell_ll_qty"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mid_card_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/act027_services_content_cell_tv_qty_val_icon"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/baseline_done_24"
-                    app:tint="@color/m3_namoa_onSurfaceVariant" />
+                android:orientation="vertical"
+                android:paddingStart="16dp">
 
                 <TextView
-                    android:id="@+id/act027_services_content_cell_tv_qty_val"
-                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:id="@+id/act027_services_content_cell_tv_service_val"
+                    style="@style/TextAppearance.Material3.TitleLarge"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingStart="8dp"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:layout_height="wrap_content"
+                    android:text="Descrição do serviço"
+                    android:textColor="@color/m3_namoa_onSurface"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/act027_services_content_cell_tv_comment_val"
+                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textColor="@color/m3_namoa_onSurface"
                     android:visibility="visible"
-                    tools:text="0 / 1" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act027_services_content_cell_tv_service_val"
+                    tools:text="Comentário do serviço" />
+
+                <ImageView
+                    android:id="@+id/act027_services_content_cell_iv_flag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_engrenagens_ns"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/m3_namoa_secondary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp">
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="4dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/act027_services_content_cell_tv_qty_val_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_done_24"
+                        app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/act027_services_content_cell_tv_qty_val"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        android:visibility="visible"
+                        tools:text="0 / 1" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/view_padding_qty_between_zone"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_zone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_location_on_24"
+                        app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/act027_services_content_cell_tv_zone_val"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        android:visibility="visible"
+                        tools:text="Site | Zona" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act027_services_content_cell_ll_partner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_baseline_person_24_secondary60"
+                        app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/act027_services_content_cell_tv_partner_val"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        android:visibility="visible"
+                        tools:text="Parceiro" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
-            <View
-                android:id="@+id/view_padding_qty_between_zone"
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
-
-            <LinearLayout
-                android:id="@+id/act027_services_content_cell_ll_zone"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:gravity="end"
+                android:paddingTop="32dp">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/baseline_location_on_24"
-                    app:tint="@color/m3_namoa_onSurfaceVariant" />
 
-                <TextView
-                    android:id="@+id/act027_services_content_cell_tv_zone_val"
-                    style="@style/TextAppearance.Material3.BodySmall"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/act083_serial_info"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_height="match_parent"
-                    android:paddingStart="8dp"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:visibility="visible"
-                    tools:text="Site | Zona" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:paddingHorizontal="12dp"
+                    android:text="Mais Ações"
+                    android:textColor="@color/m3_namoa_primary"
+                    android:visibility="gone"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toStartOf="@+id/act027_services_content_cell_btn_normal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/m3_namoa_outline" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/act027_services_content_cell_ll_partner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="8dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_baseline_person_24_secondary60"
-                    app:tint="@color/m3_namoa_onSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/act027_services_content_cell_tv_partner_val"
-                    style="@style/TextAppearance.Material3.BodySmall"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/act027_services_content_cell_btn_normal"
+                    style="@style/Widget.Material3.Button.Icon"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingStart="8dp"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:visibility="visible"
-                    tools:text="Parceiro" />
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/button_theme_primary"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@color/m3_namoa_surface2"
+                    android:visibility="gone"
+                    app:icon="@drawable/baseline_done_24"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/m3_namoa_surface2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/m3_namoa_primary"
+                    app:strokeWidth="0dp"
+                    tools:text="Confirmar" />
 
-            </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/act027_services_content_cell_btn_done"
+                    style="@style/NamoaMaterialButtonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/m3_namoa_extended_verdeDone_seed"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:iconTint="@color/m3_namoa_extended_verdeDone_seed"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Concluido" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/act027_services_content_cell_btn_options"
+                    style="@style/NamoaTheme3.IconButton.Standard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    app:icon="@drawable/baseline_more_vert_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/act027_services_content_cell_btn_clip"
+                    style="@style/NamoaTheme3.IconButton.Standard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    app:icon="@drawable/baseline_attach_file_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/act027_services_content_cell_btn_options" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="32dp"
-            android:gravity="end">
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/act083_serial_info"
-                android:paddingHorizontal="12dp"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="Mais Ações"
-                android:visibility="gone"
-                android:textColor="@color/m3_namoa_primary"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toStartOf="@+id/act027_services_content_cell_btn_normal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/m3_namoa_outline" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/act027_services_content_cell_btn_normal"
-                style="@style/Widget.Material3.Button.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="Confirmar"
-                android:textAlignment="center"
-                android:textColor="@color/m3_namoa_surface2"
-                android:visibility="gone"
-                android:backgroundTint="@drawable/button_theme_primary"
-                app:icon="@drawable/baseline_done_24"
-                app:iconGravity="textStart"
-                app:iconTint="@color/m3_namoa_surface2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/m3_namoa_primary"
-                app:strokeWidth="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/act027_services_content_cell_btn_done"
-                style="@style/NamoaMaterialButtonText"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginBottom="4dp"
-                android:textColor="@color/m3_namoa_extended_verdeDone_seed"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:iconTint="@color/m3_namoa_extended_verdeDone_seed"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Concluido" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/act027_services_content_cell_btn_options"
-                style="@style/NamoaTheme3.IconButton.Standard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:visibility="visible"
-                app:icon="@drawable/baseline_more_vert_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/act027_services_content_cell_btn_clip"
-                style="@style/NamoaTheme3.IconButton.Standard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:visibility="visible"
-                app:icon="@drawable/baseline_attach_file_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/act027_services_content_cell_btn_options" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>
