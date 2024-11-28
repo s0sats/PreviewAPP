@@ -905,18 +905,6 @@ fun SQLiteDatabase.addMissingColumnsIfNecessary(
     }
 }
 
-val migrationV13 = object : MigrationSQLite(13, 14) {
-    override fun migrate(db: SQLiteDatabase) {
-        db.checkIfFieldExist(MD_ProductDao.TABLE, MD_ProductDao.IS_CLASS_REQUIRED) {
-            addColumn(
-                MD_ProductDao.TABLE,
-                MD_ProductDao.IS_CLASS_REQUIRED,
-                "int not null default 0"
-            )
-        }
-    }
-}
-
 private fun SQLiteDatabase.addColumn(tableName: String, columnName: String, columnType: String) {
     execSQL(
         """
