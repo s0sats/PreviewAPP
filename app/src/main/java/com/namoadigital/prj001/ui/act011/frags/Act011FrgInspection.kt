@@ -352,6 +352,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
                     putInt(ARG_ACESSORY_FORM_VIEW_IDX,acessoryFormViewIdx)
                 }
                 this.acessoryFormView = acessoryFormView

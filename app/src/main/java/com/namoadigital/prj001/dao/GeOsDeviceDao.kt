@@ -11,18 +11,19 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.GeOsDevice
+import com.namoadigital.prj001.sql.GeOsDeviceSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class GeOsDeviceDao(
     context: Context,
-    mDB_NAME: String,
-    mDB_VERSION: Int
+    mDB_NAME: String = ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+    mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<GeOsDevice> {
-    companion object{
+    companion object {
         const val TABLE = "ge_os_device"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
@@ -49,10 +50,11 @@ class GeOsDeviceDao(
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(item: GeOsDevice?): StringBuilder{
-        item?.let{
+    private fun getWherePkClause(item: GeOsDevice?): StringBuilder {
+        item?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${item.customer_code}'  
                         AND ${CUSTOM_FORM_TYPE} = '${item.custom_form_type}'                           
                         AND ${CUSTOM_FORM_CODE} = '${item.custom_form_code}'                           
@@ -81,7 +83,8 @@ class GeOsDeviceDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(item)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet =
+                db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
@@ -116,10 +119,14 @@ class GeOsDeviceDao(
     }
 
     override fun addUpdate(items: MutableList<GeOsDevice>?, status: Boolean): DaoObjReturn {
-        return addUpdate(items, status,null)
+        return addUpdate(items, status, null)
     }
 
-    fun addUpdate(items: MutableList<GeOsDevice>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
+    fun addUpdate(
+        items: MutableList<GeOsDevice>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -146,7 +153,9 @@ class GeOsDeviceDao(
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet =
+                    db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null)
+                        .toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
@@ -247,7 +256,7 @@ class GeOsDeviceDao(
         } finally {
         }
         closeDB()
-        return  item
+        return item
     }
 
     override fun query(sQuery: String?): MutableList<GeOsDevice> {
@@ -285,10 +294,11 @@ class GeOsDeviceDao(
         return items
     }
 
+
     class CursorToGeOsDeviceMapper : Mapper<Cursor, GeOsDevice> {
         override fun map(cursor: Cursor?): GeOsDevice? {
             cursor?.let {
-                with(cursor){
+                with(cursor) {
                     return GeOsDevice(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
                         custom_form_type = getInt(getColumnIndex(CUSTOM_FORM_TYPE)),
@@ -314,22 +324,22 @@ class GeOsDeviceDao(
         override fun map(geOs: GeOsDevice?): ContentValues {
             val contentValues = ContentValues()
             geOs?.let {
-                with(contentValues){
-                    if(it.customer_code > -1){
+                with(contentValues) {
+                    if (it.customer_code > -1) {
                         put(CUSTOMER_CODE, it.customer_code)
                     }
                     //
-                    if(it.custom_form_type > -1){
-                        put(CUSTOM_FORM_TYPE,it.custom_form_type)
+                    if (it.custom_form_type > -1) {
+                        put(CUSTOM_FORM_TYPE, it.custom_form_type)
                     }
                     //
-                    put(CUSTOM_FORM_CODE,it.custom_form_code)
+                    put(CUSTOM_FORM_CODE, it.custom_form_code)
                     //
-                    put(CUSTOM_FORM_VERSION,it.custom_form_version)
+                    put(CUSTOM_FORM_VERSION, it.custom_form_version)
                     //
-                    put(CUSTOM_FORM_DATA,it.custom_form_data)
+                    put(CUSTOM_FORM_DATA, it.custom_form_data)
                     //
-                    put(PRODUCT_CODE,it.product_code)
+                    put(PRODUCT_CODE, it.product_code)
                     //
                     put(SERIAL_CODE, it.serial_code)
                     //
@@ -343,13 +353,32 @@ class GeOsDeviceDao(
                     //
                     put(TRACKING_NUMBER, it.tracking_number)
                     //
-                    if(it.show_empty > -1){
-                        put(SHOW_EMPTY,it.show_empty)
+                    if (it.show_empty > -1) {
+                        put(SHOW_EMPTY, it.show_empty)
                     }
                 }
             }
             return contentValues
         }
 
+    }
+
+
+    fun getAllDeviceById(
+        customerCode: Long,
+        type: Int,
+        code: Int,
+        version: Int,
+        data: Long
+    ): List<GeOsDevice> {
+        return query(
+            GeOsDeviceSql_002(
+                customerCode,
+                type,
+                code,
+                version,
+                data.toInt()
+            ).toSqlQuery()
+        )
     }
 }

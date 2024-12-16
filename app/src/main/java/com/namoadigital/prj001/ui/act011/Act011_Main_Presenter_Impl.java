@@ -121,6 +121,8 @@ import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.sql.transaction.ticket.TransactionSaveTicketStepCtrlAtForm;
+import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop;
+import com.namoadigital.prj001.ui.act087.model.InitialSerialState;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -292,6 +294,40 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
+    public InitialSerialState getInitialSeialState(GE_Custom_Form_Data form_data, MD_Product_Serial serial) {
+        ResponsibleStop responsibleStop = ResponsibleStop.NO_STOPPED;
+        if(form_data.getInitial_unavailability_reason() != null){
+            responsibleStop = ResponsibleStop.valueOf(ResponsibleStop.class, form_data.getInitial_unavailability_reason());
+        }
+        TK_Ticket tkTicket;
+        boolean isTicketSerialStopped = false;
+        if(form_data.getTicket_prefix() != null
+        && form_data.getTicket_code() != null) {
+            tkTicket = getTicketbyPk(
+                    form_data.getTicket_prefix(),
+                    form_data.getTicket_code()
+            );
+            if(tkTicket != null) {
+                isTicketSerialStopped = tkTicket.getIsSerialStopped() != null && tkTicket.getIsSerialStopped().equals(1);
+            }
+        }
+        return new InitialSerialState(
+                    null,
+                    form_data.getInitial_stopped_date(),
+                responsibleStop,
+                serial.getUnavailability_reason_option() == 1 && responsibleStop.isStopped() == 1.,
+                isTicketSerialStopped,
+                false,
+                serial.getHorimeter(),
+                serial.getHorimeter_date(),
+                serial.getHorimeter_supplier_uid(),
+                serial.getHorimeter_supplier_desc(),
+                serial.getMeasure_block_input_time(),
+                serial.getMeasure_alert_input_time()
+            );
+    }
+
+    @Override
     public boolean checkIfFormIsNew(
             String customer_code,
             String formtype_code,
@@ -415,7 +451,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         form_code,
                         formversion_code,
                         String.valueOf(customFormLocal.getCustom_form_data())
-                );
+                    );
                 //Se não encontra, aborta abertura para evitar crash.
                 if (geOs == null) {
                     bAbortGeOs = true;
@@ -914,7 +950,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         ).toSqlQuery());
     }
 
-    private GeOs getGeOs(String customer_code, String formtype_code, String form_code, String formversion_code, String s_form_data) {
+    @Override
+    public GeOs getGeOs(String customer_code, String formtype_code, String form_code, String formversion_code, String s_form_data) {
         return geOsDao.getByString(
                 new GeOsSql_001(
                         customer_code,
@@ -1311,7 +1348,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @param custom_form_data
      * @return
      */
-    private GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
+    @Override
+    public GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
         return custom_form_dataDao.getByString(
                 new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
                         String.valueOf(customer_code),
@@ -1552,6 +1590,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ) {
                     form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
                 }
+                form_data.setInitial_is_serial_stopped(geOs.getInitial_is_serial_stopped());
+                form_data.setInitial_stopped_date(geOs.getInitial_stopped_date());
+                form_data.setInitial_unavailability_reason(geOs.getInitial_unavailability_reason());
             }
             //
             if (isFreeExecutionControlSituation(so_prefix, so_code, form_data)) {

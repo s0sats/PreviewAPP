@@ -134,6 +134,78 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/act079_ll_open_serial_stopped"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act079_tv_open_serial_stopped_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Open Serial Stopped - trad" />
+
+                <TextView
+                    android:id="@+id/act079_tv_open_serial_stopped_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act079_tv_open_phone_lbl"
+                    tools:text="Open Serial Stopped " />
+
+                <View
+                    android:id="@+id/act079_divider_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act079_ll_open_desired_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act079_tv_open_desired_date_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Telefone da Pessoa da Abertura - trad" />
+
+                <TextView
+                    android:id="@+id/act079_tv_open_desired_date_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act079_tv_open_phone_lbl"
+                    tools:text="(11) 99999 8765" />
+
+                <View
+                    android:id="@+id/act079_divider_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/act079_ll_privacy_fields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

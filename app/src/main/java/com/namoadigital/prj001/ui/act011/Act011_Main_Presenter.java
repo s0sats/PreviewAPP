@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.ui.act087.model.InitialSerialState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +80,13 @@ public interface Act011_Main_Presenter {
 
     boolean hasGpsPendecy(long customer_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data);
 
+    GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data);
+
     void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
     void validateGPSResource(GE_Custom_Form_Local formLocal);
+
+    GeOs getGeOs(String customer_code, String formtype_code, String form_code, String formversion_code, String s_form_data);
 
     //
     boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
@@ -170,4 +175,7 @@ public interface Act011_Main_Presenter {
     void clearTicketDownloadSingleton();
 
     void setTicketDownloadSingleton(int mTkPrefix, int mTkCode);
+
+    InitialSerialState getInitialSeialState(GE_Custom_Form_Data form_data, MD_Product_Serial serial);
+
 }

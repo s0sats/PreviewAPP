@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_Get_Last_Date;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -86,6 +88,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String TRIP_PREFIX = "trip_prefix";
     public static final String TRIP_CODE = "trip_code";
     public static final String DESTINATION_SEQ = "destination_seq";
+    public static final String INITIAL_IS_SERIAL_STOPPED = "initial_is_serial_stopped";
+    public static final String INITIAL_STOPPED_DATE = "initial_stopped_date";
+    public static final String INITIAL_UNAVAILABILITY_REASON = "initial_unavailability_reason";
+    public static final String FINAL_IS_SERIAL_STOPPED = "final_is_serial_stopped";
+    public static final String FINAL_UNAVAILABILITY_REASON = "final_unavailability_reason";
+
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -107,9 +115,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         this.toGE_Custom_Form_DataMapper = new GE_Custom_Form_DataMapper();
     }
 
-    @Override
-    public void addUpdate(GE_Custom_Form_Data custom_form_data) {
-        openDB();
+    public void addUpdate(GE_Custom_Form_Data custom_form_data, SQLiteDatabase dbInstance){
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
 
@@ -129,10 +140,16 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
 
         } catch (Exception e) {
+            Log.d("GE_UPDATE", e.getMessage());
         } finally {
         }
 
-        closeDB();
+        if(dbInstance == null) closeDB();
+    }
+
+    @Override
+    public void addUpdate(GE_Custom_Form_Data custom_form_data) {
+        addUpdate(custom_form_data, null);
     }
 
     public DaoObjReturn addUpdateWithReturn(GE_Custom_Form_Data custom_form_data) {
@@ -695,6 +712,37 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             } else {
                 custom_form_data.setDestination_seq(cursor.getInt(cursor.getColumnIndex(DESTINATION_SEQ)));
             }
+
+            if (cursor.isNull(cursor.getColumnIndex(INITIAL_IS_SERIAL_STOPPED))) {
+                custom_form_data.setInitial_is_serial_stopped(null);
+            } else {
+                custom_form_data.setInitial_is_serial_stopped(cursor.getInt(cursor.getColumnIndex(INITIAL_IS_SERIAL_STOPPED)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(INITIAL_STOPPED_DATE))) {
+                custom_form_data.setInitial_stopped_date(null);
+            } else {
+                custom_form_data.setInitial_stopped_date(cursor.getString(cursor.getColumnIndex(INITIAL_STOPPED_DATE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(INITIAL_UNAVAILABILITY_REASON))) {
+                custom_form_data.setInitial_unavailability_reason(null);
+            } else {
+                custom_form_data.setInitial_unavailability_reason(cursor.getString(cursor.getColumnIndex(INITIAL_UNAVAILABILITY_REASON)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(FINAL_IS_SERIAL_STOPPED))) {
+                custom_form_data.setFinal_is_serial_stopped(null);
+            } else {
+                custom_form_data.setFinal_is_serial_stopped(cursor.getInt(cursor.getColumnIndex(FINAL_IS_SERIAL_STOPPED)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(FINAL_UNAVAILABILITY_REASON))) {
+                custom_form_data.setFinal_unavailability_reason(null);
+            } else {
+                custom_form_data.setFinal_unavailability_reason(cursor.getString(cursor.getColumnIndex(FINAL_UNAVAILABILITY_REASON)));
+            }
+
             return custom_form_data;
         }
     }
@@ -822,6 +870,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(TRIP_PREFIX, custom_form_data.getTrip_prefix());
             contentValues.put(TRIP_CODE, custom_form_data.getTrip_code());
             contentValues.put(DESTINATION_SEQ, custom_form_data.getDestination_seq());
+            contentValues.put(INITIAL_IS_SERIAL_STOPPED, custom_form_data.getInitial_is_serial_stopped());
+            contentValues.put(INITIAL_STOPPED_DATE, custom_form_data.getInitial_stopped_date());
+            contentValues.put(INITIAL_UNAVAILABILITY_REASON, custom_form_data.getInitial_unavailability_reason());
+            contentValues.put(FINAL_IS_SERIAL_STOPPED, custom_form_data.getFinal_is_serial_stopped());
+            contentValues.put(FINAL_UNAVAILABILITY_REASON, custom_form_data.getFinal_unavailability_reason());
+
             return contentValues;
         }
     }
@@ -839,4 +893,21 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     }
 
 
+    public GE_Custom_Form_Data getFormDataById(
+            Long customerCode,
+            Integer typeCode,
+            Integer code,
+            Integer version,
+            Long data
+    ){
+        return getByString(
+                new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                        customerCode.toString(),
+                        typeCode.toString(),
+                        code.toString(),
+                        version.toString(),
+                        data.toString()
+                ).toSqlQuery()
+        );
+    }
 }

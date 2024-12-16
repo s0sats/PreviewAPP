@@ -16,6 +16,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
+import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
@@ -93,6 +94,7 @@ class Act087Main : Base_Activity_Frag(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
             ),
+            TK_TicketDao(context),
             originFlow,
             GE_Custom_Form_DataDao(
                 context,
@@ -331,12 +333,16 @@ class Act087Main : Base_Activity_Frag(),
         return mPresenter.getOrderTypeList(orderTypeCode)
     }
 
-    override fun searchSerialClick(bkpProductCode: Long, bkpSerialId: String) {
-        return mPresenter.executeWsBkpMachine(bkpProductCode,bkpSerialId)
+    override fun searchSerialClick(bkpSerialId: String) {
+        return mPresenter.executeWsBkpMachine(bkpSerialId)
     }
 
     override fun getDefaultBkpMachineProduct(): MD_Product? {
         return mPresenter.getProductInfo(productCode)
+    }
+
+    override fun getMdProduct(code: Long): MD_Product? {
+        return mPresenter.getMdProduct(context.getCustomerCode(), code)
     }
 
     override fun getFormSerialId() = serialId

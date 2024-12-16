@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
@@ -891,6 +892,76 @@ val MigrationV14 = object : MigrationSQLite(14, 15) {
                 MD_Product_SerialDao.UNAVAILABILITY_REASON_OPTION to "int not null default 0",
             )
         }
+    }
+}
+
+val migrationV15 = object : MigrationSQLite(15, 16) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumnsIfNecessary(tableName = TK_TicketDao.TABLE) {
+            mapOf(
+                TK_TicketDao.OPEN_SERIAL_STOPPED to "text",
+                TK_TicketDao.OPEN_DESIRED_DATE to "text"
+            )
+        }
+
+        db.addMissingColumnsIfNecessary(tableName = TK_TicketDao.TABLE) {
+            mapOf(
+                TK_TicketDao.IS_SERIAL_STOPPED to "int not null default 0"
+            )
+        }
+
+        db.addMissingColumnsIfNecessary(tableName = TK_TicketDao.TABLE) {
+            mapOf(
+                TK_TicketDao.STOPPED_DATE to "text",
+                TK_TicketDao.DESIRED_DATE to "text"
+            )
+        }
+
+        db.updateColumn(
+            TK_TicketDao.TABLE,
+            TK_TicketDao.SYNC_REQUIRED,
+            "1"
+        )
+
+        db.addMissingColumnsIfNecessary(tableName = GE_Custom_Form_DataDao.TABLE) {
+            mapOf(
+                GE_Custom_Form_DataDao.INITIAL_IS_SERIAL_STOPPED to "int",
+                GE_Custom_Form_DataDao.FINAL_IS_SERIAL_STOPPED to "int",
+            )
+        }
+
+        db.addMissingColumnsIfNecessary(tableName = GE_Custom_Form_DataDao.TABLE) {
+            mapOf(
+                GE_Custom_Form_DataDao.FINAL_UNAVAILABILITY_REASON to "text",
+                GE_Custom_Form_DataDao.INITIAL_UNAVAILABILITY_REASON to "text",
+                GE_Custom_Form_DataDao.INITIAL_STOPPED_DATE to "text"
+            )
+        }
+        //
+        db.addMissingColumnsIfNecessary(tableName = GeOsDao.TABLE) {
+            mapOf(
+                GeOsDao.INITIAL_IS_SERIAL_STOPPED to "int",
+                GeOsDao.FINAL_IS_SERIAL_STOPPED to "int",
+            )
+        }
+        //
+        db.addMissingColumnsIfNecessary(tableName = GeOsDao.TABLE) {
+            mapOf(
+                GeOsDao.FINAL_UNAVAILABILITY_REASON to "text",
+                GeOsDao.INITIAL_UNAVAILABILITY_REASON to "text",
+                GeOsDao.INITIAL_STOPPED_DATE to "text"
+            )
+        }
+
+        db.addMissingColumnsIfNecessary(tableName = GeOsDao.TABLE) {
+            mapOf(GeOsDao.ALLOW_FORM_IN_THE_PAST to "int not null default 0")
+        }
+
+        db.updateColumn(
+            GeOsDao.TABLE,
+            GeOsDao.ALLOW_FORM_IN_THE_PAST,
+            "1"
+        )
     }
 }
 

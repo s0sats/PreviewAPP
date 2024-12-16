@@ -208,3 +208,4 @@ fun Context.loadNetworkTranslate(): HMAux {
 
 const val NETWORK_GENERIC_ERROR = "generic_error_lbl"
 const val DB_TRANSACTION_ERROR_LBL = "db_transaction_error_lbl"
+const val DB_GET_DATA_ERROR_LBL = "db_get_data_error_lbl"

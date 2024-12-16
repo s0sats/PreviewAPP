@@ -85,8 +85,6 @@ public class AppBase extends Application {
     public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
-    public static String currentAct = "";
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -152,7 +150,7 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 15;
+        DB_VERSION_CUSTOM = 16;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

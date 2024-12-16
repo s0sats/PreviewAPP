@@ -1,18 +1,11 @@
 package com.namoadigital.prj001.service;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_CUSTOMER;
 
-import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -189,6 +182,18 @@ public class WS_GetCustomer extends BaseWsIntentService {
                 1,
                 rec.getDb_version()
         )) {
+            return;
+        }
+        //
+        if(rec.getLogin() == null
+           && rec.getValid_time() == -1){
+            //
+            ToolBox.sendBCStatus(
+                    getApplicationContext(),
+                    Constant.PD_TYPE_ERROR_1,
+                    getString(R.string.msg_login_invalid_json_response),
+                    "",
+                    "0");
             return;
         }
         //

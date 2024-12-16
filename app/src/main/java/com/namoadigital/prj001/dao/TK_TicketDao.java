@@ -162,6 +162,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String KANBAN_STAGE_EXECUTION = "EXECUTION";
     public static final String KANBAN_STAGE_RELEASE_FOR_EXECUTION = "RELEASE_FOR_EXECUTION";
 
+    public static final String OPEN_SERIAL_STOPPED = "open_serial_stopped";
+    public static final String OPEN_DESIRED_DATE = "open_desired_date";
+    public static final String IS_SERIAL_STOPPED = "is_serial_stopped";
+    public static final String STOPPED_DATE = "stopped_date";
+    public static final String DESIRED_DATE = "desired_date";
+
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
@@ -1265,6 +1271,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
             tk_ticket.setContactName(cursor.getString(cursor.getColumnIndex(CONTACT_NAME)));
             tk_ticket.setContactPhone(cursor.getString(cursor.getColumnIndex(CONTACT_PHONE)));
+
+            tk_ticket.setOpenSerialStopped(cursor.getString(cursor.getColumnIndex(OPEN_SERIAL_STOPPED)));
+            tk_ticket.setOpenDesiredDate(cursor.getString(cursor.getColumnIndex(OPEN_DESIRED_DATE)));
+            tk_ticket.setIsSerialStopped(cursor.getInt(cursor.getColumnIndex(IS_SERIAL_STOPPED)));
+
+
+            int columnIndexStopped = cursor.getColumnIndex(STOPPED_DATE);
+            int columnIndexDesired = cursor.getColumnIndex(DESIRED_DATE);
+            tk_ticket.setStoppedDate(cursor.isNull(columnIndexStopped) ? null : cursor.getString(columnIndexStopped));
+            tk_ticket.setDesiredDate(cursor.isNull(columnIndexDesired) ? null : cursor.getString(columnIndexDesired));
+
             return tk_ticket;
         }
     }
@@ -1502,6 +1519,14 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
             contentValues.put(CONTACT_NAME, tk_ticket.getContactName());
             contentValues.put(CONTACT_PHONE, tk_ticket.getContactPhone());
+
+            contentValues.put(OPEN_SERIAL_STOPPED, tk_ticket.getOpenSerialStopped());
+            contentValues.put(OPEN_DESIRED_DATE, tk_ticket.getOpenDesiredDate());
+            if(tk_ticket.getIsSerialStopped() > -1){
+                contentValues.put(IS_SERIAL_STOPPED, tk_ticket.getIsSerialStopped());
+            }
+            contentValues.put(STOPPED_DATE, tk_ticket.getStoppedDate());
+            contentValues.put(DESIRED_DATE, tk_ticket.getDesiredDate());
             //
             return contentValues;
         }

@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.core.module
+package com.namoadigital.prj001.core.module.trip
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
@@ -34,7 +34,8 @@ import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
 @InstallIn(ServiceComponent::class)
-object ServiceModule {
+
+object TripServiceModule {
 
     @ServiceScoped
     @Provides

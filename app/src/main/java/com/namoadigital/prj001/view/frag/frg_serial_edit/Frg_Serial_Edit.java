@@ -652,7 +652,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         ss_category_price.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         ss_class.setmLabel(hmAux_Trans.get("class_lbl"));
         ss_class.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
-        ss_class.setmCanClean(getMdProduct().getIsClassRequired() != 1);
+        ss_class.setmCanClean(!isClassRequired());
         btn_action.setText(btn_action_translation);
         //
         for (View view : views) {
@@ -672,6 +672,10 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         }
         //
+    }
+
+    private boolean isClassRequired() {
+        return mdProduct.getIsClassRequired() == 1;
     }
 
     @Nullable
@@ -1253,6 +1257,15 @@ public class Frg_Serial_Edit extends BaseFragment {
         } else {
             tv_trackings_value.setVisibility(View.VISIBLE);
         }
+        //
+        if(isClassRequired()) {
+            if (mdProductSerial.getClass_code() != null) {
+                ss_class.setVisibility(View.VISIBLE);
+            }else{
+                ss_class.setVisibility(View.GONE);
+            }
+        }
+        //
         //region SS Class
         ToolBox_Inf.setSSmValue(
                 ss_class,
@@ -1688,81 +1701,75 @@ public class Frg_Serial_Edit extends BaseFragment {
         if (!new_serial || (mket_serial_id.isValid() && !StringHelperKt.checkIfHasCharInvalid(mket_serial_id.getText().toString()))) {
             //Valida se alteração de site é valida.
             if (!siteChanged || validateSiteChange()) {
-                if(isClassRequiredAndValid()){
-                    if (validadeSerialLocation()) {
-                        if (validateMoveReasonSS()) {
-                            if (validateSiteRestriction()) {
-                                if (validateAddInfoDuplication()) {
-                                    if (new_serial || checkSerialChanges() || forceSaveAgain) {
-                                        //
-                                        setUIDataToSerialObj();
-                                        //
-                                        if (btnId == R.id.frg_serial_edit_btn_action) {
-                                            delegate.onSaveWithChangesClick(
-                                                    mdProductSerial,
-                                                    !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                            );
-                                        }
-                                        resetSaveCtrlVar();
-                                    } else {
-                                        if (btnId == R.id.frg_serial_edit_btn_action) {
-                                            delegate.onSaveNoChangesClick(
-                                                    mdProductSerial,
-                                                    !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                            );
-                                        }
-                                        resetSaveCtrlVar();
-                                    }
-                                } else {
-                                    //Concatena msg informando que existe add info duplicada
-                                    String msg =
-                                            hmAux_Trans.get("alert_tracking_add_info_duplicated_msg")
-                                                    + "\n" + hmAux_Trans.get("serial_add_info_ttl");
+                if (validadeSerialLocation()) {
+                    if (validateMoveReasonSS()) {
+                        if (validateSiteRestriction()) {
+                            if (validateAddInfoDuplication()) {
+                                if (new_serial || checkSerialChanges() || forceSaveAgain) {
                                     //
-                                    showAlertDialog(
-                                            hmAux_Trans.get("alert_tracking_add_info_validation_ttl"),
-                                            msg
-                                    );
-                                }
-
-                            } else {
-                                String siteRestrictionViolationMsg = "";
-                                if (FsTripHelperKt.isCurrentTrip(context)) {
-                                    if (hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg") != null) {
-                                        siteRestrictionViolationMsg = hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg");
-                                    } else {
-                                        siteRestrictionViolationMsg = "";
+                                    setUIDataToSerialObj();
+                                    //
+                                    if (btnId == R.id.frg_serial_edit_btn_action) {
+                                        delegate.onSaveWithChangesClick(
+                                                mdProductSerial,
+                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                        );
                                     }
+                                    resetSaveCtrlVar();
+                                } else {
+                                    if (btnId == R.id.frg_serial_edit_btn_action) {
+                                        delegate.onSaveNoChangesClick(
+                                                mdProductSerial,
+                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                        );
+                                    }
+                                    resetSaveCtrlVar();
                                 }
-                                if (mdProduct.getSite_restriction() == 1) {
-                                    siteRestrictionViolationMsg +=
-                                            siteRestrictionViolationMsg.isEmpty() ? hmAux_Trans.get("alert_site_restriction_violation_msg") : "\n" + hmAux_Trans.get("alert_site_restriction_violation_msg");
-                                }
+                            } else {
+                                //Concatena msg informando que existe add info duplicada
+                                String msg =
+                                        hmAux_Trans.get("alert_tracking_add_info_duplicated_msg")
+                                                + "\n" + hmAux_Trans.get("serial_add_info_ttl");
                                 //
                                 showAlertDialog(
-                                        hmAux_Trans.get("alert_serial_validation_ttl"),
-                                        siteRestrictionViolationMsg,
-                                        hideSerialInfoErrorListner
+                                        hmAux_Trans.get("alert_tracking_add_info_validation_ttl"),
+                                        msg
                                 );
                             }
+
                         } else {
+                            String siteRestrictionViolationMsg = "";
+                            if (FsTripHelperKt.isCurrentTrip(context)) {
+                                if (hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg") != null) {
+                                    siteRestrictionViolationMsg = hmAux_Trans.get("alert_site_restriction_violation_on_trip_msg");
+                                } else {
+                                    siteRestrictionViolationMsg = "";
+                                }
+                            }
+                            if (mdProduct.getSite_restriction() == 1) {
+                                siteRestrictionViolationMsg +=
+                                        siteRestrictionViolationMsg.isEmpty() ? hmAux_Trans.get("alert_site_restriction_violation_msg") : "\n" + hmAux_Trans.get("alert_site_restriction_violation_msg");
+                            }
+                            //
                             showAlertDialog(
-                                    hmAux_Trans.get("alert_reason_validation_ttl"),
-                                    hmAux_Trans.get("alert_reason_required_msg")
+                                    hmAux_Trans.get("alert_serial_validation_ttl"),
+                                    siteRestrictionViolationMsg,
+                                    hideSerialInfoErrorListner
                             );
                         }
                     } else {
                         showAlertDialog(
-                                hmAux_Trans.get("alert_invalid_serial_local_ttl"),
-                                hmAux_Trans.get("alert_invalid_serial_local_msg")
+                                hmAux_Trans.get("alert_reason_validation_ttl"),
+                                hmAux_Trans.get("alert_reason_required_msg")
                         );
                     }
-                }else{
+                } else {
                     showAlertDialog(
-                            hmAux_Trans.get("alert_class_serial_validation_ttl"),
-                            hmAux_Trans.get("alert_class_serial_invalid_msg")
+                            hmAux_Trans.get("alert_invalid_serial_local_ttl"),
+                            hmAux_Trans.get("alert_invalid_serial_local_msg")
                     );
                 }
+
             } else {
                 showAlertDialog(
                         hmAux_Trans.get("alert_serial_validation_ttl"),
@@ -2710,7 +2717,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         blockAllProperties();
         if (!serialIdChanged) {
             if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_CLASS)) {
-                ss_class.setmEnabled(true);
+                ss_class.setmEnabled(!isClassRequired());
             }
             //
             if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_CHANGE_LOCATION)) {
@@ -2728,7 +2735,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             //
             if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)) {
 
-                ss_class.setmEnabled(true);
+                ss_class.setmEnabled(!isClassRequired());
                 ss_site.setmEnabled(true);
                 ss_site_zone.setmEnabled(true);
                 ss_site_zone_local.setmEnabled(true);
@@ -2907,12 +2914,12 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private boolean isClassRequiredAndValid() {
-        boolean isClassRequired = mdProduct.getIsClassRequired() == 1;
+
         boolean isValidValue = ss_class.getmValue().get(SearchableSpinner.CODE) != null &&
                 !ss_class.getmValue().get(SearchableSpinner.CODE).equals("null") &&
                 ss_class.getmValue().get(SearchableSpinner.CODE).length() > 0;
 
-        if (isClassRequired && !isValidValue) {
+        if (isClassRequired() && !isValidValue) {
             ss_class.setmRequired(true);
             return false;
         }
@@ -3119,8 +3126,13 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
 
     private void updateSSVisibility(SearchableSpinner ss, String sType) {
-        ss.setVisibility(ss.getVisibilityStatusForUse() ? View.VISIBLE : View.GONE);
-
+        //
+        if(isClassRequired()) {
+            ss.setVisibility(mdProductSerial.getClass_code() != null ? View.VISIBLE : View.GONE);
+        }else{
+            ss.setVisibility(ss.getVisibilityStatusForUse() ? View.VISIBLE : View.GONE);
+        }
+        //
         switch (sType.toUpperCase()) {
             case "CLASS":
                 if (ss.getVisibility() == View.GONE) {

@@ -56,7 +56,7 @@ class WS_Product_Serial_Backup : IntentService("WS_Product_Serial_Backup") {
             val bundle = intent!!.extras!!
             val soProductCode = bundle.getLong(SO_PRODUCT_CODE)
             val soSerialCode = bundle.getLong(SO_SERIAL_CODE)
-            val productCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE)
+            val productCode = if(bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE, -1) == -1L) null else bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE)
             val serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID)
             val siteCode = bundle.getInt(MD_Product_SerialDao.SITE_CODE)
 
@@ -73,7 +73,7 @@ class WS_Product_Serial_Backup : IntentService("WS_Product_Serial_Backup") {
     private fun processSerialBackup(
         soProductCode: Long,
         soSerialCode: Long,
-        productCode: Long,
+        productCode: Long?,
         serialId: String?,
         siteCode: Int
     ) {

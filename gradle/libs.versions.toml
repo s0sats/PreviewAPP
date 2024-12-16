@@ -4,6 +4,7 @@ androidbootstrap = "2.3.1"
 appUpdateKtx = "2.1.0"
 concurrentFutures = "1.1.0"
 constraintlayout = "2.1.4"
+constraintlayoutCompose = "1.0.1"
 firebaseIid = "21.1.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -12,6 +13,7 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.6.4"
+kotlinxCoroutinesTest = "1.8.0"
 legacySupportV4 = "1.0.0"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
@@ -19,8 +21,12 @@ composeBom = "2024.06.00"
 dagger = "2.48"
 dagger-viewModel = "1.2.0"
 lifecycleViewmodelKtx = "2.8.3"
+material3 = "1.2.1"
+materialIconsExtended = "1.6.8"
+mockitoCore = "5.0.0"
 mockitoKotlin = "3.2.0"
 mockitoInline = "3.11.2"
+mockk = "1.13.3"
 navigationFragmentKtx = "2.7.7"
 navigationUiKtx = "2.7.7"
 playServicesLocation = "21.0.1"
@@ -37,6 +43,7 @@ firebaseServices = "32.0.0"
 firebaseCrashlytics = "2.9.2"
 lifecycleExtensions = "2.2.0"
 gson = "2.10.1"
+turbine = "0.7.0"
 workRuntime = "2.7.1"
 namoaLib = "2.6.8"
 safeArgs = "2.7.7"
@@ -45,9 +52,12 @@ safeArgs = "2.7.7"
 androidbootstrap = { module = "com.beardedhen:androidbootstrap", version.ref = "androidbootstrap" }
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "concurrentFutures" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-material = { module = "androidx.compose.material:material", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
@@ -78,8 +88,11 @@ hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref =
 hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "dagger-viewModel" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -94,7 +107,8 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 androidx-lifecycle-extensions = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "lifecycleExtensions" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-namoa-library = { group = "com.namoa_digital", name = "library", version.ref = "namoaLib" }
+namoa-library = { group = "com.namoa_digital", name = "library", version.ref = "namoaLib"}
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

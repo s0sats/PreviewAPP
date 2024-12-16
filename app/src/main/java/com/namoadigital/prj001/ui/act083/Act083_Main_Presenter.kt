@@ -16,7 +16,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseC
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
@@ -574,7 +574,7 @@ class Act083_Main_Presenter(
 
     private fun processCachedTicketClick(myAction: MyActions) {
         val ticketSplit = myAction.processPk.split(".")
-        val containTicketLocal = actionUseCases.getTicket?.invoke(GetTicketUseCase.GetTicketParams(ticketSplit[0].toInt(), ticketSplit[1].toInt()))
+        val containTicketLocal = actionUseCases.getTicket?.invoke(GetTicketByIdUseCase.GetTicketParams(ticketSplit[0].toInt(), ticketSplit[1].toInt()))
 
         containTicketLocal?.let {
             processLocalTicketClick(myAction)

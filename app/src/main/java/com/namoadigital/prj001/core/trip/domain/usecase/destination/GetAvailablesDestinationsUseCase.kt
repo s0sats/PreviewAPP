@@ -3,9 +3,8 @@ package com.namoadigital.prj001.core.trip.domain.usecase.destination
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
-import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.UseCases
-import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepository
+import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.ui.act094.destination.domain.destination_availables.DestinationAvailables
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.flow
 class GetAvailablesDestinationsUseCase constructor(
     private val repository: TripDestinationRepository,
     private val ticketRepository: TicketRepository,
-    private val serialRepository: SerialRepository,
+    private val productSerialRepository: ProductSerialRepository,
 ) : UseCases<Unit, List<DestinationAvailables>> {
 
     private fun booleanToInt(value: Boolean) = when (value) {
@@ -43,7 +42,7 @@ class GetAvailablesDestinationsUseCase constructor(
                 todayCnt = ticketRepository.getTicketTodayCntList(destination.siteCode ?: -1),
                 lateCnt = ticketRepository.getTicketLateCntList(destination.siteCode ?: -1),
                 nextCnt = ticketRepository.getTicketNextList(destination.siteCode ?: -1),
-                serialCnt = serialRepository.getListSerialsBySiteCode(destination.siteCode ?: -1).size
+                serialCnt = productSerialRepository.getListSerialsBySiteCode(destination.siteCode ?: -1).size
             )
         }.let(list::addAll)
 

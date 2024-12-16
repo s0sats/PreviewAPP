@@ -216,6 +216,27 @@ public class GE_Custom_Form_Data {
     @Nullable
     @SerializedName("destination_seq") private Integer destination_seq;
 
+    @Expose
+    @Nullable
+    @SerializedName("initial_is_serial_stopped") private Integer initial_is_serial_stopped;
+
+    @Expose
+    @Nullable
+    @SerializedName("initial_stopped_date") private String initial_stopped_date;
+
+    @Expose
+    @Nullable
+    @SerializedName("initial_unavailability_reason") private String initial_unavailability_reason;
+
+    @Expose
+    @Nullable
+    @SerializedName("final_is_serial_stopped") private Integer final_is_serial_stopped;
+
+    @Expose
+    @Nullable
+    @SerializedName("final_unavailability_reason") private String final_unavailability_reason;
+
+
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
         this.custom_form_type = -1;
@@ -709,5 +730,50 @@ public class GE_Custom_Form_Data {
 
     public void setDestination_seq(@Nullable Integer destination_seq) {
         this.destination_seq = destination_seq;
+    }
+
+    @Nullable
+    public Integer getInitial_is_serial_stopped() {
+        return initial_is_serial_stopped;
+    }
+
+    public void setInitial_is_serial_stopped(@Nullable Integer initial_is_serial_stopped) {
+        this.initial_is_serial_stopped = initial_is_serial_stopped;
+    }
+
+    @Nullable
+    public String getInitial_stopped_date() {
+        return initial_stopped_date;
+    }
+
+    public void setInitial_stopped_date(@Nullable String initial_stopped_date) {
+        this.initial_stopped_date = initial_stopped_date;
+    }
+
+    @Nullable
+    public String getInitial_unavailability_reason() {
+        return initial_unavailability_reason;
+    }
+
+    public void setInitial_unavailability_reason(@Nullable String initial_unavailability_reason) {
+        this.initial_unavailability_reason = initial_unavailability_reason;
+    }
+
+    @Nullable
+    public Integer getFinal_is_serial_stopped() {
+        return final_is_serial_stopped;
+    }
+
+    public void setFinal_is_serial_stopped(@Nullable Integer final_is_serial_stopped) {
+        this.final_is_serial_stopped = final_is_serial_stopped;
+    }
+
+    @Nullable
+    public String getFinal_unavailability_reason() {
+        return final_unavailability_reason;
+    }
+
+    public void setFinal_unavailability_reason(@Nullable String final_unavailability_reason) {
+        this.final_unavailability_reason = final_unavailability_reason;
     }
 }

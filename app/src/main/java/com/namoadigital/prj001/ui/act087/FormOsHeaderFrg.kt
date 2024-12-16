@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -28,7 +29,9 @@ import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogBin
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
 import com.namoadigital.prj001.databinding.FormSupplierDialogBinding
+import com.namoadigital.prj001.databinding.IncSerialInitialStateBinding
 import com.namoadigital.prj001.extensions.date.getDateDiferenceInMinutes
+import com.namoadigital.prj001.extensions.date.isDateBefore
 import com.namoadigital.prj001.extensions.formatTo
 import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
@@ -41,6 +44,7 @@ import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
 import com.namoadigital.prj001.model.MeMeasureTp
 import com.namoadigital.prj001.ui.act011.FormOsHeaderFrgMeasureInteraction
+import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -50,7 +54,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.Locale
 import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
@@ -134,6 +137,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
         fun getFragTranslationsVars(): List<String> {
             return listOf(
+                "form_os_info_lbl",
                 "order_type_lbl",
                 "use_backup_lbl",
                 "start_date_lbl",
@@ -151,6 +155,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_invalid_measure_value_error_msg",
                 "alert_invalid_measure_zero_cycle_error_msg",
                 "alert_invalid_measure_cycle_error_msg",
+                "alert_invalid_initial_serial_state_date_error_msg",
+                "alert_invalid_initial_serial_state_responsable_error_msg",
                 "alert_last_cycle_lbl",
                 "alert_current_cycle_lbl",
                 "alert_form_os_creation_ttl",
@@ -171,6 +177,16 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_measure_invalid_value_msg",
                 "form_os_partition_headline_lbl",
                 "alert_invalid_start_date_partition_error_msg",
+                "initial_serial_state_ttl",
+                "initial_serial_state_stopped_ttl",
+                "initial_serial_state_switch_lbl",
+                "initial_serial_state_ticket_stopped_lbl",
+                "initial_serial_state_date_lbl",
+                "initial_serial_state_responsable_lbl",
+                "initial_serial_state_maintenance_opt",
+                "initial_serial_state_third_party_error_opt",
+                "initial_serial_state_running_opt",
+                "initial_serial_state_stopped_opt",
                 "telemetry_horimeter_lbl",
                 "telemetry_horimeter_date_lbl",
                 "telemetry_supplier_uid_lbl",
@@ -224,6 +240,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     @SuppressLint("SetTextI18n")
     private fun setLabels() {
         with(binding) {
+            tvInfoOsLbl.text = hmAuxTrans["form_os_info_lbl"]
             tvOsTypeLbl.text = hmAuxTrans["order_type_lbl"]
             tvOsMachineLbl.text = hmAuxTrans["use_backup_lbl"]
             tvOsStartDateLbl.text = hmAuxTrans["start_date_lbl"]
@@ -233,7 +250,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
             tvHorimeterAlertLbl.text = hmAuxTrans["alert_horimeter_type_lbl"]
-
+            clSerialInitialState.apply {
+                setInitialStateSerialLbl()
+            }
 
             ticketForm?.let {
                 notificationPartial.apply {
@@ -247,23 +266,156 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             } ?: run {
                 btnSave.text = hmAuxTrans["btn_save"]
             }
-            //Lista com os textView que será usado para add colocar contadore nos campos
-            labelsView.add(tvOsTypeLbl)
-            labelsView.add(tvOsMachineLbl)
-            labelsView.add(tvOsStartDateLbl)
-            labelsView.add(tvOsMainMeasureLbl)
         }
     }
 
     private fun iniVars() {
         iniOrderTypeSpinner()
+        iniInitialStateSerial()
         iniBkpMachine()
         iniStartDate()
         iniMainMeasure()
         iniLastMeasureInfo()
         iniSwAllowInThePast()
         iniSaveBtn()
-        addIdxToVisibleLabels()
+//        addIdxToVisibleLabels()
+    }
+
+    private fun iniInitialStateSerial() {
+        binding.clSerialInitialState.apply {
+
+            if (ConstantBaseApp.SYS_STATUS_CANCELLED == formStatus
+                || ConstantBaseApp.SYS_STATUS_DONE == formStatus
+            ) {
+                root.visibility = View.GONE
+            }
+            swInitialStateMachine.visibility = View.VISIBLE
+            tvTitle.visibility = View.VISIBLE
+            tvQuestionLbl.visibility = View.VISIBLE
+            viewSeparator.visibility = View.GONE
+            initialSerialState?.let {
+                //
+                mkDateVal.setmEnabled(isOsCreation)
+                rbMachineRunning.isEnabled = isOsCreation
+                rbMachineStopped.isEnabled = isOsCreation
+                rbMaintenance.isEnabled = isOsCreation
+                rbThirdPartyError.isEnabled = isOsCreation
+                //
+                setInitialStateSerialResponsableVisibility(it.showResponsableStopMachine)
+                //
+                if (it.isTicketSerialStopped) {
+                    tvSerialStoppedDateLbl.visibility = View.GONE
+                    swInitialStateMachine.visibility = View.GONE
+                    tvTitle.text = hmAuxTrans["initial_serial_state_stopped_ttl"]
+                } else {
+                    swInitialStateMachine.isChecked = it.stoppedDate != null
+                    swInitialStateMachine.isEnabled = isOsCreation
+                }
+                //
+                when (it.responsibleStop) {
+                    ResponsibleStop.THIRD_PARTY -> {
+                        rbThirdPartyError.isChecked = true
+                        if (it.isTicketSerialStopped) {
+                            rbMachineStopped.isChecked = true
+                            setInitialStateSerialStoppedDateVisibility(false)
+                            setInitialStateSerialStoppedTicketDateVisibility(true)
+                        } else {
+                            swInitialStateMachine.isChecked = true
+                            setInitialStateSerialStoppedTicketDateVisibility(false)
+                            setInitialStateSerialStoppedDateVisibility(true)
+                        }
+                        setInitialStateSerialResponsableVisibility(true)
+//                        rbMaintenance.isChecked = false
+                    }
+
+                    ResponsibleStop.MAINTENANCE -> {
+//                        rbThirdPartyError.isChecked = false
+                        if (it.isTicketSerialStopped) {
+                            rbMachineStopped.isChecked = true
+                            setInitialStateSerialStoppedDateVisibility(false)
+                            setInitialStateSerialStoppedTicketDateVisibility(true)
+                        } else {
+                            swInitialStateMachine.isChecked = true
+                            setInitialStateSerialStoppedTicketDateVisibility(false)
+                            setInitialStateSerialStoppedDateVisibility(true)
+                        }
+                        rbMaintenance.isChecked = true
+                        setInitialStateSerialResponsableVisibility(true)
+                    }
+
+                    ResponsibleStop.STOPPED -> {
+                        if (it.isTicketSerialStopped) {
+                            rbMachineStopped.isChecked = true
+                            setInitialStateSerialStoppedDateVisibility(false)
+                            setInitialStateSerialStoppedTicketDateVisibility(true)
+                        } else {
+                            swInitialStateMachine.isChecked = true
+                            setInitialStateSerialStoppedTicketDateVisibility(false)
+                            setInitialStateSerialStoppedDateVisibility(true)
+                        }
+                    }
+
+                    ResponsibleStop.NO_STOPPED -> {
+                        if (it.isTicketSerialStopped) {
+                            rbMachineRunning.isChecked = true
+                            setInitialStateSerialStoppedTicketDateVisibility(true)
+                        } else {
+                            swInitialStateMachine.isChecked = false
+                            setInitialStateSerialStoppedDateVisibility(false)
+                        }
+                        setInitialStateSerialResponsableVisibility(false)
+                    }
+                }
+                //
+                mkDateVal.setmCanClean(false)
+                //
+                if (it.stoppedDate != null) {
+                    mkDateVal.setmValue(it.stoppedDate)
+                }
+                //
+            }
+        }
+    }
+
+    private fun IncSerialInitialStateBinding.setInitialStateSerialResponsableVisibility(showQuestion: Boolean) {
+        tvResponsableStopMachineLbl.visibility = if (showQuestion) View.VISIBLE else View.GONE
+        rgResponsableStopMachine.visibility = if (showQuestion) View.VISIBLE else View.GONE
+    }
+
+    private fun IncSerialInitialStateBinding.setInitialStateSerialStoppedDateVisibility(showQuestion: Boolean) {
+        tvSerialStoppedDateLbl.visibility = if (showQuestion) View.VISIBLE else View.GONE
+        mkDateVal.visibility = if (showQuestion) View.VISIBLE else View.GONE
+    }
+
+    private fun IncSerialInitialStateBinding.setInitialStateSerialStoppedTicketDateVisibility(
+        showQuestion: Boolean
+    ) {
+        rgStopMachine.visibility = if (showQuestion) View.VISIBLE else View.GONE
+        viewSeparator.visibility = if (showQuestion) View.VISIBLE else View.GONE
+        mkDateVal.visibility = if (showQuestion) View.VISIBLE else View.GONE
+    }
+
+
+    private fun IncSerialInitialStateBinding.setInitialStateSerialLbl() {
+        tvTitle.text = "${hmAuxTrans["initial_serial_state_ttl"]}"
+        tvQuestionLbl.text = "${hmAuxTrans["initial_serial_state_switch_lbl"]}"
+        tvResponsableStopMachineLbl.text = "${hmAuxTrans["initial_serial_state_responsable_lbl"]}"
+        initialSerialState?.let {
+            if (it.isTicketSerialStopped) {
+                tvQuestionLbl.text = "${hmAuxTrans["initial_serial_state_ticket_stopped_lbl"]}"
+            }
+            if (it.isEditMode) {
+                tvResponsableStopMachineLbl.setAsRequired(true)
+            }
+        }
+
+        rbMaintenance.text = "${hmAuxTrans["initial_serial_state_maintenance_opt"]}"
+        rbThirdPartyError.text = "${hmAuxTrans["initial_serial_state_third_party_error_opt"]}"
+        rbMachineRunning.text = "${hmAuxTrans["initial_serial_state_running_opt"]}"
+        rbMachineStopped.text = "${hmAuxTrans["initial_serial_state_stopped_opt"]}"
+        tvSerialStoppedDateLbl.text = hmAuxTrans["initial_serial_state_date_lbl"]
+        mkDateVal.setmLabel("")
+        mkDateVal.setmCanClean(false)
     }
 
     private fun iniSwAllowInThePast() {
@@ -378,33 +530,36 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         with(binding) {
             //Se permite maquina reserva exibe, caso contrario some tudo.
             if (formOsHeader.so_allow_backup == 1
-                && !isContinuosFormPartition()
+                && (isOsCreation
+                        || formStatus != ConstantBaseApp.SYS_STATUS_DONE
+                        )
             ) {
                 swMachine.isChecked = (formOsHeader.backup_product_code != null)
                 updateBkpMachineVisibility()
                 if (isOsCreation) {
                     mCreationListener?.let {
                         defaultBkpMachineProduct = it.getDefaultBkpMachineProduct()
-                        tvMachineProdEditLbl.text =
-                            defaultBkpMachineProduct?.product_desc?.uppercase(Locale.getDefault())
+//                        tvMachineProdEditLbl.text =
+//                            defaultBkpMachineProduct?.product_desc?.uppercase(Locale.getDefault())
                     }
-                    //Seta iv como desabilitado, só será habiltiado quando campo serial digitado.
-                    ivSerialSearch.isEnabled = false
                 } else {
-                    formOsHeader.backup_product_code?.let {
+                    /*formOsHeader.backup_product_code?.let {
                         tvMachineProdEditLbl.text = formOsHeader.backup_product_desc
-                    }
+                    }*/
                     formOsHeader.backup_serial_code?.let {
                         mketMachineSerialEdit.setText(formOsHeader.backup_serial_id)
+                        tilMketSerial.helperText = formOsHeader.backup_product_desc
                     }
                     //
-                    swMachine.isChecked = formOsHeader.backup_serial_code != null
+                    swMachine.isChecked = formOsHeader.backup_serial_id != null
+                    tilMketSerial.isHelperTextEnabled = formOsHeader.backup_serial_id != null
                     swMachine.isEnabled = false
                     mketMachineSerialEdit.isEnabled = false
                     mketMachineSerialEdit.setmBARCODE(false)
-                    tilMketSerial.isHelperTextEnabled = false
-                    ivSwapMachine.visibility =
-                        if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+                    tilMketSerial.isErrorEnabled = false
+                    ivSerialSearch.isEnabled = false
+                    /*ivSwapMachine.visibility =
+                        if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE*/
                     ivSerialSearch.visibility =
                         if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
                 }
@@ -420,7 +575,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun updateBkpMachineVisibility() {
         with(binding) {
-            gpBkpMachineVal.visibility = if (swMachine.isChecked) View.VISIBLE else View.GONE
+            gpBkpMachineVal.visibility = if (swMachine.isChecked) {
+                View.VISIBLE
+            } else {
+                clearMachineSerialValue()
+                View.GONE
+            }
         }
     }
 
@@ -483,15 +643,27 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     ) {
         with(binding) {
             mketMachineSerialEdit.setText(serialBkp.serialId)
+            mketMachineSerialEdit.isEnabled = false
+            mketMachineSerialEdit.setmBARCODE(false)
+            tilMketSerial.isHelperTextEnabled = true
+            tilMketSerial.helperText = serialBkp.productDesc
             clMachineEdit.background =
                 ContextCompat.getDrawable(
                     requireContext(),
                     com.namoa_digital.namoa_library.R.drawable.shape_ok
                 )
-            tilMketSerial.isHelperTextEnabled = false
+            tilMketSerial.isErrorEnabled = false
             selectedBkpMachineSerialCode = serialBkp.serialCode
             selectedBkpMachineSerialId = serialBkp.serialId
+            ivSerialSearch.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_delete
+                )
+            )
         }
+        selectedBkpMachineProduct = mCreationListener?.getMdProduct(serialBkp.productCode.toLong())
+
         //
         bkpMachineDialog?.dismiss()
         //Se auto selecao, exibe toast
@@ -543,6 +715,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
                 } ?: run {
                     if (mainMeasureTp?.without_measure == 1) {
+
                         mketOsMainMeasureVal.setText(
                             formOsHeader.last_cycle_value?.let {
                                 ToolBox_Inf.convertFloatToBigDecimalString(
@@ -609,12 +782,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
             //
-            ibTelemetry.visibility = View.GONE
+            ibTelemetry.visibility = getTelemetryVisibility()
             //
             initialSerialState?.let {
                 if (isOsCreation) {
-                    ibTelemetry.visibility =
-                        if (isContinuosFormPartition()) View.GONE else View.VISIBLE
                     if (!isContinuosFormPartition()) {
                         it.horimeter?.let { horimeter ->
                             val validHorimeter = if (checkLateTelemetryMeasureDate(
@@ -652,7 +823,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         && isOsCreation
                         && !isContinuosFormPartition()
                     ) {
-                        tvHorimeterAlertLbl.visibility = View.VISIBLE
+                        tvHorimeterAlertLbl.visibility = getTelemetryVisibility()
                         mketOsMainMeasureVal.setText("")
                     } else {
                         tvHorimeterAlertLbl.visibility = View.GONE
@@ -660,6 +831,16 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
         }
+    }
+
+    private fun getTelemetryVisibility(): Int {
+        return if((isOsCreation
+                    || isContinuosFormPartition())
+            && initialSerialState?.horimeter_supplier_uid != null
+            )
+                View.VISIBLE
+            else
+                View.GONE
     }
 
 
@@ -765,6 +946,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     com.namoa_digital.namoa_library.R.drawable.shape_ok
                 )
             }
+            val isInitialSerialStateDateInvalid = initialSerialState?.let {
+                checkStoppedDate()
+            } ?: false
+            //
+            val isInitialSerialStateResponsableInvalid = initialSerialState?.let {
+                if (it.showResponsableStopMachine
+                    && (clSerialInitialState.swInitialStateMachine.isChecked
+                            || clSerialInitialState.rbMachineStopped.isChecked)
+                ) {
+                    !clSerialInitialState.rbMaintenance.isChecked
+                            && !clSerialInitialState.rbThirdPartyError.isChecked
+                } else {
+                    false
+                }
+            } ?: false
+            //
             val measureInvalid = mainMeasureTp?.let {
                 if (!binding.mketOsMainMeasureVal.commaFormatted.isNullOrEmpty() && isMeasureValNumeric()) {
                     val typedMeasure = binding.mketOsMainMeasureVal.commaFormatted.toDouble()
@@ -782,15 +979,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             //
             val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //
+            formOsHeader.allowFormInThePast = if (swAllowFormSoInThePast.isChecked) 1 else 0
             //Verifica se a OS é uma continuação e se for ele continua para a próxima tela
             //Se for continuação da OS e a data estiver invalida ele mostra um dialog pro user
             if (isContinuosFormPartition()) {
                 if (isStartDateInvalid
                     || isContinuousFormStartDateInvalid
+                    || isInitialSerialStateDateInvalid
+                    || isInitialSerialStateResponsableInvalid
                 ) {
                     showSaveErroDialog(
                         startDateInvalid = isStartDateInvalid,
-                        continuousFormStartDateInvalid = isContinuousFormStartDateInvalid
+                        continuousFormStartDateInvalid = isContinuousFormStartDateInvalid,
+                        isInitialSerialStateDateInvalid = isInitialSerialStateDateInvalid,
+                        isInitialSerialStateResponsableInvalid = isInitialSerialStateResponsableInvalid,
                     )
                     return
                 }
@@ -806,7 +1008,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 )
             } else {
                 val isInvalid =
-                    isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid
+                    isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid || isInitialSerialStateDateInvalid || isInitialSerialStateResponsableInvalid
                 if (isInvalid) {
                     showSaveErroDialog(
                         osTypeInvalid = isOrderTypeInvalid,
@@ -815,6 +1017,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         startDateInvalid = isStartDateInvalid,
                         measureInvalid = measureInvalid,
                         lastCycleInvalid = preventiveCycleInvalid,
+                        isInitialSerialStateDateInvalid = isInitialSerialStateDateInvalid,
+                        isInitialSerialStateResponsableInvalid = isInitialSerialStateResponsableInvalid,
                         calculatedCycle = if (calculatedExecCycle >= 0) calculatedExecCycle else 0.0f,
                         lastCycleVal = formOsHeader.last_cycle_value ?: 0f,
                         measureSufix = mainMeasureTp?.valueSufix ?: ""
@@ -836,6 +1040,25 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
         }
+    }
+
+    private fun FormOsHeaderFrgBinding.checkStoppedDate(): Boolean {
+        clSerialInitialState.apply {
+            return if (mkDateVal.isVisible) {
+                isSerialStoppedDateInvalid(mkDateVal.getmValue(), mkdtStartDate.getmValue())
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun isSerialStoppedDateInvalid(
+        stoppedDate: String?,
+        formOsInitialDate: String?
+    ): Boolean {
+        return stoppedDate?.let {
+            !isDateBefore(it, formOsInitialDate)
+        } ?: true
     }
 
     private fun createOs() {
@@ -918,6 +1141,31 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 measure_cycle_value = getMeasureCycleValue(orderType)
             }
             date_start = binding.mkdtStartDate.getmValue()
+            //
+            binding.clSerialInitialState.swInitialStateMachine
+            //
+            initial_is_serial_stopped =
+                if (binding.clSerialInitialState.swInitialStateMachine.visibility == View.VISIBLE) {
+                    if (binding.clSerialInitialState.swInitialStateMachine.isChecked) 1 else 0
+                } else {
+                    if (binding.clSerialInitialState.rbMachineStopped.isChecked) 1 else 0
+                }
+            if (initial_is_serial_stopped == 1
+                && (initialSerialState?.showResponsableStopMachine == true)
+            ) {
+                initial_unavailability_reason =
+                    if (binding.clSerialInitialState.rbMaintenance.isChecked) ResponsibleStop.MAINTENANCE.value else ResponsibleStop.THIRD_PARTY.value
+            } else {
+                initial_unavailability_reason = if (initial_is_serial_stopped == 0) {
+                    ResponsibleStop.NO_STOPPED.value
+                } else {
+                    ResponsibleStop.STOPPED.value
+                }
+            }
+            //
+            val stoppedDate = binding.clSerialInitialState.mkDateVal.getmValue()
+            initial_stopped_date = if (stoppedDate.isNullOrBlank()) null else stoppedDate
+            //
         }
     }
 
@@ -1082,7 +1330,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         ).toFloat()
     }
 
-    private fun addIdxToVisibleLabels() {
+    /*private fun addIdxToVisibleLabels() {
         var lblIdx = 1
         labelsView.forEach { obj ->
             if (obj.visibility == View.VISIBLE) {
@@ -1091,13 +1339,69 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 lblIdx++
             }
         }
-    }
+    }*/
 
     private fun iniActions() {
         with(binding) {
-            swMachine.setOnCheckedChangeListener { _, _ ->
-                updateBkpMachineVisibility()
-                resetBkpMachineProductSerial()
+            //
+            clSerialInitialState.apply {
+
+                if (isOsCreation) {
+                    swInitialStateMachine.setOnCheckedChangeListener { _, _ ->
+                        if (swInitialStateMachine.isChecked) {
+                            mkDateVal.visibility = View.VISIBLE
+                            tvSerialStoppedDateLbl.visibility = View.VISIBLE
+                            setInitialStateSerialStoppedDateVisibility(true)
+                            setInitialStateSerialResponsableVisibility(
+                                initialSerialState?.showResponsableStopMachine ?: false
+                            )
+                        } else {
+                            setInitialStateSerialStoppedDateVisibility(false)
+                            setInitialStateSerialResponsableVisibility(false)
+                            mkDateVal.setmValue(null)
+                            rgResponsableStopMachine.visibility = View.GONE
+                            rgResponsableStopMachine.clearCheck()
+                        }
+                    }
+                    //
+                    rgStopMachine.setOnCheckedChangeListener { group, checkedId ->
+
+                        if (rbMachineStopped.isChecked) {
+                            mkDateVal.visibility = View.VISIBLE
+                            if (initialSerialState?.isTicketSerialStopped == true) {
+                                tvSerialStoppedDateLbl.visibility = View.GONE
+                            } else {
+                                tvSerialStoppedDateLbl.visibility = View.VISIBLE
+                            }
+                            initialSerialState?.let {
+                                setInitialStateSerialResponsableVisibility(it.showResponsableStopMachine)
+                            }
+                        } else {
+                            setInitialStateSerialResponsableVisibility(false)
+                            mkDateVal.visibility = View.GONE
+                            tvSerialStoppedDateLbl.visibility = View.GONE
+                        }
+                    }
+                    ivSerialSearch.setOnClickListener {
+                        if (mketMachineSerialEdit.isEnabled) {
+                            if (selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString()
+                                    .isNotEmpty()
+                            ) {
+                                mCreationListener?.searchSerialClick(
+                                    bkpSerialId = mketMachineSerialEdit.text.toString()
+                                )
+                            }
+                        } else {
+                            clearMachineSerialValue()
+                        }
+                    }
+                    swMachine.setOnCheckedChangeListener { _, _ ->
+                        updateBkpMachineVisibility()
+                        resetBkpMachineProductSerial()
+                    }
+                }
+                //
+
             }
             if (isOsCreation) {
                 ibTelemetry.setOnClickListener {
@@ -1139,9 +1443,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             if (isOsCreation
                 && !isContinuosFormPartition()
             ) {
-                ivSwapMachine.setOnClickListener {
+                /*ivSwapMachine.setOnClickListener {
                     callProductSelection()
-                }
+                }*/
                 //
                 mketMachineSerialEdit.setOnReportTextChangeListner(object :
                     MKEditTextNM.IMKEditTextChangeText {
@@ -1155,8 +1459,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                                 selectedBkpMachineSerialCode = null
                                 selectedBkpMachineSerialId = null
                             }
-                            tilMketSerial.isHelperTextEnabled = true
-                            tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
+                            tilMketSerial.isErrorEnabled = true
+                            tilMketSerial.error = hmAuxTrans["backup_serial_help_lbl"]
                             clMachineEdit.background =
                                 ContextCompat.getDrawable(
                                     requireContext(),
@@ -1165,8 +1469,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         }
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
-                }
-                )
+                })
+                //
                 mketMachineSerialEdit.setDelegateTextBySpecialist {
                     isBarcodeRead = true
                     ivSerialSearch.performClick()
@@ -1177,18 +1481,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     }
                 }
                 //
-                ivSerialSearch.setOnClickListener {
-                    if (selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString()
-                            .isNotEmpty()
-                    ) {
-                        mCreationListener?.searchSerialClick(
-                            bkpProductCode = selectedBkpMachineProduct!!.product_code,
-                            bkpSerialId = mketMachineSerialEdit.text.toString()
-                        )
-                    }
-                }
             }
         }
+    }
+
+    private fun FormOsHeaderFrgBinding.clearMachineSerialValue() {
+        mketMachineSerialEdit.text?.clear()
+        mketMachineSerialEdit.setmBARCODE(true)
+        mketMachineSerialEdit.isEnabled = true
+        ivSerialSearch.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.ic_baseline_search_24
+            )
+        )
     }
 
     private fun checkOsMainMeasureValEnable(): Boolean {
@@ -1220,12 +1526,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun initLayout(popupView: FormSupplierDialogBinding) {
         initialSerialState?.let { initialSerialState ->
 
-            val horimeterFormatted = if (isOsCreation) {
+            val horimeterFormatted = if(isOsCreation) {
                 initialSerialState.horimeter?.let {
-                    val horimeterAndSfix = ToolBox_Inf.convertFloatToBigDecimalString(
-                        it,
-                        true
-                    ) + " " + (mainMeasureTp?.valueSufix ?: "")
+                    val horimeterAndSfix = ToolBox_Inf.convertFloatToBigDecimalString(it, true) +" " +(mainMeasureTp?.valueSufix?: "")
                     if (initialSerialState.horimeter_date != null) {
                         "$horimeterAndSfix  - ${
                             ToolBox_Inf.millisecondsToString(
@@ -1242,7 +1545,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     )
                 }
-            } else {
+            }else{
                 null
             }
             //
@@ -1253,13 +1556,13 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 horimeterFormatted
             )
             //
-            val supplierDescFormatted = initialSerialState.horimeter_supplier_uid?.let {
-                if (initialSerialState.horimeter_supplier_desc != null) {
+            val supplierDescFormatted =initialSerialState.horimeter_supplier_uid?.let {
+                if(initialSerialState.horimeter_supplier_desc != null ){
                     "${initialSerialState.horimeter_supplier_uid} - ${initialSerialState.horimeter_supplier_desc}"
-                } else {
+                }else{
                     initialSerialState.horimeter_supplier_uid
                 }
-            } ?: run {
+            }?: run{
                 initialSerialState.horimeter_supplier_desc
             }
             //
@@ -1303,8 +1606,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun resetBkpMachineProductSerial() {
         with(binding) {
-            tvMachineProdEditLbl.text = defaultBkpMachineProduct?.product_desc
+//            tvMachineProdEditLbl.text = defaultBkpMachineProduct?.product_desc
             mketMachineSerialEdit.text = null
+            mketMachineSerialEdit.setmBARCODE(true)
             selectedBkpMachineProduct = if (swMachine.isChecked) defaultBkpMachineProduct else null
             clMachineEdit.background = if (swMachine.isChecked) {
                 ContextCompat.getDrawable(
@@ -1381,9 +1685,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             && resultCode == Base_Activity_Frag.RESULT_OK
         ) {
             data?.let {
-                selectedBkpMachineProduct =
+                /*selectedBkpMachineProduct =
                     it.getSerializableExtra(MD_Product::class.java.name) as MD_Product?
-                binding.tvMachineProdEditLbl.text = selectedBkpMachineProduct?.product_desc
+                binding.tvMachineProdEditLbl.text = selectedBkpMachineProduct?.product_desc*/
                 resetBkpSerialInfo()
             }
         }
@@ -1403,6 +1707,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         continuousFormStartDateInvalid: Boolean = false,
         measureInvalid: Boolean = false,
         lastCycleInvalid: Boolean = false,
+        isInitialSerialStateDateInvalid: Boolean = false,
+        isInitialSerialStateResponsableInvalid: Boolean = false,
         calculatedCycle: Float = 0f,
         lastCycleVal: Float = 0f,
         measureSufix: String = ""
@@ -1454,6 +1760,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 visibility =
                     if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_measure_cycle_error_msg"]
+                setPrefix(getString(R.string.unicode_bullet).plus(" "))
+            }
+            tvInitialSerialStateDateInvalidMsg.apply {
+                visibility =
+                    if (isInitialSerialStateDateInvalid) View.VISIBLE else View.GONE
+                text = hmAuxTrans["alert_invalid_initial_serial_state_date_error_msg"]
+                setPrefix(getString(R.string.unicode_bullet).plus(" "))
+            }
+            tvInitialSerialStateResponsableInvalidMsg.apply {
+                visibility =
+                    if (isInitialSerialStateResponsableInvalid) View.VISIBLE else View.GONE
+                text = hmAuxTrans["alert_invalid_initial_serial_state_responsable_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvLastCycleLbl.apply {
@@ -1511,12 +1829,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 View.INVISIBLE
             } else {
                 View.VISIBLE
-            }
-            //
-            tvBkpProductInfo.apply {
-                text = selectedBkpMachineProduct?.let {
-                    ToolBox_Inf.getFormattedGenericIdDesc(it.product_id, it.product_desc)
-                }
             }
             //
             rvBkpSerial.apply {

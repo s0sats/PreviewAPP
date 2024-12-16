@@ -1,8 +1,9 @@
-package com.namoadigital.prj001.core.module
+
+package com.namoadigital.prj001.core.module.trip
 
 import android.content.Context
-import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepository
-import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepositoryImp
+import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepository
+import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepositoryImp
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepositoryImp
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
@@ -13,12 +14,12 @@ import com.namoadigital.prj001.core.trip.data.destination.action.TripDestination
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepositoryImp
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_SiteDao
 import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -26,7 +27,6 @@ import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FSTripUserDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
-import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepository
 import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepositoryImp
 import com.namoadigital.prj001.ui.act005.trip.repository.users.TripUserRepository
@@ -40,7 +40,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object RepositoryModule {
+object TripRepositoryModule {
 
     @ViewModelScoped
     @Provides
@@ -82,8 +82,9 @@ object RepositoryModule {
     @Provides
     fun providesRepositoryTicket(
         @ApplicationContext app: Context,
-        dao: TK_TicketDao
-    ): TicketRepository = TicketRepositoryImp(app, dao)
+        dao: TK_TicketDao,
+        formDao: TK_Ticket_FormDao
+    ): TicketRepository = TicketRepositoryImp(app, dao, formDao)
 
     @ViewModelScoped
     @Provides
@@ -117,9 +118,10 @@ object RepositoryModule {
     @ViewModelScoped
     @Provides
     fun providesSerialRepository(
+        @ApplicationContext app: Context,
         dao: MD_Product_SerialDao
-    ): SerialRepository {
-        return SerialRepositoryImp(dao)
+    ): ProductSerialRepository {
+        return ProductSerialRepositoryImp(app, dao)
     }
 
 

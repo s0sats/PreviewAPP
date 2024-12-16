@@ -96,6 +96,30 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_measure_invalid_val_msg" />
 
     <TextView
+        android:id="@+id/tv_initial_serial_state_date_invalid_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:text="Cycle Zero"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_measure_invalid_zero_cycle_msg" />
+
+    <TextView
+        android:id="@+id/tv_initial_serial_state_responsable_invalid_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:text="Cycle Zero"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_initial_serial_state_date_invalid_msg" />
+
+    <TextView
         android:id="@+id/tv_measure_invalid_cycle_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -105,7 +129,7 @@
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_measure_invalid_zero_cycle_msg" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_initial_serial_state_responsable_invalid_msg" />
 
     <TextView
         android:id="@+id/tv_last_cycle_val"

@@ -21,7 +21,7 @@ sealed class IResult<out DTO> {
         fun failed(exceptionError: Throwable) = isFailed(exceptionError)
         fun error(message: String? = null, exceptionError: Throwable? = null) = isError(message, exceptionError)
 
-        fun loading(isLoading: Boolean = true, message: String = "Waiting...") =
+        fun loading(isLoading: Boolean = true, message: String = "") =
             isLoading(isLoading, message)
 
         suspend fun <DTO> IResult<DTO>.isSuccess(block: suspend (DTO) -> Unit) = apply {

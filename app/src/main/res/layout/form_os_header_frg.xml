@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,19 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-            <include
-                android:id="@+id/notification_partial"
-                layout="@layout/notication_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="8dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <include
                 android:id="@+id/inc_header"
                 layout="@layout/act011_frg_include_header"
@@ -39,7 +27,20 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notification_partial" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <include
+                android:id="@+id/cl_serial_initial_state"
+                layout="@layout/inc_serial_initial_state"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inc_header" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_os_content"
@@ -50,7 +51,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inc_header"
+                app:layout_constraintTop_toBottomOf="@id/cl_serial_initial_state"
                 app:layout_constraintBottom_toTopOf="@id/inc_navegation"
                 >
 
@@ -61,50 +62,14 @@
                     android:orientation="vertical"
                     app:layout_constraintGuide_begin="6dp" />
 
-                <TextView
-                    android:id="@+id/tv_os_type_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="1. Tipo de Order de serviço" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:minHeight="36dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl"
-                    android:background="@drawable/bg_namoa_spinner"
-                    >
-
-                    <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/sp_os_type"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_machine_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cl_spinner"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:padding="2dp">
 
                     <androidx.constraintlayout.widget.Guideline
@@ -118,10 +83,14 @@
                         android:id="@+id/tv_os_machine_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
                         android:gravity="center_vertical"
+                        android:minHeight="48dp"
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/namoa_color_black"
                         app:layout_constraintEnd_toStartOf="@id/br_switch"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="2. Usar maquina reserva" />
@@ -136,7 +105,7 @@
                         android:id="@+id/gp_bkp_machine_val"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="tv_machine_prod_edit_lbl,iv_swap_machine,til_mket_serial,iv_serial_search"
+                        app:constraint_referenced_ids="til_mket_serial,iv_serial_search"
                         android:visibility="visible"
                         />
 
@@ -150,29 +119,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/br_switch"
                         app:layout_constraintTop_toTopOf="@id/tv_os_machine_lbl"
-                        app:thumbTint="@color/namoa_switch_color_states"
-                        app:trackTint="@color/namoa_switch_track_color_states" />
-
-                    <TextView
-                        android:id="@+id/tv_machine_prod_edit_lbl"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:gravity="center_vertical"
-                        android:text="Empilhadeira"
-                        android:paddingStart="4dp"
-                        app:layout_constraintEnd_toEndOf="@id/tv_os_machine_lbl"
-                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
-                        app:layout_constraintTop_toBottomOf="@id/tv_os_machine_lbl" />
-
-                    <ImageView
-                        android:id="@+id/iv_swap_machine"
-                        style="@style/ImageViewButtonStd"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_machine_prod_edit_lbl"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/sw_machine"
-                        app:layout_constraintTop_toTopOf="@id/tv_machine_prod_edit_lbl"
-                        app:srcCompat="@drawable/ic_swap_horiz_black_24dp" />
+                        app:thumbTint="@color/namoa_form_onboard_switch_color_states"
+                        app:trackTint="@color/namoa_form_onboard_switch_track_color_states" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_mket_serial"
@@ -180,19 +128,21 @@
                         android:layout_height="wrap_content"
                         app:helperText="Informe o serial"
                         app:helperTextEnabled="false"
-                        app:helperTextTextAppearance="@style/TextInputLayoutHelperTextColorRequired"
-                        app:layout_constraintEnd_toEndOf="@id/tv_machine_prod_edit_lbl"
-                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
-                        app:layout_constraintTop_toBottomOf="@id/tv_machine_prod_edit_lbl"
+                        app:errorTextAppearance="@style/TextInputLayoutHelperTextColorRequired"
                         app:hintEnabled="false"
-                        >
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/tv_os_machine_lbl"
+                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
+                        app:layout_constraintTop_toBottomOf="@id/tv_os_machine_lbl">
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                             android:id="@+id/mket_machine_serial_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="48dp"
                             android:hint="Digite o serial"
+                            android:minHeight="48dp"
                             app:mBARCODE="true"
                             app:mNFC="false"
                             app:mOCR="false"
@@ -203,6 +153,7 @@
                         android:id="@+id/iv_serial_search"
                         style="@style/ImageViewButtonStd"
                         android:layout_marginTop="4dp"
+                        android:background="@drawable/my_action_toogle_default_inset"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/sw_machine"
                         app:layout_constraintTop_toTopOf="@id/til_mket_serial"
@@ -213,19 +164,120 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
+                    android:id="@+id/tv_info_os_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="Informações da OS "
+                    android:textColor="@color/namoa_color_black"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/font_size_font_20"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cl_machine_edit"
+                    />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/ll_schedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/tv_info_os_lbl"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_schedule_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Titulo do Comentário"
+                        android:textColor="@color/namoa_color_blue_dark_chat"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tv_comments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sem Valor"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <TextView
+                    android:id="@+id/tv_os_type_lbl"
+                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/namoa_color_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toBottomOf="@id/ll_schedule"
+                    tools:text="1. Tipo de Order de serviço" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="16dp"
+                    android:minHeight="36dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl"
+                    android:background="@drawable/bg_namoa_spinner"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/sp_os_type"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:textColor="@color/namoa_color_black"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <include
+                    android:id="@+id/notification_partial"
+                    layout="@layout/notication_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginVertical="8dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cl_spinner" />
+
+
+                <TextView
                     android:id="@+id/tv_os_start_date_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/namoa_color_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toBottomOf="@id/cl_machine_edit"
+                    app:layout_constraintTop_toBottomOf="@id/notification_partial"
                     tools:text="3. Date e horario de inicio" />
 
                 <com.namoa_digital.namoa_library.ctls.MkDateTime
                     android:id="@+id/mkdt_start_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/namoa_color_black"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_os_start_date_lbl"
@@ -244,6 +296,8 @@
                         android:id="@+id/tv_os_main_measure_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/namoa_color_black"
                         app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -255,6 +309,8 @@
                         android:layout_height="wrap_content"
                         android:hint="Digite o valor atual"
                         android:inputType="numberDecimal"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/namoa_color_black"
                         app:mInputType="NUMBER"
                         app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
                         app:layout_constraintStart_toStartOf="parent"
@@ -290,7 +346,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         style="@style/NamoaTheme3.Button.Icon.Filled"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -307,6 +363,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Ultimo valor:"
+                        android:layout_marginStart="16dp"
                         app:layout_constraintWidth_percent="0.25"
                         android:layout_marginTop="2dp"
                         android:textColor="@color/namoa_color_gray_9"
@@ -336,6 +393,7 @@
                     tools:text="10400h - 31/08/2021 15:30 "
                     android:textColor="@color/namoa_color_gray_9"
                     android:textSize="@dimen/font_size_font_16"
+                    android:layout_marginStart="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
                     android:thumb="@drawable/namoa_switch_states"
@@ -345,18 +403,17 @@
 
                 <Button
                     android:id="@+id/btn_save"
+                    style="@style/NamoaSaveButtonDarkBlue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sw_allow_form_so_in_the_past"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="16dp"
-                    style="@style/NamoaSaveButtonDarkBlue"
-                    tools:text="save"
-                    />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toBottomOf="@id/sw_allow_form_so_in_the_past"
+                    tools:text="save" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

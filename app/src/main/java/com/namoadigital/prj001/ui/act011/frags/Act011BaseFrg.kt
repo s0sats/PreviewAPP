@@ -9,19 +9,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
+import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.HashMap
 
 abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFrgValidation{
     protected val PARAM_LAST_INDEX = "LAST_INDEX"
@@ -137,7 +132,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     private fun iniIncludeHeaderUI() {
         val headerInclude = getHeaderInclude()
         handleSerialCardInfos(headerInclude)
-        handleScheduleInfos(headerInclude)
     }
 
     /**
@@ -155,9 +149,9 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     /**
      * Configura as views com as infos de agendamento.
      */
-    private fun handleScheduleInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
-        with(headerInclude){
-            if(isFirstTab()) {
+    private fun handleScheduleInfos(binding: FormOsHeaderFrgBinding) {
+        binding.apply {
+            if (isFirstTab()) {
                 tvComments.apply {
                     text = scheduleComments ?: ""
                     visibility = if (scheduleComments.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -166,7 +160,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
                     text = scheduleDesc ?: ""
                     visibility = if (scheduleDesc.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
-            }else{
+            } else {
                 tvComments.visibility = View.GONE
                 tvScheduleDesc.visibility = View.GONE
             }

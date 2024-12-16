@@ -16,3 +16,9 @@ inline fun <reified C> Bundle.putApiRequest(apiRequest: List<C>): Bundle {
     this.putString(C::class.java.name, json)
     return this
 }
+
+fun Bundle?.getIntArguments(key: String) = this?.getInt(key, -1) ?: -1
+fun Bundle?.getLongArguments(key: String) = this?.getLong(key, -1L) ?: -1L
+fun Bundle?.getStringArguments(key: String) = this?.getString(key, "") ?: ""
+fun Bundle?.getBooleanArguments(key: String) = this?.getBoolean(key, false) ?: false
+

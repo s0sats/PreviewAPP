@@ -5,8 +5,7 @@ import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.S
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.ticket.TicketUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.ui.act092.data.repository.IActionSerialRepository.Companion.ActionSerialRepositoryFactoryRepository
@@ -17,7 +16,7 @@ data class ActionPreferenceUseCases(
     val setPreferences: SetModelPreferencesUseCase? = null,
     val getPreferences: GetSerialModelPreferencesUseCase? = null,
     val reset: ResetSerialModelPreferenceUseCase? = null,
-    val getTicket: GetTicketUseCase? = null
+    val getTicket: GetTicketByIdUseCase? = null
 ) {
     class ActionUseCasesPreferenceFactory constructor(
         private val context: Context
@@ -29,7 +28,7 @@ data class ActionPreferenceUseCases(
             return ActionPreferenceUseCases(
                 setPreferences = SetModelPreferencesUseCase(repository),
                 reset = ResetSerialModelPreferenceUseCase(repository),
-                getTicket = GetTicketUseCase(TicketRepositoryImp(context, TK_TicketDao(context)))
+                getTicket = GetTicketByIdUseCase(TicketRepositoryImp(context, TK_TicketDao(context)))
             )
         }
 

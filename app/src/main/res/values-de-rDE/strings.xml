@@ -171,5 +171,6 @@
 
     <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
     <string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN.\n\nFolgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
+    <string name="msg_login_invalid_json_response">Ungültige Daten empfangen. Versuchen Sie bitte später erneut oder kontaktieren Sie bitte NAMOAs Support-Team, um die Verfügbarkeit des Services zu überprüfen.</string>
 
 </resources>

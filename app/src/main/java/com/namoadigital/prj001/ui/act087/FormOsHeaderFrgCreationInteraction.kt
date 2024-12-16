@@ -9,9 +9,10 @@ import com.namoadigital.prj001.model.TK_Ticket_Form
 
 interface FormOsHeaderFrgCreationInteraction {
     fun getOrderTypeList(orderTypeCode: Int = -1) : ArrayList<MdOrderType>
-    fun searchSerialClick(bkpProductCode: Long,bkpSerialId: String)
+    fun searchSerialClick(bkpSerialId: String)
     fun createOsHeader(formOsHeader: GeOs)
     fun getDefaultBkpMachineProduct() : MD_Product?
+    fun getMdProduct(code: Long): MD_Product?
     fun getFormSerialId(): String
     fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean)
     fun getMeasure(measureCode: Int) : MeMeasureTp?

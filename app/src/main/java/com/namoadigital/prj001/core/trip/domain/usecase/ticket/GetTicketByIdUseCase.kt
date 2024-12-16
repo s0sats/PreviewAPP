@@ -4,9 +4,9 @@ import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.model.TK_Ticket
 
-class GetTicketUseCase constructor(
+class GetTicketByIdUseCase constructor(
     private val repository: TicketRepository
-): UseCaseWithoutFlow<GetTicketUseCase.GetTicketParams, TK_Ticket?>{
+): UseCaseWithoutFlow<GetTicketByIdUseCase.GetTicketParams, TK_Ticket?>{
 
     data class GetTicketParams(
         val prefix: Int,

@@ -43,12 +43,13 @@ val LightColorScheme = lightColorScheme(
 
 @Composable
 fun NamoaTheme(
+    sideEffect: Boolean = true,
     content: @Composable() () -> Unit
 ) {
     val colorScheme = LightColorScheme
 
     val view = LocalView.current
-    if (!view.isInEditMode) {
+    if (!view.isInEditMode && sideEffect) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()

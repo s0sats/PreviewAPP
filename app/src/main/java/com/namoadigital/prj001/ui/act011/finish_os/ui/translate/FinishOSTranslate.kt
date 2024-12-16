@@ -1,0 +1,61 @@
+package com.namoadigital.prj001.ui.act011.finish_os.ui.translate
+
+
+const val DIALOG_FINALIZE_FORM_SO_TTL = "dialog_finalize_form_so_ttl"
+
+const val INITIAL_SERIAL_STATE_TTL = "initial_serial_state_ttl"
+const val INITIAL_SERIAL_STATE_STOPPED_TTL = "initial_serial_state_stopped_ttl"
+const val INITIAL_SERIAL_STATE_SWITCH_LBL = "initial_serial_state_switch_lbl"
+const val INITIAL_SERIAL_STATE_DATE_LBL = "initial_serial_state_date_lbl"
+const val INITIAL_SERIAL_STATE_RESPONSIBLE_LBL = "initial_serial_state_responsible_lbl"
+const val INITIAL_SERIAL_STATE_MAINTENANCE_OPT = "initial_serial_state_maintenance_opt"
+const val INITIAL_SERIAL_STATE_NO_STOPPED_OPT = "initial_serial_state_no_stopped_opt"
+const val INITIAL_SERIAL_STATE_THIRD_PARTY_ERROR_OPT = "initial_serial_state_third_party_error_opt"
+const val DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL = "dialog_finalize_os_empty_verify_lbl"
+const val MKDATETIME_DATE_TTL = "mkdatetime_date_ttl"
+const val MKDATETIME_HOUR_TTL = "mkdatetime_hour_ttl"
+const val DIALOG_FINALIZE_OS_FORM_START_DATE_LBL = "dialog_finalize_os_form_start_date_lbl"
+const val DIALOG_FINALIZE_OS_FORM_END_DATE_LBL = "dialog_finalize_os_form_end_date_lbl"
+const val DIALOG_FINALIZE_OS_FORM_ELAPSED_TIME_LBL = "dialog_finalize_os_form_elapsed_time_lbl"
+const val DIALOG_FINALIZE_OS_FORM_INVALID_START_DATE_MSG =
+    "dialog_finalize_os_form_invalid_start_date_msg"
+const val DIALOG_FINALIZE_OS_BTN_SAVE = "dialog_finalize_os_btn_save"
+const val DIALOG_FINALIZE_OS_BTN_CANCEL = "dialog_finalize_os_btn_cancel"
+const val DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL =
+    "dialog_finalized_os_info_start_date_exceeded_end_date_lbl"
+const val DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL =
+    "dialog_finalize_os_info_end_date_exceeded_start_date_lbl"
+const val FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL = "form_os_info_end_date_future_error_lbl"
+const val DIALOG_NOT_FINALIZE_INFO_LBL = "dialog_not_finalized_info_lbl"
+const val DIALOG_NOT_FINALIZE_DECIDE_PLANNING_LBL = "dialog_not_finalized_decide_planning_lbl"
+const val DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL = "dialog_not_finalized_partial_execution_lbl"
+const val DIALOG_NOT_FINALIZED_DATE_INCORRECT_LBL = "dialog_not_finalized_date_incorrect_lbl"
+const val DIALOG_FINALIZE_OS_AFTER_TITLE_LBL = "dialog_finalized_os_after_title_lbl"
+const val DIALOG_FINALIZED_OS_MACHINE_STOPPED_SWITCH_TTL =
+    "dialog_finalized_os_machine_stopped_switch_ttl"
+const val DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_MAINTENANCE =
+    "dialog_finalized_os_option_stopped_by_maintenance"
+const val DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_THIRD_PARTY =
+    "dialog_finalized_os_option_stopped_by_third_party"
+const val DIALOG_FINALIZE_INITIAL_MACHINE_DATE_EMPTY_ERROR_LBL =
+    "dialog_finalize_initial_machine_date_empty_error_lbl"
+const val DIALOG_FINALIZE_INITIAL_MACHINE_DATE_EXCEED_FORM_START_ERROR_LBL =
+    "dialog_finalize_initial_machine_date_exceed_form_start_error_lbl"
+const val DIALOG_FINALIZE_BACKUP_MACHINE_TTL = "dialog_finalize_backup_machine_ttl"
+const val DIALOG_FINALIZE_BACKUP_MACHINE_SWITCH_TTL = "dialog_finalize_backup_machine_switch_ttl"
+const val DIALOG_FINALIZE_BACKUP_MACHINE_HINT = "dialog_finalize_backup_machine_hint"
+const val DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_LAST_MEASURE_DATE_LBL =
+    "dialog_finalize_os_info_start_date_exceeded_last_measure_date_lbl"
+const val DIALOG_FINALIZE_FORM_OS_DATE_EXCEED_MACHINE_DATE_STOPPED_LBL =
+    "dialog_finalize_form_os_date_exceed_machine_date_stopped_lbl"
+const val DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_TTL =
+    "dialog_finalize_form_os_dialog_close_confirm_ttl"
+const val DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_MSG =
+    "dialog_finalize_form_os_dialog_close_confirm_msg"
+
+const val DIALOG_INVALID_INITIAL_SERIAL_STATE_DATE_ERROR_MSG = "dialog_invalid_initial_serial_state_date_error_msg"
+const val DIALOG_FINALIZE_FORM_SO_INFO_LBL = "dialog_finalize_form_so_info_lbl"
+const val DIALOG_SELECT_BACKUP_MACHINE_TTL = "dialog_select_backup_machine_ttl"
+const val DIALOG_SELECT_BACKUP_MACHINE_EMPTY_LBL = "dialog_select_backup_machine_empty_lbl"
+const val DIALOG_SELECT_BACKUP_SERIAL_HELP_LBL = "backup_serial_help_lbl"
+const val DIALOG_SELECT_BACKUP_SERIAL_HINT = "backup_serial_hint"

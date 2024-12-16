@@ -14,7 +14,6 @@ class Act087Sql_001(
     private val customerCode: Long,
     private val productCode: Long,
     private val serialId: String,
-    private val bkpProductCode: Long,
     private val bkpSerialId: String,
     private val siteCode: Int
 ) : Specification {
@@ -25,7 +24,6 @@ class Act087Sql_001(
                       ${MD_Product_SerialDao.TABLE} s
                     WHERE
                       s.${MD_Product_SerialDao.CUSTOMER_CODE} = $customerCode
-                      and s.${MD_Product_SerialDao.PRODUCT_CODE} = $bkpProductCode
                       and s.${MD_Product_SerialDao.SERIAL_ID} GLOB upper('*$bkpSerialId*')
                       and ( s.${MD_Product_SerialDao.CUSTOMER_CODE}||'.'||
                             s.${MD_Product_SerialDao.PRODUCT_CODE}||'.'||

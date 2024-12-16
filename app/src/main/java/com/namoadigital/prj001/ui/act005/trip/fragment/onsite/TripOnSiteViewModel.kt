@@ -6,7 +6,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUs
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.DestinationActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.DownloadTicketUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.TicketUseCase
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.trip.DestinationStatus
@@ -47,7 +47,7 @@ class TripOnSiteViewModel @Inject constructor(
         prefix: Int,
         code: Int,
     ): TK_Ticket? {
-        return ticketUseCase.get(GetTicketUseCase.GetTicketParams(prefix, code))
+        return ticketUseCase.get(GetTicketByIdUseCase.GetTicketParams(prefix, code))
     }
 
     fun downloadTicket(

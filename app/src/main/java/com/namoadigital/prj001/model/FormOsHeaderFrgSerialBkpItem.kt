@@ -2,6 +2,8 @@ package com.namoadigital.prj001.model
 
 class FormOsHeaderFrgSerialBkpItem(
     val productCode: Int,
+    val productId: String,
+    val productDesc: String,
     val serialCode: Int,
     val serialId: String,
     val siteCode: Int?,

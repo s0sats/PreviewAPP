@@ -28,6 +28,21 @@ fun String.convertDateToFullTimeStampGMT(inputFormat: String = DATE_FORMAT, outp
     return formattedDate
 }
 
+
+fun String.convertToDate(inputFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT): Date? {
+    val sdfInput = SimpleDateFormat(inputFormat, Locale.getDefault())
+    return if (this.trim().isNotEmpty() && !this.equals("null", ignoreCase = true)) {
+        try {
+            sdfInput.parse(this)
+        } catch (e: ParseException) {
+            null
+        }
+    } else {
+        null
+    }
+}
+
+
 fun String.toFormattedDateAndTime(): Date? {
     val format = SimpleDateFormat("dd/MM/yy HH:mm", Locale.getDefault())
     return try {
@@ -86,6 +101,85 @@ fun calculateMinutesBetweenDates(
         ToolBox_Inf.registerException("CalculateMinutesBetweenDates", e)
         -1L
     }
+}
+
+
+fun compareDates(
+    startDate: String,
+    endDate: String,
+    startDateFormat: String = ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+    endDateFormat: String = ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+    comparator: (Date, Date) -> Boolean
+): Boolean {
+    val startDateFormat = SimpleDateFormat(startDateFormat, Locale.getDefault())
+    val endDateFormat = SimpleDateFormat(endDateFormat, Locale.getDefault())
+    return try {
+        if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) return false
+        val dateStart = startDateFormat.parse(startDate)
+        val dateEnd = endDateFormat.parse(endDate)
+        dateStart?.let { start ->
+            dateEnd?.let { end ->
+                comparator(start, end)
+            }
+        } ?: false
+    } catch (e: Exception) {
+        ToolBox_Inf.registerException("compareDate", e)
+        false
+    }
+}
+
+private fun String.compareDateToCurrent(
+    startFormatDate: String = FULL_TIMESTAMP_TZ_FORMAT_GMT,
+    comparator: (Date, Date) -> Boolean
+): Boolean {
+    val simpleDate = SimpleDateFormat(startFormatDate)
+    val currentSimpleDate = SimpleDateFormat(FULL_TIMESTAMP_TZ_FORMAT_GMT)
+    return try {
+        if (this.trim().isEmpty()) return false
+        val userDate = simpleDate.parse(this)
+        val dialogDate = currentSimpleDate.parse(getCurrentDateApi())
+        userDate?.let { user ->
+            dialogDate?.let { current ->
+                comparator(user, current)
+            }
+        } ?: false
+    } catch (e: Exception) {
+        ToolBox_Inf.registerException("compareDateToCurrent", e)
+        false
+    }
+}
+
+fun String.dateIsFuture(): Boolean {
+    return this.compareDateToCurrent { userDate, currentDate ->
+        userDate.after(currentDate)
+    }
+}
+
+fun isDateBeforeOrEquals(startDate: String, endDate: String?): Boolean {
+    return endDate?.let { date ->
+        compareDates(
+            startDate,
+            date
+        ) { startDate, threshold -> startDate.before(threshold) || startDate == threshold }
+    } ?: false
+}
+
+fun isDateBefore(startDate: String, endDate: String?): Boolean {
+    return endDate?.let { date ->
+        compareDates(
+            startDate,
+            date
+        ) { startDate, threshold -> startDate.before(threshold) }
+    } ?: false
+}
+
+fun isDateEquals(startDate: String, endDate: String?): Boolean {
+    return endDate?.let { date ->
+        compareDates(
+            startDate,
+            date
+        ) { startDate, threshold -> startDate == threshold }
+    } ?: false
 }
 
 fun String.getDateDiferenceInMinutes(secoundDate:String):Long{

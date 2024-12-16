@@ -3285,6 +3285,9 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("lib_camera_menu_option_add_oval", (!Constant.HMAUX_TRANS_LIB.containsKey("lib_camera_menu_option_add_oval") || Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_oval").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_oval")));
         Constant.HMAUX_TRANS_LIB.put("btn_clear", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_clear") || Constant.HMAUX_TRANS_LIB.get("btn_clear").contains(Constant.APP_MODULE + "/") ? "btn_clear" : Constant.HMAUX_TRANS_LIB.get("btn_clear")));
 
+        Constant.HMAUX_TRANS_LIB.put("mdots_form_fields_photo_nc_required", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_form_fields_photo_nc_required") || Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_photo_nc_required").contains(Constant.APP_MODULE + "/") ? "mdots_form_fields_photo_nc_required" : Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_photo_nc_required")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_alert_form_fields_info", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_alert_form_fields_info") || Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_info").contains(Constant.APP_MODULE + "/") ? "mdots_alert_form_fields_info" : Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_info")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_form_fields_required", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_form_fields_required") || Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_required").contains(Constant.APP_MODULE + "/") ? "mdots_form_fields_required" : Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_required")));
 
     }
 

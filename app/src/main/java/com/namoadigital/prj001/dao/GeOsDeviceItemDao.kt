@@ -15,6 +15,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -23,8 +24,8 @@ import java.lang.Boolean.getBoolean
 
 class GeOsDeviceItemDao(
     context: Context,
-    mDB_NAME: String,
-    mDB_VERSION: Int
+    mDB_NAME: String = ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+    mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<GeOsDeviceItem> {
@@ -117,7 +118,8 @@ class GeOsDeviceItemDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(item)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet =
+                db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
@@ -125,7 +127,8 @@ class GeOsDeviceItemDao(
             }
             //
             item?.materialList.let {
-                daoObjReturn = tryAddUpdateMaterials(item!!,it?: mutableListOf<GeOsDeviceMaterial>(), db)
+                daoObjReturn =
+                    tryAddUpdateMaterials(item!!, it ?: mutableListOf<GeOsDeviceMaterial>(), db)
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -165,10 +168,14 @@ class GeOsDeviceItemDao(
 
 
     override fun addUpdate(items: MutableList<GeOsDeviceItem>?, status: Boolean): DaoObjReturn {
-        return addUpdate(items, status,null)
+        return addUpdate(items, status, null)
     }
 
-    fun addUpdate(items: MutableList<GeOsDeviceItem>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
+    fun addUpdate(
+        items: MutableList<GeOsDeviceItem>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -194,7 +201,9 @@ class GeOsDeviceItemDao(
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet =
+                    db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null)
+                        .toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
@@ -245,12 +254,13 @@ class GeOsDeviceItemDao(
         //
         return daoObjReturn
     }
+
     //
     private fun tryAddUpdateMaterials(
         geOsDeviceItem: GeOsDeviceItem,
         materials: MutableList<GeOsDeviceMaterial>,
         db: SQLiteDatabase
-    ): DaoObjReturn{
+    ): DaoObjReturn {
         val geOsDeviceMaterialDao = geOsDeviceMaterialDao()
         //Tenta remover a lista atual
         val daoObjReturn = geOsDeviceMaterialDao.removeAllForGeOsDeviceItem(
@@ -258,7 +268,7 @@ class GeOsDeviceItemDao(
             db
         )
         //Se erro, reporta
-        if(daoObjReturn.hasError()){
+        if (daoObjReturn.hasError()) {
             return daoObjReturn
         }
         //Senão tem erro, atualiza.
@@ -273,6 +283,7 @@ class GeOsDeviceItemDao(
             Constant.DB_VERSION_CUSTOM
         )
     }
+
     //
     override fun addUpdate(sQuery: String?) {
         openDB()
@@ -304,7 +315,7 @@ class GeOsDeviceItemDao(
             while (cursor.moveToNext()) {
                 item = toGeOsDeviceItemMapper.map(cursor)
                 item?.apply {
-                        getMaterialList(this)
+                    getMaterialList(this)
                 }
             }
             //
@@ -323,7 +334,8 @@ class GeOsDeviceItemDao(
         //
         geOsDeviceItem
             .materialList
-            .addAll(geOsDeviceMaterialDao.query(
+            .addAll(
+                geOsDeviceMaterialDao.query(
                     GeOsDeviceMaterialSql_002(
                         geOsDeviceItem.customer_code,
                         geOsDeviceItem.custom_form_type,
@@ -337,7 +349,7 @@ class GeOsDeviceItemDao(
                         geOsDeviceItem.item_check_seq
                     ).toSqlQuery()
                 )
-        )
+            )
     }
 
     override fun getByStringHM(sQuery: String?): HMAux? {
@@ -354,7 +366,7 @@ class GeOsDeviceItemDao(
         } finally {
         }
         closeDB()
-        return  item
+        return item
     }
 
     override fun query(sQuery: String?): MutableList<GeOsDeviceItem> {
@@ -399,7 +411,7 @@ class GeOsDeviceItemDao(
     /**
      * Fun que remove o item e os materiais ela vinculados.
      */
-    fun removeFull(geOsDeviceItem: GeOsDeviceItem) : DaoObjReturn{
+    fun removeFull(geOsDeviceItem: GeOsDeviceItem): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         val curAction = DaoObjReturn.DELETE
@@ -411,8 +423,8 @@ class GeOsDeviceItemDao(
         try {
             db.beginTransaction()
             //
-            addUpdateRet += db.delete(TABLE,wherePkClause,null)
-            addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE, wherePkClause, null)
             //
             db.setTransactionSuccessful()
         } catch (e: SQLiteException) {
@@ -444,6 +456,32 @@ class GeOsDeviceItemDao(
 
     }
 
+    fun getListDeviceItemById(
+        customerCode: Long,
+        formType: Int,
+        formCode: Int,
+        formVersion: Int,
+        formData: Long,
+        productCode: Long,
+        serialCode: Long,
+        deviceTpCode: Int
+    ): List<GeOsDeviceItem>? {
+
+        return query(
+            GeOsDeviceItem_Sql_006(
+                customerCode,
+                formType,
+                formCode,
+                formVersion,
+                formData.toInt(),
+                productCode,
+                serialCode,
+                deviceTpCode
+            ).toSqlQuery()
+        )
+
+    }
+
     class CursorToGeOsDeviceItemMapper : Mapper<Cursor, GeOsDeviceItem> {
         override fun map(cursor: Cursor?): GeOsDeviceItem? {
             cursor?.let {
@@ -463,7 +501,11 @@ class GeOsDeviceItemDao(
                         item_check_desc = getString(getColumnIndex(ITEM_CHECK_DESC)),
                         item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)),
-                        verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
+                        verification_instruction = getStringOrNull(
+                            getColumnIndex(
+                                VERIFICATION_INSTRUCTION
+                            )
+                        ),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
@@ -471,7 +513,11 @@ class GeOsDeviceItemDao(
                         structure = getInt(getColumnIndex(STRUCTURE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getFloatOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
-                        next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
+                        next_cycle_measure_date = getStringOrNull(
+                            getColumnIndex(
+                                NEXT_CYCLE_MEASURE_DATE
+                            )
+                        ),
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         restriction_decimal = getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),

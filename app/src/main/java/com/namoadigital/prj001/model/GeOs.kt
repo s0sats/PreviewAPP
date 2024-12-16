@@ -38,15 +38,27 @@ class GeOs(
     @SerializedName("so_order_type_code_default") val so_order_type_code_default: Int?,
     @SerializedName("so_allow_change_order_type") val so_allow_change_order_type: Int,
     @SerializedName("so_allow_backup") val so_allow_backup: Int,
-    @SerializedName("device_tp_code_main") val device_tp_code_main: Int?
-):Serializable{
+    @SerializedName("device_tp_code_main") val device_tp_code_main: Int?,
+    @SerializedName("initial_is_serial_stopped") var initial_is_serial_stopped: Int? = null,
+    @SerializedName("initial_stopped_date") var initial_stopped_date: String? = null,
+    @SerializedName("initial_unavailability_reason") var initial_unavailability_reason: String? = null,
+    @SerializedName("final_is_serial_stopped") var final_is_serial_stopped: Int? = null,
+    @SerializedName("final_unavailability_reason") var final_unavailability_reason: String? = null,
+    var allowFormInThePast: Int? = 0,
+) : Serializable {
     /**
      *  BARRIONUEVO - 11-=08-2022
      *  METODO QUE TRAZ O MAIOR ENTRE CICLO CONSIDERADO E VALOR INSERIDO PELO USER.
      */
-    fun maxMeasureValue():Float{
-        val mMeasure_value = measure_value?: 0f
-        val mMeasure_cycle_value = measure_cycle_value?: 0f
-        return if(mMeasure_value>mMeasure_cycle_value){mMeasure_value}else{mMeasure_cycle_value}
+    fun maxMeasureValue(): Float {
+        val mMeasure_value = measure_value ?: 0f
+        val mMeasure_cycle_value = measure_cycle_value ?: 0f
+        return if (mMeasure_value > mMeasure_cycle_value) {
+            mMeasure_value
+        } else {
+            mMeasure_cycle_value
+        }
     }
+
+
 }

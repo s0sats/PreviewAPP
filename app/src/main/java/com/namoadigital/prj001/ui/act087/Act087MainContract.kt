@@ -40,7 +40,7 @@ interface Act087MainContract {
         fun getProductInfo(productCode: Int): MD_Product?
         fun getMeasure(measureCode: Int): MeMeasureTp?
         fun createOsHeader(formOsHeader: GeOs)
-        fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String)
+        fun executeWsBkpMachine(bkpSerialId: String)
         fun processWsBkpMachineResult(mLink: String?)
         fun onBackPressedClicked(anyDataChanged: Boolean)
         fun isSchedule(): Boolean
@@ -50,5 +50,6 @@ interface Act087MainContract {
         fun hasPassedDay(): Int
         fun getTkTicketForm(): TK_Ticket_Form?
         fun getInitialSerialState(): InitialSerialState?
+        fun getMdProduct(customerCode: Long, code: Long): MD_Product?
     }
 }

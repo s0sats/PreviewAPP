@@ -16,6 +16,7 @@ import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -23,6 +24,7 @@ import com.namoadigital.prj001.util.ScheduleFormFatory
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
+import java.util.Locale
 
 class Act087MainPresenter(
     private val context: Context,
@@ -44,6 +46,7 @@ class Act087MainPresenter(
     private val scheduleCode: Int?,
     private val scheduleExec: Int?,
     private val scheduleDao: MD_Schedule_ExecDao,
+    private val ticketDao: TK_TicketDao,
     private val originFlow: String = ConstantBaseApp.ACT005,
     private var custom_form_dataDao: GE_Custom_Form_DataDao,
     private var ticketPrefix: Int?,
@@ -249,7 +252,8 @@ class Act087MainPresenter(
             so_order_type_code_default = mCustomForm.so_order_type_code_default,
             so_allow_change_order_type = mCustomForm.so_allow_change_order_type,
             device_tp_code_main = serialObj.device_tp_code_main,
-            so_allow_backup =  mCustomForm.so_allow_backup
+            so_allow_backup =  mCustomForm.so_allow_backup,
+
         )
     }
 
@@ -324,7 +328,7 @@ class Act087MainPresenter(
      * @param bkpProductCode Codigo do produto da maquina reserva
      * @param bkpSerialId Id do serial digitado
      */
-    override fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String) {
+    override fun executeWsBkpMachine(bkpSerialId: String) {
         if(ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Product_Serial_Backup::class.java.name)
             //
@@ -339,7 +343,7 @@ class Act087MainPresenter(
                     Bundle().apply {
                         putLong(SO_PRODUCT_CODE, serialObj.product_code)
                         putLong(SO_SERIAL_CODE, serialObj.serial_code)
-                        putLong(MD_Product_SerialDao.PRODUCT_CODE, bkpProductCode)
+//                        putLong(MD_Product_SerialDao.PRODUCT_CODE, bkpProductCode)
                         putString(MD_Product_SerialDao.SERIAL_ID, bkpSerialId)
                         putInt(
                             MD_Product_SerialDao.SITE_CODE,
@@ -351,7 +355,7 @@ class Act087MainPresenter(
             //
             context.sendBroadcast(mIntent)
         }else{
-            searchBkpMachineInDb(bkpProductCode, bkpSerialId)
+            searchBkpMachineInDb(bkpSerialId)
         }
     }
 
@@ -362,20 +366,21 @@ class Act087MainPresenter(
      * @param bkpProductCode Codigo do produto da maquina reserva
      * @param bkpSerialId Id do serial digitado
      */
-    private fun searchBkpMachineInDb(bkpProductCode: Long, bkpSerialId: String) {
+    private fun searchBkpMachineInDb(bkpSerialId: String) {
         //
         val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? = serialDao.query(
             Act087Sql_001(
                 serialObj.customer_code,
                 serialObj.product_code,
                 serialObj.serial_id,
-                bkpProductCode,
                 ToolBox_Inf.getNoAccentStringForGlobSql(bkpSerialId),
                 ToolBox_Con.getPreference_Site_Code(context).toInt()
             ).toSqlQuery()
         )?.map { bkpOffline ->
                 FormOsHeaderFrgSerialBkpItem(
                     bkpOffline.product_code.toInt(),
+                    bkpOffline.product_id,
+                    bkpOffline.product_desc,
                     bkpOffline.serial_code.toInt(),
                     bkpOffline.serial_id,
                     bkpOffline.site_code,
@@ -453,6 +458,8 @@ class Act087MainPresenter(
         val bkpSerialItemList: MutableList<FormOsHeaderFrgSerialBkpItemAbs> = records.map { bkp ->
             FormOsHeaderFrgSerialBkpItem(
                 bkp.productCode,
+                bkp.productId,
+                bkp.productDesc,
                 bkp.serialCode,
                 bkp.serialId,
                 bkp.siteCode,
@@ -637,11 +644,11 @@ class Act087MainPresenter(
     private fun getNextFormData(geOs: GeOs): Int {
         val nextDataAux = formDao.getByStringHM(
             GE_Custom_Form_Local_Sql_002(
-                geOs.customer_code.toString(),
-                geOs.custom_form_type.toString(),
-                geOs.custom_form_code.toString(),
-                geOs.custom_form_version.toString()
-            ).toSqlQuery().toLowerCase()
+                        geOs.customer_code.toString(),
+                        geOs.custom_form_type.toString(),
+                        geOs.custom_form_code.toString(),
+                        geOs.custom_form_version.toString()
+                    ).toSqlQuery().lowercase(Locale.ENGLISH)
         )
         //
         return nextDataAux[GE_Custom_Form_Local_Sql_002.ID]!!.toInt()
@@ -734,15 +741,55 @@ class Act087MainPresenter(
     }
 
     override fun getInitialSerialState(): InitialSerialState? {
-        return serialObj.horimeter?.let{
-            return InitialSerialState(
-                horimeter = serialObj.horimeter,
-                horimeter_date = serialObj.horimeter_date,
-                horimeter_supplier_uid = serialObj.horimeter_supplier_uid,
-                horimeter_supplier_desc = serialObj.horimeter_supplier_desc,
-                measure_block_input_time = serialObj.measure_block_input_time,
-                measure_alert_input_time = serialObj.measure_alert_input_time,
-            )
+        ticketPrefix?.let {prefix->
+            ticketCode?.let { code ->
+                val ticket = ticketDao.getTicket(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    prefix,
+                    code,
+                )
+                ticket?.let{
+                    val resposibleStop =
+                        if(ticket.isSerialStopped != null && ticket.isSerialStopped == 1){
+                            ResponsibleStop.STOPPED
+                        } else{
+                            ResponsibleStop.NO_STOPPED
+                        }
+
+                    return InitialSerialState(
+                        ticket.desiredDate,
+                        ticket.stoppedDate,
+                        resposibleStop,
+                        serialObj.unavailability_reason_option == 1,
+                        ticket.isSerialStopped == 1,
+                        true,
+                        serialObj.horimeter,
+                        serialObj.horimeter_date,
+                        serialObj.horimeter_supplier_uid,
+                        serialObj.horimeter_supplier_desc,
+                        serialObj.measure_block_input_time,
+                        serialObj.measure_alert_input_time,
+                    )
+                }
+            }
         }
+        return InitialSerialState(
+            null,
+            null,
+            ResponsibleStop.NO_STOPPED,
+            serialObj.unavailability_reason_option == 1,
+            isTicketSerialStopped = false,
+            isEditMode = true,
+            horimeter = serialObj.horimeter,
+            horimeter_date = serialObj.horimeter_date,
+            horimeter_supplier_uid = serialObj.horimeter_supplier_uid,
+            horimeter_supplier_desc = serialObj.horimeter_supplier_desc,
+            measure_block_input_time = serialObj.measure_block_input_time,
+            measure_alert_input_time = serialObj.measure_alert_input_time,
+        )
+    }
+
+    override fun getMdProduct(customerCode: Long, code: Long): MD_Product? {
+        return productDao.getProductById(customerCode, code)
     }
 }

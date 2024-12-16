@@ -76,6 +76,12 @@
         <item name="windowFixedWidthMinor">90%</item>
     </style>
 
+    <style name="FullScreenDialogTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/padrao_TRANSPARENT</item>
+    </style>
+
     <style name="TextViewForm" parent="AppTheme">
         <item name="android:textColor">@color/namoa_color_light_blue</item>
         <item name="android:textSize">@dimen/font_size_title</item>

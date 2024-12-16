@@ -125,6 +125,7 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
             "CUSTOMER_IP_RESTRICTION",
             null,
             -> {
+                ToolBox_Con.setPreference_Status_Login(context,Constant.LOGIN_STATUS_SESSION_NOT_FOUND);
                 return false
             }
         }

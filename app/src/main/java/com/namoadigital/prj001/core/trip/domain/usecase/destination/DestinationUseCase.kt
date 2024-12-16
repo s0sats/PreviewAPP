@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.core.trip.domain.usecase.destination
 
 import android.content.Context
-import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepositoryImp
+import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepositoryImp
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepositoryImp
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
@@ -47,7 +47,7 @@ data class DestinationUseCase(
                 GetAvailablesDestinationsUseCase(
                     tripDestinationRepository,
                     TicketRepositoryImp(context, TK_TicketDao(context)),
-                    SerialRepositoryImp(MD_Product_SerialDao(context))),
+                    ProductSerialRepositoryImp(context, MD_Product_SerialDao(context))),
                 SelectDestinationUseCase(tripDestinationRepository),
                 GetFilterPreferenceUseCase(tripDestinationRepository),
                 SaveDestinationFilterUseCase(tripDestinationRepository),

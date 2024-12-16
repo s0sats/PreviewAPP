@@ -13,6 +13,8 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.sql.MeMeasureTpSql_001
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -26,7 +28,13 @@ class MeMeasureTpDao(
 ), DaoWithReturn<MeMeasureTp> {
 
 
-    companion object{
+    constructor(context: Context) : this(
+        context,
+        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+        Constant.DB_VERSION_CUSTOM,
+    )
+
+    companion object {
         const val TABLE = "me_measure_tp"
         const val CUSTOMER_CODE = "customer_code"
         const val MEASURE_TP_CODE = "measure_tp_code"
@@ -64,7 +72,12 @@ class MeMeasureTpDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(item)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(MeMeasureTpDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(
+                MeMeasureTpDao.TABLE,
+                toContentValuesMapper.map(item),
+                sbWhere.toString(),
+                null
+            ).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
@@ -99,9 +112,10 @@ class MeMeasureTpDao(
     }
 
     private fun getWherePkClause(item: MeMeasureTp?): StringBuilder {
-        item?.let{
+        item?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${item.customerCode}'  
                         AND ${MEASURE_TP_CODE} = '${item.measureTpCode}'                           
                         """.trimIndent()
@@ -130,7 +144,12 @@ class MeMeasureTpDao(
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MeMeasureTpDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(
+                    MeMeasureTpDao.TABLE,
+                    toContentValuesMapper.map(item),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
@@ -225,7 +244,7 @@ class MeMeasureTpDao(
         } finally {
         }
         closeDB()
-        return  item
+        return item
     }
 
     override fun query(sQuery: String?): MutableList<MeMeasureTp> {
@@ -261,6 +280,18 @@ class MeMeasureTpDao(
         }
         closeDB()
         return items
+    }
+
+    fun getMeasureTpByCode(
+        customerCode: Long,
+        measureTpCode: Int
+    ): MeMeasureTp? {
+        return getByString(
+            MeMeasureTpSql_001(
+                customerCode,
+                measureTpCode
+            ).toSqlQuery()
+        )
     }
 
     inner class MeMeasureTpToContentValuesMapper : Mapper<MeMeasureTp, ContentValues> {

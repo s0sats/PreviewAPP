@@ -51,4 +51,7 @@
     <color name="namoa_destination_tag_today">#2962FF</color>
     <color name="namoa_destination_tag_late">#39257C</color>
 
+    <color name="m3_namoa_primary_sw_disable_handler">#92BECB</color>
+    <color name="m3_namoa_primary_sw_disable_track">#E1EDF1</color>
+
 </resources>

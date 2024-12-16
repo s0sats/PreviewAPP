@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -70,6 +71,18 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String VALUE_SUFIX = "value_sufix";
     public static final String START_DATE = "start_date";
     public static final String PARTITION_MIN_DATE = "partition_min_date";
+
+
+    public TK_Ticket_FormDao(Context context) {
+        super(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+        toContentValuesMapper = new TK_Ticket_FormToContentValuesMapper();
+        toTk_Ticket_FormMapper = new CursorToTk_Ticket_FormMapper();
+    }
 
     public TK_Ticket_FormDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -192,9 +205,9 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 Constant.DB_VERSION_CUSTOM
             );
             GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
             /**
@@ -202,40 +215,40 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
              * ADICIONADO CLAUSULA  dbTicketForm.getTicket_seq() > 0 PARA EVITAR CANCELAR FORM ESPONTANEOS.
              */
             if (tk_ticket_form.getCustom_form_data() != null
-                && tk_ticket_form.getCustom_form_data() > 0
-                && dbTicketForm.getCustom_form_data_tmp() != null
-                && dbTicketForm.getCustom_form_data_tmp() > 0
-                && dbTicketForm.getTicket_seq() > 0
+                    && tk_ticket_form.getCustom_form_data() > 0
+                    && dbTicketForm.getCustom_form_data_tmp() != null
+                    && dbTicketForm.getCustom_form_data_tmp() > 0
+                    && dbTicketForm.getTicket_seq() > 0
             ) {
                 if (ConstantBaseApp.SYS_STATUS_PENDING.equals(dbTicketForm.getForm_status())
-                    || ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketForm.getForm_status())
-                    || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketForm.getForm_status())
+                        || ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketForm.getForm_status())
+                        || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketForm.getForm_status())
                 ) {
                     GE_Custom_Form_Local formLocalToCancel = formLocalDao.getByStringSharedDbInstance(
-                        new TK_Ticket_Form_Sql_003(
-                            tk_ticket_form.getCustomer_code(),
-                            tk_ticket_form.getTicket_prefix(),
-                            tk_ticket_form.getTicket_code(),
-                            tk_ticket_form.getTicket_seq_tmp(),
-                            tk_ticket_form.getStep_code()
-                        ).toSqlQuery(),
-                        db
+                            new TK_Ticket_Form_Sql_003(
+                                    tk_ticket_form.getCustomer_code(),
+                                    tk_ticket_form.getTicket_prefix(),
+                                    tk_ticket_form.getTicket_code(),
+                                    tk_ticket_form.getTicket_seq_tmp(),
+                                    tk_ticket_form.getStep_code()
+                            ).toSqlQuery(),
+                            db
                     );
                     //
                     GE_Custom_Form_Data formDataToCancel = formDataDao.getByStringSharedDbInstance(
-                        new TK_Ticket_Form_Sql_004(
-                            tk_ticket_form.getCustomer_code(),
-                            tk_ticket_form.getTicket_prefix(),
-                            tk_ticket_form.getTicket_code(),
-                            tk_ticket_form.getTicket_seq_tmp(),
-                            tk_ticket_form.getStep_code()
-                        ).toSqlQuery(),
-                        db
+                            new TK_Ticket_Form_Sql_004(
+                                    tk_ticket_form.getCustomer_code(),
+                                    tk_ticket_form.getTicket_prefix(),
+                                    tk_ticket_form.getTicket_code(),
+                                    tk_ticket_form.getTicket_seq_tmp(),
+                                    tk_ticket_form.getStep_code()
+                            ).toSqlQuery(),
+                            db
                     );
                     //
                     if (formLocalToCancel != null) {
                         formLocalToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
-                        DaoObjReturn daoObjReturn = formLocalDao.addUpdateThrowExceptionWithSharedDbInstance(formLocalToCancel,db);
+                        DaoObjReturn daoObjReturn = formLocalDao.addUpdateThrowExceptionWithSharedDbInstance(formLocalToCancel, db);
                         if (daoObjReturn.hasError()) {
                             throw new Exception(daoObjReturn.getErrorMsg());
                         }
@@ -243,7 +256,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     if (formDataToCancel != null) {
                         formDataToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
                         formDataToCancel.setLocation_pendency(0);
-                        DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturnAndSharedDbInstance(formDataToCancel,db);
+                        DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturnAndSharedDbInstance(formDataToCancel, db);
                         if (daoObjReturn.hasError()) {
                             throw new Exception(daoObjReturn.getErrorMsg());
                         }
@@ -261,15 +274,15 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             //Se db não foi passado, inicializa transaction
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.beginTransaction();
             }
 
@@ -284,29 +297,29 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 /* LUCHE - 04/09/2020
                  * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
                  */
-                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
+                checkIfFormNeedToBeCancelled(tk_ticket_form, db);
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
-                if(addUpdateRet == 0){
+                if (addUpdateRet == 0) {
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
         } catch (Exception e) {
@@ -314,7 +327,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction();
             }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
@@ -323,7 +336,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
 
@@ -336,51 +349,51 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = getWherePkTmpClause(tk_ticket_form);
             /* LUCHE - 04/09/2020
              * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
              */
-            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
+            checkIfFormNeedToBeCancelled(tk_ticket_form, db);
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
-            if(addUpdateRet == 0){
+            if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
-        }catch (Exception e){
+        } catch (Exception e) {
             //Seta obj de retorno com flag de erro e gera arquivo de exception
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
-        }finally {
+        } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
 
@@ -392,15 +405,15 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             //Se db não foi passado, inicializa transaction
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.beginTransaction();
             }
 
@@ -415,29 +428,29 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 /* LUCHE - 04/09/2020
                  * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
                  */
-                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
+                checkIfFormNeedToBeCancelled(tk_ticket_form, db);
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
-                if(addUpdateRet == 0){
+                if (addUpdateRet == 0) {
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
         } catch (Exception e) {
@@ -445,7 +458,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction();
             }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
@@ -454,7 +467,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
 
@@ -478,25 +491,25 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
-        try{
+        try {
             StringBuilder sbWhere = getWherePkClause(tk_ticket_form);
             //
-            sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-        }catch (SQLiteException e){
+            sqlRet = db.delete(TABLE, sbWhere.toString(), null);
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
         } catch (Exception e) {
@@ -509,7 +522,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             daoObjReturn.setActionReturn(sqlRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         return daoObjReturn;
@@ -528,7 +541,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     @Override
     public TK_Ticket_Form getByString(String sQuery) {
-      return getByString(sQuery,null);
+        return getByString(sQuery, null);
     }
 
     private TK_Ticket_Form getByString(String sQuery, @Nullable SQLiteDatabase dbInstance) {
@@ -549,11 +562,11 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             //
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB();
         }
 
@@ -575,7 +588,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -599,7 +612,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             //
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -620,13 +633,31 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
         closeDB();
 
         return tk_ticket_actions;
+    }
+
+    public TK_Ticket_Form getTicketFormById(
+            long customerCode,
+            int ticketPrefix,
+            int ticketCode,
+            int stepCode,
+            int ticketSeqTmp
+    ) {
+        return getByString(
+                new TK_Ticket_Form_Sql_002(
+                        customerCode,
+                        ticketPrefix,
+                        ticketCode,
+                        ticketSeqTmp,
+                        stepCode
+                ).toSqlQuery()
+        );
     }
 
     private class CursorToTk_Ticket_FormMapper implements Mapper<Cursor, TK_Ticket_Form> {
@@ -645,17 +676,17 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_form.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             tk_ticket_form.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             tk_ticket_form.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
-            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA))){
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA))) {
                 tk_ticket_form.setCustom_form_data(null);
-            }else{
+            } else {
                 tk_ticket_form.setCustom_form_data(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SCORE_STATUS))){
+            if (cursor.isNull(cursor.getColumnIndex(SCORE_STATUS))) {
                 tk_ticket_form.setScore_status(null);
-            }else{
+            } else {
                 tk_ticket_form.setScore_status(cursor.getString(cursor.getColumnIndex(SCORE_STATUS)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(SCORE_PERC))){
+            if (cursor.isNull(cursor.getColumnIndex(SCORE_PERC))) {
                 tk_ticket_form.setScore_perc(null);
             }else{
                 tk_ticket_form.setScore_perc(cursor.getString(cursor.getColumnIndex(SCORE_PERC)));
@@ -668,107 +699,107 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 tk_ticket_form.setCustom_form_data_tmp(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_TMP)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(PDF_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(PDF_CODE))) {
                 tk_ticket_form.setPdf_code(null);
-            }else{
+            } else {
                 tk_ticket_form.setPdf_code(cursor.getInt(cursor.getColumnIndex(PDF_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PDF_NAME))){
+            if (cursor.isNull(cursor.getColumnIndex(PDF_NAME))) {
                 tk_ticket_form.setPdf_name(null);
-            }else{
+            } else {
                 tk_ticket_form.setPdf_name(cursor.getString(cursor.getColumnIndex(PDF_NAME)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PDF_URL))){
+            if (cursor.isNull(cursor.getColumnIndex(PDF_URL))) {
                 tk_ticket_form.setPdf_url(null);
-            }else{
+            } else {
                 tk_ticket_form.setPdf_url(cursor.getString(cursor.getColumnIndex(PDF_URL)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PDF_URL_LOCAL))){
+            if (cursor.isNull(cursor.getColumnIndex(PDF_URL_LOCAL))) {
                 tk_ticket_form.setPdf_url_local(null);
-            }else{
+            } else {
                 tk_ticket_form.setPdf_url_local(cursor.getString(cursor.getColumnIndex(PDF_URL_LOCAL)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION))){
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION))) {
                 tk_ticket_form.setCustom_form_data_partition(null);
-            }else{
+            } else {
                 tk_ticket_form.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION))){
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION))) {
                 tk_ticket_form.setCustom_form_version_partition(null);
-            }else{
+            } else {
                 tk_ticket_form.setCustom_form_version_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))) {
                 tk_ticket_form.setOrder_type_code(null);
-            }else{
+            } else {
                 tk_ticket_form.setOrder_type_code(cursor.getInt(cursor.getColumnIndex(ORDER_TYPE_CODE)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_ID))){
+            if (cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_ID))) {
                 tk_ticket_form.setOrder_type_id(null);
-            }else{
+            } else {
                 tk_ticket_form.setOrder_type_id(cursor.getString(cursor.getColumnIndex(ORDER_TYPE_ID)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_DESC))){
+            if (cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_DESC))) {
                 tk_ticket_form.setOrder_type_desc(null);
-            }else{
+            } else {
                 tk_ticket_form.setOrder_type_desc(cursor.getString(cursor.getColumnIndex(ORDER_TYPE_DESC)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PROCESS_TYPE))){
+            if (cursor.isNull(cursor.getColumnIndex(PROCESS_TYPE))) {
                 tk_ticket_form.setProcess_type(null);
-            }else{
+            } else {
                 tk_ticket_form.setProcess_type(cursor.getString(cursor.getColumnIndex(PROCESS_TYPE)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(DISPLAY_OPTION))){
+            if (cursor.isNull(cursor.getColumnIndex(DISPLAY_OPTION))) {
                 tk_ticket_form.setDisplay_option(null);
-            }else{
+            } else {
                 tk_ticket_form.setDisplay_option(cursor.getString(cursor.getColumnIndex(DISPLAY_OPTION)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(ITEM_CHECK_GROUP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(ITEM_CHECK_GROUP_CODE))) {
                 tk_ticket_form.setItem_check_group_code(null);
-            }else{
+            } else {
                 tk_ticket_form.setItem_check_group_code(cursor.getInt(cursor.getColumnIndex(ITEM_CHECK_GROUP_CODE)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))) {
                 tk_ticket_form.setMeasure_tp_code(null);
-            }else{
+            } else {
                 tk_ticket_form.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_DESC))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_TP_DESC))) {
                 tk_ticket_form.setMeasure_tp_desc(null);
-            }else{
+            } else {
                 tk_ticket_form.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))) {
                 tk_ticket_form.setMeasure_value(null);
-            }else{
+            } else {
                 tk_ticket_form.setMeasure_value(cursor.getDouble(cursor.getColumnIndex(MEASURE_VALUE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))) {
                 tk_ticket_form.setMeasure_cycle_value(null);
-            }else{
+            } else {
                 tk_ticket_form.setMeasure_cycle_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(VALUE_SUFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(VALUE_SUFIX))) {
                 tk_ticket_form.setValue_sufix(null);
-            }else{
+            } else {
                 tk_ticket_form.setValue_sufix(cursor.getString(cursor.getColumnIndex(VALUE_SUFIX)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(START_DATE))){
+            if (cursor.isNull(cursor.getColumnIndex(START_DATE))) {
                 tk_ticket_form.setStart_date(null);
-            }else{
+            } else {
                 tk_ticket_form.setStart_date(cursor.getString(cursor.getColumnIndex(START_DATE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(PARTITION_MIN_DATE))){
+            if (cursor.isNull(cursor.getColumnIndex(PARTITION_MIN_DATE))) {
                 tk_ticket_form.setPartition_min_date(null);
-            }else{
+            } else {
                 tk_ticket_form.setPartition_min_date(cursor.getString(cursor.getColumnIndex(PARTITION_MIN_DATE)));
             }
 
@@ -782,69 +813,69 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             ContentValues contentValues = new ContentValues();
             //
             if (tk_ticket_form.getCustomer_code() > -1) {
-                contentValues.put(CUSTOMER_CODE,tk_ticket_form.getCustomer_code());
+                contentValues.put(CUSTOMER_CODE, tk_ticket_form.getCustomer_code());
             }
             if (tk_ticket_form.getTicket_prefix() > -1) {
-                contentValues.put(TICKET_PREFIX,tk_ticket_form.getTicket_prefix());
+                contentValues.put(TICKET_PREFIX, tk_ticket_form.getTicket_prefix());
             }
             if (tk_ticket_form.getTicket_code() > -1) {
-                contentValues.put(TICKET_CODE,tk_ticket_form.getTicket_code());
+                contentValues.put(TICKET_CODE, tk_ticket_form.getTicket_code());
             }
             if (tk_ticket_form.getTicket_seq() > -1) {
-                contentValues.put(TICKET_SEQ,tk_ticket_form.getTicket_seq());
+                contentValues.put(TICKET_SEQ, tk_ticket_form.getTicket_seq());
             }
             if (tk_ticket_form.getTicket_seq_tmp() > -1) {
-                contentValues.put(TICKET_SEQ_TMP,tk_ticket_form.getTicket_seq_tmp());
+                contentValues.put(TICKET_SEQ_TMP, tk_ticket_form.getTicket_seq_tmp());
             }
             if (tk_ticket_form.getStep_code() > -1) {
-                contentValues.put(STEP_CODE,tk_ticket_form.getStep_code());
+                contentValues.put(STEP_CODE, tk_ticket_form.getStep_code());
             }
             if (tk_ticket_form.getForm_status() != null) {
-                contentValues.put(FORM_STATUS,tk_ticket_form.getForm_status());
+                contentValues.put(FORM_STATUS, tk_ticket_form.getForm_status());
             }
             if (tk_ticket_form.getCustom_form_type() > -1) {
-                contentValues.put(CUSTOM_FORM_TYPE,tk_ticket_form.getCustom_form_type());
+                contentValues.put(CUSTOM_FORM_TYPE, tk_ticket_form.getCustom_form_type());
             }
 
             if (tk_ticket_form.getCustom_form_code() > -1) {
-                contentValues.put(CUSTOM_FORM_CODE,tk_ticket_form.getCustom_form_code());
+                contentValues.put(CUSTOM_FORM_CODE, tk_ticket_form.getCustom_form_code());
             }
             if (tk_ticket_form.getCustom_form_desc() != null) {
-                contentValues.put(CUSTOM_FORM_DESC,tk_ticket_form.getCustom_form_desc());
+                contentValues.put(CUSTOM_FORM_DESC, tk_ticket_form.getCustom_form_desc());
             }
             if (tk_ticket_form.getCustom_form_version() > -1) {
-                contentValues.put(CUSTOM_FORM_VERSION,tk_ticket_form.getCustom_form_version());
+                contentValues.put(CUSTOM_FORM_VERSION, tk_ticket_form.getCustom_form_version());
             }
-            contentValues.put(CUSTOM_FORM_DATA,tk_ticket_form.getCustom_form_data());
+            contentValues.put(CUSTOM_FORM_DATA, tk_ticket_form.getCustom_form_data());
 
-            contentValues.put(SCORE_STATUS,tk_ticket_form.getScore_status());
-            contentValues.put(SCORE_PERC,tk_ticket_form.getScore_perc());
+            contentValues.put(SCORE_STATUS, tk_ticket_form.getScore_status());
+            contentValues.put(SCORE_PERC, tk_ticket_form.getScore_perc());
             if (tk_ticket_form.getNc() > -1) {
                 contentValues.put(NC, tk_ticket_form.getNc());
             }
             if (tk_ticket_form.getIs_so() > -1) {
                 contentValues.put(IS_SO, tk_ticket_form.getIs_so());
             }
-            contentValues.put(CUSTOM_FORM_DATA_TMP,tk_ticket_form.getCustom_form_data_tmp());
-            contentValues.put(PDF_CODE,tk_ticket_form.getPdf_code());
-            contentValues.put(PDF_NAME,tk_ticket_form.getPdf_name());
-            contentValues.put(PDF_URL,tk_ticket_form.getPdf_url());
-            contentValues.put(PDF_URL_LOCAL,tk_ticket_form.getPdf_url_local());
+            contentValues.put(CUSTOM_FORM_DATA_TMP, tk_ticket_form.getCustom_form_data_tmp());
+            contentValues.put(PDF_CODE, tk_ticket_form.getPdf_code());
+            contentValues.put(PDF_NAME, tk_ticket_form.getPdf_name());
+            contentValues.put(PDF_URL, tk_ticket_form.getPdf_url());
+            contentValues.put(PDF_URL_LOCAL, tk_ticket_form.getPdf_url_local());
             contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
             contentValues.put(CUSTOM_FORM_VERSION_PARTITION, tk_ticket_form.getCustom_form_version_partition());
-            contentValues.put(ORDER_TYPE_CODE,tk_ticket_form.getOrder_type_code());
-            contentValues.put(ORDER_TYPE_ID,tk_ticket_form.getOrder_type_id());
-            contentValues.put(ORDER_TYPE_DESC,tk_ticket_form.getOrder_type_desc());
-            contentValues.put(PROCESS_TYPE,tk_ticket_form.getProcess_type());
-            contentValues.put(DISPLAY_OPTION,tk_ticket_form.getDisplay_option());
-            contentValues.put(ITEM_CHECK_GROUP_CODE,tk_ticket_form.getItem_check_group_code());
-            contentValues.put(MEASURE_TP_CODE,tk_ticket_form.getMeasure_tp_code());
-            contentValues.put(MEASURE_TP_DESC,tk_ticket_form.getMeasure_tp_desc());
-            contentValues.put(MEASURE_VALUE,tk_ticket_form.getMeasure_value());
-            contentValues.put(MEASURE_CYCLE_VALUE,tk_ticket_form.getMeasure_cycle_value());
-            contentValues.put(VALUE_SUFIX,tk_ticket_form.getValue_sufix());
-            contentValues.put(START_DATE,tk_ticket_form.getStart_date());
-            contentValues.put(PARTITION_MIN_DATE,tk_ticket_form.getPartition_min_date());
+            contentValues.put(ORDER_TYPE_CODE, tk_ticket_form.getOrder_type_code());
+            contentValues.put(ORDER_TYPE_ID, tk_ticket_form.getOrder_type_id());
+            contentValues.put(ORDER_TYPE_DESC, tk_ticket_form.getOrder_type_desc());
+            contentValues.put(PROCESS_TYPE, tk_ticket_form.getProcess_type());
+            contentValues.put(DISPLAY_OPTION, tk_ticket_form.getDisplay_option());
+            contentValues.put(ITEM_CHECK_GROUP_CODE, tk_ticket_form.getItem_check_group_code());
+            contentValues.put(MEASURE_TP_CODE, tk_ticket_form.getMeasure_tp_code());
+            contentValues.put(MEASURE_TP_DESC, tk_ticket_form.getMeasure_tp_desc());
+            contentValues.put(MEASURE_VALUE, tk_ticket_form.getMeasure_value());
+            contentValues.put(MEASURE_CYCLE_VALUE, tk_ticket_form.getMeasure_cycle_value());
+            contentValues.put(VALUE_SUFIX, tk_ticket_form.getValue_sufix());
+            contentValues.put(START_DATE, tk_ticket_form.getStart_date());
+            contentValues.put(PARTITION_MIN_DATE, tk_ticket_form.getPartition_min_date());
             //
             return contentValues;
         }

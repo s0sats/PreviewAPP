@@ -44,15 +44,9 @@ public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
     //
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
-    private String token;
     private ArrayList<SO_Pack_Express_Local> so_pack_express_List;
     private HMAux auxApReturned;
-    private int repeting;
-
-    //Gson de envio exclui td que não tiver a tag @Expose para diminuir pacote de envio
-    private Gson gsonEnv;
-    //Gson de Retorno com inicilização padrão.
-    private Gson gsonRec;
+    private int repeting =2;
 
     public WS_SO_Pack_Express_Local() {
         super("WS_SO_Pack_Express_Local", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
@@ -64,15 +58,10 @@ public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
-            // token = ToolBox_Inf.getToken(getApplicationContext());
-            soPackExpressLocalDao = new SO_Pack_Express_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
-            token = ToolBox_Inf.getToken(getApplicationContext());
+            soPackExpressLocalDao = new SO_Pack_Express_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             so_pack_express_List = new ArrayList<>();
             auxApReturned = new HMAux();
-            //
-            gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-            gsonRec = new GsonBuilder().serializeNulls().create();
             //
             processSO_Pack_Express();
 
@@ -92,13 +81,14 @@ public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
         Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Gson gsonRec = new GsonBuilder().serializeNulls().create();
 
-        repeting = 0;
-
-        while (++repeting < 2) {
-
+        do{
+            String token = "";
             if (processPendingToken() == 0) {
                 processNewToken();
+            }else{
+                token = so_pack_express_List.get(0).getToken();
             }
+
             if (so_pack_express_List == null || so_pack_express_List.size() == 0) {
                 //HMAux auxApReturned = new HMAux();
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_express_save"), auxApReturned, "", "0");
@@ -157,7 +147,8 @@ public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
             }
             //
             processSO_Pack_Express_Local_Return(rec, so_pack_express_List);
-        }
+            repeting--;
+        }while(processNewToken() > 0 || repeting ==0);
 
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_express_save"), auxApReturned, "", "0");
     }
@@ -170,18 +161,15 @@ public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
                 ).toSqlQuery()
         );
 
-        if (so_pack_express_List.size() > 0) {
-            token = so_pack_express_List.get(0).getToken();
-        }
-
         return so_pack_express_List.size();
     }
 
     private int processNewToken() {
+
         soPackExpressLocalDao.query(
                 new SO_Pack_Express_Local_Sql_008(
                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                        token
+                        ToolBox_Inf.getToken(getApplicationContext())
                 ).toSqlQuery()
         );
 

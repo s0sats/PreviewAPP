@@ -165,6 +165,11 @@ const val TK_TICKET_CREATE_SCRIPT = """
         [is_priority] int, 
         [has_open_so_partition]int not null default 0,                                               
         [has_address]int not null default 0,
+        [open_serial_stopped] text COLLATE NOCASE,
+        [open_desired_date] text COLLATE NOCASE,
+        [is_serial_stopped] int not null default 0,
+        [stopped_date] text,
+        [desired_date] text,
         CONSTRAINT[pk_tk_ticket]
         PRIMARY KEY([customer_code], [ticket_prefix], [ticket_code]));
 """

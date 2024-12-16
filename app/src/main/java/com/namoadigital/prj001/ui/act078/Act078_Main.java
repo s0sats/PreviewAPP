@@ -202,6 +202,9 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         binding.act078TvFormDownloadPdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
         binding.act078TvScheduleOpenPhotoLbl.setText(hmAux_Trans.get("action_photo_lbl"));
         binding.act078TvScheduleOpenCommentLbl.setText(hmAux_Trans.get("action_comment_lbl"));
+        //
+        binding.act078TvOpenSerialStoppedLbl.setText(hmAux_Trans.get("open_serial_stopped_lbl"));
+        binding.act078TvOpenDesiredDateLbl.setText(hmAux_Trans.get("open_desired_date_lbl"));
     }
 
 
@@ -413,6 +416,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("download_form_pdf_lbl");
         transList.add("action_photo_lbl");
         transList.add("action_comment_lbl");
+        transList.add("open_serial_stopped_lbl");
+        transList.add("open_desired_date_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -582,6 +587,27 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                     e.printStackTrace();
                 }
             }
+
+        if(ticket.getDesiredDate() != null){
+            binding.act078LlOpenDesiredDate.setVisibility(View.VISIBLE);
+            binding.act078TvOpenDesiredDateVal.setText(ticket.getDesiredDate());
+            binding.act078TvOpenDesiredDateVal.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(ticket.getDesiredDate()),
+                    ToolBox_Inf.nlsDateFormat(context)
+            ));
+        }
+        //
+        if(ticket.getIsSerialStopped() != null && ticket.getIsSerialStopped().equals(1)
+                && ticket.getStoppedDate() != null
+        ){
+            binding.act078LlOpenSerialStopped.setVisibility(View.VISIBLE);
+            binding.act078TvOpenSerialStoppedVal.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(ticket.getStoppedDate()),
+                    ToolBox_Inf.nlsDateFormat(context)
+            ));
+        }
+        //
+
     }
 
     private void setImagePlaceholder(ImageView imageView) {

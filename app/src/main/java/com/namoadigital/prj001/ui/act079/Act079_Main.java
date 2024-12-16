@@ -155,6 +155,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         transList.add("open_username_lbl");
         transList.add("open_email_lbl");
         transList.add("open_phone_lbl");
+        transList.add("open_serial_stopped_lbl");
+        transList.add("open_desired_date_lbl");
         //
         transList.add("nc_empty_answer_lbl");
         //
@@ -200,6 +202,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         binding.act079TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
         binding.act079TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
         binding.act079TvOpenPhoneLbl.setText(hmAux_Trans.get("open_phone_lbl"));
+        binding.act079TvOpenSerialStoppedLbl.setText(hmAux_Trans.get("open_serial_stopped_lbl"));
+        binding.act079TvOpenDesiredDateLbl.setText(hmAux_Trans.get("open_desired_date_lbl"));
     }
 
     private void setFabMenu(TK_Ticket mTicket) {
@@ -596,6 +600,28 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 e.printStackTrace();
             }
         }
+        //
+        binding.act079LlOpenDesiredDate.setVisibility(View.GONE);
+        binding.act079LlOpenSerialStopped.setVisibility(View.GONE);
+        //
+        if(ticket.getDesiredDate() != null){
+            binding.act079LlOpenDesiredDate.setVisibility(View.VISIBLE);
+            binding.act079TvOpenDesiredDateVal.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(ticket.getDesiredDate()),
+                    ToolBox_Inf.nlsDateFormat(context)
+            ));
+        }
+        //
+        if(ticket.getIsSerialStopped() != null && ticket.getIsSerialStopped().equals(1)
+        && ticket.getStoppedDate() != null
+        ){
+            binding.act079LlOpenSerialStopped.setVisibility(View.VISIBLE);
+            binding.act079TvOpenSerialStoppedVal.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(ticket.getStoppedDate()),
+                    ToolBox_Inf.nlsDateFormat(context)
+            ));
+        }
+        //
     }
 
     private void setImagePlaceholder(ImageView imageView) {

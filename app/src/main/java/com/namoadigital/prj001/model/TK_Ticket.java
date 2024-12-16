@@ -349,6 +349,21 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("serial")
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
+    @SerializedName("open_serial_stopped")
+    private String openSerialStopped;
+
+    @SerializedName("open_desired_date")
+    private String openDesiredDate;
+
+    @SerializedName("is_serial_stopped")
+    private Integer isSerialStopped;
+
+    @SerializedName("stopped_date")
+    private String stoppedDate;
+
+    @SerializedName("desired_date")
+    private String desiredDate;
+
     public void setPK() {
 
         if (address != null) {
@@ -2093,5 +2108,45 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setAddress_countryId(@Nullable String address_countryId) {
         this.address_countryId = address_countryId;
+    }
+
+    public String getOpenSerialStopped() {
+        return openSerialStopped;
+    }
+
+    public void setOpenSerialStopped(String openSerialStopped) {
+        this.openSerialStopped = openSerialStopped;
+    }
+
+    public String getOpenDesiredDate() {
+        return openDesiredDate;
+    }
+
+    public void setOpenDesiredDate(String openDesiredDate) {
+        this.openDesiredDate = openDesiredDate;
+    }
+
+    public Integer getIsSerialStopped() {
+        return isSerialStopped;
+    }
+
+    public void setIsSerialStopped(Integer isSerialStopped) {
+        this.isSerialStopped = isSerialStopped;
+    }
+
+    public String getStoppedDate() {
+        return stoppedDate;
+    }
+
+    public void setStoppedDate(String stoppedDate) {
+        this.stoppedDate = stoppedDate;
+    }
+
+    public String getDesiredDate() {
+        return desiredDate;
+    }
+
+    public void setDesiredDate(String desiredDate) {
+        this.desiredDate = desiredDate;
     }
 }

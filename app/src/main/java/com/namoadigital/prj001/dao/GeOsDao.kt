@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
@@ -15,19 +16,20 @@ import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemMaterialCreation_Sql_001
+import com.namoadigital.prj001.sql.GeOsSql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class GeOsDao(
     context: Context,
-    mDB_NAME: String,
-    mDB_VERSION: Int
+    mDB_NAME: String = ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+    mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<GeOs> {
 
-    companion object{
+    companion object {
         const val TABLE = "ge_os"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
@@ -64,6 +66,12 @@ class GeOsDao(
         const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
         const val SO_ALLOW_BACKUP = "so_allow_backup"
         const val DEVICE_TP_CODE_MAIN = "device_tp_code_main"
+        const val INITIAL_IS_SERIAL_STOPPED: String = "initial_is_serial_stopped"
+        const val INITIAL_STOPPED_DATE: String = "initial_stopped_date"
+        const val INITIAL_UNAVAILABILITY_REASON: String = "initial_unavailability_reason"
+        const val FINAL_IS_SERIAL_STOPPED: String = "final_is_serial_stopped"
+        const val FINAL_UNAVAILABILITY_REASON: String = "final_unavailability_reason"
+        const val ALLOW_FORM_IN_THE_PAST = "allow_form_in_the_past"
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -75,10 +83,11 @@ class GeOsDao(
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(item: GeOs?): StringBuilder{
-        item?.let{
+    private fun getWherePkClause(item: GeOs?): StringBuilder {
+        item?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${item.customer_code}'  
                         AND ${CUSTOM_FORM_TYPE} = '${item.custom_form_type}'                           
                         AND ${CUSTOM_FORM_CODE} = '${item.custom_form_code}'                           
@@ -90,13 +99,20 @@ class GeOsDao(
         throw Exception("NULL_OBJ_RECEIVED")
     }
 
-
     override fun addUpdate(item: GeOs?): DaoObjReturn {
+        return addUpdate(item, null)
+    }
+
+    fun addUpdate(item: GeOs?, dbInstance: SQLiteDatabase? = null): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            this.db = dbInstance
+        }
 
         try {
             daoObjReturn.table = TABLE
@@ -104,7 +120,8 @@ class GeOsDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(item)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet =
+                db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
@@ -133,7 +150,7 @@ class GeOsDao(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        closeDB()
+        if (dbInstance == null) closeDB()
         //
         return daoObjReturn
     }
@@ -158,7 +175,9 @@ class GeOsDao(
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet =
+                    db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null)
+                        .toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
@@ -253,7 +272,7 @@ class GeOsDao(
         } finally {
         }
         closeDB()
-        return  item
+        return item
     }
 
     override fun query(sQuery: String?): MutableList<GeOs> {
@@ -294,7 +313,7 @@ class GeOsDao(
     class CursorToGeOsMapper : Mapper<Cursor, GeOs> {
         override fun map(cursor: Cursor?): GeOs? {
             cursor?.let {
-                with(cursor){
+                with(cursor) {
                     return GeOs(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
                         custom_form_type = getInt(getColumnIndex(CUSTOM_FORM_TYPE)),
@@ -319,7 +338,7 @@ class GeOsDao(
                         measure_cycle_value = getFloatOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         restriction_decimal = getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
-                        value_cycle_size =  getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
+                        value_cycle_size = getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
                         cycle_tolerance = getIntOrNull(getColumnIndex(CYCLE_TOLERANCE)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
                         date_end = getStringOrNull(getColumnIndex(DATE_END)),
@@ -327,10 +346,40 @@ class GeOsDao(
                         last_measure_date = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
                         last_cycle_value = getFloatOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
                         so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
-                        so_order_type_code_default = getIntOrNull(getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)),
-                        so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)),
+                        so_order_type_code_default = getIntOrNull(
+                            getColumnIndex(
+                                SO_ORDER_TYPE_CODE_DEFAULT
+                            )
+                        ),
+                        so_allow_change_order_type = getInt(
+                            getColumnIndex(
+                                SO_ALLOW_CHANGE_ORDER_TYPE
+                            )
+                        ),
                         so_allow_backup = getInt(getColumnIndex(SO_ALLOW_BACKUP)),
-                        device_tp_code_main = getIntOrNull(getColumnIndex(DEVICE_TP_CODE_MAIN))
+                        device_tp_code_main = getIntOrNull(getColumnIndex(DEVICE_TP_CODE_MAIN)),
+                        initial_is_serial_stopped = getIntOrNull(
+                            getColumnIndex(
+                                INITIAL_IS_SERIAL_STOPPED
+                            )
+                        ),
+                        initial_stopped_date = getStringOrNull(getColumnIndex(INITIAL_STOPPED_DATE)),
+                        initial_unavailability_reason = getStringOrNull(
+                            getColumnIndex(
+                                INITIAL_UNAVAILABILITY_REASON
+                            )
+                        ),
+                        final_is_serial_stopped = getIntOrNull(
+                            getColumnIndex(
+                                FINAL_IS_SERIAL_STOPPED
+                            )
+                        ),
+                        final_unavailability_reason = getStringOrNull(
+                            getColumnIndex(
+                                FINAL_UNAVAILABILITY_REASON
+                            )
+                        ),
+                        allowFormInThePast = getInt(getColumnIndex(ALLOW_FORM_IN_THE_PAST))
                     )
                 }
             }
@@ -342,22 +391,22 @@ class GeOsDao(
         override fun map(geOs: GeOs?): ContentValues {
             val contentValues = ContentValues()
             geOs?.let {
-                with(contentValues){
-                    if(it.customer_code > -1){
+                with(contentValues) {
+                    if (it.customer_code > -1) {
                         put(CUSTOMER_CODE, it.customer_code)
                     }
                     //
-                    if(it.custom_form_type > -1){
-                        put(CUSTOM_FORM_TYPE,it.custom_form_type)
+                    if (it.custom_form_type > -1) {
+                        put(CUSTOM_FORM_TYPE, it.custom_form_type)
                     }
                     //
-                    put(CUSTOM_FORM_CODE,it.custom_form_code)
+                    put(CUSTOM_FORM_CODE, it.custom_form_code)
                     //
-                    put(CUSTOM_FORM_VERSION,it.custom_form_version)
+                    put(CUSTOM_FORM_VERSION, it.custom_form_version)
                     //
-                    put(CUSTOM_FORM_DATA,it.custom_form_data)
+                    put(CUSTOM_FORM_DATA, it.custom_form_data)
                     //
-                    put(ORDER_TYPE_CODE,it.order_type_code)
+                    put(ORDER_TYPE_CODE, it.order_type_code)
                     //
                     put(ORDER_TYPE_ID, it.order_type_id)
                     //
@@ -365,9 +414,9 @@ class GeOsDao(
                     //
                     put(PROCESS_TYPE, it.process_type)
                     //
-                    put(DISPLAY_OPTION , it.display_option)
+                    put(DISPLAY_OPTION, it.display_option)
                     //
-                    put(ITEM_CHECK_GROUP_CODE , it.item_check_group_code)
+                    put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)
@@ -378,7 +427,7 @@ class GeOsDao(
                     //
                     put(MEASURE_TP_CODE, it.measure_tp_code)
                     //
-                    put(MEASURE_TP_ID,it.measure_tp_id)
+                    put(MEASURE_TP_ID, it.measure_tp_id)
                     //
                     put(MEASURE_TP_DESC, it.measure_tp_desc)
                     //
@@ -394,9 +443,9 @@ class GeOsDao(
                     //
                     put(CYCLE_TOLERANCE, it.cycle_tolerance)
                     //
-                    put(DATE_START,it.date_start)
+                    put(DATE_START, it.date_start)
                     //
-                    put(DATE_END,it.date_end)
+                    put(DATE_END, it.date_end)
                     //
                     put(LAST_MEASURE_VALUE, it.last_measure_value)
                     //
@@ -413,21 +462,51 @@ class GeOsDao(
                     put(SO_ALLOW_BACKUP, it.so_allow_backup)
                     //
                     put(DEVICE_TP_CODE_MAIN, it.device_tp_code_main)
+                    //
+                    put(INITIAL_IS_SERIAL_STOPPED, it.initial_is_serial_stopped)
+                    put(INITIAL_STOPPED_DATE, it.initial_stopped_date)
+                    put(INITIAL_UNAVAILABILITY_REASON, it.initial_unavailability_reason)
+                    put(FINAL_IS_SERIAL_STOPPED, it.final_is_serial_stopped)
+                    put(FINAL_UNAVAILABILITY_REASON, it.final_unavailability_reason)
+
+                    if (it.allowFormInThePast!! > -1) {
+                        put(ALLOW_FORM_IN_THE_PAST, it.allowFormInThePast)
+                    }
                 }
             }
             return contentValues
         }
     }
 
-    fun createGeOsStructure(geOs: GeOs, mdSerial: MD_Product_Serial, isContinuousForm: Boolean): DaoObjReturn {
+    fun createGeOsStructure(
+        geOs: GeOs,
+        mdSerial: MD_Product_Serial,
+        isContinuousForm: Boolean
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        val geOsDeviceDao = GeOsDeviceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val geOsDeviceItemDao = GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val geOsDeviceItemMaterialDao = GeOsDeviceMaterialDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val geOsDeviceDao = GeOsDeviceDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemDao = GeOsDeviceItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemMaterialDao = GeOsDeviceMaterialDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
         //
         val geOsDevices = geOsDeviceDao.query(
             GeOsDeviceCreation_Sql_001(
@@ -494,19 +573,19 @@ class GeOsDao(
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
-            daoObjReturn = geOsDeviceDao.addUpdate(geOsDevices,false,db)
+            daoObjReturn = geOsDeviceDao.addUpdate(geOsDevices, false, db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
-            daoObjReturn = geOsDeviceItemDao.addUpdate(geOsDeviceItens,false,db)
+            daoObjReturn = geOsDeviceItemDao.addUpdate(geOsDeviceItens, false, db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
-            daoObjReturn =  geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist,false,db)
+            daoObjReturn = geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist, false, db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
-            daoObjReturn =  geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterial,false,db)
+            daoObjReturn = geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterial, false, db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
@@ -545,7 +624,7 @@ class GeOsDao(
         geOsDeviceItens: MutableList<GeOsDeviceItem>,
         isContinuousForm: Boolean
     ) {
-        if(!isContinuousForm) {
+        if (!isContinuousForm) {
             //Chama primeira varredura que modifica o status baseado nas configuração do proximo ciclo
             //programado.
             firstScan(geOs, geOsDeviceItens)
@@ -571,19 +650,26 @@ class GeOsDao(
                 0f
             }
         //Seta data inseriada pelo usr com 23:59:59.
-        var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
+        var dateStartLastMinute: String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
             item.hide_days_in_alert = 0
             item.has_expired_cycle = 0
             if ((item.next_cycle_limit_date != null
-                && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
+                        && ToolBox_Inf.getDateDiferenceInMilliseconds(
+                    item.next_cycle_limit_date,
+                    dateStartLastMinute
+                ) <= 0)
                 || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(geOs.maxMeasureValue()) <= 0)
             ) {
-                    item.has_expired_cycle = 1
+                item.has_expired_cycle = 1
             }
 
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT.equals(item.item_check_status,true)){
+            if (GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT.equals(
+                    item.item_check_status,
+                    true
+                )
+            ) {
                 //Verifica se data projetada do proximo ciclo foi atingida
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
@@ -600,10 +686,17 @@ class GeOsDao(
              * menor que a data de projetada, volta para normal.
              * Isso só acontece no app, pois o usr pode informar uma data anterior a atual.
              */
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
+            if (GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(
+                    item.item_check_status,
+                    true
+                )
+            ) {
                 //Verifica se data projetada do proximo ciclo foi atingida
                 if (item.next_cycle_measure_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(
+                        item.next_cycle_measure_date,
+                        dateStartLastMinute
+                    ) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                     item.hide_days_in_alert = 1
@@ -616,9 +709,16 @@ class GeOsDao(
              *      - Se data de limite(next_cycle_limit_date) for maior que data de inicio
              *  até o ultimo minuto(dateStartLastMinute)
              */
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED.equals(item.item_check_status,true)){
+            if (GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED.equals(
+                    item.item_check_status,
+                    true
+                )
+            ) {
                 if (item.next_cycle_limit_date != null && geOs.date_start != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(
+                        item.next_cycle_limit_date,
+                        dateStartLastMinute
+                    ) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                     item.hide_days_in_alert = 1
@@ -636,7 +736,7 @@ class GeOsDao(
              *      - Se o valor do proximo ciclo(next_cycle_measure) for menor ou igual ao valor
              *      medido pelo usr measureConsider
              */
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status,true)){
+            if (GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status, true)) {
                 var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
 
 
@@ -649,7 +749,10 @@ class GeOsDao(
 
                 //Verifica se data limite do proximo ciclo foi atingida
                 if (item.next_cycle_limit_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(
+                        item.next_cycle_limit_date,
+                        dateStartLastMinute
+                    ) <= 0
                 ) {
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
@@ -669,7 +772,11 @@ class GeOsDao(
              *      - Se o data projetada foi alcançada, mas o valor da medido pelo usr, é inferior
              *  ao proximo ciclo previsto(next_cycle_measure)
              */
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
+            if (GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(
+                    item.item_check_status,
+                    true
+                )
+            ) {
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
                 ) {
@@ -693,37 +800,54 @@ class GeOsDao(
     @Throws(java.lang.Exception::class)
     private fun secondScan(geOs: GeOs, geOsDeviceItens: MutableList<GeOsDeviceItem>) {
         geOsDeviceItens.forEach { item ->
-            when(geOs.display_option){
+            when (geOs.display_option) {
                 //Se show all, pega os itens em status normal e
-                MdOrderType.DISPLAY_OPTION_SHOW_ALL ->{
+                MdOrderType.DISPLAY_OPTION_SHOW_ALL -> {
                     geOs.item_check_group_code?.let {
-                        if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
+                        if (item.item_check_status.equals(
+                                GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                                true
+                            )
                             && it.equals(item.item_check_group_code)
                             && item.partitioned_execution == 0
-                        ){
+                        ) {
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
                         }
-                    } ?:
-                        if(
-                            item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
-                            && item.partitioned_execution == 0
-                        ){
-                            item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-                        } else { }
+                    } ?: if (
+                        item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL, true)
+                        && item.partitioned_execution == 0
+                    ) {
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
+                    } else {
+                    }
 
                 }
-                MdOrderType.DISPLAY_OPTION_SHOW_ONLY_CRITICAL ->{
-                    if(item.critical_item == 0
-                        && (    item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE ,true)
-                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,true)
-                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,true)
-                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED ,true)
+
+                MdOrderType.DISPLAY_OPTION_SHOW_ONLY_CRITICAL -> {
+                    if (item.critical_item == 0
+                        && (item.item_check_status.equals(
+                            GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                            true
                         )
-                    ){
+                                || item.item_check_status.equals(
+                            GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT,
+                            true
+                        )
+                                || item.item_check_status.equals(
+                            GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED,
+                            true
+                        )
+                                || item.item_check_status.equals(
+                            GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED,
+                            true
+                        )
+                                )
+                    ) {
                         item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                     }
                 }
-                else ->{}
+
+                else -> {}
             }
 
         }
@@ -746,11 +870,11 @@ class GeOsDao(
         try {
             db.beginTransaction()
             //
-            addUpdateRet += db.delete(TABLE,wherePkClause,null)
-            addUpdateRet += db.delete(GeOsDeviceDao.TABLE,wherePkClause,null)
-            addUpdateRet += db.delete(GeOsDeviceItemDao.TABLE,wherePkClause,null)
-            addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE,wherePkClause,null)
-            addUpdateRet += db.delete(GeOsDeviceItemHistDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsDeviceDao.TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsDeviceItemDao.TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsDeviceItemHistDao.TABLE, wherePkClause, null)
             //
             db.setTransactionSuccessful()
         } catch (e: SQLiteException) {
@@ -779,5 +903,23 @@ class GeOsDao(
         //
         closeDB()
         return daoObjReturn
+    }
+
+    fun getGeOsById(
+        customerCode: Long,
+        formTypeCode: String,
+        formCode: String,
+        formVersionCode: String,
+        formData: String
+    ): GeOs? {
+        return getByString(
+            GeOsSql_001(
+                customerCode.toString(),
+                formTypeCode,
+                formCode,
+                formVersionCode,
+                formData
+            ).toSqlQuery()
+        )
     }
 }

@@ -15,6 +15,8 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -126,18 +128,18 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
     /**
      * LUCHE - 15/03/2019
-     *
+     * <p>
      * Metodo insert ou update criado usando nova metodologia.
      * Diferente dos metodo usados até hoje, nesse metodo, esse metodo retorna
      * um objeto com informações referente a ação executada.
-     *
+     * <p>
      * Esse metodo primeiro tenta executar o update do registro e caso a qtd
      * de linhas alterdas seja 0, executa o insert usando o metodo insertOrThrow
      * que retorna SQLiteException em caso de erro no insert.
-     *
+     * <p>
      * O obj de retorno contem a informação de se houve erro ao executar o metodo
      * e deve ser SEMPRE avalidado após ser retornado.
-     *
+     * <p>
      * Em caso de exception, o obj de retorno recebe a flag de erro e msg do erro
      * além de gerar um arquivo de exception
      *
@@ -145,14 +147,14 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
      * @return Obj com informação referentes a operação executada, seu sucesso e
      * info de qtd de registros alterados ou row id do insert
      */
-    public DaoObjReturn addUpdateThrowException(GE_Custom_Form_Local custom_form_local){
+    public DaoObjReturn addUpdateThrowException(GE_Custom_Form_Local custom_form_local) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
         openDB();
 
-        try{
+        try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = new StringBuilder();
@@ -168,11 +170,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
-            if(addUpdateRet == 0){
+            if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -184,11 +186,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                     )
             );
 
-        }catch (Exception e){
+        } catch (Exception e) {
             //Seta obj de retorno com flag de erro e gera arquivo de exception
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
-        }finally {
+        } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);
@@ -203,17 +205,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
      * Metodo de insert ou update em massa usando nova metodologia com obj de retorno da operação.
      *
      * @param custom_form_locals
-     * @param status -> Var que identifica se antes da operação deve executar um TRUNCATE  na tabela.
+     * @param status             -> Var que identifica se antes da operação deve executar um TRUNCATE  na tabela.
      * @return
      */
-    public DaoObjReturn addUpdateThrowException(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status){
+    public DaoObjReturn addUpdateThrowException(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
         openDB();
 
-        try{
+        try {
             db.beginTransaction();
 
             if (status) {
@@ -242,7 +244,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                 }
             }
             db.setTransactionSuccessful();
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
@@ -273,26 +275,28 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
 
     //region SCHEDULE_EXEC
+
     /**
      * LUCHE - 15/05/2020
-     *
+     * <p>
      * Metodo que executa insert / update do obj usando instance de banco de dados comparilhada
+     *
      * @param custom_form_local
      * @param dbInstance
      * @return - DaoObjReturn com informações
      */
-    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(GE_Custom_Form_Local custom_form_local , SQLiteDatabase dbInstance){
+    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(GE_Custom_Form_Local custom_form_local, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = new StringBuilder();
@@ -308,28 +312,28 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
-            if(addUpdateRet == 0){
+            if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
             }
 
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
-        }catch (Exception e){
+        } catch (Exception e) {
             //Seta obj de retorno com flag de erro e gera arquivo de exception
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
-        }finally {
+        } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
             daoObjReturn.setAction(curAction);
@@ -344,27 +348,28 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
     /**
      * LUCHE - 15/05/2020
-     *
+     * <p>
      * Metodo que executa insert / update de lista usando instance de banco de dados comparilhada
+     *
      * @param custom_form_locals
      * @param status
      * @param dbInstance
      * @return - DaoObjReturn com informações
      */
-    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status, SQLiteDatabase dbInstance){
+    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
-        try{
+        try {
             //Se db não foi passado, inicializa transaction
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.beginTransaction();
             }
 
@@ -394,19 +399,19 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
 
         } catch (Exception e) {
@@ -414,7 +419,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction();
             }
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
@@ -423,7 +428,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         //
@@ -434,6 +439,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
      * LUCHE - 15/05/2020
      * <p></p>
      * Criado metodo que busca GE_Custom_Form_Local usando instancia de banco de dados compartilhada
+     *
      * @param s_query
      * @param dbInstance
      * @return Obj GE_Custom_Form_Local ou null
@@ -457,7 +463,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         } finally {
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB();
         }
         //
@@ -667,83 +673,83 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public List<HMAux> getFormInProcessFromTrip(long customerCode, int tripPrefix, int tripCode, int destinationSeq) {
         return query_HM(
                 "SELECT " +
-                        "l."+ CUSTOMER_CODE + "," +
-                        " l."+ CUSTOM_FORM_TYPE + "," +
-                        " l."+ CUSTOM_FORM_CODE + "," +
-                        " l."+ CUSTOM_FORM_VERSION + "," +
-                        " l."+ CUSTOM_FORM_DATA + "," +
-                        " l."+ CUSTOM_FORM_PRE + "," +
-                        " l."+ CUSTOM_FORM_STATUS + "," +
-                        " l."+ REQUIRE_SIGNATURE + "," +
-                        " l."+ REQUIRE_LOCATION + "," +
-                        " l."+ REQUIRE_SERIAL_DONE + "," +
-                        " l."+ AUTOMATIC_FILL + "," +
-                        " l."+ CUSTOM_PRODUCT_CODE + "," +
-                        " l."+ CUSTOM_PRODUCT_DESC + "," +
-                        " l."+ CUSTOM_PRODUCT_ID + "," +
-                        " l."+ CUSTOM_PRODUCT_ICON_NAME+ "," +
-                        " l."+ CUSTOM_PRODUCT_ICON_URL + "," +
-                        " l."+ CUSTOM_PRODUCT_ICON_URL_LOCAL + "," +
-                        " l."+ CUSTOM_FORM_DESC + "," +
-                        " l."+ SERIAL_ID + "," +
-                        " l."+ SCHEDULE_DATE_START_FORMAT + "," +
-                        " l."+ SCHEDULE_DATE_END_FORMAT + "," +
-                        " l."+ SCHEDULE_DATE_START_FORMAT_MS + "," +
-                        " l."+ REQUIRE_SERIAL + "," +
-                        " l."+ ALLOW_NEW_SERIAL_CL + "," +
-                        " l."+ ALL_SITE + "," +
-                        " l."+ ALL_OPERATION + "," +
-                        " l."+ ALL_PRODUCT + "," +
-                        " l."+ SITE_CODE + "," +
-                        " l."+ SITE_ID + "," +
-                        " l."+ SITE_DESC + "," +
-                        " l."+ ZONE_CODE + "," +
-                        " l."+ ZONE_ID + "," +
-                        " l."+ ZONE_DESC + "," +
-                        " l."+ IO_CONTROL + "," +
-                        " l."+ INBOUND_AUTO_CREATE + "," +
-                        " l."+ OPERATION_CODE + "," +
-                        " l."+ OPERATION_ID + "," +
-                        " l."+ OPERATION_DESC + "," +
-                        " l."+ LOCAL_CONTROL + "," +
-                        " l."+ SERIAL_MIN_LENGTH + "," +
-                        " l."+ SERIAL_MAX_LENGTH + "," +
-                        " l."+ SCHEDULE_COMMENTS + "," +
-                        " l."+ SCHEDULE_PREFIX + "," +
-                        " l."+ SCHEDULE_CODE + "," +
-                        " l."+ SCHEDULE_EXEC + "," +
-                        " l."+ TICKET_PREFIX + "," +
-                        " l."+ TICKET_CODE + "," +
-                        " l."+ TICKET_SEQ + "," +
-                        " l."+ TICKET_SEQ_TMP + "," +
-                        " l."+ STEP_CODE + "," +
-                        " l."+ TAG_OPERATIONAL_CODE + "," +
-                        " l."+ TAG_OPERATIONAL_ID + "," +
-                        " l."+ TAG_OPERATIONAL_DESC + "," +
-                        " l."+ IS_SO + "," +
-                        " l."+ SO_EDIT_START_END + "," +
-                        " l."+ SO_ORDER_TYPE_CODE_DEFAULT + "," +
-                        " l."+ SO_ALLOW_CHANGE_ORDER_TYPE + "," +
-                        " l."+ SO_ALLOW_BACKUP + "," +
-                        " l."+ SO_OPTIONAL_JUSTIFY_PROBLEM + "," +
-                        " l."+ NC_RECOGNIZE_EMAIL_IN_COMMENT + "," +
-                        " d."+ GE_Custom_Form_DataDao.DATE_START +
+                        "l." + CUSTOMER_CODE + "," +
+                        " l." + CUSTOM_FORM_TYPE + "," +
+                        " l." + CUSTOM_FORM_CODE + "," +
+                        " l." + CUSTOM_FORM_VERSION + "," +
+                        " l." + CUSTOM_FORM_DATA + "," +
+                        " l." + CUSTOM_FORM_PRE + "," +
+                        " l." + CUSTOM_FORM_STATUS + "," +
+                        " l." + REQUIRE_SIGNATURE + "," +
+                        " l." + REQUIRE_LOCATION + "," +
+                        " l." + REQUIRE_SERIAL_DONE + "," +
+                        " l." + AUTOMATIC_FILL + "," +
+                        " l." + CUSTOM_PRODUCT_CODE + "," +
+                        " l." + CUSTOM_PRODUCT_DESC + "," +
+                        " l." + CUSTOM_PRODUCT_ID + "," +
+                        " l." + CUSTOM_PRODUCT_ICON_NAME + "," +
+                        " l." + CUSTOM_PRODUCT_ICON_URL + "," +
+                        " l." + CUSTOM_PRODUCT_ICON_URL_LOCAL + "," +
+                        " l." + CUSTOM_FORM_DESC + "," +
+                        " l." + SERIAL_ID + "," +
+                        " l." + SCHEDULE_DATE_START_FORMAT + "," +
+                        " l." + SCHEDULE_DATE_END_FORMAT + "," +
+                        " l." + SCHEDULE_DATE_START_FORMAT_MS + "," +
+                        " l." + REQUIRE_SERIAL + "," +
+                        " l." + ALLOW_NEW_SERIAL_CL + "," +
+                        " l." + ALL_SITE + "," +
+                        " l." + ALL_OPERATION + "," +
+                        " l." + ALL_PRODUCT + "," +
+                        " l." + SITE_CODE + "," +
+                        " l." + SITE_ID + "," +
+                        " l." + SITE_DESC + "," +
+                        " l." + ZONE_CODE + "," +
+                        " l." + ZONE_ID + "," +
+                        " l." + ZONE_DESC + "," +
+                        " l." + IO_CONTROL + "," +
+                        " l." + INBOUND_AUTO_CREATE + "," +
+                        " l." + OPERATION_CODE + "," +
+                        " l." + OPERATION_ID + "," +
+                        " l." + OPERATION_DESC + "," +
+                        " l." + LOCAL_CONTROL + "," +
+                        " l." + SERIAL_MIN_LENGTH + "," +
+                        " l." + SERIAL_MAX_LENGTH + "," +
+                        " l." + SCHEDULE_COMMENTS + "," +
+                        " l." + SCHEDULE_PREFIX + "," +
+                        " l." + SCHEDULE_CODE + "," +
+                        " l." + SCHEDULE_EXEC + "," +
+                        " l." + TICKET_PREFIX + "," +
+                        " l." + TICKET_CODE + "," +
+                        " l." + TICKET_SEQ + "," +
+                        " l." + TICKET_SEQ_TMP + "," +
+                        " l." + STEP_CODE + "," +
+                        " l." + TAG_OPERATIONAL_CODE + "," +
+                        " l." + TAG_OPERATIONAL_ID + "," +
+                        " l." + TAG_OPERATIONAL_DESC + "," +
+                        " l." + IS_SO + "," +
+                        " l." + SO_EDIT_START_END + "," +
+                        " l." + SO_ORDER_TYPE_CODE_DEFAULT + "," +
+                        " l." + SO_ALLOW_CHANGE_ORDER_TYPE + "," +
+                        " l." + SO_ALLOW_BACKUP + "," +
+                        " l." + SO_OPTIONAL_JUSTIFY_PROBLEM + "," +
+                        " l." + NC_RECOGNIZE_EMAIL_IN_COMMENT + "," +
+                        " d." + GE_Custom_Form_DataDao.DATE_START +
                         "\n" +
-                        " FROM "+ GE_Custom_Form_DataDao.TABLE +" d\n" +
-                        " INNER JOIN "+ GE_Custom_Form_LocalDao.TABLE +" l\n" +
-                        " ON d."+ GE_Custom_Form_DataDao.CUSTOMER_CODE +" = l."+ GE_Custom_Form_LocalDao.CUSTOMER_CODE+ "\n" +
-                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_CODE+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE+"\n" +
-                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE+"\n" +
-                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION+"\n" +
-                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_DATA+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA+"\n" +
+                        " FROM " + GE_Custom_Form_DataDao.TABLE + " d\n" +
+                        " INNER JOIN " + GE_Custom_Form_LocalDao.TABLE + " l\n" +
+                        " ON d." + GE_Custom_Form_DataDao.CUSTOMER_CODE + " = l." + GE_Custom_Form_LocalDao.CUSTOMER_CODE + "\n" +
+                        " AND d." + GE_Custom_Form_DataDao.CUSTOM_FORM_CODE + " = l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE + "\n" +
+                        " AND d." + GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE + " = l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE + "\n" +
+                        " AND d." + GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION + " = l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION + "\n" +
+                        " AND d." + GE_Custom_Form_DataDao.CUSTOM_FORM_DATA + " = l." + GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA + "\n" +
                         "\n" +
-                        " WHERE d.customer_code = '"+customerCode+"'\n" +
-                        " AND d.trip_prefix = '"+tripPrefix+"'\n" +
-                        " AND d.trip_code = '"+tripCode+"'\n" +
-                        " AND d.destination_seq = '"+destinationSeq+"'\n" +
-                        " AND d.custom_form_status IN ('"+SYS_STATUS_IN_PROCESSING+"', +'"+SYS_STATUS_WAITING_SYNC+"')"
+                        " WHERE d.customer_code = '" + customerCode + "'\n" +
+                        " AND d.trip_prefix = '" + tripPrefix + "'\n" +
+                        " AND d.trip_code = '" + tripCode + "'\n" +
+                        " AND d.destination_seq = '" + destinationSeq + "'\n" +
+                        " AND d.custom_form_status IN ('" + SYS_STATUS_IN_PROCESSING + "', +'" + SYS_STATUS_WAITING_SYNC + "')"
 
-                );
+        );
     }
 
     private class CursorGE_Custom_FormMapper implements Mapper<Cursor, GE_Custom_Form_Local> {
@@ -832,57 +838,57 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             //
             custom_form_local.setRequire_serial_done(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL_DONE)));
             //
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_COMMENTS))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_COMMENTS))) {
                 custom_form_local.setSchedule_comments(null);
-            }else{
+            } else {
                 custom_form_local.setSchedule_comments(cursor.getString(cursor.getColumnIndex(SCHEDULE_COMMENTS)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))) {
                 custom_form_local.setSchedule_prefix(null);
-            }else{
+            } else {
                 custom_form_local.setSchedule_prefix(cursor.getInt(cursor.getColumnIndex(SCHEDULE_PREFIX)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))) {
                 custom_form_local.setSchedule_code(null);
-            }else{
+            } else {
                 custom_form_local.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))) {
                 custom_form_local.setSchedule_exec(null);
-            }else{
+            } else {
                 custom_form_local.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_PREFIX))) {
                 custom_form_local.setTicket_prefix(null);
-            }else{
+            } else {
                 custom_form_local.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_CODE))) {
                 custom_form_local.setTicket_code(null);
-            }else{
+            } else {
                 custom_form_local.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_SEQ))) {
                 custom_form_local.setTicket_seq(null);
-            }else{
+            } else {
                 custom_form_local.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ_TMP))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_SEQ_TMP))) {
                 custom_form_local.setTicket_seq_tmp(null);
-            }else{
+            } else {
                 custom_form_local.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(STEP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(STEP_CODE))) {
                 custom_form_local.setStep_code(null);
-            }else{
+            } else {
                 custom_form_local.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             }
             custom_form_local.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
@@ -1053,13 +1059,13 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             contentValues.put(TICKET_SEQ_TMP, custom_form_local.getTicket_seq_tmp());
             contentValues.put(STEP_CODE, custom_form_local.getStep_code());
 
-            if(custom_form_local.getTag_operational_code() > -1){
+            if (custom_form_local.getTag_operational_code() > -1) {
                 contentValues.put(TAG_OPERATIONAL_CODE, custom_form_local.getTag_operational_code());
             }
-            if(custom_form_local.getTag_operational_id() != null){
+            if (custom_form_local.getTag_operational_id() != null) {
                 contentValues.put(TAG_OPERATIONAL_ID, custom_form_local.getTag_operational_id());
             }
-            if(custom_form_local.getTag_operational_desc() != null){
+            if (custom_form_local.getTag_operational_desc() != null) {
                 contentValues.put(TAG_OPERATIONAL_DESC, custom_form_local.getTag_operational_desc());
             }
             if (custom_form_local.getIs_so() > -1) {
@@ -1081,5 +1087,60 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             return contentValues;
         }
     }
+
+
+    public GE_Custom_Form_Local getGeCustomFormLocalById(
+            String customerCode,
+            String formTypeCode,
+            String formCode,
+            String formVersionCode,
+            String formData,
+            String productCode,
+            String serialId
+    ) {
+        return getByString(
+                new GE_Custom_Form_Local_Sql_003(
+                        customerCode,
+                        formTypeCode,
+                        formCode,
+                        formVersionCode,
+                        formData,
+                        productCode,
+                        serialId.toUpperCase()
+                ).toSqlQuery()
+        );
+    }
+
+
+    public GE_Custom_Form_Local getGeCustomFormLocalTicketById(
+            @NotNull String customerCode,
+            @NotNull String formTypeCode,
+            @NotNull String formCode,
+            @NotNull String formVersionCode,
+            @NotNull String formData,
+            @NotNull String productCode,
+            @NotNull String serialId,
+            int ticketPrefix,
+            int ticketCode,
+            int ticketSeq,
+            int stepCode
+    ) {
+        return getByString(
+                new GE_Custom_Form_Local_Sql_019(
+                        customerCode,
+                        formTypeCode,
+                        formCode,
+                        formVersionCode,
+                        formData,
+                        productCode,
+                        serialId,
+                        ticketPrefix,
+                        ticketCode,
+                        ticketSeq,
+                        stepCode
+                ).toSqlQuery()
+        );
+    }
+
 
 }

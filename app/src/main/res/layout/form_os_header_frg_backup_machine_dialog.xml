@@ -31,21 +31,6 @@
         app:srcCompat="@drawable/ic_baseline_wifi_off_24"
         app:tint="@color/namoa_color_gray_9" />
 
-
-    <TextView
-        android:id="@+id/tv_bkp_product_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
-        android:text="EMP - Empilhadeira"
-        android:textColor="@color/namoa_color_gray_9"
-        android:textSize="@dimen/font_size_font_12"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_dialog_ttl" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bkp_serial"
         android:layout_width="0dp"
@@ -54,7 +39,7 @@
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_bkp_product_info"
+        app:layout_constraintTop_toBottomOf="@+id/tv_dialog_ttl"
         app:layout_constraintBottom_toTopOf="@id/cl_bottom_btn"
         tools:itemCount="6"
         tools:listitem="@layout/form_os_header_frg_backup_machine_dialog_item"

@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -438,5 +439,18 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             }
             return contentValues;
         }
+    }
+
+
+    public MD_Product getProductById(
+            long customerCode,
+            long code
+    ) {
+        return getByString(
+                new MD_Product_Sql_001(
+                        customerCode,
+                        code
+                ).toSqlQuery()
+        );
     }
 }

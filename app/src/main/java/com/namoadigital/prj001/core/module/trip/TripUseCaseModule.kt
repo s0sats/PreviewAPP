@@ -1,7 +1,8 @@
-package com.namoadigital.prj001.core.module
+
+package com.namoadigital.prj001.core.module.trip
 
 import android.content.Context
-import com.namoadigital.prj001.core.data.local.repository.serial.SerialRepository
+import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
@@ -36,7 +37,8 @@ import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.Desti
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.GetDestinationActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.action.GetListSiteExtractUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.DownloadTicketUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketFormByIdUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.TicketUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetEventTypeUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetListEventTypeUseCase
@@ -60,7 +62,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object UseCaseModule {
+object TripUseCaseModule {
 
     @ViewModelScoped
     @Provides
@@ -92,7 +94,7 @@ object UseCaseModule {
         ticketRepository: TicketRepository,
         ticketCacheRepository: TicketCacheRepository,
         tripRepository: TripRepository,
-        serialRepository: SerialRepository
+        productSerialRepository: ProductSerialRepository
     ): DestinationUseCase {
         return DestinationUseCase(
             destination = GetDestinationUseCase(repository),
@@ -102,7 +104,7 @@ object UseCaseModule {
                 repository,
                 ticketRepository,
                 ticketCacheRepository,
-                serialRepository
+                productSerialRepository
             ),
             setDestinationStatusUseCase = SetDestinationStatusUseCase(
                 repository,
@@ -176,8 +178,9 @@ object UseCaseModule {
     fun providesTicketUseCase(
         repository: TicketRepository
     ) = TicketUseCase(
-        get = GetTicketUseCase(repository),
-        download = DownloadTicketUseCase(repository)
+        get = GetTicketByIdUseCase(repository),
+        download = DownloadTicketUseCase(repository),
+        ticketForm = GetTicketFormByIdUseCase(repository)
     )
 
     @ViewModelScoped
