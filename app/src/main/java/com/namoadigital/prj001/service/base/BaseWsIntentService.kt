@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.os.Build
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.loadNetworkTranslate
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -18,6 +19,9 @@ abstract class BaseWsIntentService(
     private val mResourceName = "ws_generic_resource"
     open val genericServiceTranslate: HMAux by lazy {
         loadGenericTranslation()
+    }
+    open val netwrokServiceTranslate: HMAux by lazy {
+        loadNetworkTranslate()
     }
 
     override fun onCreate() {

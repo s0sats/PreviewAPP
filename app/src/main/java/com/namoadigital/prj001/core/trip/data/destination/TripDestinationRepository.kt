@@ -35,8 +35,8 @@ interface TripDestinationRepository {
         tripCode: Int,
         destinationSeq: Int
     ): FsTripDestination?
-    fun getTripDestinations(customerCode: Long, tripPrefix: Int, tripCode:Int): List<FsTripDestination>
-    fun getTripLastDestinationCoordinate(customerCode: Long, tripPrefix: Int, tripCode:Int): Coordinates?
+
+
     fun getDestinationByStatus(customerCode: Long, tripPrefix: Int, tripCode:Int, status: DestinationStatus): FsTripDestination?
 
     fun getLastDestinationStatus(
@@ -70,7 +70,7 @@ interface TripDestinationRepository {
     ): Flow<IResult<Unit>>
 
     fun getExtract(trip: FSTrip?): List<Extract<FsTripDestination>>
-    fun getListDestinations(tripPrefix: Int, tripCode: Int) : List<FsTripDestination>
+
     fun getListOdometerArrived() : List<OdometerArrivedDestination>
     fun saveDestinationDate(
         dateStart: String,

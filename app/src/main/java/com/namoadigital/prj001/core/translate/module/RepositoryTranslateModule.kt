@@ -34,7 +34,7 @@ object RepositoryTranslateModule {
         ).let {
             return TranslateBuild(context)
                 .listVars(it)
-                .resource("0")
+                .resource("2")
                 .build()
         }
     }

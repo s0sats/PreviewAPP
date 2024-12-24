@@ -190,7 +190,8 @@ fun Context.processWSCheckValidation(
 fun Context.loadNetworkTranslate(): HMAux {
     listOf(
         NETWORK_GENERIC_ERROR,
-        DB_TRANSACTION_ERROR_LBL
+        DB_TRANSACTION_ERROR_LBL,
+        DB_GET_DATA_ERROR_LBL
     ).let {
         return ToolBox_Inf.setLanguage(
             this,
@@ -198,7 +199,7 @@ fun Context.loadNetworkTranslate(): HMAux {
             ToolBox_Inf.getResourceCode(
                 this,
                 Constant.APP_MODULE,
-                "0"
+                "2"
             ),
             ToolBox_Con.getPreference_Translate_Code(this),
             it

@@ -27,7 +27,6 @@ import com.namoadigital.prj001.dao.trip.FsTripPositionDao
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.getCustomerCode
-import com.namoadigital.prj001.extensions.getToken
 import com.namoadigital.prj001.extensions.getUserCode
 import com.namoadigital.prj001.extensions.getUserSessionAPP
 import com.namoadigital.prj001.extensions.results
@@ -158,11 +157,17 @@ class TripDestinationRepositoryImp @Inject constructor(
 
                             },
                             failed = { throwable ->
-                                saveOfflineOvernight(trip, destinationType, currentLat, currentLon, throwable)
+                                saveOfflineOvernight(
+                                    trip,
+                                    destinationType,
+                                    currentLat,
+                                    currentLon,
+                                    throwable
+                                )
                             }
                         )
                     }
-                }else{
+                } else {
                     saveOfflineOvernight(trip, destinationType, currentLat, currentLon, null)
                 }
             }
@@ -180,11 +185,17 @@ class TripDestinationRepositoryImp @Inject constructor(
         throwable: Throwable? = null
     ) {
         val nextDestinationSeq = getNextDestinationSeq(trip.tripPrefix, trip.tripCode)
+
+        if (nextDestinationSeq == null) {
+            emit(failed(IOException("SAVE_ERROR")))
+            return
+        }
+
         val selectDestinationRec = SelectDestinationRec(
             tripPrefix = trip.tripPrefix,
             tripCode = trip.tripCode,
             scn = trip.scn,
-            destinationSeq = nextDestinationSeq ?: 1,
+            destinationSeq = nextDestinationSeq,
             destinationStatus = DestinationStatus.ARRIVED.toDescription(),
             tripStatus = TripStatus.OVER_NIGHT.toDescription(),
             lat = currentLat,
@@ -223,13 +234,6 @@ class TripDestinationRepositoryImp @Inject constructor(
         return emptyList()
     }
 
-    override fun getListDestinations(tripPrefix: Int, tripCode: Int): List<FsTripDestination> {
-        return dao.listAllDestinations(
-            customerCode = context.getCustomerCode(),
-            tripPrefix = tripPrefix,
-            tripCode = tripCode
-        )
-    }
 
     override fun getListOdometerArrived(): List<OdometerArrivedDestination> {
         tripDao?.getTrip()?.let { trip ->
@@ -251,38 +255,6 @@ class TripDestinationRepositoryImp @Inject constructor(
             tripCode,
             destinationSeq,
         )
-    }
-
-
-    override fun getTripDestinations(
-        customerCode: Long,
-        tripPrefix: Int,
-        tripCode: Int
-    ): List<FsTripDestination> {
-        return dao.listAllDestinations(
-            customerCode,
-            tripPrefix,
-            tripCode
-        )
-    }
-
-    override fun getTripLastDestinationCoordinate(
-        customerCode: Long,
-        tripPrefix: Int,
-        tripCode: Int
-    ): Coordinates? {
-        //
-        val tripDestinations = getTripDestinations(
-            customerCode,
-            tripPrefix,
-            tripCode
-        )
-        //
-        if (tripDestinations.isEmpty()) {
-            return null
-        }
-        //
-        return tripDestinations.last().coordinates
     }
 
     override fun getDestinationByStatus(
@@ -323,7 +295,7 @@ class TripDestinationRepositoryImp @Inject constructor(
         customerCode: Long,
         remoteDestination: SelectDestinationRec,
         destination: SelectionDestinationAvailable,
-        isOnlineFLow:Boolean
+        isOnlineFLow: Boolean
     ): Boolean {
         val fsTripDestination = FsTripDestination(
             customerCode = customerCode,
@@ -629,12 +601,22 @@ class TripDestinationRepositoryImp @Inject constructor(
                                     }.success {
                                         context.sendBCStatus(WsTypeStatus.CLOSE_ACT(response = "ok"))
                                     }.failed {
-                                        context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                        context.sendBCStatus(
+                                            WsTypeStatus.CUSTOM_ERROR(
+                                                networkTranslate[DB_TRANSACTION_ERROR_LBL]
+                                            )
+                                        )
                                     }
                                 }
                             },
                             failed = { throwable ->
-                                saveDestinationOffline(trip, destinationSeq, dateStart, dateEnd, throwable)
+                                saveDestinationOffline(
+                                    trip,
+                                    destinationSeq,
+                                    dateStart,
+                                    dateEnd,
+                                    throwable
+                                )
                             }
                         )
                     }

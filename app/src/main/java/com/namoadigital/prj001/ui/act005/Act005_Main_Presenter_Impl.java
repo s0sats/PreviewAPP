@@ -2648,11 +2648,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void executeTripSave() {
-        mView.setWsProcess(WS_TRIP_SEND_UPDATE);
+
         SendTripFullUseCase useCase = new SendTripFullUseCase(
                 new TripRepositoryImp(context)
         );
-        useCase.invoke(Unit.INSTANCE);
+        if(!useCase.invoke(Unit.INSTANCE)){
+            mView.showAlertMsg();
+        }
 
     }
 

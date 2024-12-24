@@ -7,6 +7,7 @@ class DestinationGetMax(
     val tripPrefix: Int,
     val tripCode: Int,
 ) : Specification {
+    @Throws(Exception::class)
     override fun toSqlQuery() = """
             SELECT ifnull(MAX(${FsTripDestinationDao.DESTINATION_SEQ}), 0) + 1 ${FsTripDestinationDao.DESTINATION_SEQ} 
             FROM ${FsTripDestinationDao.TABLE}

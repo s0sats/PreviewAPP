@@ -124,7 +124,8 @@ class FSTripEventDao(
                     db.insertOrThrow(
                         TABLE,
                         null,
-                        toContentValuesMapper.map(fsEvent))
+                        toContentValuesMapper.map(fsEvent)
+                    )
                 }
             }
             //
@@ -172,34 +173,34 @@ class FSTripEventDao(
         remove(sQuery, null)
     }
 
-    fun remove(sQuery: String?, dbInstance: SQLiteDatabase?):DaoObjReturn {
+    fun remove(sQuery: String?, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         val curAction = DaoObjReturn.DELETE
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        }else{
+        } else {
             db = dbInstance
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             db.beginTransaction()
         }
 
         try {
             db.execSQL(sQuery)
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful()
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
             ToolBox_Inf.registerException(javaClass.name, e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.endTransaction()
             }
             daoObjReturn.action = curAction
         }
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
         return daoObjReturn
@@ -273,6 +274,28 @@ class FSTripEventDao(
         return items
     }
 
+    private fun queryForFullUpdate(sQuery: String?): MutableList<FSTripEvent>? {
+        var items = mutableListOf<FSTripEvent>()
+        openDB()
+        try {
+            val cursor = db.rawQuery(sQuery, null)
+            while (cursor.moveToNext()) {
+                val uAux: FSTripEvent = toFSTripEvent.map(cursor)
+                items.add(uAux)
+            }
+            //
+            cursor.close()
+        } catch (e: java.lang.Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+            return null
+        } finally {
+        }
+        //
+        closeDB()
+        return items
+    }
+
+
     fun query(sQuery: String?, db: SQLiteDatabase): MutableList<FSTripEvent> {
         var items = mutableListOf<FSTripEvent>()
         val cursor = db.rawQuery(sQuery, null)
@@ -319,14 +342,14 @@ class FSTripEventDao(
         throw Exception("NULL_OBJ_RECEIVED")
     }
 
-    fun addUpdate(fsEvent: FSTripEvent, dbInstance: SQLiteDatabase?):DaoObjReturn {
+    fun addUpdate(fsEvent: FSTripEvent, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        } else{
+        } else {
             db = dbInstance
         }
         //
@@ -374,7 +397,7 @@ class FSTripEventDao(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
         //
@@ -456,14 +479,16 @@ class FSTripEventDao(
         tripPrefix: Int,
         tripCode: Int,
     ): FSTripEvent? {
-        val value = query("""
+        val value = query(
+            """
             SELECT * FROM $TABLE 
             WHERE $TRIP_PREFIX = '$tripPrefix'
              AND $TRIP_CODE = '$tripCode'
              AND $EVENT_STATUS = '${EventStatus.WAITING.name}'
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        return if(value.isNotEmpty()) value[0]
+        return if (value.isNotEmpty()) value[0]
         else null
     }
 
@@ -474,14 +499,16 @@ class FSTripEventDao(
         seq: Int,
         dbInstance: SQLiteDatabase
     ): FSTripEvent? {
-        val value = query("""
+        val value = query(
+            """
             SELECT * FROM $TABLE 
             WHERE $TRIP_PREFIX = '$tripPrefix'
              AND $TRIP_CODE = '$tripCode'
              AND $EVENT_SEQ = '$seq'
-        """.trimIndent(), dbInstance)
+        """.trimIndent(), dbInstance
+        )
 
-        return if(value.isNotEmpty()) value[0]
+        return if (value.isNotEmpty()) value[0]
         else null
     }
 
@@ -490,21 +517,23 @@ class FSTripEventDao(
         tripCode: Int,
         seq: Int
     ): FSTripEvent? {
-        val value = query("""
+        val value = query(
+            """
             SELECT * FROM $TABLE 
             WHERE $TRIP_PREFIX = '$tripPrefix'
              AND $TRIP_CODE = '$tripCode'
              AND $EVENT_SEQ = '$seq'
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        return if(value.isNotEmpty()) value[0]
+        return if (value.isNotEmpty()) value[0]
         else null
     }
 
     @kotlin.jvm.Throws(SQLiteException::class)
-    fun update(event: FSTripEvent, dbInstance: SQLiteDatabase?){
+    fun update(event: FSTripEvent, dbInstance: SQLiteDatabase?) {
         addUpdate(event, dbInstance).let {
-            if(it.hasError()) throw SQLiteException(it.errorMsg)
+            if (it.hasError()) throw SQLiteException(it.errorMsg)
         }
     }
 
@@ -514,12 +543,13 @@ class FSTripEventDao(
         eventSeq: Int?,
     ): List<EventValidation> {
 
-        val eventSeqFilter = eventSeq?.let{
+        val eventSeqFilter = eventSeq?.let {
             "AND $EVENT_SEQ != $it"
-        }?:""
+        } ?: ""
 
 
-        val value = query_HM("""
+        val value = query_HM(
+            """
             SELECT e.*, et.$WAIT_ALLOWED 
             FROM $TABLE e
             LEFT JOIN ${FSEventTypeDao.TABLE}  et
@@ -531,7 +561,8 @@ class FSTripEventDao(
             AND ($EVENT_END IS NOT NULL AND $EVENT_END != '')
             AND event_status IN('${EventStatus.DONE.name}', '${EventStatus.WAITING.name}')
             ORDER BY $EVENT_START ASC
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val eventValidation = value.map {
 
@@ -554,58 +585,63 @@ class FSTripEventDao(
                 photoName = it[PHOTO_NAME]!!,
                 photoUrl = it[PHOTO_URL]!!,
                 eventPhotoChanged = it[PHOTO_CHANGED]?.toInt() ?: 0
-                )
+            )
             EventValidation(
                 event = fsTripEvent,
                 waitAllowed = it[WAIT_ALLOWED]?.toInt() == 1
             )
         }
 
-        return if(eventValidation.isEmpty()) emptyList() else eventValidation
+        return if (eventValidation.isEmpty()) emptyList() else eventValidation
     }
 
     fun getExtract(
         tripPrefix: Int,
         tripCode: Int,
     ): List<FSTripEvent> {
-        val value = query("""
+        val value = query(
+            """
             SELECT * FROM $TABLE
             WHERE $TRIP_PREFIX = '$tripPrefix' 
             AND $TRIP_CODE = '$tripCode'
             AND ($EVENT_END IS NOT NULL AND $EVENT_END != '')
             AND event_status IN('${EventStatus.DONE.name}', '${EventStatus.WAITING.name}')
             ORDER BY $EVENT_START ASC
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        return if(value.isEmpty()) emptyList() else value
+        return if (value.isEmpty()) emptyList() else value
     }
 
     fun listAllEvents(
         tripPrefix: Int,
         tripCode: Int,
-    ): List<FSTripEvent> {
-        val value = query("""
+    ): List<FSTripEvent>? {
+        return queryForFullUpdate(
+            """
             SELECT * FROM $TABLE
             WHERE $TRIP_PREFIX = '$tripPrefix' 
             AND $TRIP_CODE = '$tripCode'
             ORDER BY $EVENT_START ASC
-        """.trimIndent())
-
-        return if(value.isEmpty()) emptyList() else value
+        """.trimIndent()
+        )
     }
 
+    @Throws(Exception::class)
     fun getLastEvent(
         tripPrefix: Int,
         tripCode: Int
     ): FSTripEvent? {
-        val value = query("""
+        val value = query(
+            """
             SELECT * FROM $TABLE
             WHERE $TRIP_PREFIX = '$tripPrefix' 
             AND $TRIP_CODE = '$tripCode'
             ORDER BY $EVENT_SEQ DESC
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        return if(value.isEmpty()) null else value[0]
+        return if (value.isEmpty()) null else value[0]
     }
 
     companion object {

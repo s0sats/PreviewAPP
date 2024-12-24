@@ -120,6 +120,9 @@
     <string name="act002_ws_site_license_msg">Standorte mit verfügbaren Lizenzen werden geladen.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
+    <string name="act002_upload_trip_error_msg">Fehler beim Datenabrufen. Versuchen Sie bitte erneut sich anzumelden.</string>
+    <string name="act002_ws_trip_upload_ttl">Daten werden aktualisiert</string>
+    <string name="act002_ws_trip_upload_msg">Daten werden synchronisiert</string>
     <string name="license_site_dialog_ttl">Auswahl: Standort mit Lizenz</string>
     <string name="license_site_dialog_filter_hint">Standort Ihrer Lizenz auswählen</string>
     <string name="license_site_dialog_close">Abbrechen</string>

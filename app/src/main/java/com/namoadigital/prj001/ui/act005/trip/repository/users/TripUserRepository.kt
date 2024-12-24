@@ -22,5 +22,4 @@ interface TripUserRepository {
     fun getListUserByCode(code: Int) : List<FSTripUser>
     fun getListUserByCodeInTrip(code: Int) : List<FSTripUser>
     fun getFirstUserOnTrip(customerCode: Long, tripPrefix: Int, tripCode: Int): FSTripUser?
-    fun getListUsers(tripPrefix: Int, tripCode: Int): List<FSTripUser>
 }

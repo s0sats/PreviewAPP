@@ -6,7 +6,6 @@ import com.namoadigital.prj001.core.DB_TRANSACTION_ERROR_LBL
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.loading
-import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
@@ -38,7 +37,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.sql.SQLException
 
 class TripUserRepositoryImp constructor(
     private val context: Context,
@@ -59,13 +57,7 @@ class TripUserRepositoryImp constructor(
         return emptyList()
     }
 
-    override fun getListUsers(tripPrefix: Int, tripCode: Int): List<FSTripUser> {
-        tripDao.getTrip()?.let { trip ->
-            return dao.listAllUsers(trip.tripPrefix, trip.tripCode)
-        }
 
-        return emptyList()
-    }
 
     override fun execSaveUsers(
         userEdit: TripUserEdit,

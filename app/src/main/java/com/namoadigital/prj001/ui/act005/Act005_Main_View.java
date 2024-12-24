@@ -79,4 +79,6 @@ public interface Act005_Main_View {
     void handleInvalidLocalDatetime();
 
     Activity getActivity();
+
+    void showAlertMsg();
 }

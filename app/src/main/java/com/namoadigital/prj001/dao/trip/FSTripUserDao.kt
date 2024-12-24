@@ -218,6 +218,27 @@ class FSTripUserDao(
         return items
     }
 
+    private fun queryForFullUpdate(sQuery: String?): MutableList<FSTripUser>? {
+        var items = mutableListOf<FSTripUser>()
+        openDB()
+        try {
+            val cursor = db.rawQuery(sQuery, null)
+            while (cursor.moveToNext()) {
+                val uAux: FSTripUser = toFSTripUser.map(cursor)
+                items.add(uAux)
+            }
+            //
+            cursor.close()
+        } catch (e: java.lang.Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+            return null
+        } finally {
+        }
+        //
+        closeDB()
+        return items
+    }
+
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
         val items: MutableList<HMAux> = ArrayList()
         openDB()
@@ -334,6 +355,22 @@ class FSTripUserDao(
         return if (value.isEmpty()) emptyList() else value
     }
 
+    fun getAllUsersForFullUpdate(
+        tripPrefix: Int,
+        tripCode: Int,
+    ): List<FSTripUser>? {
+
+        return queryForFullUpdate(
+            """
+            SELECT * FROM $TABLE
+            WHERE $TRIP_PREFIX = '$tripPrefix' 
+            AND $TRIP_CODE = '$tripCode'
+            ORDER BY $DATE_START ASC
+        """.trimIndent()
+        )
+
+
+    }
 
     @Throws(SQLiteException::class)
     fun removeUser(

@@ -99,12 +99,6 @@ class TripServiceCallbackManager constructor(
 
 
     fun tripServiceFailed(){
-        if(FSTrip.TRIP_FULL_ERROR == response){
-            fragmentNav.popBackStack(R.id.frgMainHome)
-            selectTrip()
-            return
-        }
-
         when(wsProcess){
             TripBaseFragment.WS_TRIP_GET_LOCATION -> {
                 fragmentNav.getFragment<TripHomeFragment>()?.let { homeFragment ->
@@ -134,6 +128,10 @@ class TripServiceCallbackManager constructor(
             }
             TripBaseFragment.WS_TRIP_GET_AVAILABLE_USERS -> {
                 fragmentNav.getFragment<TripBaseFragment<*>>()?.showUsersAvailable(response.fromJsonToList<AvailableUsersRec>()?.map { it.toListAdapter() } ?: emptyList())
+            }
+            WS_TRIP_SEND_UPDATE ->{
+                fragmentNav.popBackStack(R.id.frgMainHome)
+                selectTrip()
             }
             else -> {
                 fragmentNav.getFragment<TripBaseFragment<*>>()?.errorDialog()

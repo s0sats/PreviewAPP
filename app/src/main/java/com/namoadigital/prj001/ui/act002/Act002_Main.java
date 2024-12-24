@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -357,6 +359,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
+    public void showTripUpdateFullError() {
+        ToolBox.alertMSG(
+                context,
+                getString(R.string.act002_ws_trip_upload_ttl),
+                getString(R.string.act002_upload_trip_error_msg),
+                null,
+                0
+        );
+    }
+
+    @Override
     protected void processOtherDevice() {
         super.processOtherDevice();
         HMAux item = new HMAux();
@@ -381,8 +394,27 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //super.processSync();
         if (mPresenter.checkSoSyncNeed()) {
             callSODownload();
-        }else {
+        } else if (mPresenter.checkTripSyncNeed()) {
+            callTripUpdateFull();
+        } else {
             callTicketDownload();
+        }
+    }
+
+    private void callTripUpdateFull() {
+        if (ToolBox_Con.isOnline(context, true)) {
+            //Seta variavel que define ação do metodo processCloseACT.
+            /*
+             * LUCHE - 30/06/2021
+             * Sempre que fizer o login e houvem ticket baixados,será chamado o ws_tickt_download com
+             * TODOS os tickets para que o servidor avalie a necessidade se enviar o ticket full.
+             * Necessidade "identificada" pois caso o usr perca sessão e atualizações sejam feitas no
+             * ticket sem ele saber, o ticket estará atualizado quando ele chegar na act005...
+             */
+            mPresenter.executeWSTripUpdateFull();
+        } else {
+            progressDialog.dismiss();
+            ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
         }
     }
 
@@ -489,12 +521,18 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
         } else if(wsProcess.equals(WS_SO_Sync.class.getName())){
+            if (mPresenter.checkTripSyncNeed()) {
+                callTripUpdateFull();
+            } else {
+                callTicketDownload();
+            }
+        } else if(wsProcess.equals(WS_TRIP_SEND_UPDATE)){
             callTicketDownload();
         } else if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
             ToolBox_Inf.hasFormProductOutdate(context);
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
-        }else{
+        } else {
             progressDialog.dismiss();
         }
     }

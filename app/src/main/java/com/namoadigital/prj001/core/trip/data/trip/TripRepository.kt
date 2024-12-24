@@ -61,8 +61,8 @@ interface TripRepository {
     fun getEvent(): FSTripEvent?
     fun getExtract(trip: FSTrip?): Extract<FSTrip>?
     fun getTripByDestinationSeq(destinationSeq: Int): FSTrip?
-    fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv
-    fun sendTripFullUpdate()
+    fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv?
+    fun sendTripFullUpdate():Boolean
     fun getTripUpdateRequired(): Boolean
     fun existsTripWithUpdateRequired(): Boolean
     fun isTripOnline(it: FSTrip): Boolean

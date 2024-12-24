@@ -27,7 +27,9 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
+import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.getResourceCode
+import com.namoadigital.prj001.extensions.sendCommandToServiceTripLocation
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.TripPositionAlertType
@@ -85,7 +87,11 @@ class FsTripLocationService : LifecycleService() {
                         LatLog.value = Coordinates(location.latitude, location.longitude)
                     }
                     if (!isGetLocation) {
-                        positionUseCase.checkStatusLocation(LatLog.value)
+                        if(applicationContext.getCustomerCode() == -1L){
+                            sendCommandToServiceTripLocation(STOP_LOCATION)
+                        } else {
+                            positionUseCase.checkStatusLocation(LatLog.value)
+                        }
                     } else {
                         val gson = GsonBuilder().create()
                         /*

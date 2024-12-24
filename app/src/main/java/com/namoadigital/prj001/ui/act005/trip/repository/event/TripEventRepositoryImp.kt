@@ -164,11 +164,11 @@ class TripEventRepositoryImp constructor(
                                                 this.eventStart = request.eventStart
                                                 this.eventEnd = request.eventEnd
                                                 this.eventStatus = request.eventStatus
-                                                if(request.eventPhoto.isNullOrEmpty()){
+                                                if (request.eventPhoto.isNullOrEmpty()) {
                                                     photoName = null
                                                     photoUrl = null
                                                     photoLocal = null
-                                                }else{
+                                                } else {
                                                     this.photoLocal = request.eventPhoto
                                                 }
                                                 this.eventTypeCode = request.eventTypeCode
@@ -228,15 +228,16 @@ class TripEventRepositoryImp constructor(
         eventRequest: FSTripEventEnv,
         networkError: Throwable? = null
     ) {
-        val lastEventSeq = eventDao.getLastEvent(trip.tripPrefix, trip.tripCode)?.eventSeq ?: 0
-        val newEvent = FSTripEventRec(
-            tripPrefix = trip.tripPrefix,
-            tripCode = trip.tripCode,
-            scn = trip.scn,
-            eventSeq = lastEventSeq + 1
-        )
 
         DatabaseTransactionManager(context).executeTransaction { db ->
+            val lastEventSeq = eventDao.getLastEvent(trip.tripPrefix, trip.tripCode)?.eventSeq ?: 0
+            val newEvent = FSTripEventRec(
+                tripPrefix = trip.tripPrefix,
+                tripCode = trip.tripCode,
+                scn = trip.scn,
+                eventSeq = lastEventSeq + 1
+            )
+
             val existingEvent =
                 eventDao.getEvent(trip.tripPrefix, trip.tripCode, eventRequest.eventSeq ?: -1)
 
@@ -248,11 +249,11 @@ class TripEventRepositoryImp constructor(
                     eventStart = eventRequest.eventStart
                     eventEnd = eventRequest.eventEnd
                     eventStatus = eventRequest.eventStatus
-                    if(eventRequest.eventPhoto.isNullOrEmpty()){
+                    if (eventRequest.eventPhoto.isNullOrEmpty()) {
                         photoName = null
                         photoUrl = null
                         photoLocal = null
-                    }else{
+                    } else {
                         photoLocal = eventRequest.eventPhoto
                     }
                     eventTypeCode = eventRequest.eventTypeCode
@@ -315,9 +316,6 @@ class TripEventRepositoryImp constructor(
         return emptyList()
     }
 
-    override fun getListEvents(tripPrefix: Int, tripCode: Int): List<FSTripEvent> {
-        return eventDao.listAllEvents(tripPrefix, tripCode)
-    }
 
     override fun checkRestrictionDate(
         startDateInMilis: Long,

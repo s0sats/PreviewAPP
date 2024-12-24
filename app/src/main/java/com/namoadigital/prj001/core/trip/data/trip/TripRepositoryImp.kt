@@ -29,11 +29,9 @@ import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.getCustomerCode
-import com.namoadigital.prj001.extensions.getToken
 import com.namoadigital.prj001.extensions.getUserSessionAPP
 import com.namoadigital.prj001.extensions.putApiRequest
 import com.namoadigital.prj001.extensions.results
-import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.GE_File
 import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.FSTrip
@@ -57,7 +55,6 @@ import com.namoadigital.prj001.model.trip.toTripTarget
 import com.namoadigital.prj001.receiver.trip.WBRGetTripFull
 import com.namoadigital.prj001.receiver.trip.WBRSendTripFullUpdate
 import com.namoadigital.prj001.receiver.trip.WBR_CreateTrip
-import com.namoadigital.prj001.receiver.trip.WBR_OriginSet
 import com.namoadigital.prj001.sql.MD_Site_Sql_004
 import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
 import com.namoadigital.prj001.sql.transaction.trip.TransactionWsTripDestinationStatusChange
@@ -799,23 +796,54 @@ class TripRepositoryImp @Inject constructor(
         return dao.getTripByDestination(destinationSeq)
     }
 
-    override fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv {
+    override fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv? {
         userDao?.let{
-            trip.users?.addAll(it.listAllUsers(trip.tripPrefix, trip.tripCode))
+            val listAllUsers = it.getAllUsersForFullUpdate(trip.tripPrefix, trip.tripCode)
+            listAllUsers?.let{list->
+                trip.users?.addAll(list)
+            }?: run {
+                trip.users = null
+            }
+        }?: run {
+            trip.users = null
+        }
+        if(trip.users == null){
+            return null
         }
         //
         eventDao?.let{
-            trip.events?.addAll(it.listAllEvents(trip.tripPrefix, trip.tripCode))
+            val listAllUsers = it.listAllEvents(trip.tripPrefix, trip.tripCode)
+            listAllUsers?.let { list->
+                trip.events?.addAll(list)
+            }?:run {
+                trip.events = null
+            }
+        }?:run {
+            trip.events = null
+        }
+        //
+        if(trip.events == null){
+            return null
         }
         //
         destinationDao?.let {
-            trip.destinations?.addAll(
-                it.listAllDestinations(
-                    customerCode = context.getCustomerCode(),
-                    tripPrefix = trip.tripPrefix,
-                    tripCode = trip.tripCode
-                )
+            val listAllDestination = it.listAllDestinations(
+                customerCode = context.getCustomerCode(),
+                tripPrefix = trip.tripPrefix,
+                tripCode = trip.tripCode
             )
+            //
+            listAllDestination?.let { list->
+                trip.destinations?.addAll(list)
+            }?:run {
+                trip.destinations = null
+            }
+        }?:run {
+            trip.destinations = null
+        }
+        //
+        if(trip.destinations == null){
+            return null
         }
         //
         return trip.toTripUpdate()
@@ -825,16 +853,23 @@ class TripRepositoryImp @Inject constructor(
         return dao.hasTripUpdateRequired()
     }
 
-    override fun sendTripFullUpdate() {
+    override fun sendTripFullUpdate():Boolean {
         dao.getTripWithUpdateRequired()?.let { trip ->
             //
             ToolBox_Inf.scheduleUploadImgWork(context)
             val tripEnv = getTripFullUpdateEnv(trip)
             //
-            context.sendToWebServiceReceiver<WBRSendTripFullUpdate> {
-                Bundle().putApiRequest(tripEnv)
+            tripEnv?.let{
+                context.sendToWebServiceReceiver<WBRSendTripFullUpdate> {
+                    Bundle().putApiRequest(tripEnv)
+                }
+            }?: run{
+                return false
             }
+        }?:run{
+            return false
         }
+        return true
     }
 
     override fun existsTripWithUpdateRequired(): Boolean {

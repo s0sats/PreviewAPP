@@ -307,6 +307,26 @@ class FsTripDestinationDao @Inject constructor(
         closeDB()
         return items
     }
+    private fun queryForFullUpdate(sQuery: String?): MutableList<FsTripDestination>? {
+        var items = mutableListOf<FsTripDestination>()
+        openDB()
+        try {
+            val cursor = db.rawQuery(sQuery, null)
+            while (cursor.moveToNext()) {
+                val uAux: FsTripDestination = toFsTripDestination.map(cursor)
+                items.add(uAux)
+            }
+            //
+            cursor.close()
+        } catch (e: java.lang.Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+            return null
+        } finally {
+        }
+        //
+        closeDB()
+        return items
+    }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
         val items: MutableList<HMAux> = ArrayList()
@@ -378,6 +398,7 @@ class FsTripDestinationDao @Inject constructor(
         return if (value.isNotEmpty()) value[0].destinationStatus?.toDestinationStatus() else null
     }
 
+    @Throws(Exception::class)
     fun getNextDestinationSeq(
         tripPrefix: Int,
         tripCode: Int
@@ -389,18 +410,22 @@ class FsTripDestinationDao @Inject constructor(
             ).toSqlQuery()
         )
         value?.let {
-            return if (value.hasConsistentValue(DESTINATION_SEQ)) value[DESTINATION_SEQ]!!.toInt() else null
+            return if (value.hasConsistentValue(DESTINATION_SEQ)) {
+                value[DESTINATION_SEQ]?.toInt()
+            } else {
+                null
+            }
         }
-        return 1
+        return null
     }
 
     fun listAllDestinations(
         customerCode: Long,
         tripPrefix: Int,
         tripCode: Int,
-    ): List<FsTripDestination> {
+    ): List<FsTripDestination>? {
 
-        val value = query(
+        return queryForFullUpdate(
             """
             SELECT * 
               FROM $TABLE 
@@ -409,8 +434,6 @@ class FsTripDestinationDao @Inject constructor(
                AND $TRIP_CODE =  $tripCode
         """.trimIndent()
         )
-        if (value.isNotEmpty()) return value
-        return emptyList()
     }
 
 

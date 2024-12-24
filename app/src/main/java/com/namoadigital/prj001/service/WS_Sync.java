@@ -310,7 +310,7 @@ public class WS_Sync extends BaseWsIntentService {
                     ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
                     -1L);
             //
-            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout);
+            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess, connection_timeout);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
@@ -394,7 +394,7 @@ public class WS_Sync extends BaseWsIntentService {
                     o processo de sincronismo de produtos da tabela sync_checklist.
                     a tratativa a baixo evita a inclusão do produto igual a 0.
                  */
-                if(product_code != 0L) {
+                if (product_code != 0L) {
                     CHECKLIST.add(product_code);
                 }
             }
@@ -462,7 +462,7 @@ public class WS_Sync extends BaseWsIntentService {
         //}
         //LUCHE - 10/11/2021 - Inventario do serial
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
-            ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL = getDatapackageSerialStructureObjList(serialDao); 
+            ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL = getDatapackageSerialStructureObjList(serialDao);
             dataPackage.setSERIAL(SERIAL);
         }
 
@@ -476,11 +476,11 @@ public class WS_Sync extends BaseWsIntentService {
         env.setStatus_jump(jump_validation);
         env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         env.setValid_time(
-            ToolBox_Con.getBooleanPreferencesByKey(
-                getApplicationContext(),
-                ConstantBaseApp.DATETIME_IS_VALID,
-                false
-            ) ? 1 : 0
+                ToolBox_Con.getBooleanPreferencesByKey(
+                        getApplicationContext(),
+                        ConstantBaseApp.DATETIME_IS_VALID,
+                        false
+                ) ? 1 : 0
         );
         env.setPreference_site_code(getPreferenceSiteCodeForSync());
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
@@ -516,7 +516,7 @@ public class WS_Sync extends BaseWsIntentService {
                         getApplicationContext(),
                         getResources().getString(R.string.generic_error_lbl),
                         rec.getError_msg())
-                ) {
+        ) {
             return;
         }
         //Carrega traduções , quando existem.
@@ -561,9 +561,9 @@ public class WS_Sync extends BaseWsIntentService {
         //LUCHE - 07/02/2020
         //Define metodo de delete das tabelas de tradução baseado se é sincronismos full ou de form.
         DaoObjReturn daoObjReturn;
-        if(product_code == -1L){
+        if (product_code == -1L) {
             daoObjReturn = moduleResDao.truncateModuleResTables();
-        }else{
+        } else {
             daoObjReturn = moduleResDao.deleteModuleTrans(ConstantBaseApp.EV_MODULE_CUST_FORM);
         }
 
@@ -703,14 +703,13 @@ public class WS_Sync extends BaseWsIntentService {
             TkTicketTypeOperationDao tkTicketTypeOperationDao = new TkTicketTypeOperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             TkTicketTypeProductDao tkTicketTypeProductDao = new TkTicketTypeProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             FSTripDao fsTripDao = new FSTripDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FsTripDestinationActionDao fsTripDestinationActionDao= new FsTripDestinationActionDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FSTripUserDao fsTripUserDao= new FSTripUserDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FSTripEventDao fsTripEventDao= new FSTripEventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FsTripDestinationDao fsTripDestinationDao= new FsTripDestinationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FSEventTypeDao fsEventTypeDao= new FSEventTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            FsTripPositionDao fsTripPositionDao= new FsTripPositionDao(getApplicationContext());
+            FsTripDestinationActionDao fsTripDestinationActionDao = new FsTripDestinationActionDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSTripUserDao fsTripUserDao = new FSTripUserDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSTripEventDao fsTripEventDao = new FSTripEventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FsTripDestinationDao fsTripDestinationDao = new FsTripDestinationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSEventTypeDao fsEventTypeDao = new FSEventTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FsTripPositionDao fsTripPositionDao = new FsTripPositionDao(getApplicationContext());
             MDRegionDao mdRegionDao = new MDRegionDao(getApplicationContext());
-
 
 
             //
@@ -750,10 +749,6 @@ public class WS_Sync extends BaseWsIntentService {
             tkTicketTypeOperationDao.remove(new TkTicketTypeOperationSqlTruncate().toSqlQuery());
             tkTicketTypeProductDao.remove(new TkTicketTypeProductSqlTruncate().toSqlQuery());
 
-            fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
-            fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
-            fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
-            fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
             fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
             mdRegionDao.remove(RegionScript.REMOVE_TABLE);
 
@@ -782,7 +777,7 @@ public class WS_Sync extends BaseWsIntentService {
                     for (MD_Operation operation : operations) {
                         if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
                                 == operation.getOperation_code()
-                                ) {
+                        ) {
                             operationExist = true;
                             break;
                         }
@@ -1024,15 +1019,15 @@ public class WS_Sync extends BaseWsIntentService {
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
              */
             for (File _file : files_serial_tp_device) {
-               serialTpDevices.addAll(
-                   gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
-                        }.getType()
-                    )
-               );
+                serialTpDevices.addAll(
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
+                                }.getType()
+                        )
+                );
             }
 
             /**
@@ -1040,13 +1035,13 @@ public class WS_Sync extends BaseWsIntentService {
              */
             for (File _file : files_serial_tp_device_item) {
                 serialTpDeviceItems.addAll(
-                    gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
-                        }.getType()
-                    )
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
+                                }.getType()
+                        )
                 );
             }
 
@@ -1055,13 +1050,13 @@ public class WS_Sync extends BaseWsIntentService {
              */
             for (File _file : files_serial_tp_device_item_hist) {
                 serialTpDeviceItemHists.addAll(
-                    gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
-                        }.getType()
-                    )
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
+                                }.getType()
+                        )
                 );
             }
             /**
@@ -1742,7 +1737,7 @@ public class WS_Sync extends BaseWsIntentService {
             /**
              * Processamento TkTicketTypeOperation
              */
-            File[] files_tk_ticket_type_operation  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_operation-");
+            File[] files_tk_ticket_type_operation = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_operation-");
 
             for (File _file : files_tk_ticket_type_operation) {
                 ArrayList<TkTicketTypeOperation> tkTicketTypeOperations = gson.fromJson(
@@ -1762,7 +1757,7 @@ public class WS_Sync extends BaseWsIntentService {
             /**
              * Processamento TkTicketTypeSite
              */
-            File[] files_tk_ticket_type_site  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_site-");
+            File[] files_tk_ticket_type_site = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_site-");
 
             for (File _file : files_tk_ticket_type_site) {
                 ArrayList<TkTicketTypeSite> tkTicketTypeSites = gson.fromJson(
@@ -1784,7 +1779,7 @@ public class WS_Sync extends BaseWsIntentService {
             /**
              * Processamento TkTicketTypeSite
              */
-            File[] files_tk_ticket_type_product  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_product-");
+            File[] files_tk_ticket_type_product = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_product-");
 
             for (File _file : files_tk_ticket_type_product) {
                 ArrayList<TkTicketTypeProduct> tkTicketTypeProduct = gson.fromJson(
@@ -1803,7 +1798,7 @@ public class WS_Sync extends BaseWsIntentService {
             /**
              * Processamento Trip
              */
-            File[] files_fs_trip_event_type  = ToolBox_Inf.getListOfFiles_v2("fs_event_type-");
+            File[] files_fs_trip_event_type = ToolBox_Inf.getListOfFiles_v2("fs_event_type-");
 
             for (File _file : files_fs_trip_event_type) {
                 ArrayList<FSEventType> fsEventTypes = gson.fromJson(
@@ -1819,8 +1814,8 @@ public class WS_Sync extends BaseWsIntentService {
             //Libera pro GB
             files_fs_trip_event_type = null;
 
-            File[] files_fs_trip  = ToolBox_Inf.getListOfFiles_v2("fs_trip-");
-            if(files_fs_trip == null || files_fs_trip.length ==0){
+            File[] files_fs_trip = ToolBox_Inf.getListOfFiles_v2("fs_trip-");
+            if (files_fs_trip == null || files_fs_trip.length == 0) {
                 fsTripPositionDao.remove(new FsTripPositionSqlTruncate().toSqlQuery());
                 fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
             }
@@ -1832,20 +1827,26 @@ public class WS_Sync extends BaseWsIntentService {
                         FSTrip.class
                 );
                 //
-                if(fsTrips != null){
-                FSTrip dbTrip = fsTripDao.getByString(
-                        new GetSingleTrip(
-                                fsTrips.getCustomerCode(),
-                                fsTrips.getTripPrefix(),
-                                fsTrips.getTripCode()
-                        ).toSqlQuery()
-                );
-                //
-                if (dbTrip == null
-                        || !dbTrip.getHasUpdateRequired()) {
-                    fsTrips.setPk();
-                    fsTripDao.syncTripFull(fsTrips);
-                }
+                if (fsTrips != null) {
+                    FSTrip dbTrip = fsTripDao.getByString(
+                            new GetSingleTrip(
+                                    fsTrips.getCustomerCode(),
+                                    fsTrips.getTripPrefix(),
+                                    fsTrips.getTripCode()
+                            ).toSqlQuery()
+                    );
+                    //
+                    if (dbTrip == null
+                            || !dbTrip.getHasUpdateRequired()) {
+                        //
+                        fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
+                        fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
+                        fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
+                        fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
+                        //
+                        fsTrips.setPk();
+                        fsTripDao.syncTripFull(fsTrips);
+                    }
                 }
 
             }
@@ -1853,8 +1854,8 @@ public class WS_Sync extends BaseWsIntentService {
             files_fs_trip = null;
 
             //tratativa de imagens de outros users
-            if(rec.getFiles_waiting() != null
-                && rec.getFiles_waiting()){
+            if (rec.getFiles_waiting() != null
+                    && rec.getFiles_waiting()) {
                 handleFilesWaiting();
             }
 
@@ -1902,16 +1903,16 @@ public class WS_Sync extends BaseWsIntentService {
              */
             //O processamento MD_Tag pode acontecer em duas situações, foi adiciona var de controle
             //Se foi processada uma vez, não é necessario processar a segunda
-            if(!mdTagAlreadyProcess) {
+            if (!mdTagAlreadyProcess) {
                 mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
                 File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
                 for (File _file : files_tag) {
                     ArrayList<MdTag> tags = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MdTag>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MdTag>>() {
+                            }.getType()
                     );
 
                     mdTagDao.addUpdate(tags, false);
@@ -2099,13 +2100,13 @@ public class WS_Sync extends BaseWsIntentService {
 
             MD_Schedule_ExecDao mdScheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             /*
-            *   Processamento  MD_Schedule_Exec
-            */
+             *   Processamento  MD_Schedule_Exec
+             */
             //Seta flag sync_process para 0 nos agendamento não iniciados
             mdScheduleExecDao.addUpdate(
-                new MD_Schedule_Exec_Sql_004(
-                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ).toSqlQuery()
+                    new MD_Schedule_Exec_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
             );
             //
             File[] files_md_schedule_exec = ToolBox_Inf.getListOfFiles_v2("md_schedule_exec-");
@@ -2118,15 +2119,15 @@ public class WS_Sync extends BaseWsIntentService {
             ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList = new ArrayList<>();
             ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList = new ArrayList<>();
             //
-            if(files_md_schedule_exec.length > 0) {
+            if (files_md_schedule_exec.length > 0) {
                 //Carrega lista de sites dos agendamentos
                 for (File fileSite : files_md_schedule_exec_site) {
                     ArrayList<MD_Schedule_Exec_Site> tempScheduleExecSites = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(fileSite)
-                        ),
-                        new TypeToken<ArrayList<MD_Schedule_Exec_Site>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(fileSite)
+                            ),
+                            new TypeToken<ArrayList<MD_Schedule_Exec_Site>>() {
+                            }.getType()
                     );
                     //
                     scheduleExecSiteList.addAll(tempScheduleExecSites);
@@ -2134,11 +2135,11 @@ public class WS_Sync extends BaseWsIntentService {
                 //Carrega lista de operation dos agendamentos
                 for (File fileOperation : files_md_schedule_exec_operation) {
                     ArrayList<MD_Schedule_Exec_Operation> tempScheduleExecOperations = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(fileOperation)
-                        ),
-                        new TypeToken<ArrayList<MD_Schedule_Exec_Operation>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(fileOperation)
+                            ),
+                            new TypeToken<ArrayList<MD_Schedule_Exec_Operation>>() {
+                            }.getType()
                     );
                     //
                     scheduleExecOperationList.addAll(tempScheduleExecOperations);
@@ -2146,11 +2147,11 @@ public class WS_Sync extends BaseWsIntentService {
                 //Carrega lista de produtos dos agendamentos
                 for (File fileOProducts : files_md_schedule_exec_product) {
                     ArrayList<MD_Schedule_Exec_Product> tempScheduleExecProducts = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(fileOProducts)
-                        ),
-                        new TypeToken<ArrayList<MD_Schedule_Exec_Product>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(fileOProducts)
+                            ),
+                            new TypeToken<ArrayList<MD_Schedule_Exec_Product>>() {
+                            }.getType()
                     );
                     //
                     scheduleExecProductList.addAll(tempScheduleExecProducts);
@@ -2160,18 +2161,18 @@ public class WS_Sync extends BaseWsIntentService {
                 //Loop nos arquivos extraindo todos os agendamentos para uma unica lista.
                 for (File _file : files_md_schedule_exec) {
                     ArrayList<MD_Schedule_Exec> tempScheduleExecs = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Schedule_Exec>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Schedule_Exec>>() {
+                            }.getType()
                     );
                     //
                     scheduleExecs.addAll(tempScheduleExecs);
                 }
                 //
-                mdScheduleExecDao.processConciliation(scheduleExecs,scheduleExecSiteList,scheduleExecOperationList,scheduleExecProductList);
-            }else{
+                mdScheduleExecDao.processConciliation(scheduleExecs, scheduleExecSiteList, scheduleExecOperationList, scheduleExecProductList);
+            } else {
                 mdScheduleExecDao.deleteUnsyncSchedule();
             }
             //Libera referencias par ao GB
@@ -2255,23 +2256,23 @@ public class WS_Sync extends BaseWsIntentService {
              * seta preferencia pra false.
              * Caso seja valida, atualiza as preferencias.
              */
-            if(isInvalidCurrentTime(rec.getValid_time())){
-                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,false);
+            if (isInvalidCurrentTime(rec.getValid_time())) {
+                ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.DATETIME_IS_VALID, false);
                 //
-                if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+                if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
                     ToolBox.sendBCStatus(
-                        getApplicationContext(),
-                        Constant.PD_TYPE_ERROR_1,
-                        getString(R.string.msg_login_invalid_current_time),
-                        "",
-                        "0");
+                            getApplicationContext(),
+                            Constant.PD_TYPE_ERROR_1,
+                            getString(R.string.msg_login_invalid_current_time),
+                            "",
+                            "0");
                     //
                     return;
                 }
-            }else{
-                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
-                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
-                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+            } else {
+                ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.DATETIME_IS_VALID, true);
+                ToolBox_Con.setLongPreference(getApplicationContext(), ConstantBaseApp.DATETIME_TOLERANCE, rec.getTolerance_time());
+                ToolBox_Con.setLongPreference(getApplicationContext(), ConstantBaseApp.DATETIME_LAST_VALID_TIME, ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
             }
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
@@ -2280,7 +2281,7 @@ public class WS_Sync extends BaseWsIntentService {
 
     private Integer getPreferenceSiteCodeForSync() {
         String preferenceSiteCode = ToolBox_Con.getPreference_Site_Code(getApplicationContext());
-        if(!preferenceSiteCode.equals("-1")){
+        if (!preferenceSiteCode.equals("-1")) {
             return Integer.valueOf(preferenceSiteCode);
         }
         return null;
@@ -2292,7 +2293,7 @@ public class WS_Sync extends BaseWsIntentService {
         //
         HashSet<String> files_open = getGeFilesFromAllCustomers();
         //
-        if(files_waiting != null) {
+        if (files_waiting != null) {
             for (File file : files_waiting) {
 //                if (fileIsNotOnGeFile(file, files_open)) {
                 if (!ListHelperKt.containFileName(files_open, file.getName())) {
@@ -2305,7 +2306,7 @@ public class WS_Sync extends BaseWsIntentService {
 
     private boolean fileIsNotOnGeFile(File file, Set<String> filesPath) {
         for (String path : filesPath) {
-            if(file.getName().equals(path)){
+            if (file.getName().equals(path)) {
                 return false;
             }
         }
@@ -2323,11 +2324,11 @@ public class WS_Sync extends BaseWsIntentService {
 
     private ArrayList<T_DataPackage_SM_SO_Env> getDatapackageSoObjList(SM_SODao soDao) {
         List<HMAux> soPkAuxList = soDao.query_HM(new Sql_WS_Sync_Datapackage_So_001(
-            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
         ).toSqlQuery());
         //
-        if(soPkAuxList != null && soPkAuxList.size() > 0){
-          return convertHmAuxSoPkToDataPkgSoObj(soPkAuxList);
+        if (soPkAuxList != null && soPkAuxList.size() > 0) {
+            return convertHmAuxSoPkToDataPkgSoObj(soPkAuxList);
         }
         //
         return new ArrayList<>();
@@ -2337,11 +2338,11 @@ public class WS_Sync extends BaseWsIntentService {
     private ArrayList<T_DataPackage_SM_SO_Env> convertHmAuxSoPkToDataPkgSoObj(@NotNull List<HMAux> soPkAuxList) {
         ArrayList<T_DataPackage_SM_SO_Env> soDataPkgList = new ArrayList<>();
         for (HMAux auxPk : soPkAuxList) {
-            if(auxPk.hasConsistentValue(SM_SODao.CUSTOMER_CODE)
-               && auxPk.hasConsistentValue(SM_SODao.SO_PREFIX)
-               && auxPk.hasConsistentValue(SM_SODao.SO_CODE)
-               && auxPk.hasConsistentValue(SM_SODao.SO_SCN)
-            ){
+            if (auxPk.hasConsistentValue(SM_SODao.CUSTOMER_CODE)
+                    && auxPk.hasConsistentValue(SM_SODao.SO_PREFIX)
+                    && auxPk.hasConsistentValue(SM_SODao.SO_CODE)
+                    && auxPk.hasConsistentValue(SM_SODao.SO_SCN)
+            ) {
                 T_DataPackage_SM_SO_Env dtPkSo = new T_DataPackage_SM_SO_Env();
                 //
                 dtPkSo.setCustomer_code(auxPk.get(SM_SODao.CUSTOMER_CODE));
@@ -2359,10 +2360,10 @@ public class WS_Sync extends BaseWsIntentService {
 
     private ArrayList<T_DataPackage_TK_Ticket_Env> getDatapackageTicketObjList(TK_TicketDao ticketDao) {
         List<HMAux> ticketPkAuxList = ticketDao.query_HM(new Sql_WS_Sync_Datapackage_Ticket_001(
-            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
         ).toSqlQuery());
         //
-        if(ticketPkAuxList != null && ticketPkAuxList.size() > 0){
+        if (ticketPkAuxList != null && ticketPkAuxList.size() > 0) {
             return convertHmAuxTicketPkToDataPkgSoObj(ticketPkAuxList);
         }
         //
@@ -2373,11 +2374,11 @@ public class WS_Sync extends BaseWsIntentService {
     private ArrayList<T_DataPackage_TK_Ticket_Env> convertHmAuxTicketPkToDataPkgSoObj(@NotNull List<HMAux> ticketPkAuxList) {
         ArrayList<T_DataPackage_TK_Ticket_Env> ticketDataPkgList = new ArrayList<>();
         for (HMAux auxPk : ticketPkAuxList) {
-            if(auxPk.hasConsistentValue(TK_TicketDao.CUSTOMER_CODE)
-                && auxPk.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
-                && auxPk.hasConsistentValue(TK_TicketDao.TICKET_CODE)
-                && auxPk.hasConsistentValue(TK_TicketDao.SCN)
-            ){
+            if (auxPk.hasConsistentValue(TK_TicketDao.CUSTOMER_CODE)
+                    && auxPk.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && auxPk.hasConsistentValue(TK_TicketDao.TICKET_CODE)
+                    && auxPk.hasConsistentValue(TK_TicketDao.SCN)
+            ) {
                 T_DataPackage_TK_Ticket_Env dtPkTk = new T_DataPackage_TK_Ticket_Env();
                 //
                 dtPkTk.setCustomer_code(auxPk.get(TK_TicketDao.CUSTOMER_CODE));
@@ -2394,10 +2395,10 @@ public class WS_Sync extends BaseWsIntentService {
 
     private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> getDatapackageSerialStructureObjList(MD_Product_SerialDao serialDao) {
         List<HMAux> serialPkAuxList = serialDao.query_HM(new Sql_WS_Sync_Datapackage_Serial_001(
-            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
         ).toSqlQuery());
         //
-        if(serialPkAuxList != null && serialPkAuxList.size() > 0){
+        if (serialPkAuxList != null && serialPkAuxList.size() > 0) {
             return convertHmAuxSerialStructurePkToDataPkgSerial(serialPkAuxList);
         }
         //
@@ -2407,16 +2408,16 @@ public class WS_Sync extends BaseWsIntentService {
     private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> convertHmAuxSerialStructurePkToDataPkgSerial(@NotNull List<HMAux> serialPkAuxList) {
         ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> serialDataPkgList = new ArrayList<>();
         for (HMAux auxPk : serialPkAuxList) {
-            if(auxPk.hasConsistentValue(MD_Product_SerialDao.CUSTOMER_CODE)
-                && auxPk.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)
-                && auxPk.hasConsistentValue(MD_Product_SerialDao.SERIAL_CODE)
-                && auxPk.hasConsistentValue(MD_Product_SerialDao.SCN_ITEM_CHECK)
-            ){
+            if (auxPk.hasConsistentValue(MD_Product_SerialDao.CUSTOMER_CODE)
+                    && auxPk.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)
+                    && auxPk.hasConsistentValue(MD_Product_SerialDao.SERIAL_CODE)
+                    && auxPk.hasConsistentValue(MD_Product_SerialDao.SCN_ITEM_CHECK)
+            ) {
                 T_DataPackage_MD_Product_Serial_Structure_Env dtPkSerial = new T_DataPackage_MD_Product_Serial_Structure_Env(
-                    auxPk.get(MD_Product_SerialDao.CUSTOMER_CODE),
-                    auxPk.get(MD_Product_SerialDao.PRODUCT_CODE),
-                    auxPk.get(MD_Product_SerialDao.SERIAL_CODE),
-                    auxPk.get(MD_Product_SerialDao.SCN_ITEM_CHECK)
+                        auxPk.get(MD_Product_SerialDao.CUSTOMER_CODE),
+                        auxPk.get(MD_Product_SerialDao.PRODUCT_CODE),
+                        auxPk.get(MD_Product_SerialDao.SERIAL_CODE),
+                        auxPk.get(MD_Product_SerialDao.SCN_ITEM_CHECK)
                 );
                 //
                 serialDataPkgList.add(dtPkSerial);

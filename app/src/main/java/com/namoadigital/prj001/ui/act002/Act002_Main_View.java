@@ -30,4 +30,6 @@ public interface Act002_Main_View {
     void setSelectedCustomerInfo(HMAux item);
 
     HMAux getSelectedCustomerInfo();
+
+    void showTripUpdateFullError();
 }

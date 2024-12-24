@@ -28,8 +28,6 @@ interface TripEventRepository {
 
     fun getExtract(trip: FSTrip?) : List<Extract<FSTripEvent>>
 
-    fun getListEvents(tripPrefix: Int, tripCode: Int) : List<FSTripEvent>
-
     fun checkRestrictionDate(
         startDateInMilis: Long,
         endDateInMilis: Long?,

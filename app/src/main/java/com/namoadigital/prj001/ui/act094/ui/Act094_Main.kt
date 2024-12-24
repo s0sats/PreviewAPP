@@ -166,7 +166,7 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
                 },
                 0
             )
-        }else if (wsProcess == WsSelectDestination::class.java.name) {
+        } else if (wsProcess == WsSelectDestination::class.java.name) {
             wsProcess = ""
             progressDialog.dismiss()
             Toast.makeText(
@@ -233,8 +233,22 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
                 showMsg(dialog.title, dialog.message)
             }
 
+            is DialogType.ACTION -> {
+                showDialogAction(dialog)
+            }
+
             else -> {}
         }
+    }
+
+    private fun showDialogAction(dialog: DialogType.ACTION) {
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans[dialog.title],
+            hmAux_Trans[dialog.message],
+            dialog.action,
+            dialog.negativeBtn
+        )
     }
 
     fun showMsg(ttl: String?, msg: String?) {

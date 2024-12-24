@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
 import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
@@ -16,14 +17,18 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
+import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp;
+import com.namoadigital.prj001.core.trip.domain.usecase.SendTripFullUseCase;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.SiteLicense;
+import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -49,6 +54,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import kotlin.Unit;
 
 /**
  * Created by neomatrix on 13/01/17.
@@ -523,7 +530,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     public void executeWSSoDownload() {
         mView.setWsProcess(WS_SO_Sync.class.getName());
         //
-        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_ticket_download_msg), "", "0");
+        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_so_download_msg), "", "0");
         //
         Intent mIntent = new Intent(context, WBR_SO_Sync.class);
         //
@@ -539,6 +546,26 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         SM_SODao dao = new SM_SODao(context);
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
             && dao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    @Override
+    public boolean checkTripSyncNeed() {
+        FSTripDao dao = new FSTripDao(context);
+        FSTrip trip = dao.getTrip();
+        return trip != null
+                && trip.getHasUpdateRequired();
+    }
+
+    @Override
+    public void executeWSTripUpdateFull() {
+        mView.setWsProcess(WS_TRIP_SEND_UPDATE);
+        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_trip_upload_msg), "", "0");
+        SendTripFullUseCase useCase = new SendTripFullUseCase(
+                new TripRepositoryImp(context)
+        );
+        if (!useCase.invoke(Unit.INSTANCE)){
+            mView.showTripUpdateFullError();
+        }
     }
 
     @Override

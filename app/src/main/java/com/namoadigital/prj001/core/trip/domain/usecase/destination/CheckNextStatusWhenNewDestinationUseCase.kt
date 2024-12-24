@@ -39,12 +39,15 @@ class CheckNextStatusWhenNewDestinationUseCase constructor(
             val destinationSeq = repository.getNextDestinationSeq(tripPrefix, tripCode)
             val checkStatus = listOf(TripStatus.WAITING_DESTINATION, TripStatus.TRANSFER)
 
+            if (destinationSeq == null) {
+                return Output()
+            }
 
             return when {
 
                 destinationType == FsTripDestination.OVER_NIGHT_DESTINATION_TYPE -> {
                     Output(
-                        destinationSeq = destinationSeq ?: 1,
+                        destinationSeq = destinationSeq,
                         tripStatus = TripStatus.OVER_NIGHT,
                         destinationStatus = DestinationStatus.ARRIVED,
                         date = getCurrentDateApi(),
@@ -55,7 +58,7 @@ class CheckNextStatusWhenNewDestinationUseCase constructor(
 
                 checkStatus.contains(tripStatus) -> {
                     Output(
-                        destinationSeq = destinationSeq ?: 1,
+                        destinationSeq = destinationSeq,
                         tripStatus = TripStatus.TRANSIT,
                         destinationStatus = DestinationStatus.TRANSIT
                     )

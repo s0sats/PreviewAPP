@@ -43,4 +43,8 @@ public interface Act002_Main_Presenter {
     boolean checkSoSyncNeed();
 
     void scheduleTicketCacheDownload();
+
+    boolean checkTripSyncNeed();
+
+    void executeWSTripUpdateFull();
 }

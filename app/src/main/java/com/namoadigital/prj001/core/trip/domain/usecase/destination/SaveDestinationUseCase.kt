@@ -35,12 +35,17 @@ class SaveDestinationUseCase constructor(
                         destinationType = input.destination.destinationType
                     )
                 )
-                val latitude:Double?
-                val longitude:Double?
+
+                if (addDestination.destinationSeq == null) {
+                    return false
+                }
+
+                val latitude: Double?
+                val longitude: Double?
                 if (input.destination.destinationType == FsTripDestination.OVER_NIGHT_DESTINATION_TYPE) {
                     latitude = addDestination.arrivedLat
                     longitude = addDestination.arrivedLon
-                }else{
+                } else {
                     latitude = input.destination.lat
                     longitude = input.destination.lon
                 }
@@ -67,7 +72,7 @@ class SaveDestinationUseCase constructor(
             gson.fromJson(input.response, SelectDestinationRec::class.java)
         }
         //
-        return model?.let { model->
+        return model?.let { model ->
             if (input.destination.destinationType == FsTripDestination.OVER_NIGHT_DESTINATION_TYPE) {
                 repository.saveOverNightDestination(
                     input.customerCode,
@@ -81,7 +86,7 @@ class SaveDestinationUseCase constructor(
                     isOnlineFLow = input.response != null
                 )
             }
-        }?: false
+        } ?: false
     }
 
 }

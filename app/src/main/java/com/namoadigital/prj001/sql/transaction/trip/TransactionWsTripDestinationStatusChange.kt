@@ -80,17 +80,6 @@ class TransactionWsTripDestinationStatusChange(
                                         db
                                     )
                             }
-                            DestinationStatus.CANCELLED -> {
-                                destinationResult = fsTripDestinationDao.remove(
-                                    FsTripDestinationSqlDelete(
-                                        context.getCustomerCode(),
-                                        statusChanged.tripPrefix,
-                                        statusChanged.tripCode,
-                                        statusChanged.destinationSeq!!,
-                                        ).toSqlQuery(),
-                                    db
-                                )
-                            }
                             else -> {
                                 destinationResult = fsTripDestinationDao.updateStatus(
                                     statusChanged.tripPrefix,

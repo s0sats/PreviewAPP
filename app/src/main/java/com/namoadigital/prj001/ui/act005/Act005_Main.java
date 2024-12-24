@@ -854,6 +854,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("progress_send_update_trip_ttl");
         transList.add("progress_send_update_trip_msg");
         //
+        transList.add("alert_upload_trip_internal_error_ttl");
+        transList.add("alert_upload_trip_internal_error_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -2685,6 +2688,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void sendTripUpdateRequired() {
+        setWsProcess(WS_TRIP_SEND_UPDATE);
         showPD();
         cleanUpResults();
         mPresenter.executeTripSave();
@@ -2784,6 +2788,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    @Override
+    public void showAlertMsg() {
+        if (sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
+        //
+        if (progressDialog != null) {
+             progressDialog.dismiss();
+        }
+        //
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_upload_trip_internal_error_ttl"),
+                hmAux_Trans.get("alert_upload_trip_internal_error_msg"),
+                null,
+                0
+        );
     }
 
     @Override

@@ -8,8 +8,11 @@ object Act094Translate {
 
     const val ALERT_DESTINATION_SELECTED_MSG = "alert_destination_selected_msg"
     const val ALERT_DESTINATION_TICKET_DOWNLOADED_MSG = "alert_destination_ticket_downloaded_msg"
-    const val ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_TTL = "alert_destination_ticket_downloaded_error_ttl"
-    const val ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_MSG = "alert_destination_ticket_downloaded_error_msg"
+    const val ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_TTL =
+        "alert_destination_ticket_downloaded_error_ttl"
+    const val ALERT_DESTINATION_TICKET_DOWNLOADED_ERROR_MSG =
+        "alert_destination_ticket_downloaded_error_msg"
+
     //dialog process
     const val PROCESS_GET_LIST_TITLE = "get_list_title_lbl"
     const val START_PROCESS_GET_LIST = "get_list_lbl"
@@ -27,10 +30,12 @@ object Act094Translate {
     const val DIALOG_FILTER_CANCEL = "dialog_filter_cancel"
 
     const val DIALOG_FILTER_APPLY = "dialog_filter_apply"
+
     //Dialog Maps Not Found
     const val ALERT_NO_NAVEGATION_APP_FOUND_TTL = "alert_no_navegation_app_found_ttl"
 
     const val ALERT_NO_NAVEGATION_APP_FOUND_MSG = "alert_no_navegation_app_found_msg"
+
     //Dialog Phone Not Found
     const val ALERT_NO_CONTACT_APP_FOUND_TTL = "alert_no_contact_app_found_ttl"
     const val ALERT_NO_CONTACT_APP_FOUND_MSG = "alert_no_contact_app_found_msg"

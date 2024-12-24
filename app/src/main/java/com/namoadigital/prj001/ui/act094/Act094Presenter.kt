@@ -61,7 +61,7 @@ class Act094Presenter constructor(
                     }
                 },
                 loading = { _, _ ->
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         view.onEvent(SelectDestinationUiEvent.Loading)
                     }
                 }
@@ -77,8 +77,9 @@ class Act094Presenter constructor(
         val trip = fsTripDao.getTrip()
         val gson = GsonBuilder().serializeNulls().create()
         trip?.let {
-            if(!ToolBox_Con.isOnline(context)
-                || it.hasUpdateRequired){
+            if (!ToolBox_Con.isOnline(context)
+                || it.hasUpdateRequired
+            ) {
                 saveDestination(
                     context = context,
                     destination = selectionDestinationAvailable,
@@ -137,23 +138,23 @@ class Act094Presenter constructor(
             )
             if (result) {
                 if (destination.destinationType == TICKET_DESTINATION_TYPE) {
-                    val ticket = if(destination.ticketPrefix != null
-                                     &&  destination.ticketCode != null
-                        ){
+                    val ticket = if (destination.ticketPrefix != null
+                        && destination.ticketCode != null
+                    ) {
                         ticketDao.getTicket(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             destination.ticketPrefix,
                             destination.ticketCode
                         )
-                    }else{
+                    } else {
                         null
                     }
 
-                    if(!ToolBox_Con.isOnline(context)
+                    if (!ToolBox_Con.isOnline(context)
                         || trip?.hasUpdateRequired == true
                         || forceOfflineFlow
-                        || (ticket!= null && ticket.sync_required == 0)
-                        ){
+                        || (ticket != null && ticket.sync_required == 0)
+                    ) {
                         view.callAct005()
                         return@let
                     }
@@ -184,10 +185,9 @@ class Act094Presenter constructor(
             } else {
                 view.onEvent(
                     SelectDestinationUiEvent.OpenDialog(
-                        DialogType.ACTION(
+                        DialogType.DEFAULT_OK(
                             hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_TTL],
-                            hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_MSG],
-                            { dialogInterface, i -> dialogInterface.dismiss() }
+                            hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_MSG]
                         )
                     )
                 )
