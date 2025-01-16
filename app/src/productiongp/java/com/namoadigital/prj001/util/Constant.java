@@ -115,6 +115,9 @@ public class Constant extends ConstantBaseApp {
     public static String WS_TRIP_EVENT = "https://portal.namoadigital.com/ws/prj001/trip/trip_event_set.ws";
     public static String WS_TRIP_UPDATE = "https://portal.namoadigital.com/ws/prj001/trip/trip_full_update.ws";
 
+    public static String RESERVED_LIST_USER = "https://portal.namoadigital.com/ws/prj001/server_sm_so_user.ws";
+    public static String SET_LIST_USER = "https://portal.namoadigital.com/ws/prj001/server_sm_so_reserved_user.ws";
+
     // Connection Test
     public static final String WS_HOST = "portal.namoadigital.com";
     public static final int WS_PORT = 443;

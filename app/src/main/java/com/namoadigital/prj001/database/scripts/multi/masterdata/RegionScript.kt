@@ -7,9 +7,8 @@ import com.namoadigital.prj001.dao.md.MDRegionDao.Companion.REGION_ID
 import com.namoadigital.prj001.dao.md.MDRegionDao.Companion.TABLE_NAME
 
 
-object RegionScript {
 
-    const val CREATE_TABLE = """create table if not exists [$TABLE_NAME]
+const val CREATE_REGION_TABLE = """create table if not exists [$TABLE_NAME]
             (
             [$CUSTOMER_CODE] int not null,
             [$REGION_CODE] int not null,
@@ -19,6 +18,5 @@ object RegionScript {
 );"""
 
 
-    const val REMOVE_TABLE = "DELETE FROM [$TABLE_NAME]"
-}
+const val REMOVE_TABLE = "DELETE FROM [$TABLE_NAME]"
 

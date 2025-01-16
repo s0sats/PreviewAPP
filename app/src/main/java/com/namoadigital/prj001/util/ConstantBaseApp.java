@@ -505,6 +505,7 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String ACT027_SWITCH_STATE = "act027_switch_state";
     public static final String ACT047_SWITCH_STATE = "act047_switch_state";
+    public static final String ACT047_RESERVED_USER_SWITCH_STATE = "act047_reserved_user_switch_state";
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;
@@ -606,6 +607,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_SHOW_ACTIONS = "SHOW_ACTIONS";
     public static final String PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME = "EDIT_USER_WORKGROUP_HOME";
     public static final String PROFILE_MENU_SO_PARAM_CHANGE_STATUS = "CHANGE_SO_STATUS";
+    public static final String RESERVE_SO = "RESERVE_SO";
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
@@ -685,6 +687,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_PARAM_AUTH_NICK_MAIL = "so_param_auth_nick_mail";
     public static final String SO_PARAM_AUTH_PASSWORD = "so_param_auth_password";
     public static final String SO_PARAM_AUTH_NFC = "so_param_auth_nfc";
+    public static final String SO_STATUS_SCN_INVALID = "SCN_INVALID";
 
     public static final String MASK_VIEW_TYPE_HIDE = "HIDE";
     public static final String MASK_VIEW_TYPE_OPTIONAL = "OPTIONAL";

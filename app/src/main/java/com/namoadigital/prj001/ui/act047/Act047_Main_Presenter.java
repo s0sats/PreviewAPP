@@ -11,22 +11,30 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.core.util.BroadcastHelper;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SmPriorityDao;
+import com.namoadigital.prj001.extensions.nservices.SoNextOrdersKt;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.model.next_os.ListReservedUserEnv;
+import com.namoadigital.prj001.model.next_os.SetReservedUserEnv;
 import com.namoadigital.prj001.receiver.WBR_SO_Next_Orders;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
+import com.namoadigital.prj001.receiver.next_os.WBR_ListUserReservedReceiver;
+import com.namoadigital.prj001.receiver.next_os.WBR_SoSetReservedUserReceiver;
 import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.next_os.WSSoSetReservedUser;
+import com.namoadigital.prj001.service.next_os.WsListUserReserved;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.sql.SmPrioritySql002;
@@ -63,6 +71,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             Intent mIntent = new Intent(context, WBR_SO_Next_Orders.class);
             Bundle bundle = new Bundle();
             int contain_filter = (filter ? ToolBox_Con.getPreference_Zone_Code(context) : -1);
+
             NextOsFilter modelFilter = pref.read();
 
             mView.setWsProcess(WS_SO_Next_Orders.class.getName());
@@ -283,13 +292,13 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
 
     private String filterPriorityType = "";
     @Override
-    public boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter) {
+    public boolean saveFilterDialog(NextOsFilter filter) {
         List<TypeStatusFilter> actualFilter = pref.read().getStatusFilter();
         filterPriorityType = filter.getPriorityTypeFilter();
         if (!filter.getStatusFilter().equals(actualFilter)) {
             if (ToolBox_Con.isOnline(context)) {
                 pref.write(filter);
-                executeNextOrdersSearch(switchFilter);
+                executeNextOrdersSearch(getSwitchState());
                 return true;
             } else {
                 return false;
@@ -478,5 +487,86 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             default:
                 mView.callAct005(context);
         }
+    }
+
+    @Override
+    public void executeGetListUsersReserved(int siteCode, int operationCode, int productCode, int contractCode, int segmentCode) {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WsListUserReserved.class.getName());
+            mView.showPD(
+                    hmAux_Trans.get("dialog_next_orders_list_user_ttl"),
+                    hmAux_Trans.get("dialog_next_orders_list_user_msg")
+            );
+            ListReservedUserEnv listReservedUserEnv = new ListReservedUserEnv(
+                    siteCode,
+                    operationCode,
+                    segmentCode,
+                    productCode,
+                    contractCode,
+                    1 //DEFAULT 1 by César
+            );
+
+            BroadcastHelper.sendToWebServiceReceiver(
+                    context,
+                    WBR_ListUserReservedReceiver.class,
+                    () -> {
+                        return BroadcastHelper.putApiRequest(
+                                new Bundle(),
+                                listReservedUserEnv,
+                                ListReservedUserEnv.class
+                        );
+                    }
+            );
+        }else{
+            mView.showNoConnectionMsgListUser();
+        }
+    }
+    @Override
+    public boolean getSwitchState() {
+        return ToolBox_Con.getBooleanPreferencesByKey(context, Constant.ACT047_SWITCH_STATE, true);
+    }
+    @Override
+    public void setSwitchState(boolean isChecked) {
+        ToolBox_Con.setBooleanPreference(context, Constant.ACT047_SWITCH_STATE, isChecked);
+    }
+
+    @Override
+    public void executeSetListUsersReserved(String token,String soPrefix, String soCode, int soScn, Integer reservedUser) {
+
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WSSoSetReservedUser.class.getName());
+            mView.showPD(
+                    hmAux_Trans.get("dialog_next_orders_set_reserved_user_ttl"),
+                    hmAux_Trans.get("dialog_next_orders_set_reserved_user_msg")
+            );
+            //
+            SetReservedUserEnv setReservedUserEnv = new SetReservedUserEnv(
+                    token,
+                    Integer.parseInt(soPrefix),
+                    Integer.parseInt(soCode),
+                    soScn,
+                    reservedUser
+            );
+
+            BroadcastHelper.sendToWebServiceReceiver(
+                    context,
+                    WBR_SoSetReservedUserReceiver.class,
+                    () -> {
+                        return BroadcastHelper.putApiRequest(
+                                new Bundle(),
+                                setReservedUserEnv,
+                                SetReservedUserEnv.class
+                        );
+                    }
+            );
+        }else{
+            mView.showNoConnectionMsgListUser();
+        }
+    }
+
+    @Override
+    public SO_Next_Orders_Obj getListItemByPK(String soPk) {
+        String[] pkFields = soPk.split("\\.");
+        return SoNextOrdersKt.queryPk(nextOrdersObjsList,pkFields[0], pkFields[1]);
     }
 }

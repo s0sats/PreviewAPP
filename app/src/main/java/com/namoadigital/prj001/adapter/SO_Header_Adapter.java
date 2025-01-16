@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import static android.text.TextUtils.join;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
+import static com.namoadigital.prj001.extensions.UserHelperKt.getUserCode;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -36,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by d.luche on 28/06/2017.
@@ -131,9 +134,9 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         this.source_filtered = (ArrayList<HMAux>) source;
         this.showSerialAndTrackings = showSerialAndTrackings;
         //LUCHE - 01/11/2019
-        if(sFilter != null && !sFilter.trim().isEmpty()) {
+        if (sFilter != null && !sFilter.trim().isEmpty()) {
             getFilter().filter(sFilter);
-        }else{
+        } else {
             getFilter();
         }
     }
@@ -241,6 +244,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         ImageView icon_schedule = convertView.findViewById(R.id.so_left_icon);
         ImageView icon_clouds = convertView.findViewById(R.id.so_right_icon);
         TextView tv_site = convertView.findViewById(R.id.so_site_val);
+        TextView tv_reserved = convertView.findViewById(R.id.so_is_reserved_val);
         LinearLayout ll_so_express = convertView.findViewById(R.id.so_express_layout);
 
         //
@@ -278,15 +282,22 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context, so.get(SM_SODao.STATUS)));
         iv_block.setVisibility(View.GONE);
         //
-        if (so.hasConsistentValue(SM_SODao.HAS_CLIENT_DEADLINE)) {
-            if (so.get(SM_SODao.HAS_CLIENT_DEADLINE).equalsIgnoreCase("1")) {
-                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
-            } else {
-                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
-            }
-            icon_schedule.setVisibility(View.VISIBLE);
+        icon_schedule.setVisibility(View.VISIBLE);
+        icon_schedule.setImageTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_onSurfaceVariant));
+        if (!so.hasConsistentValue(SM_SODao.DEADLINE) || Objects.requireNonNull(so.get(SM_SODao.DEADLINE)).isEmpty()) {
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.outline_calendar_month_24));
+            icon_schedule.setImageTintList(AppCompatResources.getColorStateList(context, android.R.color.darker_gray));
         } else {
-            icon_schedule.setVisibility(View.GONE);
+            if (so.hasConsistentValue(SM_SODao.HAS_CLIENT_DEADLINE)) {
+                if (so.get(SM_SODao.HAS_CLIENT_DEADLINE).equalsIgnoreCase("1")) {
+                    icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_calendar_clock));
+                } else {
+                    icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.outline_calendar_month_24));
+                }
+            } else {
+                //Nao deveria acontece mas se acontecer nao mostrara icone errado
+                icon_schedule.setVisibility(View.INVISIBLE);
+            }
         }
 
         if (so.get(SM_SODao.STATUS) != null && !so.get(SM_SODao.STATUS).isEmpty() &&
@@ -392,6 +403,19 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
             icon_clouds.setVisibility(View.VISIBLE);
             icon_clouds.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_check_circle_24));
             icon_clouds.setImageTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_extended_verdeDone_seed));
+        }
+
+        if (isNotNullOrEmpty(so, SM_SODao.RESERVED_USER)) {
+            tv_reserved.setVisibility(View.VISIBLE);
+            if (so.get(SM_SODao.RESERVED_USER).equalsIgnoreCase(getUserCode(context))) {
+                tv_reserved.setText(hmAux_Trans.get("so_is_reserved_lbl"));
+                tv_reserved.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_primary));
+            } else {
+                tv_reserved.setText(hmAux_Trans.get("so_is_reserved_other_lbl"));
+                tv_reserved.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_onSurfaceVariant));
+            }
+        } else {
+            tv_reserved.setVisibility(View.GONE);
         }
         /*//
         //Checkbox
@@ -513,6 +537,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         translateList.add("segment_lbl");
         translateList.add("category_price_lbl");
         translateList.add("create_date_lbl");
+        translateList.add("so_is_reserved_lbl");
+        translateList.add("so_is_reserved_other_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -524,7 +550,6 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     }
 
 
-
     @Override
     public Filter getFilter() {
         if (valueFilter == null) {
@@ -534,7 +559,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     }
 
 
-    private class ValueFilter extends Filter{
+    private class ValueFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
@@ -558,15 +583,15 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     String model_desc = "";
                     String color_desc = "";
 
-                    if(hmAux.hasConsistentValue("brand_desc")) {
+                    if (hmAux.hasConsistentValue("brand_desc")) {
                         brand_desc = ToolBox.AccentMapper(hmAux.get("brand_desc").toLowerCase());
                     }
 
-                    if(hmAux.hasConsistentValue("model_desc")) {
+                    if (hmAux.hasConsistentValue("model_desc")) {
                         model_desc = ToolBox.AccentMapper(hmAux.get("model_desc").toLowerCase());
                     }
 
-                    if(hmAux.hasConsistentValue("color_desc")) {
+                    if (hmAux.hasConsistentValue("color_desc")) {
                         color_desc = ToolBox.AccentMapper(hmAux.get("color_desc").toLowerCase());
                     }
 
@@ -617,19 +642,19 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                 results.count = filterList.size();
                 results.values = filterList;
             } else {
-                if(showOnlyAvailable){
+                if (showOnlyAvailable) {
                     ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                     for (HMAux hmAux : source_filtered) {
                         boolean isAvailable = hmAux.hasConsistentValue(Sql_Act026_001.QTD_SERVICES) && !"0".equals(hmAux.get(Sql_Act026_001.QTD_SERVICES));
                         //
-                        if (isAvailable){
+                        if (isAvailable) {
                             filterList.add(hmAux);
                         }
                     }
                     //
                     results.count = filterList.size();
                     results.values = filterList;
-                }else {
+                } else {
                     results.count = source_filtered.size();
                     results.values = source_filtered;
                 }
@@ -641,7 +666,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         protected void publishResults(CharSequence constraint, FilterResults results) {
             source = (ArrayList<HMAux>) results.values;
             //
-            if(rememberListState != null){
+            if (rememberListState != null) {
                 rememberListState.dataChanged((ArrayList<HMAux>) source);
             }
             //

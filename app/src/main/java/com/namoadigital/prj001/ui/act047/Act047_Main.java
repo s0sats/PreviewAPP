@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act047;
 
+import static com.namoadigital.prj001.extensions.UserHelperKt.getUserCode;
+import static com.namoadigital.prj001.extensions.date.DateHelperKt.formatDate;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SO_STATUS_SCN_INVALID;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -27,43 +32,54 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act047_SO_Next_Orders_Adapter;
+import com.namoadigital.prj001.core.util.BroadcastHelper;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.databinding.Act047FilterDialogBinding;
 import com.namoadigital.prj001.databinding.Act047SoNextOrdersDialogBinding;
+import com.namoadigital.prj001.extensions.date.FormatDateType;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.model.SmPriority;
+import com.namoadigital.prj001.model.next_os.ListReservedUserRec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.next_os.WSSoSetReservedUser;
+import com.namoadigital.prj001.service.next_os.WsListUserReserved;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act047.component.dialog.DialogReservedUserList;
+import com.namoadigital.prj001.ui.act047.enums.ReservationStatus;
 import com.namoadigital.prj001.ui.act047.model.NextOsFilter;
+import com.namoadigital.prj001.ui.act047.model.ReservedUser;
 import com.namoadigital.prj001.ui.act047.model.TypeDeadlineFilter;
 import com.namoadigital.prj001.ui.act047.model.TypePriorityFilter;
 import com.namoadigital.prj001.ui.act047.model.TypeStatusFilter;
@@ -74,14 +90,19 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I_View {
 
     public static final String WS_PROCESS_SO_STATUS_CHANGE = "WS_PROCESS_SO_STATUS_CHANGE";
+    public static final String RESERVATION_FOR_ME = "RESERVATION_FOR_ME";
+    public static final String RESERVATION_FOR_OTHER = "RESERVATION_FOR_OTHER";
+    public static final String REMOVE_RESERVATION = "REMOVE_RESERVATION";
     private TextView tv_site;
     private TextView tv_empty_list;
     private ListView lv_services;
     private ImageView sw_filter;
+    private ImageView swReservedUser;
     private Act047_SO_Next_Orders_Adapter mAdapter;
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
@@ -92,6 +113,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private TextInputLayout filter_layout;
     private Toolbar toolbar;
     private String filterSerial;
+    private String soPk = "";
 
 
     @Override
@@ -167,6 +189,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("dialog_so_add_info_lbl");
         //
         transList.add("empty_serial_list_lbl");
+        transList.add("empty_os_list_lbl");
         transList.add("zone_filter_lbl");
         //
         transList.add("dialog_so_product_lbl");
@@ -190,6 +213,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         transList.add("apply_zone_on_lbl");
         transList.add("apply_zone_off_lbl");
+        transList.add("apply_reserved_user_on_lbl");
+        transList.add("apply_reserved_user_off_lbl");
+        transList.add("fetch_user_code_error_ttl");
+        transList.add("fetch_user_code_error_msg");
         //
         transList.add("progress_status_change_ttl");
         transList.add("progress_status_change_msg");
@@ -203,7 +230,25 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("status_active_success_toast");
         transList.add("status_change_error_toast");
         //
-
+        transList.add("user_reserved_ttl");
+        transList.add("user_no_reserved_lbl");
+        transList.add("user_reserved_for_me_btn");
+        transList.add("user_reserved_for_others_btn");
+        transList.add("user_reserved_remove_btn");
+        transList.add("user_reserved_change_for_me_btn");
+        transList.add("user_reserved_remove_me_btn");
+        transList.add("user_reserved_for_me_without_profile_btn");
+        transList.add("so_user_removed_lbl");
+        transList.add("so_current_user_reserved_lbl");
+        transList.add("so_user_reserved_lbl");
+        //
+        transList.add("list_user_empty_list");
+        transList.add("list_user_filter_hint");
+        transList.add("list_user_title_ttl");
+        transList.add("dialog_next_orders_list_user_ttl");
+        transList.add("dialog_next_orders_list_user_msg");
+        transList.add("dialog_next_orders_set_reserved_user_ttl");
+        transList.add("dialog_next_orders_set_reserved_user_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -229,10 +274,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         filter_layout = findViewById(R.id.actTextLayout);
         filter_layout.setHint(hmAux_Trans.get("filter_hint"));
         //
+        swReservedUser = findViewById(R.id.iv_reserved_user);
+        swReservedUser.setVisibility(View.VISIBLE);
         sw_filter = findViewById(R.id.main_zone_selection);
         sw_filter.setVisibility(View.VISIBLE);
-        applyZoneFilter = getSwitchState();
-        setIvMainUserSelection();
         //
         mPresenter = new Act047_Main_Presenter(
                 context,
@@ -243,18 +288,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         setLabels();
         //
-        mPresenter.executeNextOrdersSearch(getSwitchState());
+        applyZoneFilter = mPresenter.getSwitchState();
+        applyReservedUserFilter = false;
+        //
+        setIvToogleSelection(swReservedUser, applyReservedUserFilter, R.drawable.ic_person_white_24dp, R.drawable.ic_person_black_24dp);
+        setIvToogleSelection(sw_filter, applyZoneFilter, R.drawable.ic_location_on_24, R.drawable.outline_wrong_location_24);
+        //
+        mPresenter.executeNextOrdersSearch(mPresenter.getSwitchState());
     }
 
     private void setLabels() {
-        tv_empty_list.setText(hmAux_Trans.get("empty_serial_list_lbl"));
+        tv_empty_list.setText(hmAux_Trans.get("empty_os_list_lbl"));
         if (!filterSerial.isEmpty()) mketFilter.setText(filterSerial);
     }
 
     private void checkIfContainsFilter() {
         String text = mketFilter.getText().toString();
-        if (mAdapter != null && !text.isEmpty()) {
-            mAdapter.getFilter().filter(text);
+        if (mAdapter != null) {
+            mAdapter.applyFilter(applyReservedUserFilter, text.trim());
         }
     }
 
@@ -386,6 +437,19 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
     }
 
+    @Override
+    public void showNoConnectionMsgListUser() {
+        ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_no_conection_ttl"),
+                hmAux_Trans.get("alert_no_conection_msg"),
+                (dialog, which) -> {
+                    showLastDetailClicked();
+                },
+                0
+        );
+    }
+
 
     @Override
     public void showErrorMsg() {
@@ -402,7 +466,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private String soChangeType;
     private AlertDialog detailDialog;
     private Act047SoNextOrdersDialogBinding bindingDetailDialog;
-    private String tokenDialog = "";
+    private String tokenSoStatusDialog = "";
+    private String tokenSoUserDialog = "";
+
 
     private void showDetailsDialog(final SO_Next_Orders_Obj item) {
 
@@ -519,7 +585,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         //Listener para remover o mket_serial da lista de componentes
         detailDialog.setOnDismissListener(dialogInterface -> {
-            tokenDialog = "";
+            tokenSoStatusDialog = "";
+            tokenSoUserDialog = "";
             controls_sta.remove(bindingDetailDialog.act047SoNextOrdersDialogMketSerialConfirm);
         });
 
@@ -531,19 +598,208 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             checkDialogFlow(detailDialog, bindingDetailDialog.act047SoNextOrdersDialogTvError, bindingDetailDialog.act047SoNextOrdersDialogMketSerialConfirm, item);
         });
         bindingDetailDialog.soNextOrdersDialogMiddleAction.setOnClickListener(v -> {
-            if (tokenDialog == null || tokenDialog.isEmpty())
-                tokenDialog = ToolBox_Inf.getToken(context);
-            mPresenter.executeSoStatusChangeService(item, soChangeType, tokenDialog);
+            if (tokenSoStatusDialog == null || tokenSoStatusDialog.isEmpty())
+                tokenSoStatusDialog = ToolBox_Inf.getToken(context);
+            mPresenter.executeSoStatusChangeService(item, soChangeType, tokenSoStatusDialog);
         });
+
+
+        addSectionReserved(item);
     }
 
+    @SuppressLint("SetTextI18n")
+    private void addSectionReserved(SO_Next_Orders_Obj item) {
+        setupReservationTexts();
+        setupReservationButtons(item);
+        setupReservationDate(item);
+        setupButtonClickListeners(item);
+    }
+
+    private void setupReservationTexts() {
+        bindingDetailDialog.act047ReservationUserTtl.setText(hmAux_Trans.get("user_reserved_ttl"));
+        bindingDetailDialog.act047ReservationUserLbl.setText(hmAux_Trans.get("user_no_reserved_lbl"));
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_for_me_btn"));
+        bindingDetailDialog.reservationUserOthersBtn.setText(hmAux_Trans.get("user_reserved_for_others_btn"));
+        bindingDetailDialog.act047ReservationUserDate.setVisibility(View.GONE);
+        bindingDetailDialog.act047ReservationUserLbl.setTypeface(null, Typeface.NORMAL);
+    }
+
+    private void setupReservationButtons(SO_Next_Orders_Obj item) {
+        ReservationStatus status = ReservationStatus.Companion.resolve(item, context);
+        int btnIcon = R.drawable.ic_person_black_24dp;
+        int textColor = R.color.text_black;
+
+        switch (status) {
+            case NO_USER_WITH_PROFILE:
+                configureNoUserWithProfileButtons();
+                break;
+
+            case NO_USER_NO_PROFILE:
+                configureNoUserNoProfileButtons();
+                break;
+
+            case USER_WITH_PROFILE:
+                configureUserWithProfileButtons(item);
+                btnIcon = R.drawable.ic_person_off;
+                textColor = R.color.namoa_color_warning_red;
+                break;
+
+            case USER_NO_PROFILE:
+                configureUserNoProfileButtons(item);
+                textColor = R.color.namoa_color_warning_red;
+                break;
+
+            case CURRENT_USER_WITH_PROFILE:
+                configureUserWithProfileButtons(item);
+                btnIcon = R.drawable.ic_person_off;
+                break;
+
+            case CURRENT_USER_NO_PROFILE:
+                configureCurrentUserNoProfileButtons(item);
+                btnIcon = R.drawable.ic_person_off;
+                break;
+        }
+
+        setButtonIconAndTextColor(btnIcon, textColor);
+    }
+
+    private void setButtonIconAndTextColor(int btnIcon, int textColor) {
+        bindingDetailDialog.reservationUserMeBtn.setIcon(
+                ResourcesCompat.getDrawable(context.getResources(), btnIcon, null)
+        );
+        bindingDetailDialog.act047ReservationUserLbl.setTextColor(
+                ResourcesCompat.getColorStateList(context.getResources(), textColor, null)
+        );
+        bindingDetailDialog.act047ReservationUserDate.setTextColor(
+                ResourcesCompat.getColorStateList(context.getResources(), textColor, null)
+        );
+    }
+
+    private void configureNoUserWithProfileButtons() {
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_for_me_btn"));
+        bindingDetailDialog.reservationUserOthersBtn.setVisibility(View.VISIBLE);
+        bindingDetailDialog.act047ReservationUserLbl.setText(hmAux_Trans.get("user_no_reserved_lbl"));
+        bindingDetailDialog.act047ReservationUserLbl.setTypeface(null, Typeface.ITALIC);
+    }
+
+    private void configureNoUserNoProfileButtons() {
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_for_me_without_profile_btn"));
+        bindingDetailDialog.reservationUserOthersBtn.setVisibility(View.GONE);
+        bindingDetailDialog.act047ReservationUserLbl.setText(hmAux_Trans.get("user_no_reserved_lbl"));
+        bindingDetailDialog.act047ReservationUserLbl.setTypeface(null, Typeface.ITALIC);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void configureUserWithProfileButtons(SO_Next_Orders_Obj item) {
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_remove_btn"));
+        bindingDetailDialog.act047ReservationUserLbl.setText(item.getReservedUserName() + " (" + item.getReservedUser() + ")");
+        bindingDetailDialog.reservationUserOthersBtn.setVisibility(View.VISIBLE);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void configureUserNoProfileButtons(SO_Next_Orders_Obj item) {
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_change_for_me_btn"));
+        bindingDetailDialog.act047ReservationUserLbl.setText(item.getReservedUserName() + " (" + item.getReservedUser() + ")");
+        bindingDetailDialog.reservationUserOthersBtn.setVisibility(View.GONE);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void configureCurrentUserNoProfileButtons(SO_Next_Orders_Obj item) {
+        bindingDetailDialog.reservationUserMeBtn.setText(hmAux_Trans.get("user_reserved_remove_me_btn"));
+        bindingDetailDialog.act047ReservationUserLbl.setText(item.getReservedUserName() + " (" + item.getReservedUser() + ")");
+        bindingDetailDialog.reservationUserOthersBtn.setVisibility(View.GONE);
+    }
+
+    private void setupReservationDate(SO_Next_Orders_Obj item) {
+        if (item.getReservedDate() != null) {
+            bindingDetailDialog.act047ReservationUserDate.setVisibility(View.VISIBLE);
+            bindingDetailDialog.act047ReservationUserDate.setText(
+                    formatDate(context, new FormatDateType.DateAndHour(item.getReservedDate()))
+            );
+        }
+    }
+
+    private void setupButtonClickListeners(SO_Next_Orders_Obj item) {
+        bindingDetailDialog.reservationUserMeBtn.setOnClickListener(v -> handleReservationForMe(item));
+        bindingDetailDialog.reservationUserOthersBtn.setOnClickListener(v -> handleReservationForOthers(item));
+    }
+
+    private void handleReservationForMe(SO_Next_Orders_Obj item) {
+        Integer reservedUserFilter = null;
+        if (!isRemoveUserFlow(item) || (
+                !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.RESERVE_SO) &&
+                        !item.getReservedUser().toString().equalsIgnoreCase(getUserCode(context))
+        )) {
+            try {
+                reservedUserFilter = Integer.parseInt(getUserCode(context));
+            } catch (NumberFormatException e) {
+                showAlert(
+                        hmAux_Trans.get("fetch_user_code_error_ttl"),
+                        hmAux_Trans.get("fetch_user_code_error_msg")
+                );
+                return;
+            }
+        }
+        callReservedUser(item, reservedUserFilter);
+    }
+
+    private void handleReservationForOthers(SO_Next_Orders_Obj item) {
+        detailDialog.dismiss();
+        mPresenter.executeGetListUsersReserved(
+                item.getSiteCode(),
+                item.getOperationCode(),
+                item.getProductCode(),
+                item.getContractCode(),
+                item.getSegmentCode()
+        );
+    }
+
+    private boolean isRemoveUserFlow(SO_Next_Orders_Obj item) {
+        return item.getReservedUser() != null;
+    }
+
+
+    private void callReservedUser(SO_Next_Orders_Obj item, Integer reserved_user) {
+        if (tokenSoUserDialog == null || tokenSoUserDialog.isEmpty()) {
+            tokenSoUserDialog = ToolBox_Inf.getToken(context);
+        }
+
+        mPresenter.executeSetListUsersReserved(
+                tokenSoUserDialog,
+                item.getSo_prefix(),
+                item.getSo_code(),
+                item.getSoScn(),
+                reserved_user
+        );
+    }
+
+    private void showDialogListUsers(List<ListReservedUserRec.ResultRec.Users> users) {
+        new DialogReservedUserList(
+                context,
+                users,
+                user -> {
+                    SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) mAdapter.getItem(soPositionCardItemClicked);
+                    callReservedUser(item, user.getUserCode());
+                    showLastDetailClicked();
+                    return null;
+                },
+                () -> {
+                    showLastDetailClicked();
+                    return null;
+                }).show();
+    }
+
+    private void showLastDetailClicked() {
+        SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) mAdapter.getItem(soPositionCardItemClicked);
+        showDetailsDialog(item);
+    }
 
     private void processReturnSoChangeStatus(HMAux hmAux) {
         SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) mAdapter.getItem(soPositionCardItemClicked);
         item.setStatus(hmAux.get("so_status"));
         item.setSoScn(Integer.parseInt(hmAux.get("scn_code")));
         mAdapter.notifyDataSetChanged();
-        tokenDialog = "";
+        tokenSoStatusDialog = "";
         changeStatusDialog(item);
         if (soChangeType.equals(WSSoStatusChange.WS_ACTION_SO_PROCESS)) {
             Toast.makeText(context, hmAux_Trans.get("status_block_success_toast"), Toast.LENGTH_LONG).show();
@@ -776,8 +1032,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         ToolBox_Inf.buildFooterDialog(context);
     }
 
-    private void swToastMessage() {
-        String message = applyZoneFilter ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl");
+    private void swToastMessage(String message) {
         Toast.makeText(
                         context,
                         message,
@@ -788,14 +1043,21 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private int soPositionCardItemClicked;
 
     private void initActions() {
+        swReservedUser.setOnClickListener(view -> {
+            applyReservedUserFilter = !applyReservedUserFilter;
+            setIvToogleSelection(swReservedUser, applyReservedUserFilter, R.drawable.ic_person_white_24dp, R.drawable.ic_person_black_24dp);
+            checkIfContainsFilter();
+            swToastMessage(applyReservedUserFilter ? hmAux_Trans.get("apply_reserved_user_on_lbl") : hmAux_Trans.get("apply_reserved_user_off_lbl"));
+        });
         sw_filter.setOnClickListener(view -> {
             applyZoneFilter = !applyZoneFilter;
-            setIvMainUserSelection();
-            setSwitchState(applyZoneFilter);
+            setIvToogleSelection(sw_filter, applyZoneFilter, R.drawable.ic_location_on_24, R.drawable.outline_wrong_location_24);
+            mPresenter.setSwitchState(applyZoneFilter);
             checkIfContainsFilter();
             mPresenter.executeNextOrdersSearch(applyZoneFilter);
-            swToastMessage();
+            swToastMessage(applyZoneFilter ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl"));
         });
+        //
         lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -806,7 +1068,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 showDetailsDialog(item);
             }
         });
-
+        //
         lv_services.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
@@ -818,7 +1080,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
             }
         });
-
+        //
         mketFilter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -828,7 +1090,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             @Override
             public void reportTextChange(String s, boolean b) {
                 if (mAdapter != null) {
-                    mAdapter.getFilter().filter(s.trim());
+                    mAdapter.applyFilter(applyReservedUserFilter, s.trim());
+//                    mAdapter.getFilter().filter(s.trim());
                     if (lv_services.getVisibility() == View.VISIBLE)
                         lv_services.setSelectionFromTop(0, 0);
                 }
@@ -837,30 +1100,39 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private boolean applyZoneFilter;
+    private boolean applyReservedUserFilter;
 
-    private void setIvMainUserSelection() {
-        if (applyZoneFilter) {
-            sw_filter.setImageDrawable(null);
-            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_pressed));
+
+    private void setIvToogleSelection(
+            ImageView ivToggleButton,
+            boolean isSwitchSelected,
+            @DrawableRes
+            int selectDrawable,
+            @DrawableRes
+            int unselectDrawable
+    ) {
+        if (isSwitchSelected) {
+            ivToggleButton.setImageDrawable(null);
+            ivToggleButton.setBackground(context.getDrawable(R.drawable.my_action_toogle_pressed));
             Drawable drawable = DrawableCompat.wrap(
-                    ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
+                    Objects.requireNonNull(ContextCompat.getDrawable(context, selectDrawable)));
             DrawableCompat.setTint(
                     drawable.mutate(), ContextCompat.getColor(context, com.namoa_digital.namoa_library.R.color.padrao_WHITE)
             );
 
-            sw_filter.setImageDrawable(drawable);
-            sw_filter.postInvalidate();
+            ivToggleButton.setImageDrawable(drawable);
+            ivToggleButton.postInvalidate();
         } else {
-            sw_filter.setImageDrawable(null);
-            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_default));
+            ivToggleButton.setImageDrawable(null);
+            ivToggleButton.setBackground(context.getDrawable(R.drawable.my_action_toogle_default));
             Drawable drawable = DrawableCompat.wrap(
-                    ContextCompat.getDrawable(context, R.drawable.outline_wrong_location_24));
+                    Objects.requireNonNull(ContextCompat.getDrawable(context, unselectDrawable)));
             DrawableCompat.setTint(
                     drawable.mutate(), ContextCompat.getColor(context, R.color.m3_namoa_secondary)
             );
 
-            sw_filter.setImageDrawable(drawable);
-            sw_filter.postInvalidate();
+            ivToggleButton.setImageDrawable(drawable);
+            ivToggleButton.postInvalidate();
         }
     }
 
@@ -876,6 +1148,19 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         if (wsProcess.equals(WS_SO_Next_Orders.class.getName())) {
             mPresenter.processNextOrderList(hmAux.get(WS_SO_Next_Orders.SO_NEXT_SERVICES));
+            if (!soPk.isEmpty()) {
+                SO_Next_Orders_Obj item = mPresenter.getListItemByPK(soPk);
+                if (item != null) {
+                    changeStatusDialog(item);
+                    mAdapter.notifyDataSetChanged();
+                    mPresenter.updateLocalSo(Integer.parseInt(item.getSo_prefix()), Integer.parseInt(item.getSo_code()));
+                } else {
+                    if (detailDialog.isShowing()) {
+                        detailDialog.dismiss();
+                    }
+                }
+                soPk = "";
+            }
             disableProgressDialog();
         } else if (wsProcess.equals(WS_Serial_Search.class.getName())) {
             //Não fecha o dialog, pois o mesmo será usado na sequencia para o download a S.O
@@ -889,6 +1174,47 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             wsProcess = "";
             disableProgressDialog();
             processReturnSoChangeStatus(hmAux);
+        } else if (wsProcess.equalsIgnoreCase(WsListUserReserved.class.getName())) {
+            disableProgressDialog();
+            List<ListReservedUserRec.ResultRec.Users> users = BroadcastHelper.fromJsonToList(mLink, ListReservedUserRec.ResultRec.Users.class);
+            showDialogListUsers(users);
+        } else if (wsProcess.equalsIgnoreCase(WSSoSetReservedUser.class.getName())) {
+            disableProgressDialog();
+            tokenSoUserDialog = "";
+            Gson gson = new Gson();
+            ReservedUser soReturn = gson.fromJson(mLink, ReservedUser.class);
+
+            if (soReturn.getRetStatus().equals("OK")) {
+                SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) mAdapter.getItem(soPositionCardItemClicked);
+                item.setSoScn(soReturn.getSoScn());
+                item.setReservedUserName(soReturn.getReservedName());
+                item.setReservedUserNick(soReturn.getReservedNick());
+                item.setReservedUser(soReturn.getReservedCode());
+                item.setReservedDate(soReturn.getReservedDate());
+                changeStatusDialog(item);
+                mAdapter.notifyDataSetChanged();
+                mPresenter.updateLocalSo(Integer.parseInt(item.getSo_prefix()), Integer.parseInt(item.getSo_code()));
+                if (soReturn.getReservedCode() != null && Objects.equals(soReturn.getReservedCode(), Integer.valueOf(getUserCode(context)))) {
+                    Toast.makeText(context, hmAux_Trans.get("so_current_user_reserved_lbl"), Toast.LENGTH_LONG).show();
+                } else if (soReturn.getReservedCode() != null) {
+                    Toast.makeText(context, hmAux_Trans.get("so_user_reserved_lbl"), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, hmAux_Trans.get("so_user_removed_lbl"), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                showAlert(
+                        hmAux_Trans.get("dialog_next_orders_set_reserved_user_ttl"),
+                        soReturn.getRetMsg(),
+                        (dialog, which) -> {
+                            SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) mAdapter.getItem(soPositionCardItemClicked);
+                            soPk = item.getSo_prefix() + "." + item.getSo_code();
+                            if (soReturn.getRetStatus().equals(SO_STATUS_SCN_INVALID)) {
+                                mPresenter.executeNextOrdersSearch(applyZoneFilter);
+                            }
+                        }
+                );
+
+            }
         }
     }
 
@@ -920,6 +1246,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        soPk = "";
         //
         if (wsProcess.equals(WS_Serial_Search.class.getName())
                 || wsProcess.equals(WS_SO_Search.class.getName())) {
@@ -936,6 +1263,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
+        soPk = "";
         if (wsProcess.equals(WS_Serial_Search.class.getName())
                 || wsProcess.equals(WS_SO_Search.class.getName())
         ) {
@@ -998,6 +1326,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     Menu optionMenu;
+
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.act047_main_menu, menu);
         optionMenu = menu;
@@ -1013,15 +1342,12 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             showFilterDialog();
             return true;
         }
+
+        if (item.getItemId() == R.id.filter_refresh_os) {
+            mPresenter.executeNextOrdersSearch(applyZoneFilter);
+            return true;
+        }
         return false;
-    }
-
-    private boolean getSwitchState() {
-        return ToolBox_Con.getBooleanPreferencesByKey(context, Constant.ACT047_SWITCH_STATE, true);
-    }
-
-    private void setSwitchState(boolean isChecked) {
-        ToolBox_Con.setBooleanPreference(context, Constant.ACT047_SWITCH_STATE, isChecked);
     }
 
 
@@ -1065,7 +1391,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         } else {
             binding.filterDialogTvDescLbl.setVisibility(View.GONE);
         }
-        if (getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
+        if (mPresenter.getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
             binding.filterDialogTvZoneLbl.setText(hmAux_Trans.get("filter_dialog_zone_lbl") + ": " + zone.getZone_desc());
             binding.filterDialogTvZoneLbl.setVisibility(View.VISIBLE);
         } else {
@@ -1153,7 +1479,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             filter.setDeadlineFilter(deadlineFilterList);
             filter.setPriorityFilter(typePriorityFilter);
             filter.setPriorityTypeFilter(priorityTypeFiltered);
-            if (mPresenter.saveFilterDialog(filter, getSwitchState())) {
+            if (mPresenter.saveFilterDialog(filter)) {
                 changeBadgeVisibility();
                 if (lv_services.getVisibility() == View.VISIBLE) lv_services.setSelection(0);
                 dialog.dismiss();

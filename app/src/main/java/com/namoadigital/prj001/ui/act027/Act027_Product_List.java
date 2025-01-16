@@ -163,8 +163,8 @@ public class Act027_Product_List extends BaseFragment {
         }
 
         cardStatus = view.findViewById(R.id.card_alert_status);
-        tv_status_card = view.findViewById(R.id.tv_process_new_header);
-        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        tv_status_card = view.findViewById(R.id.card_balloon_text);
+        iv_remove_card = view.findViewById(R.id.card_balloon_icon);
         iv_remove_card.setVisibility(View.GONE);
         loadCardStatus();
         checkStatus();

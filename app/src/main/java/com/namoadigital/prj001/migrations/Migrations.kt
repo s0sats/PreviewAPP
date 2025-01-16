@@ -34,7 +34,7 @@ import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_CREATE_SCRIP
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript
+import com.namoadigital.prj001.database.scripts.multi.masterdata.CREATE_REGION_TABLE
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2) {
@@ -765,7 +765,7 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
 val MigrationV12 = object : MigrationSQLite(12, 13) {
     override fun migrate(db: SQLiteDatabase) {
         //Table Region
-        db.execSQL(RegionScript.CREATE_TABLE)
+        db.execSQL(CREATE_REGION_TABLE)
 
         listOf(
             MD_SiteDao.COUNTRY_CODE,
@@ -963,6 +963,20 @@ val migrationV15 = object : MigrationSQLite(15, 16) {
             "1"
         )
     }
+}
+
+val migrationV16 = object : MigrationSQLite(16, 17) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumnsIfNecessary(tableName = SM_SODao.TABLE) {
+            mapOf(
+                SM_SODao.RESERVED_USER to "int",
+                SM_SODao.RESERVED_USER_NICK to "text",
+                SM_SODao.RESERVED_USER_NAME to "text",
+                SM_SODao.RESERVED_DATE to "text"
+            )
+        }
+    }
+
 }
 
 fun SQLiteDatabase.addMissingColumnsIfNecessary(

@@ -26,6 +26,8 @@ public interface Act047_Main_Contract {
 
         void showNoConnecionMsg();
 
+        void showNoConnectionMsgListUser();
+
         void showErrorMsg();
 
         void callAct021(Context context);
@@ -34,7 +36,7 @@ public interface Act047_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
-        void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listener);
+        void showAlert(String ttl, String msg, @Nullable DialogInterface.OnClickListener listener);
 
         void callAct027(Bundle bundle);
 
@@ -59,7 +61,7 @@ public interface Act047_Main_Contract {
 
         void executeSerialDownload(String productId, String serialCode);
 
-        boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter);
+        boolean saveFilterDialog(NextOsFilter filter);
 
         void extractSearchResult(String mLink, SO_Next_Orders_Obj wsTmpItem);
 
@@ -72,6 +74,22 @@ public interface Act047_Main_Contract {
         List<SmPriority> getListSmPriority();
 
         void updateLocalSo(int soPrefix, int soCode);
+
+        void executeGetListUsersReserved(
+                int siteCode,
+                int operationCode,
+                int productCode,
+                int contractCode,
+                int segmentCode
+        );
+
+        boolean getSwitchState();
+
+        void setSwitchState(boolean isChecked);
+
+        void executeSetListUsersReserved(String token, String soPrefix, String soCode, int soScn, Integer reservedUser);
+
+        SO_Next_Orders_Obj getListItemByPK(String soPk);
     }
 
 }

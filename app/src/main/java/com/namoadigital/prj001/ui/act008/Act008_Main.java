@@ -684,8 +684,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             onBackPressed();
         });
         if (hasNFormSelected()) {
-            ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
+            ImageView ivClose = vNFormSelected.findViewById(R.id.card_balloon_icon);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.card_balloon_text);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -698,9 +698,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }
         //
         if(has_tk_ticket_is_form_off_hand) {
-            ImageView ivClose = vCurrentStep.findViewById(R.id.iv_nform_new_header);
+            ImageView ivClose = vCurrentStep.findViewById(R.id.card_balloon_icon);
             ivClose.setVisibility(View.GONE);
-            TextView tvNFormSelected = vCurrentStep.findViewById(R.id.tv_process_new_header);
+            TextView tvNFormSelected = vCurrentStep.findViewById(R.id.card_balloon_text);
             tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
             vCurrentStep.setVisibility(View.VISIBLE);
         }

@@ -100,6 +100,34 @@ public class SO_Next_Orders_Obj {
     @SerializedName("site_desc")
     private String siteDesc;
 
+    @SerializedName("site_code")
+    private Integer siteCode;
+
+    @SerializedName("segment_code")
+    private Integer segmentCode;
+
+    @SerializedName("contract_code")
+    private Integer contractCode;
+
+    @SerializedName("operation_code")
+    private Integer operationCode;
+
+    @SerializedName("product_code")
+    private Integer productCode;
+
+    @SerializedName("reserved_user")
+    private Integer reservedUser;
+
+    @SerializedName("reserved_user_name")
+    private String reservedUserName;
+
+    @SerializedName("reserved_user_nick")
+    private String reservedUserNick;
+
+    @SerializedName("reserved_date")
+    private String reservedDate;
+
+
     public String getSo_prefix() {
         return so_prefix;
     }
@@ -512,5 +540,77 @@ public class SO_Next_Orders_Obj {
 
     public void setHas_client_deadline(Integer has_client_deadline) {
         this.has_client_deadline = has_client_deadline;
+    }
+
+    public Integer getOperationCode() {
+        return operationCode;
+    }
+
+    public void setOperationCode(Integer operationCode) {
+        this.operationCode = operationCode;
+    }
+
+    public Integer getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(Integer contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public Integer getSegmentCode() {
+        return segmentCode;
+    }
+
+    public void setSegmentCode(Integer segmentCode) {
+        this.segmentCode = segmentCode;
+    }
+
+    public Integer getSiteCode() {
+        return siteCode;
+    }
+
+    public void setSiteCode(Integer siteCode) {
+        this.siteCode = siteCode;
+    }
+
+    public Integer getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(Integer productCode) {
+        this.productCode = productCode;
+    }
+
+    public Integer getReservedUser() {
+        return reservedUser;
+    }
+
+    public void setReservedUser(Integer reservedUser) {
+        this.reservedUser = reservedUser;
+    }
+
+    public String getReservedUserName() {
+        return reservedUserName;
+    }
+
+    public void setReservedUserName(String reservedUserName) {
+        this.reservedUserName = reservedUserName;
+    }
+
+    public String getReservedDate() {
+        return reservedDate;
+    }
+
+    public void setReservedDate(String reservedDate) {
+        this.reservedDate = reservedDate;
+    }
+
+    public String getReservedUserNick() {
+        return reservedUserNick;
+    }
+
+    public void setReservedUserNick(String reservedUserNick) {
+        this.reservedUserNick = reservedUserNick;
     }
 }

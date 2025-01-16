@@ -2,9 +2,7 @@ package com.namoadigital.prj001.database.scripts.multi.masterdata
 
 import com.namoadigital.prj001.dao.MD_SiteDao
 
-object SiteScript {
-
-    const val CREATE_TABLE = """
+const val CREATE_SITE_TABLE = """
         create table if not exists [${MD_SiteDao.TABLE}] 
         (
             [customer_code] int not null,
@@ -47,5 +45,3 @@ object SiteScript {
             constraint pk_md_sites primary key(customer_code, site_code)
         );
     """
-
-}

@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,8 +75,8 @@ import com.namoadigital.prj001.dao.trip.FSTripUserDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
 import com.namoadigital.prj001.extensions.ListHelperKt;
-import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScript;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -750,7 +749,7 @@ public class WS_Sync extends BaseWsIntentService {
             tkTicketTypeProductDao.remove(new TkTicketTypeProductSqlTruncate().toSqlQuery());
 
             fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
-            mdRegionDao.remove(RegionScript.REMOVE_TABLE);
+            mdRegionDao.remove(RegionScriptKt.REMOVE_TABLE);
 
             //
             // Processamento Operation

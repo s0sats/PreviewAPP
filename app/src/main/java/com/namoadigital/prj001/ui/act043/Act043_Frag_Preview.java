@@ -122,8 +122,8 @@ public class Act043_Frag_Preview extends BaseFragment {
         lv_service_pack = view.findViewById(R.id.act043_frag_preview_lv_services_packs);
         //
         cardStatus = view.findViewById(R.id.card_alert_status);
-        tv_status_card = view.findViewById(R.id.tv_process_new_header);
-        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        tv_status_card = view.findViewById(R.id.card_balloon_text);
+        iv_remove_card = view.findViewById(R.id.card_balloon_icon);
         iv_remove_card.setVisibility(View.GONE);
         loadCardStatus();
         //

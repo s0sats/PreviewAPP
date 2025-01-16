@@ -31,47 +31,79 @@ public class SM_SO {
     @SerializedName("so_desc")
     private String so_desc;
     @Expose
-    @SerializedName("product_code") private int product_code;
-    @SerializedName("product_id") private String product_id;
-    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("product_code")
+    private int product_code;
+    @SerializedName("product_id")
+    private String product_id;
+    @SerializedName("product_desc")
+    private String product_desc;
     @Expose
-    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("serial_code")
+    private int serial_code;
     @Expose
-    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("serial_id")
+    private String serial_id;
     @Expose
-    @SerializedName("category_price_code") private int category_price_code;
-    @SerializedName("category_price_id") private String category_price_id;
-    @SerializedName("category_price_desc") private String category_price_desc;
+    @SerializedName("category_price_code")
+    private int category_price_code;
+    @SerializedName("category_price_id")
+    private String category_price_id;
+    @SerializedName("category_price_desc")
+    private String category_price_desc;
     @Expose
-    @SerializedName("segment_code") private int segment_code;
-    @SerializedName("segment_id") private String segment_id;
-    @SerializedName("segment_desc") private String segment_desc;
+    @SerializedName("segment_code")
+    private int segment_code;
+    @SerializedName("segment_id")
+    private String segment_id;
+    @SerializedName("segment_desc")
+    private String segment_desc;
     @Expose
-    @SerializedName("site_code") private int site_code;
-    @SerializedName("site_id") private String site_id;
-    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("site_code")
+    private int site_code;
+    @SerializedName("site_id")
+    private String site_id;
+    @SerializedName("site_desc")
+    private String site_desc;
     @Expose
-    @SerializedName("operation_code") private int operation_code;
-    @SerializedName("operation_id") private String operation_id;
-    @SerializedName("operation_desc") private String operation_desc;
+    @SerializedName("operation_code")
+    private int operation_code;
+    @SerializedName("operation_id")
+    private String operation_id;
+    @SerializedName("operation_desc")
+    private String operation_desc;
     @Expose
-    @SerializedName("contract_code") private int contract_code;
-    @SerializedName("contract_desc") private String contract_desc;
-    @SerializedName("contract_po_erp") private String contract_po_erp;
-    @SerializedName("contract_po_client1") private String contract_po_client1;
-    @SerializedName("contract_po_client2") private String contract_po_client2;
-    @SerializedName("contract_po_client3") private String contract_po_client3;
+    @SerializedName("contract_code")
+    private int contract_code;
+    @SerializedName("contract_desc")
+    private String contract_desc;
+    @SerializedName("contract_po_erp")
+    private String contract_po_erp;
+    @SerializedName("contract_po_client1")
+    private String contract_po_client1;
+    @SerializedName("contract_po_client2")
+    private String contract_po_client2;
+    @SerializedName("contract_po_client3")
+    private String contract_po_client3;
     @Expose
-    @SerializedName("po_code") private int po_code;
-    @SerializedName("po_id") private String po_id;
-    @SerializedName("po_desc") private String po_desc;
+    @SerializedName("po_code")
+    private int po_code;
+    @SerializedName("po_id")
+    private String po_id;
+    @SerializedName("po_desc")
+    private String po_desc;
     @Expose
-    @SerializedName("priority_code") private int priority_code;
-    @SerializedName("priority_desc") private String priority_desc;
-    @SerializedName("status") private String status;
-    @SerializedName("quality_approval_user") private Integer quality_approval_user;
-    @SerializedName("quality_approval_user_nick") private String quality_approval_user_nick;
-    @SerializedName("quality_approval_date") private String quality_approval_date;
+    @SerializedName("priority_code")
+    private int priority_code;
+    @SerializedName("priority_desc")
+    private String priority_desc;
+    @SerializedName("status")
+    private String status;
+    @SerializedName("quality_approval_user")
+    private Integer quality_approval_user;
+    @SerializedName("quality_approval_user_nick")
+    private String quality_approval_user_nick;
+    @SerializedName("quality_approval_date")
+    private String quality_approval_date;
     @Expose
     @SerializedName("comments")
     private String comments;
@@ -106,26 +138,43 @@ public class SM_SO {
     @SerializedName("client_email")
     private String client_email;
     @Expose
-    @SerializedName("client_phone") private String client_phone;
-    @SerializedName("client_approval_image") private Integer client_approval_image;
-    @SerializedName("client_approval_image_name") private String client_approval_image_name;
-    @SerializedName("client_approval_image_url") private String client_approval_image_url;
-    @SerializedName("client_approval_image_url_local") private String client_approval_image_url_local;
-    @SerializedName("client_approval_date") private String client_approval_date;
-    @SerializedName("client_approval_user_nick") private String client_approval_user_nick;
-    @SerializedName("client_approval_user") private Integer client_approval_user;
-    @SerializedName("client_approval_type_sig") private String client_approval_type_sig;
-    @SerializedName("client_so_id") private String client_so_id;
+    @SerializedName("client_phone")
+    private String client_phone;
+    @SerializedName("client_approval_image")
+    private Integer client_approval_image;
+    @SerializedName("client_approval_image_name")
+    private String client_approval_image_name;
+    @SerializedName("client_approval_image_url")
+    private String client_approval_image_url;
+    @SerializedName("client_approval_image_url_local")
+    private String client_approval_image_url_local;
+    @SerializedName("client_approval_date")
+    private String client_approval_date;
+    @SerializedName("client_approval_user_nick")
+    private String client_approval_user_nick;
+    @SerializedName("client_approval_user")
+    private Integer client_approval_user;
+    @SerializedName("client_approval_type_sig")
+    private String client_approval_type_sig;
+    @SerializedName("client_so_id")
+    private String client_so_id;
     @Expose
-    @SerializedName("origin_change") private String origin_change;
-    @SerializedName("started_flag") private int started_flag;
+    @SerializedName("origin_change")
+    private String origin_change;
+    @SerializedName("started_flag")
+    private int started_flag;
     @Expose
-    @SerializedName("edit_origin") private String edit_origin;
+    @SerializedName("edit_origin")
+    private String edit_origin;
     @Expose
-    @SerializedName("edit_user") private Integer edit_user;
-    @SerializedName("edit_user_nick") private String edit_user_nick;
-    @SerializedName("total_qty_service") private int total_qty_service;
-    @SerializedName("total_price") private double total_price;
+    @SerializedName("edit_user")
+    private Integer edit_user;
+    @SerializedName("edit_user_nick")
+    private String edit_user_nick;
+    @SerializedName("total_qty_service")
+    private int total_qty_service;
+    @SerializedName("total_price")
+    private double total_price;
     @Expose
     @SerializedName("add_inf1")
     private String add_inf1;
@@ -189,16 +238,23 @@ public class SM_SO {
     @Expose
     @SerializedName("serial_add_inf3")
     private String serial_add_inf3;
-    @SerializedName("approve_budget") private int approve_budget;
-    @SerializedName("approve_client") private int approve_client;
-    @SerializedName("update_required") private int update_required;
-    @SerializedName("approval_required") private int approval_required;
-    @SerializedName("sync_required") private int sync_required;
-    @SerializedName("log_date") private String log_date;
+    @SerializedName("approve_budget")
+    private int approve_budget;
+    @SerializedName("approve_client")
+    private int approve_client;
+    @SerializedName("update_required")
+    private int update_required;
+    @SerializedName("approval_required")
+    private int approval_required;
+    @SerializedName("sync_required")
+    private int sync_required;
+    @SerializedName("log_date")
+    private String log_date;
     @Expose
     @SerializedName("action")
     private String action;
-    @SerializedName("token") private String token;
+    @SerializedName("token")
+    private String token;
     @Expose
     @SerializedName("so_file")
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
@@ -214,21 +270,31 @@ public class SM_SO {
     @Expose
     @SerializedName("product_icon_url")
     private String product_icon_url;
-    @SerializedName("product_icon_url_local") private String product_icon_url_local;
+    @SerializedName("product_icon_url_local")
+    private String product_icon_url_local;
     //LUCHE - 02/06/2020 - Chat integration
-    @SerializedName("room_member") private int room_member;
-    @SerializedName("room_code") private String room_code;
+    @SerializedName("room_member")
+    private int room_member;
+    @SerializedName("room_code")
+    private String room_code;
     //LUCHE - 13/07/2021
     @Expose
     @SerializedName("site_exec")
     private int site_exec;
-    @SerializedName("site_exec_id") private String site_exec_id;
-    @SerializedName("site_exec_desc") private String site_exec_desc;
-    @SerializedName("create_date") private String create_date;
-    @SerializedName("create_user") private int create_user;
-    @SerializedName("create_user_nick") private String create_user_nick;
-    @SerializedName("log_user") private int log_user;
-    @SerializedName("log_user_nick") private String log_user_nick;
+    @SerializedName("site_exec_id")
+    private String site_exec_id;
+    @SerializedName("site_exec_desc")
+    private String site_exec_desc;
+    @SerializedName("create_date")
+    private String create_date;
+    @SerializedName("create_user")
+    private int create_user;
+    @SerializedName("create_user_nick")
+    private String create_user_nick;
+    @SerializedName("log_user")
+    private int log_user;
+    @SerializedName("log_user_nick")
+    private String log_user_nick;
     @Nullable
     @SerializedName("last_approval_budget_date")
     private String last_approval_budget_date;
@@ -245,8 +311,19 @@ public class SM_SO {
     @SerializedName("pipeline_desc")
     private String pipeline_desc;
 
-    @SerializedName("deadline_manual") private int deadline_manual;
-    @SerializedName("has_client_deadline") private int has_client_deadline;
+    @SerializedName("deadline_manual")
+    private int deadline_manual;
+    @SerializedName("has_client_deadline")
+    private int has_client_deadline;
+
+    @SerializedName("reserved_user")
+    private Integer reservedUser;
+    @SerializedName("reserved_user_name")
+    private String reservedUserName;
+    @SerializedName("reserved_user_nick")
+    private String reservedUserNick;
+    @SerializedName("reserved_date")
+    private String reservedDate;
 
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
@@ -1209,5 +1286,37 @@ public class SM_SO {
 
     public void setHas_client_deadline(int has_client_deadline) {
         this.has_client_deadline = has_client_deadline;
+    }
+
+    public Integer getReservedUser() {
+        return reservedUser;
+    }
+
+    public void setReservedUser(Integer reservedUser) {
+        this.reservedUser = reservedUser;
+    }
+
+    public String getReservedUserNick() {
+        return reservedUserNick;
+    }
+
+    public void setReservedUserNick(String reservedUserNick2) {
+        this.reservedUserNick = reservedUserNick2;
+    }
+
+    public String getReservedDate() {
+        return reservedDate;
+    }
+
+    public void setReservedDate(String reservedDate) {
+        this.reservedDate = reservedDate;
+    }
+
+    public String getReservedUserName() {
+        return reservedUserName;
+    }
+
+    public void setReservedUserName(String reservedUserName) {
+        this.reservedUserName = reservedUserName;
     }
 }

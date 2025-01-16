@@ -1103,6 +1103,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.trip.WBRDestinationEdit" />
         <receiver android:name=".receiver.trip.WBRGetTripFull" />
         <receiver android:name=".receiver.trip.WBRSendTripFullUpdate" />
+        <receiver android:name=".receiver.next_os.WBR_ListUserReservedReceiver" />
+        <receiver android:name=".receiver.next_os.WBR_SoSetReservedUserReceiver" />
 
         <service android:name=".service.WS_SO_Create_Room"
             android:foregroundServiceType="dataSync"/>
@@ -1144,8 +1146,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:foregroundServiceType="dataSync"/>
         <service android:name=".service.trip.WsSelectDestination"
             android:foregroundServiceType="dataSync"/>
-        <service android:name=".service.trip.WsGetUsersAvailable"
-            android:foregroundServiceType="dataSync"/>
+
         <service android:name=".service.WS_SO_Sync"
             android:foregroundServiceType="dataSync"/>
         <service android:name=".service.WsSerialSiteInventory"
@@ -1171,6 +1172,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.trip.WsGetTripFull"
             android:foregroundServiceType="dataSync"/>
         <service android:name=".service.trip.WsSendTripUpdate"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.next_os.WsListUserReserved"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.next_os.WSSoSetReservedUser"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.trip.WsGetUsersAvailable"
             android:foregroundServiceType="dataSync"/>
 
 

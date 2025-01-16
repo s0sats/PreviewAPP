@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -38,6 +39,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
     private HMAux hmAux_Trans;
     private ArrayList<SO_Next_Orders_Obj> mFilteredValues;
     private NextOrdersFilter mFilter;
+    private boolean reservedUserFilter = false;
 
     public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource, OnRememberListState<SO_Next_Orders_Obj> listState) {
         this.context = context;
@@ -55,7 +57,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         loadTranslation();
     }
 
-    public void changeListByFilter(ArrayList<SO_Next_Orders_Obj> list){
+    public void changeListByFilter(ArrayList<SO_Next_Orders_Obj> list) {
         this.mValues.clear();
         this.mFilteredValues.clear();
         this.mValues = list;
@@ -107,6 +109,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_site = convertView.findViewById(R.id.so_site_val);
         LinearLayout layout_services = convertView.findViewById(R.id.so_service_layout);
         TextView tv_service = convertView.findViewById(R.id.so_service_first);
+        TextView tv_is_reserved = convertView.findViewById(R.id.so_is_reserved_val);
         //
         //Seta Valores
         icon_clouds.setVisibility(View.GONE);
@@ -136,14 +139,19 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         tv_status_val.setText((hmAux_Trans.get(item.getStatus())));
         tv_status_val.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getStatus())));
         iv_block.setVisibility(View.GONE);
-
-
-        if (item.getHas_client_deadline() == 1) {
-            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
+        //
+        icon_schedule.setImageTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_onSurfaceVariant));
+        if (item.getDeadline() == null || item.getDeadline().isEmpty()) {
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.outline_calendar_month_24));
+            icon_schedule.setImageTintList(AppCompatResources.getColorStateList(context, android.R.color.darker_gray));
         } else {
-            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+            if (item.getHas_client_deadline() == 1) {
+                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_calendar_clock));
+            } else {
+                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.outline_calendar_month_24));
+            }
         }
-
+        //
         if (item.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)) {
             iv_block.setVisibility(View.VISIBLE);
         }
@@ -222,13 +230,26 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         //
         layout_services.setVisibility(View.GONE);
         //
-        if(item.getService() != null
-            && !item.getService().isEmpty()) {
+        if (item.getService() != null
+                && !item.getService().isEmpty()) {
             String[] services = item.getService().split("\n");
             boolean isOneService = services.length == 1;
             if (isOneService) {
                 layout_services.setVisibility(View.VISIBLE);
                 tv_service.setText(services[0]);
+            }
+        }
+
+        if (item.getReservedUser() == null) {
+            tv_is_reserved.setVisibility(View.GONE);
+        } else {
+            tv_is_reserved.setVisibility(View.VISIBLE);
+            if (item.getReservedUser().toString().equalsIgnoreCase(ToolBox_Con.getPreference_User_Code(context))) {
+                tv_is_reserved.setText(hmAux_Trans.get("so_is_reserved_lbl"));
+                tv_is_reserved.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_primary));
+            } else {
+                tv_is_reserved.setText(hmAux_Trans.get("so_is_reserved_other_lbl"));
+                tv_is_reserved.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_onSurfaceVariant));
             }
         }
 
@@ -261,6 +282,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         translateList.add("client_so_id");
         translateList.add("no_deadline_lbl");
         translateList.add("create_date_lbl");
+        translateList.add("so_is_reserved_lbl");
+        translateList.add("so_is_reserved_other_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -271,28 +294,41 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         );
     }
 
+    public void applyFilter(boolean reservedUserFilter, String textFilter) {
+        this.reservedUserFilter = reservedUserFilter;
+        getFilter().filter(textFilter.trim());
+    }
+
     @Override
     public Filter getFilter() {
-        if(mFilter == null){
+        if (mFilter == null) {
             mFilter = new NextOrdersFilter();
         }
         return mFilter;
     }
 
-    private class NextOrdersFilter extends Filter{
+    private class NextOrdersFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<SO_Next_Orders_Obj> temp;
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+            ArrayList<SO_Next_Orders_Obj> filteredList = new ArrayList<>();
+
             if (charString.isEmpty()) {
-                temp = mValues;
+                for (SO_Next_Orders_Obj row : mValues) {
+                    if (!reservedUserFilter || isUserReserved(row.getReservedUser())) {
+                        filteredList.add(row);
+                    }
+                }
+                temp = filteredList;
             } else {
-                ArrayList<SO_Next_Orders_Obj> filteredList = new ArrayList<>();
+
                 for (SO_Next_Orders_Obj row : mValues) {
                     //Resgata todos os campos concatenado e com remoção de acentuacao
                     String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
-                    if (rowFields.contains(charString)) {
+                    if (rowFields.contains(charString)
+                            && (!reservedUserFilter || isUserReserved(row.getReservedUser()))) {
                         filteredList.add(row);
                     }
                 }
@@ -304,6 +340,16 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
             return filterResults;
         }
 
+        private boolean isUserReserved(Integer reservedUser) {
+            if (reservedUser != null) {
+                String preferenceUserCode = ToolBox_Con.getPreference_User_Code(context);
+                if (!preferenceUserCode.trim().isEmpty()) {
+                    return reservedUser.equals(Integer.parseInt(preferenceUserCode));
+                }
+            }
+            return false;
+        }
+
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
             mFilteredValues = ((ArrayList<SO_Next_Orders_Obj>) results.values);
@@ -311,9 +357,6 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
             notifyDataSetChanged();
         }
     }
-
-
-
 
 
 }

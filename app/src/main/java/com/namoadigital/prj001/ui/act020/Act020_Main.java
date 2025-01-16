@@ -306,8 +306,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //Quando a tela vier do fluxo de criação de processo espontaneo do ticket,
         //exibe card view com dados dos ticket
         if (mtk_ticket_is_form_off_hand) {
-            binding.act020CurrentStep.ivNformNewHeader.setVisibility(View.GONE);
-            binding.act020CurrentStep.tvProcessNewHeader.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+            binding.act020CurrentStep.cardBalloonIcon.setVisibility(View.GONE);
+            binding.act020CurrentStep.cardBalloonText.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
             binding.act020CurrentStep.getRoot().setVisibility(View.VISIBLE);
             //LUCHE - 10/11/2020
             //Quando a tela vier do fluxo de criação de processo espontaneo do ticket, a obj de
@@ -583,14 +583,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
         });
         if (hasNFormSelected()) {
-            binding.act020NformInProgress.ivNformNewHeader.setOnClickListener(new View.OnClickListener() {
+            binding.act020NformInProgress.cardBalloonIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     binding.act020NformInProgress.getRoot().setVisibility(View.GONE);
                     recoverInitialNFormState();
                 }
             });
-            binding.act020NformInProgress.tvProcessNewHeader.setText(customFormCodeDesc);
+            binding.act020NformInProgress.cardBalloonText.setText(customFormCodeDesc);
         }
     }
 

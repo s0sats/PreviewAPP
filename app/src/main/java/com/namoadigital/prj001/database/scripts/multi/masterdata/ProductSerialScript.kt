@@ -1,10 +1,7 @@
 package com.namoadigital.prj001.database.scripts.multi.masterdata
 
-object ProductSerialScript {
-
-
-    const val CREATE_TABLE =
-        """
+const val CREATE_PRODUCT_SERIAL_TABLE =
+    """
         create table if not exists [md_product_serials]
         (
             [customer_code] int not null,
@@ -93,4 +90,3 @@ object ProductSerialScript {
             )
         );
     """
-}

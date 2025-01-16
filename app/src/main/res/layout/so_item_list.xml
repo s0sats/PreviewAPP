@@ -77,13 +77,12 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:contentDescription="null"
-                    android:src="@drawable/baseline_schedule_24"
+                    android:src="@drawable/outline_calendar_month_24"
                     app:layout_constraintBottom_toBottomOf="@+id/so_deadline_val"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/so_deadline_val"
                     app:tint="@color/m3_namoa_onSurfaceVariant" />
-
-
+                
                 <TextView
                     android:id="@+id/so_deadline_val"
                     style="@style/TextAppearance.Material3.TitleSmall"
@@ -305,7 +304,7 @@
                     android:paddingTop="5dp"
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
                     tools:text="teste" />
-                
+
             </LinearLayout>
 
             <LinearLayout
@@ -328,7 +327,7 @@
                     tools:text="Um Texto" />
 
             </LinearLayout>
-            
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="12dp" />
@@ -349,6 +348,22 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="00:00" />
+
+
+                <TextView
+                    android:id="@+id/so_is_reserved_val"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/m3_namoa_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/so_create_date_val"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="RESERVADO" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

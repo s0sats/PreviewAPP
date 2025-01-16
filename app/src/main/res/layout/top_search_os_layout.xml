@@ -28,7 +28,7 @@
             style="@style/NamoaTheme3.TextInputLayout.Outlined"
             app:placeholderTextColor="@color/m3_namoa_onSurface"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/main_zone_selection"
+            app:layout_constraintEnd_toStartOf="@+id/iv_reserved_user"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -41,6 +41,19 @@
 
 
         <ImageView
+            android:id="@+id/iv_reserved_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/my_action_toogle_default"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_person_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/actTextLayout"
+            app:layout_constraintEnd_toStartOf="@+id/main_zone_selection"
+            app:layout_constraintTop_toTopOf="@+id/actTextLayout" />
+
+        <ImageView
             android:id="@+id/main_zone_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,9 +62,9 @@
             android:padding="12dp"
             android:visibility="gone"
             android:src="@drawable/outline_wrong_location_24"
-            app:layout_constraintBottom_toBottomOf="@+id/actTextLayout"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_reserved_user"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/actTextLayout" />
+            app:layout_constraintTop_toTopOf="@+id/iv_reserved_user" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

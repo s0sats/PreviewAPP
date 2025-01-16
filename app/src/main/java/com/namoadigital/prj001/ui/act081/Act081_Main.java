@@ -5,7 +5,6 @@ import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Sea
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
@@ -248,8 +247,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         vNformInProgress = findViewById(R.id.act081_nform_in_progress);
         vNformInProgress.setVisibility(View.GONE);
         if(isFinalizePlusNewProcess()) {
-            ImageView ivClose = vNformInProgress.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNformInProgress.findViewById(R.id.tv_process_new_header);
+            ImageView ivClose = vNformInProgress.findViewById(R.id.card_balloon_icon);
+            TextView tvNFormSelected = vNformInProgress.findViewById(R.id.card_balloon_text);
             ivClose.setVisibility(View.VISIBLE);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -284,8 +283,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
 
     private void setCurrentStepCard() {
         vStepSelected = findViewById(R.id.act081_current_step);
-        ImageView ivClose = vStepSelected.findViewById(R.id.iv_nform_new_header);
-        TextView tvNFormSelected = vStepSelected.findViewById(R.id.tv_process_new_header);
+        ImageView ivClose = vStepSelected.findViewById(R.id.card_balloon_icon);
+        TextView tvNFormSelected = vStepSelected.findViewById(R.id.card_balloon_text);
         ivClose.setVisibility(View.GONE);
         tvNFormSelected.setText(ticketId + " - " + stepDesc);
         vStepSelected.setVisibility(View.VISIBLE);

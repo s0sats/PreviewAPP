@@ -150,8 +150,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         //
         if (has_tk_ticket_is_form_off_hand) {
             vStepSelected = findViewById(R.id.act009_process_in_progress);
-            ImageView ivClose = vStepSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vStepSelected.findViewById(R.id.tv_process_new_header);
+            ImageView ivClose = vStepSelected.findViewById(R.id.card_balloon_icon);
+            TextView tvNFormSelected = vStepSelected.findViewById(R.id.card_balloon_text);
             ivClose.setVisibility(View.GONE);
             tvNFormSelected.setText(mTkTicketId + " - " + mStepDesc);
             vStepSelected.setVisibility(View.VISIBLE);

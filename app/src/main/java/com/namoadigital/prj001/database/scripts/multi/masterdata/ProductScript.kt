@@ -1,9 +1,7 @@
 package com.namoadigital.prj001.database.scripts.multi.masterdata
 
-object ProductScript {
-
-    const val CREATE_SCRIPT =
-        """create table if not exists [md_products] (
+const val CREATE_PRODUCT_SCRIPT =
+    """create table if not exists [md_products] (
             [customer_code] int not null,
             [product_code] int not null,
             [product_id] text not null DEFAULT '' COLLATE NOCASE,
@@ -32,5 +30,3 @@ object ProductScript {
             [is_class_required] int not null default 0,
             constraint pk_md_products primary key(customer_code, product_code)
             );"""
-
-}

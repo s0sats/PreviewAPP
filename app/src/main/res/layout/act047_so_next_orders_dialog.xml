@@ -333,9 +333,78 @@
                         android:gravity="start|center_vertical"
                         tools:text="SERIAL NAME" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act047_reservation_user_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:visibility="visible"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act047_reservation_user_ttl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        tools:text="Reserva de OS" />
+
+                    <TextView
+                        android:id="@+id/act047_reservation_user_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/text_black"
+                        android:gravity="start|center_vertical"
+                        android:paddingTop="7dp"
+                        tools:text="Sem Reserva" />
+
+                    <TextView
+                        android:id="@+id/act047_reservation_user_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/text_black"
+                        android:visibility="gone"
+                        tools:text="Sem Reserva" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingTop="10dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/reservation_user_me_btn"
+                            style="@style/NamoaTheme3.Button.Outlined"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:iconGravity="textStart"
+                            app:iconPadding="2dp"
+                            tools:text="Para mim"
+                            app:icon="@drawable/ic_person_black_24dp"
+                            android:visibility="visible"
+                            android:paddingHorizontal="4dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/reservation_user_others_btn"
+                            style="@style/NamoaTheme3.Button.Outlined"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:iconPadding="2dp"
+                            app:iconGravity="textStart"
+                            app:icon="@drawable/ic_baseline_group_24"
+                            tools:text="Para outro"
+                            android:visibility="visible"
+                            android:paddingHorizontal="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
-
-
         </LinearLayout>
 
     </ScrollView>

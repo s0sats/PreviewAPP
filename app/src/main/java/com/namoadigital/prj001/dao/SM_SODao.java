@@ -114,11 +114,11 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ADD_INF5 = "add_inf5";
     public static final String ADD_INF5_TRACKING = "add_inf5_tracking";
     public static final String ADD_INF6 = "add_inf6";
-    public static final String ADD_INF6_TRACKING= "add_inf6_tracking";
+    public static final String ADD_INF6_TRACKING = "add_inf6_tracking";
     public static final String BILLING_ADD_INF1 = "billing_add_inf1";
     public static final String BILLING_ADD_INF1_TRACKING = "billing_add_inf1_tracking";
     public static final String BILLING_ADD_INF2 = "billing_add_inf2";
-    public static final String BILLING_ADD_INF2_TRACKING= "billing_add_inf2_tracking";
+    public static final String BILLING_ADD_INF2_TRACKING = "billing_add_inf2_tracking";
     public static final String BILLING_ADD_INF3 = "billing_add_inf3";
     public static final String BILLING_ADD_INF3_TRACKING = "billing_add_inf3_tracking";
     public static final String SERIAL_ADD_INF1 = "serial_add_inf1";
@@ -139,23 +139,28 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ROOM_MEMBER = "room_member";
     public static final String ROOM_CODE = "room_code";
 
-    public static final String SITE_EXEC =  "site_exec";
-    public static final String SITE_EXEC_ID =  "site_exec_id";
-    public static final String SITE_EXEC_DESC =  "site_exec_desc";
-    public static final String CREATE_DATE =  "create_date";
-    public static final String CREATE_USER =  "create_user";
-    public static final String CREATE_USER_NICK =  "create_user_nick";
-    public static final String LOG_USER =  "log_user";
-    public static final String LOG_USER_NICK =  "log_user_nick";
-    public static final String LAST_APPROVAL_BUDGET_DATE =  "last_approval_budget_date";
-    public static final String LAST_APPROVAL_BUDGET_USER =  "last_approval_budget_user";
-    public static final String LAST_APPROVAL_BUDGET_USER_NICK =  "last_approval_budget_user_nick";
-    public static final String PIPELINE_CODE =  "pipeline_code";
-    public static final String PIPELINE_DESC =  "pipeline_desc";
+    public static final String SITE_EXEC = "site_exec";
+    public static final String SITE_EXEC_ID = "site_exec_id";
+    public static final String SITE_EXEC_DESC = "site_exec_desc";
+    public static final String CREATE_DATE = "create_date";
+    public static final String CREATE_USER = "create_user";
+    public static final String CREATE_USER_NICK = "create_user_nick";
+    public static final String LOG_USER = "log_user";
+    public static final String LOG_USER_NICK = "log_user_nick";
+    public static final String LAST_APPROVAL_BUDGET_DATE = "last_approval_budget_date";
+    public static final String LAST_APPROVAL_BUDGET_USER = "last_approval_budget_user";
+    public static final String LAST_APPROVAL_BUDGET_USER_NICK = "last_approval_budget_user_nick";
+    public static final String PIPELINE_CODE = "pipeline_code";
+    public static final String PIPELINE_DESC = "pipeline_desc";
 
-    public static final String DEADLINE_MANUAL =  "deadline_manual";
+    public static final String DEADLINE_MANUAL = "deadline_manual";
 
-    public static final String HAS_CLIENT_DEADLINE =  "has_client_deadline";
+    public static final String HAS_CLIENT_DEADLINE = "has_client_deadline";
+
+    public static final String RESERVED_USER = "reserved_user";
+    public static final String RESERVED_USER_NICK = "reserved_user_nick";
+    public static final String RESERVED_USER_NAME = "reserved_user_name";
+    public static final String RESERVED_DATE = "reserved_date";
 
 
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
@@ -168,14 +173,14 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
             ADD_INF1, ADD_INF1_TRACKING, ADD_INF2, ADD_INF2_TRACKING, ADD_INF3, ADD_INF3_TRACKING, ADD_INF4, ADD_INF4_TRACKING, ADD_INF5, ADD_INF5_TRACKING, ADD_INF6, ADD_INF6_TRACKING,
             APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN,
-            PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL,ROOM_MEMBER,ROOM_CODE
+            PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL, ROOM_MEMBER, ROOM_CODE
     };
 
     public SM_SODao(Context context) {
         super(context,
-              ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-              Constant.DB_VERSION_CUSTOM,
-              Constant.DB_MODE_MULTI);
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
 
         this.toContentValuesMapper = new SM_SOToContentValuesMapper();
         this.toSM_SOMapper = new CursorSM_SOMapper();
@@ -936,9 +941,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             //
             so.setRoom_member(cursor.getInt(cursor.getColumnIndex(ROOM_MEMBER)));
             //
-            if(cursor.isNull(cursor.getColumnIndex(ROOM_CODE))) {
+            if (cursor.isNull(cursor.getColumnIndex(ROOM_CODE))) {
                 so.setRoom_code(null);
-            }else{
+            } else {
                 so.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             }
             //LUCHE - 13/07/2021
@@ -946,15 +951,15 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             so.setSite_exec_id(cursor.getString(cursor.getColumnIndex(SITE_EXEC_ID)));
             so.setSite_exec_desc(cursor.getString(cursor.getColumnIndex(SITE_EXEC_DESC)));
             //
-            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
                 so.setPipeline_code(null);
-            }else{
+            } else {
                 so.setPipeline_code(cursor.getInt(cursor.getColumnIndex(PIPELINE_CODE)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))) {
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))) {
                 so.setPipeline_desc(null);
-            }else{
+            } else {
                 so.setPipeline_desc(cursor.getString(cursor.getColumnIndex(PIPELINE_DESC)));
             }
             so.setCreate_date(cursor.getString(cursor.getColumnIndex(CREATE_DATE)));
@@ -964,26 +969,35 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             so.setLog_user(cursor.getInt(cursor.getColumnIndex(LOG_USER)));
             so.setLog_user_nick(cursor.getString(cursor.getColumnIndex(LOG_USER_NICK)));
 
-            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_DATE))) {
+            if (cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_DATE))) {
                 so.setLast_approval_budget_date(null);
-            }else{
+            } else {
                 so.setLast_approval_budget_date(cursor.getString(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_DATE)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER))) {
+            if (cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER))) {
                 so.setLast_approval_budget_user(null);
-            }else{
+            } else {
                 so.setLast_approval_budget_user(cursor.getInt(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK))) {
+            if (cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK))) {
                 so.setLast_approval_budget_user_nick(null);
-            }else{
+            } else {
                 so.setLast_approval_budget_user_nick(cursor.getString(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK)));
             }
             //
             so.setDeadline_manual(cursor.getInt(cursor.getColumnIndex(DEADLINE_MANUAL)));
             so.setHas_client_deadline(cursor.getInt(cursor.getColumnIndex(HAS_CLIENT_DEADLINE)));
+
+            if (cursor.isNull(cursor.getColumnIndex(RESERVED_USER))) {
+                so.setReservedUser(null);
+            } else {
+                so.setReservedUser(cursor.getInt(cursor.getColumnIndex(RESERVED_USER)));
+            }
+            so.setReservedUserNick(cursor.getString(cursor.getColumnIndex(RESERVED_USER_NICK)));
+            so.setReservedUserName(cursor.getString(cursor.getColumnIndex(RESERVED_USER_NAME)));
+            so.setReservedDate(cursor.getString(cursor.getColumnIndex(RESERVED_DATE)));
             //
             return so;
         }
@@ -1333,36 +1347,36 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(PRODUCT_ICON_URL_LOCAL, sm_so.getProduct_icon_url_local());
             }
             //
-            if(sm_so.getRoom_member() > -1) {
+            if (sm_so.getRoom_member() > -1) {
                 contentValues.put(ROOM_MEMBER, sm_so.getRoom_member());
             }
             //
             contentValues.put(ROOM_CODE, sm_so.getRoom_code());
             //LUCHE - 13/07/2021
-            if(sm_so.getSite_exec() > -1) {
+            if (sm_so.getSite_exec() > -1) {
                 contentValues.put(SITE_EXEC, sm_so.getSite_exec());
             }
-            if(sm_so.getSite_exec_id() != null) {
+            if (sm_so.getSite_exec_id() != null) {
                 contentValues.put(SITE_EXEC_ID, sm_so.getSite_exec_id());
             }
-            if(sm_so.getSite_exec_desc()!= null) {
+            if (sm_so.getSite_exec_desc() != null) {
                 contentValues.put(SITE_EXEC_DESC, sm_so.getSite_exec_desc());
             }
             contentValues.put(PIPELINE_CODE, sm_so.getPipeline_code());
             contentValues.put(PIPELINE_DESC, sm_so.getPipeline_desc());
-            if(sm_so.getCreate_user() > -1) {
+            if (sm_so.getCreate_user() > -1) {
                 contentValues.put(CREATE_USER, sm_so.getCreate_user());
             }
-            if(sm_so.getCreate_user_nick() != null) {
+            if (sm_so.getCreate_user_nick() != null) {
                 contentValues.put(CREATE_USER_NICK, sm_so.getCreate_user_nick());
             }
-            if(sm_so.getCreate_date()!= null) {
+            if (sm_so.getCreate_date() != null) {
                 contentValues.put(CREATE_DATE, sm_so.getCreate_date());
             }
-            if(sm_so.getLog_user() > -1) {
+            if (sm_so.getLog_user() > -1) {
                 contentValues.put(LOG_USER, sm_so.getLog_user());
             }
-            if(sm_so.getLog_user_nick() != null) {
+            if (sm_so.getLog_user_nick() != null) {
                 contentValues.put(LOG_USER_NICK, sm_so.getLog_user_nick());
             }
             //
@@ -1370,12 +1384,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             contentValues.put(LAST_APPROVAL_BUDGET_USER, sm_so.getLast_approval_budget_user());
             contentValues.put(LAST_APPROVAL_BUDGET_USER_NICK, sm_so.getLast_approval_budget_user_nick());
             //
-            if(sm_so.getDeadline_manual() > -1) {
+            if (sm_so.getDeadline_manual() > -1) {
                 contentValues.put(DEADLINE_MANUAL, sm_so.getDeadline_manual());
             }
-            if(sm_so.getHas_client_deadline() > -1) {
+            if (sm_so.getHas_client_deadline() > -1) {
                 contentValues.put(HAS_CLIENT_DEADLINE, sm_so.getHas_client_deadline());
             }
+
+            contentValues.put(RESERVED_USER, sm_so.getReservedUser());
+            contentValues.put(RESERVED_USER_NICK, sm_so.getReservedUserNick());
+            contentValues.put(RESERVED_USER_NAME, sm_so.getReservedUserName());
+            contentValues.put(RESERVED_DATE, sm_so.getReservedDate());
             //
             return contentValues;
         }
@@ -1383,8 +1402,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
 
     public boolean isSoUpdateRequired(Context context) {
         String qtySO;
-        try{
-            qtySO = this.getByStringHM( new Sql_Act021_003(
+        try {
+            qtySO = this.getByStringHM(new Sql_Act021_003(
                             ToolBox_Con.getPreference_Customer_Code(context)
                     ).toSqlQuery()
             ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);

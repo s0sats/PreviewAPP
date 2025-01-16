@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act027;
 
 import static com.namoadigital.prj001.adapter.Act027_Services_Adapter.NAVIGATE_ACT028;
+import static com.namoadigital.prj001.extensions.UserHelperKt.getUserCode;
+import static com.namoadigital.prj001.extensions.date.DateHelperKt.formatDate;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -45,6 +47,7 @@ import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.extensions.date.FormatDateType;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
@@ -88,7 +91,9 @@ public class Act027_Services extends BaseFragment {
     private Context context;
     private ImageView sw_filter;
     private CardView cardStatus;
+    private CardView cardServiceReserved;
     private ImageView iv_remove_card;
+    private TextView tv_service_reserved;
     private TextView tv_status_card;
     private ListView lv_services;
     private Act027_Services_Adapter adp;
@@ -221,22 +226,22 @@ public class Act027_Services extends BaseFragment {
 
     private void updateFragArgs(SM_SO sm_so) {
         Bundle args = getArguments();
-        if(args == null){
+        if (args == null) {
             args = new Bundle();
         }
         Gson gson = new GsonBuilder().serializeNulls().create();
-        if(!args.containsKey(Constant.MAIN_HMAUX_TRANS_KEY)){
-            args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        if (!args.containsKey(Constant.MAIN_HMAUX_TRANS_KEY)) {
+            args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         }
 
-        if(sm_so != null){
+        if (sm_so != null) {
             args.putString(SM_SODao.TABLE, gson.toJson(mSm_so));
         }
         //
         this.setArguments(args);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "CutPasteId"})
     private void iniVar(View view) {
         context = getActivity();
         //
@@ -282,11 +287,17 @@ public class Act027_Services extends BaseFragment {
         tv_empty_list = view.findViewById(R.id.act027_tv_empty_list_lbl);
         sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
 
+
         cardStatus = view.findViewById(R.id.card_alert_status);
-        tv_status_card = view.findViewById(R.id.tv_process_new_header);
-        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        tv_status_card = view.findViewById(R.id.card_balloon_text);
+        iv_remove_card = view.findViewById(R.id.card_balloon_icon);
         iv_remove_card.setVisibility(View.GONE);
-        loadCardStatus();
+
+        cardServiceReserved = view.findViewById(R.id.card_service_reserved);
+        tv_service_reserved = cardServiceReserved.findViewById(R.id.card_balloon_text);
+        cardServiceReserved.findViewById(R.id.card_balloon_icon).setVisibility(View.GONE);
+
+        loadCards();
 
 
         iv_editable_serial.setVisibility(View.VISIBLE);
@@ -343,6 +354,11 @@ public class Act027_Services extends BaseFragment {
         }
     }
 
+    public void loadCards() {
+        loadCardStatus();
+        loadCardReserved();
+    }
+
     public void loadCardStatus() {
         String update = hmAux_Trans.get("warning_so_status_service_sync");
         if (checkStatusSO()) {
@@ -374,6 +390,26 @@ public class Act027_Services extends BaseFragment {
                 cardStatus.setVisibility(View.GONE);
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void loadCardReserved() {
+        if (mSm_so.getReservedUser() == null) {
+            cardServiceReserved.setVisibility(View.GONE);
+            return;
+        }
+        cardServiceReserved.setVisibility(View.VISIBLE);
+
+        String userCode = String.valueOf(mSm_so.getReservedUser());
+        String dateFormatted = formatDate(context, new FormatDateType.DateAndHour(mSm_so.getReservedDate()));
+
+        if (getUserCode(context).equalsIgnoreCase(userCode)) {
+            tv_service_reserved.setText(hmAux_Trans.get("card_service_reserved_for_me_lbl") + " " + dateFormatted);
+        } else {
+            String userNickFormatted = mSm_so.getReservedUserName() + " (" + userCode + ")";
+            tv_service_reserved.setText(hmAux_Trans.get("card_service_reserved_for_other_lbl") + ": " + userNickFormatted + " - " + dateFormatted);
+        }
+
     }
 
     private boolean checkStatusSO() {
@@ -543,7 +579,7 @@ public class Act027_Services extends BaseFragment {
                 setServiceAdapter(getSwitchState());
                 setSerialInfo();
                 setAddInfo();
-                loadCardStatus();
+                loadCards();
                 loadApprovalState();
             } else {
                 recoveryDelegate.callAct005();

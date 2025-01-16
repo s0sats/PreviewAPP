@@ -679,6 +679,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //
         transList.add("apply_zone_on_lbl");
         transList.add("apply_zone_off_lbl");
+
+        transList.add("card_service_reserved_for_me_lbl");
+        transList.add("card_service_reserved_for_other_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

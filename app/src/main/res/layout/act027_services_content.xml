@@ -21,6 +21,10 @@
             layout="@layout/process_in_progress"
             android:visibility="visible" />
 
+        <include
+            android:id="@+id/card_service_reserved"
+            layout="@layout/process_in_progress"
+            android:visibility="gone" />
 
 
         <LinearLayout
@@ -29,13 +33,14 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingEnd="10dp">
+
             <include
                 layout="@layout/cv_product_serial_with_icon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/act027_services_content_sw_filter"

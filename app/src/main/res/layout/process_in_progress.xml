@@ -15,7 +15,7 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tv_process_new_header"
+            android:id="@+id/card_balloon_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -25,20 +25,20 @@
             tools:text="Descricao do Formulario - trad"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iv_nform_new_header"
+            app:layout_constraintEnd_toStartOf="@+id/card_balloon_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_nform_new_header"
+            android:id="@+id/card_balloon_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_baseline_close_24"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_process_new_header"
+            app:layout_constraintBottom_toBottomOf="@+id/card_balloon_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_process_new_header"
-            app:layout_constraintTop_toTopOf="@+id/tv_process_new_header"
+            app:layout_constraintStart_toEndOf="@+id/card_balloon_text"
+            app:layout_constraintTop_toTopOf="@+id/card_balloon_text"
             app:tint="@color/m3_namoa_onSecondaryContainer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
