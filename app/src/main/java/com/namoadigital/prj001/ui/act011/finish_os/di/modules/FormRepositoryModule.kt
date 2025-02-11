@@ -7,6 +7,7 @@ import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepository
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepositoryImpl
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os.GeOsRepository
@@ -50,5 +51,4 @@ object FormRepositoryModule {
     ): MeasureTpRepository {
         return MeasureTpRepositoryImpl(context, dao)
     }
-
 }

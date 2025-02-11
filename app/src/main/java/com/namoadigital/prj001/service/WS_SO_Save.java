@@ -353,7 +353,16 @@ public class WS_SO_Save extends BaseWsIntentService {
                         //Reseta var de re transmissão.
                         so_re_send = false;
                         //
-                        processSO_Save(so_action);
+                        ArrayList<SM_SO> sos = (ArrayList<SM_SO>) soDao.query(
+                                new SM_SO_Sql_005(
+                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                                ).toSqlQuery()
+                        );
+                        if(sos.isEmpty()){
+                            callFinishProcessing(hmAuxRet);
+                        }else{
+                            processSO_Save(so_action);
+                        }
                     } else {
                         callFinishProcessing(hmAuxRet);
                     }

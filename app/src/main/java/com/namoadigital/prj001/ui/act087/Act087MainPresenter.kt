@@ -18,6 +18,7 @@ import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
+import com.namoadigital.prj001.ui.act087.model.LastMeasureDataConsider
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ScheduleFormFatory
@@ -200,23 +201,17 @@ class Act087MainPresenter(
     )
 
     override fun getOsHeaderObj(): GeOs {
-        var orderType : MdOrderType? = null
         var measureTp : MeMeasureTp? = null
-        var lastMeasureValueConsider : Double? = null
         //
-        mCustomForm.so_order_type_code_default?.let {
-            orderType = getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
-        }
         getSerialInfo()
+        //
         serialObj.measure_tp_code?.let {
             measureTp = getMeasureTp(serialObj.customer_code,serialObj.measure_tp_code)
         }
-        serialObj.last_measure_value?.let{
-            val decimal = measureTp?.let { measureTp->
-                measureTp.restrictionDecimal ?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
-            }
-            lastMeasureValueConsider = it.roundByRestrictionMeasure(decimal)
-        }
+        val tkTicketForm = getTkTicketForm()
+        //
+        val orderType = getFormOrderType(tkTicketForm)
+        val lastDataConsider = getLastDataConsider(measureTp, tkTicketForm)
         //
         return GeOs(
             customer_code = mCustomForm.customer_code,
@@ -239,23 +234,124 @@ class Act087MainPresenter(
             measure_tp_id = measureTp?.measureTpId,
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
-            measure_cycle_value = serialObj.last_cycle_value,
-            value_sufix = measureTp?.valueSufix,
+            measure_cycle_value = lastDataConsider.last_cycle_value,
+            value_sufix = lastDataConsider.value_sufix,
             restriction_decimal = measureTp?.restrictionDecimal,
             value_cycle_size = measureTp?.valueCycleSize,
             cycle_tolerance = measureTp?.cycleTolerance,
             date_start = null,
-            last_cycle_value = serialObj.last_cycle_value,
-            last_measure_value = lastMeasureValueConsider?.toFloat(),
-            last_measure_date = serialObj.last_measure_date,
+            last_cycle_value = lastDataConsider.last_cycle_value,
+            last_measure_value = lastDataConsider.last_measure_value,
+            last_measure_date = lastDataConsider.last_measure_date,
             so_edit_start_end = mCustomForm.so_edit_start_end,
             so_order_type_code_default = mCustomForm.so_order_type_code_default,
             so_allow_change_order_type = mCustomForm.so_allow_change_order_type,
             device_tp_code_main = serialObj.device_tp_code_main,
             so_allow_backup =  mCustomForm.so_allow_backup,
+            )
+    }
 
+    private fun getLastDataConsider(measureTp: MeMeasureTp?, tkTicketForm: TK_Ticket_Form?): LastMeasureDataConsider {
+        return LastMeasureDataConsider(
+            last_measure_value = getLastMeasureValueConsider(measureTp, tkTicketForm),
+            measure_cycle_value = getMeasureCycleValue(tkTicketForm),
+            last_measure_date = getLast_measure_date(tkTicketForm),
+            last_cycle_value = getLast_cycle_value(tkTicketForm),
+            value_sufix = getLast_value_sufix(measureTp, tkTicketForm),
         )
     }
+
+    private fun getLast_value_sufix(
+        measureTp: MeMeasureTp?,
+        tkTicketForm: TK_Ticket_Form?
+    ): String? {
+        return if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition == 1
+        ) {
+            tkTicketForm.value_sufix
+        }else{
+            measureTp?.valueSufix
+        }
+    }
+
+    private fun getLast_cycle_value(
+        tkTicketForm: TK_Ticket_Form?
+    ): Float? {
+        return if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition == 1
+        ) {
+            tkTicketForm.measure_cycle_value
+        }else{
+            serialObj.last_cycle_value
+        }
+    }
+
+    private fun getLast_measure_date(
+        tkTicketForm: TK_Ticket_Form?
+    ): String? {
+        return if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition != null
+        ) {
+            tkTicketForm.start_date
+        }else{
+            serialObj.last_measure_date
+        }
+    }
+
+    private fun getMeasureCycleValue(
+        tkTicketForm: TK_Ticket_Form?
+    ): Float? {
+        return if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition == 1
+        ) {
+            tkTicketForm.measure_cycle_value
+        }else{
+            serialObj.last_cycle_value
+        }
+    }
+
+    private fun getLastMeasureValueConsider(measureTp: MeMeasureTp?, tkTicketForm: TK_Ticket_Form?): Float? {
+        if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition == 1
+        ) {
+            return tkTicketForm.start_date?.let {
+                val decimal = measureTp?.let { measureTp ->
+                    measureTp.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+                }
+                tkTicketForm.measure_value.roundByRestrictionMeasure(decimal).toFloat()
+            }
+            //
+        } else {
+            return serialObj.last_measure_value?.let {
+                val decimal = measureTp?.let { measureTp ->
+                    measureTp.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+                }
+                 it.roundByRestrictionMeasure(decimal).toFloat()
+            }
+        }
+    }
+
+    private fun getFormOrderType(tkTicketForm: TK_Ticket_Form?): MdOrderType? {
+        if (tkTicketForm != null
+            && tkTicketForm.custom_form_data_partition == 1
+        ) {
+            return MdOrderType(
+                tkTicketForm.customer_code,
+                tkTicketForm.order_type_code,
+                tkTicketForm.order_type_id,
+                tkTicketForm.order_type_desc,
+                tkTicketForm.process_type,
+                tkTicketForm.display_option,
+                tkTicketForm.item_check_group_code
+            )
+        }else{
+            mCustomForm.so_order_type_code_default?.let {
+                return getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
+            }
+        }
+        return null
+    }
+
 
     private fun getMeasureTp(customerCode: Long, measureTpCode: Int): MeMeasureTp? {
         return measureTpDao.getByString(

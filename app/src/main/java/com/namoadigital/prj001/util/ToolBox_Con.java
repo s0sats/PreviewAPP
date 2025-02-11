@@ -21,6 +21,9 @@ import androidx.work.WorkManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeFlow;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
+import com.namoadigital.prj001.core.data.local.preferences.barcode_settings.BarCodeFlowPref;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
@@ -1386,6 +1389,13 @@ public class ToolBox_Con {
         ).apply();
         //Adicionar reset das preferencias da act054?
         //
+
+        BarCodeFlowPref barCodeFlowPref = BarCodeFlowPref.Companion.instance(context);
+        BarCodeFlow barCodeFlow = barCodeFlowPref.read();
+        barCodeFlow.setFlowBarcode(BarCodeTypeFlow.DEFAULT);
+        barCodeFlowPref.write(barCodeFlow);
+//
+
         sharedPreferences.edit().putString(
                 "SERVICE",
                 "NO_SERVICE"

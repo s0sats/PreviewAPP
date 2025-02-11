@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011.finish_os.ui.utils
 
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.extensions.date.isDateBefore
+import com.namoadigital.prj001.extensions.date.isDateBeforeOrEquals
 import com.namoadigital.prj001.extensions.date.isDateEquals
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
@@ -119,7 +120,7 @@ data class FinishValidation(
                     map[Component.InfoOS] = Component.InfoOS.InvalidStartDate
                 }
                 //
-                partialExecutionOS != null && isDateBefore(
+                partialExecutionOS != null && isDateBeforeOrEquals(
                     infoOs.dateStart,
                     partialExecutionOS
                 ) -> {

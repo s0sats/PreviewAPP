@@ -27,15 +27,19 @@ import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SiteLicense;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Sync;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
@@ -542,10 +546,57 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
+    public void executeWSSoSave() {
+        mView.setWsProcess(WS_SO_Save.class.getName());
+        //
+        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_so_download_msg), "", "0");
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Save.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
     public boolean checkSoSyncNeed() {
         SM_SODao dao = new SM_SODao(context);
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
             && dao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
+    }
+
+    @Override
+    public boolean checkSoSendNeed() {
+        SM_SODao dao = new SM_SODao(context);
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                && (isSoWithinTokenFile() || dao.isSoUpdateRequired(context));
+    }
+
+    public boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                return !token_so_list.isEmpty();
+                //
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
     }
 
     @Override

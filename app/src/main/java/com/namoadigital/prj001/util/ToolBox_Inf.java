@@ -542,9 +542,10 @@ public class ToolBox_Inf {
 //            return null;
 //        }
 //    }
+
     /**
      * LUCHE - 06/02/2020
-     *
+     * <p>
      * Novo metodo para geração do UUID.
      * Gera UUID baseado no Settings.Secure.ANDROID_ID (SSAI)
      *
@@ -555,13 +556,13 @@ public class ToolBox_Inf {
     private static String getPhoneUUID(Context context) {
         try {
             String androidId = Settings.Secure.getString(context.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+                    Settings.Secure.ANDROID_ID);
             //
             UUID androidId_UUID = UUID
-                .nameUUIDFromBytes(androidId.getBytes(StandardCharsets.UTF_8));
+                    .nameUUIDFromBytes(androidId.getBytes(StandardCharsets.UTF_8));
             //
             return androidId_UUID.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             /**
              *O QUE FAZER SE EXCEPTION AQUI ?!
              */
@@ -574,7 +575,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/02/2020
-     *
+     * <p>
      * Nova implementação do metodo uniqueID que retorna a preferencia PHONE_UNIQUE_ID caso "exista"
      * Se não houver valor no PHONE_UNIQUE_ID, tenta pegar IMEI e , em caso de falha, gera UUID.
      * O valor gerado é salvo na preferencia PHONE_UNIQUE_ID.
@@ -583,14 +584,14 @@ public class ToolBox_Inf {
      * @return - Preferencia PHONE_UNIQUE_ID
      */
     @Nullable
-    public static String uniqueIDv2(Context context){
+    public static String uniqueIDv2(Context context) {
 //        Log.d("IMEI", "uniqueIDv2");
         String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UNIQUE_ID(context);
         //Se preferencia setada, a retorna
 //        Log.d("IMEI", "getPreference_PHONE_UNIQUE_ID phone_uuid_code: " + phone_uuid_code);
-        if(phone_uuid_code.trim().length() != 0){
+        if (phone_uuid_code.trim().length() != 0) {
             return phone_uuid_code;
-        }else{
+        } else {
             /*
                 BARRIONUEVO  29-06-2020
                 Projeto de atualizacao do app para target 10, devido a qtde de pontos onde esta per
@@ -612,7 +613,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/02/2020
-     *
+     * <p>
      * Modificado metodo , comentando a implementação original e retornando a implementação o valor
      * de uniqueIDv2.
      *
@@ -796,16 +797,16 @@ public class ToolBox_Inf {
 
     /**
      * Luche - 10/05/2019
-     *
+     * <p>
      * Metodo para upload de imagem que foram movidas para pasta UnsentImgs
      *
-     * @param json - Json do Envio
+     * @param json     - Json do Envio
      * @param filePath - String com o caminho do diretorio pasta onde o arquivo esta localizado
      * @param fileName - String com o nome do arquivo
      * @param sNewName - Novo nome, quando houver
      * @return
      */
-    public static String uploadFileUnsentImg(String json, String filePath, String fileName,@Nullable String sNewName) {
+    public static String uploadFileUnsentImg(String json, String filePath, String fileName, @Nullable String sNewName) {
         try {
             //Como no processo de SO a foto pode mudar de nome,
             //Verifica qual o nome o arquivo esta no momento.
@@ -975,8 +976,8 @@ public class ToolBox_Inf {
 
             while ((ze = zis.getNextEntry()) != null) {
                 //LUCHE -24/02/2022 - Testa Zip Path Traversal Vulnerability
-                File f = new File(stp,ze.getName());
-                ensureZipPathSafety(f,stp);
+                File f = new File(stp, ze.getName());
+                ensureZipPathSafety(f, stp);
                 //
                 filename = ze.getName();
 
@@ -1117,8 +1118,8 @@ public class ToolBox_Inf {
                     new File(dir, children[i]).delete();
                 }
             }
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
         }
     }
 
@@ -1129,7 +1130,7 @@ public class ToolBox_Inf {
             if (file.exists()) {
                 file.delete();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             registerException(CLASS_NAME, e);
         }
     }
@@ -1209,7 +1210,7 @@ public class ToolBox_Inf {
             File file = new File(path + "/", sName);
 
             return file.exists();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -1259,6 +1260,7 @@ public class ToolBox_Inf {
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
+
     @Deprecated
     public static void executeLogoffAndUpdateSoftware(Context context) {
 //        Intent mIntent = new Intent(context, WBR_UpdateSoftware.class);
@@ -1273,7 +1275,7 @@ public class ToolBox_Inf {
         AppCompatActivityKt.logout((AppCompatActivity) context, true);
     }
 
-    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD,Integer db_version) {
+    public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD, Integer db_version) {
         if (sVersion != null) {
             switch (sVersion) {
                 case "VERSION_INVALID":
@@ -1386,7 +1388,7 @@ public class ToolBox_Inf {
          * devido a atualização da versão do banco de dados, foi criada uma segunda assinatura desse metodo
          * adicionando como ultimo parametro a versão do banco de dados da versão stable.
          */
-        return processWSCheckValidation(context, validation, error_msg, s_Link,iStatus, iStatus_OD,0);
+        return processWSCheckValidation(context, validation, error_msg, s_Link, iStatus, iStatus_OD, 0);
 //        validation = validation == null ? "" : validation;
 //
 //        switch (validation) {
@@ -1476,7 +1478,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 18/12/2018
-     *
+     * <p>
      * Criado nova assinatura do metodo para receber parametro adicional db_version e verificar
      * a necessidade de exibir ou não a msg de que dados serão perdidos.
      *
@@ -1605,71 +1607,70 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 26/02/2019 - Alteração
-     *  Metodo que verifica se existe um troca de versão do db local e se existe dados pendentens de envio.
-     *  Caso as duas condições sejam satisfeitas, adiciona msg de PERDA DE DADOS e seta preferencia do
-     *  processo de apagar dados de token para 1
-     *
+     * Metodo que verifica se existe um troca de versão do db local e se existe dados pendentens de envio.
+     * Caso as duas condições sejam satisfeitas, adiciona msg de PERDA DE DADOS e seta preferencia do
+     * processo de apagar dados de token para 1
+     * <p>
      * LUCHE - 07/01/2020
-     *  Após revisão do update_requied com troca de versão de banco e com dados pendentes,
-     *  não será mais exibida msg em vermelho. Caso seja o msm usr, ele será avisado da nova versão
-     *  e dos dados pendentes e não poderá atualizar o app.
-     *  Esse metodo, agora, serve apenas para identificar a mudança de versão de banco e, nesse caso,
-     *  verificar a necessidade de copiar imagens não enviadas para o dir de unsent imgs
+     * Após revisão do update_requied com troca de versão de banco e com dados pendentes,
+     * não será mais exibida msg em vermelho. Caso seja o msm usr, ele será avisado da nova versão
+     * e dos dados pendentes e não poderá atualizar o app.
+     * Esse metodo, agora, serve apenas para identificar a mudança de versão de banco e, nesse caso,
+     * verificar a necessidade de copiar imagens não enviadas para o dir de unsent imgs
      *
-     * @param context - Contexto
+     * @param context    - Contexto
      * @param db_version - Versão do banco de dados enviada pelo server.*
      */
-    private static void checkNewDbVersion(Context context, Integer db_version){
-        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
+    private static void checkNewDbVersion(Context context, Integer db_version) {
+        if (db_version != null && db_version > Constant.DB_VERSION_CUSTOM) {
             //
-            if(hasUnsentImgs(context)){
+            if (hasUnsentImgs(context)) {
                 //Se preferencia para checkar backup de imagens pra verdadeiro.
-                ToolBox_Con.setPreference_BkpUnsentImg(context,true);
+                ToolBox_Con.setPreference_BkpUnsentImg(context, true);
             }
         }
     }
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Criado nova versão do metodo checkNewDbVersion.
      * Após revisão no processo de update_requied, caso o usuario tenha dados pendentes
      * de envio ele NÃO PODERÁ ATUALIZAR O APP, no login.
      * Foi solicitado a exibição de uma nova mensagem informando que atualização só poderá ser feita
      * após os dados serem enviados e exbição de em quais customers existem dados pendentes.
-     *
+     * <p>
      * LUCHE - 22/01/2020
-     *
+     * <p>
      * Modificado chamada do metodo hasPendingDataV2, passando como segundo parametro lista de bancos
      * de dados locais referente a mesma versão do app instalado.
      * Em resumo, sera retornada a lista de banco dos customer que terminam com a versão atual do banco,
      * Constant.DB_VERSION_CUSTOM. Dessa forma, os bancos antigos com pendencia de envio,
      * não serão listados
      *
-     *
-     * @param context - Contexto
+     * @param context    - Contexto
      * @param db_version - Versão do banco de dados enviada pelo server.
      * @return - HmAux com msg e lista de customer.
      */
-    private static HMAux checkNewDbVersionV2(Context context, Integer db_version){
+    private static HMAux checkNewDbVersionV2(Context context, Integer db_version) {
         HMAux aux = new HMAux();
-        if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
+        if (db_version != null && db_version > Constant.DB_VERSION_CUSTOM) {
             //
-            String customerPendencieList = hasPendingDataV2(context,getCurrentDbVersionDbList("C_"));
+            String customerPendencieList = hasPendingDataV2(context, getCurrentDbVersionDbList("C_"));
             //
-            if( customerPendencieList != null) {
+            if (customerPendencieList != null) {
                 //aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
                 aux.put(
-                    Constant.LIB_DB_VERSION_MSG,
-                    context.getString(R.string.msg_customer_pendencies_list) + customerPendencieList
+                        Constant.LIB_DB_VERSION_MSG,
+                        context.getString(R.string.msg_customer_pendencies_list) + customerPendencieList
                 );
                 //
                 ToolBox_Con.setPreference_CleanTokenFiles(context, 1);
             }
             //
-            if(hasUnsentImgs(context)){
+            if (hasUnsentImgs(context)) {
                 //Se preferencia para checkar backup de imagens pra verdadeiro.
-                ToolBox_Con.setPreference_BkpUnsentImg(context,true);
+                ToolBox_Con.setPreference_BkpUnsentImg(context, true);
             }
         }
         return aux;
@@ -1677,10 +1678,11 @@ public class ToolBox_Inf {
 
     /**
      * Verifica se existem imagens não enviadas em TODOS os bancos.
+     *
      * @param context
      * @return
      */
-    public static boolean hasUnsentImgs(Context context){
+    public static boolean hasUnsentImgs(Context context) {
         ArrayList<GE_File> geFiles = getUnsentGeFiles(context);
         return geFiles != null && geFiles.size() > 0;
     }
@@ -1688,6 +1690,7 @@ public class ToolBox_Inf {
     /**
      * Busca em todos os bancos existentes se existens imagens pendentes
      * de envio e retorna lista as pendentes.
+     *
      * @param context
      * @return
      */
@@ -1696,19 +1699,19 @@ public class ToolBox_Inf {
         ArrayList<GE_File> geFiles = new ArrayList<>();
         GE_FileDao geFileDao = null;
         //Gera lista de GeFiles
-        for(File dbFile : dbList){
+        for (File dbFile : dbList) {
             Long customer_code = getCustomerCodeFromDBName(dbFile);
             //
-            if(customer_code != null && customer_code != -1){
+            if (customer_code != null && customer_code != -1) {
                 geFileDao = new GE_FileDao(
-                    context,
-                    ToolBox_Con.customDBPath(customer_code),
-                    Constant.DB_VERSION_CUSTOM
+                        context,
+                        ToolBox_Con.customDBPath(customer_code),
+                        Constant.DB_VERSION_CUSTOM
                 );
                 //
                 geFiles.addAll(geFileDao.query(
-                    new GE_File_Sql_001().toSqlQuery()
-                    )
+                                new GE_File_Sql_001().toSqlQuery()
+                        )
                 );
             }
         }
@@ -1735,10 +1738,10 @@ public class ToolBox_Inf {
         HashSet<String> fileName = new HashSet<>();
 
         //Gera lista de GeFiles
-        for(File dbFile : dbList){
+        for (File dbFile : dbList) {
             Long customer_code = getCustomerCodeFromDBName(dbFile);
             //
-            if(customer_code != null && customer_code != -1){
+            if (customer_code != null && customer_code != -1) {
                 //
                 fileName.addAll(ImageMetadataHelperKt.getGeFilesFilenames(context, customer_code));
                 //
@@ -1767,6 +1770,7 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 13/05/2019
      * Metodo que move as imagens pendentes de envio para pasta de UnsentImgs.
+     *
      * @param context - Contexto
      * @return false se erro ao copiar alguma foto
      */
@@ -1776,11 +1780,11 @@ public class ToolBox_Inf {
         //Recebe lista de imagens a serem enviadas.
         geFiles = getUnsentGeFiles(context);
         //CopiaArquivos
-        for(GE_File geFile : geFiles){
+        for (GE_File geFile : geFiles) {
             errorCount = getErrorCount(geFile.getFile_path(), errorCount);
         }
         //Se itens na lista, chama serviço de envio
-        if(geFiles.size() > 0){
+        if (geFiles.size() > 0) {
 //            Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
 //            context.sendBroadcast(mIntent);
             scheduleUploadOtherUserImgWork(context);
@@ -1794,16 +1798,16 @@ public class ToolBox_Inf {
         File toFile = new File(ConstantBaseApp.UNSENT_IMG_PATH);
         try {
             //Verifica se arquivo EXISTE na pasta origem e NÃO EXISTE na destino
-            if( verifyDownloadFileInf(geFilePath,fromFile.getParent())
-                && !verifyDownloadFileInf(geFilePath,toFile.getParent())
+            if (verifyDownloadFileInf(geFilePath, fromFile.getParent())
+                    && !verifyDownloadFileInf(geFilePath, toFile.getParent())
             ) {
                 copyFile(fromFile, toFile);
 //                    if(!fromFile.renameTo(toFile)){
 //                        errorCount++;
 //                    }
             }
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             errorCount++;
         }
         return errorCount;
@@ -1881,11 +1885,11 @@ public class ToolBox_Inf {
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(GENERIC_CHANNEL_ID);
-            if(notificationChannel == null) {
+            if (notificationChannel == null) {
                 createChannelNotification(context, notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_DEFAULT, GENERIC_CHANNEL_ID);
             }
             builder = new NotificationCompat.Builder(context, GENERIC_CHANNEL_ID);
-        }else{
+        } else {
             builder = new NotificationCompat.Builder(context);
         }
         return builder;
@@ -1910,7 +1914,7 @@ public class ToolBox_Inf {
                 createChannelNotification(context, notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, ConstantBaseApp.PENDENCY_CHANNEL_ID);
             }
             builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
-        }else{
+        } else {
             builder = new NotificationCompat.Builder(context);
         }
         return builder;
@@ -2242,6 +2246,7 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 07/01/2021
      * Modificado metodo para adicionar info de site_licença selecionado
+     *
      * @param context
      * @param editMode
      */
@@ -2300,7 +2305,7 @@ public class ToolBox_Inf {
         //
         Bitmap customer_img = getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
         final Dialog customDialog = new Dialog(context);
-        if(editMode && !FsTripHelperKt.isCurrentTrip(context)){
+        if (editMode && !FsTripHelperKt.isCurrentTrip(context)) {
             ll_site.setVisibility(View.GONE);
             ll_zone.setVisibility(View.GONE);
             ll_operation.setVisibility(View.GONE);
@@ -2328,15 +2333,15 @@ public class ToolBox_Inf {
                 public void onClick(View v) {
                     boolean result_ok = true;
                     boolean has_changes = false;
-                    if(ss_site.getmValue()!= null && ss_site.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    if (ss_site.getmValue() != null && ss_site.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                         ss_site.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                         has_changes = checkForChange(has_changes, original_site, ss_site);
-                    }else{
+                    } else {
                         result_ok = false;
                         ss_site.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                     }
                     //
-                    if(ss_zone.getVisibility() == View.VISIBLE){
+                    if (ss_zone.getVisibility() == View.VISIBLE) {
                         if (ss_zone.getmValue() != null && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                             ss_zone.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                             has_changes = checkForChange(has_changes, original_zone, ss_zone);
@@ -2346,25 +2351,25 @@ public class ToolBox_Inf {
                         }
                     }
                     //
-                    if(ss_operation.getmValue()!= null && ss_operation.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    if (ss_operation.getmValue() != null && ss_operation.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                         ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_ok));
                         has_changes = checkForChange(has_changes, original_operation, ss_operation);
-                    }else{
-                        if(!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
+                    } else {
+                        if (!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
                             ss_operation.setBackground(context.getResources().getDrawable(com.namoa_digital.namoa_library.R.drawable.shape_error));
                             result_ok = false;
                         }
                     }
 
-                    if(!has_changes){
+                    if (!has_changes) {
                         customDialog.dismiss();
-                    }else if(result_ok) {
+                    } else if (result_ok) {
                         ToolBox_Con.setPreference_Site_Code(context, ss_site.getmValue().get(SearchableSpinner.CODE));
-                        if(ss_zone.getVisibility() == View.VISIBLE
-                        && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                        if (ss_zone.getVisibility() == View.VISIBLE
+                                && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                             ToolBox_Con.setPreference_Zone_Code(context, Integer.parseInt(ss_zone.getmValue().get(SearchableSpinner.CODE)));
                         }
-                        if(!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
+                        if (!EvUserCustomerKt.hasAutomaticOperationRestriction(context)) {
                             ToolBox_Con.setPreference_Operation_Code(context, Long.parseLong(ss_operation.getmValue().get(SearchableSpinner.CODE)));
                         }
                         Intent mIntent = new Intent(ToolBox.SW_TYPE_BR_REFRESH);
@@ -2376,12 +2381,10 @@ public class ToolBox_Inf {
                            BARRIONUEVO 17-04-2020
                            Parametriza a chamada do localbroadcast
                         */
-                        if (context != null)
-                        {
-                            if (context instanceof Base_Activity_Frag)
-                            {
+                        if (context != null) {
+                            if (context instanceof Base_Activity_Frag) {
                                 bundle.putString(ToolBox.SW_ACTIVITY, "Base_Activity_Frag");
-                            }else{
+                            } else {
                                 bundle.putString(ToolBox.SW_ACTIVITY, "Base_Activity");
                             }
                         }
@@ -2393,7 +2396,7 @@ public class ToolBox_Inf {
                     }
                 }
             });
-        }else{
+        } else {
             footer_dialog_app_action_ok.setVisibility(View.GONE);
             footer_dialog_app_action_cancel.setVisibility(View.GONE);
             ll_site.setVisibility(View.VISIBLE);
@@ -2421,31 +2424,31 @@ public class ToolBox_Inf {
         //
         ll_site_license.setVisibility(View.GONE);
         ll_global_level.setVisibility(View.GONE);
-        if(evUsrCustomer != null){
-          if (evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
+        if (evUsrCustomer != null) {
+            if (evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0) {
                 ll_site_license.setVisibility(View.VISIBLE);
                 tv_site_license_desc.setText(
-                        getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
+                        getSiteLicenseDescFormmated(context, evUsrCustomer.getLicense_site_desc(), evUsrCustomer.getLicense_user_level_id(), evUsrCustomer.getLicense_user_level_changed())
                 );
-          }
-        //endregion
+            }
+            //endregion
             //region  Global por nivel
             if (evUsrCustomer.getLicense_control_type() != null && evUsrCustomer.getLicense_control_type().equals(LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL)) {
                 ll_global_level.setVisibility(View.VISIBLE);
                 int textColor;
-                if(evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1){
+                if (evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1) {
                     textColor = R.color.namoa_color_danger_red;
-                }else{
+                } else {
                     textColor = com.namoa_digital.namoa_library.R.color.namoa_color_light_blue_lib;
                 }
 
                 tv_user_global_level.setText(getLabelValueColorFormmated(
-                        context,
-                        hmDialogInfo.get(FOOTER_USER_LEVEL_LBL),
-                        evUsrCustomer.getLicense_user_level_id(),
-                        ": ",
-                        true,
-                        textColor
+                                context,
+                                hmDialogInfo.get(FOOTER_USER_LEVEL_LBL),
+                                evUsrCustomer.getLicense_user_level_id(),
+                                ": ",
+                                true,
+                                textColor
                         )
                 );
             }
@@ -2453,11 +2456,11 @@ public class ToolBox_Inf {
         }
 
 
-        setOperationFooterLayout(context, editMode, hmDialogInfo, ss_operation,ll_operation, tv_operation_lbl, tv_operation_value);
+        setOperationFooterLayout(context, editMode, hmDialogInfo, ss_operation, ll_operation, tv_operation_lbl, tv_operation_value);
 
-        if(editMode && !FsTripHelperKt.isCurrentTrip(context)){
+        if (editMode && !FsTripHelperKt.isCurrentTrip(context)) {
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone);
-        }else {
+        } else {
             setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value);
         }
 
@@ -2466,8 +2469,8 @@ public class ToolBox_Inf {
 //        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
         tv_namoa_presented.setText(
                 hmDialogInfo.get(FOOTER_PRESENTED_BY_NAMOA)
-                        + " " + context.getString(R.string.unicode_copyright) +" "+
-                        + Calendar.getInstance().get(Calendar.YEAR)
+                        + " " + context.getString(R.string.unicode_copyright) + " " +
+                        +Calendar.getInstance().get(Calendar.YEAR)
         );
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
@@ -2522,12 +2525,12 @@ public class ToolBox_Inf {
         String siteDescInfo = license_site_desc + " / " + license_user_level_id;
         SpannableString spannableString = new SpannableString(siteDescInfo);
         //
-        if(license_user_level_changed != null && license_user_level_changed == 1){
+        if (license_user_level_changed != null && license_user_level_changed == 1) {
             spannableString.setSpan(
-                new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
-                (siteDescInfo.indexOf(" / " + license_user_level_id) + 2),
-                siteDescInfo.length(),
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
+                    (siteDescInfo.indexOf(" / " + license_user_level_id) + 2),
+                    siteDescInfo.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
             );
         }
         //
@@ -2538,10 +2541,10 @@ public class ToolBox_Inf {
         String siteDescInfo = label + separator + value;
         SpannableString spannableString = new SpannableString(siteDescInfo);
         //
-        if(applyColor){
+        if (applyColor) {
             spannableString.setSpan(
                     new ForegroundColorSpan(context.getResources().getColor(color)),
-                (siteDescInfo.indexOf(separator + value) + separator.length()),
+                    (siteDescInfo.indexOf(separator + value) + separator.length()),
                     siteDescInfo.length(),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
             );
@@ -2559,7 +2562,7 @@ public class ToolBox_Inf {
         return has_changes;
     }
 
-    private static void setEnableUserInfo(Context context, HMAux hmDialogInfo,SearchableSpinner ss_site,SearchableSpinner ss_zone) {
+    private static void setEnableUserInfo(Context context, HMAux hmDialogInfo, SearchableSpinner ss_site, SearchableSpinner ss_zone) {
         setmFooterSiteCanClean(ss_site, ss_zone);
         setmSSAction(context, ss_site, ss_zone);
         //
@@ -2571,7 +2574,7 @@ public class ToolBox_Inf {
         );
         HMAux ssSiteValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_SITE), ssSiteOption);
 
-        if(isConcurrentBySiteLicense(context)) {
+        if (isConcurrentBySiteLicense(context)) {
             ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
         }
 
@@ -2600,12 +2603,12 @@ public class ToolBox_Inf {
     public static List<HMAux> getSiteLicenseAvailability(List<HMAux> ssSiteOption, String iconKey) {
 
         for (HMAux hmAux : ssSiteOption) {
-            if(hmAux.hasConsistentValue(MD_SiteDao.LICENSE_ENABLED)){
+            if (hmAux.hasConsistentValue(MD_SiteDao.LICENSE_ENABLED)) {
                 if (hmAux.get(MD_SiteDao.LICENSE_ENABLED).equals("0")) {
                     if (hmAux.hasConsistentValue(MD_SiteDao.LICENSE_BLOCKED)) {
-                        if ("1".equals(hmAux.get(MD_SiteDao.LICENSE_BLOCKED))){
+                        if ("1".equals(hmAux.get(MD_SiteDao.LICENSE_BLOCKED))) {
                             hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
-                        }else{
+                        } else {
                             int free_executions_max, free_executions_count, app_executions_count;
                             //
                             free_executions_max = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_MAX);
@@ -2613,14 +2616,14 @@ public class ToolBox_Inf {
                             app_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.APP_EXECUTIONS_COUNT);
                             //
                             int totalExecution = free_executions_count + app_executions_count;
-                            if(totalExecution < free_executions_max){
+                            if (totalExecution < free_executions_max) {
                                 hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_available));
-                            }else {
+                            } else {
                                 hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
                             }
                         }
                     }
-                }else{
+                } else {
                     hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_enable));
                 }
             }
@@ -2628,8 +2631,8 @@ public class ToolBox_Inf {
         return ssSiteOption;
     }
 
-    private static int getIntFromHmAux(HMAux hmAux, String hmAuxKey){
-        if(hmAux.hasConsistentValue(hmAuxKey)){
+    private static int getIntFromHmAux(HMAux hmAux, String hmAuxKey) {
+        if (hmAux.hasConsistentValue(hmAuxKey)) {
             return Integer.parseInt(hmAux.get(hmAuxKey));
         }
         return 0;
@@ -2647,9 +2650,9 @@ public class ToolBox_Inf {
 
     private static void setOperationFooterLayout(Context context, boolean editMode, HMAux hmDialogInfo, SearchableSpinner ss_operation, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
 
-        if(editMode
-        && !EvUserCustomerKt.hasAutomaticOperationRestriction(context)
-        && !FsTripHelperKt.isCurrentTrip(context)){
+        if (editMode
+                && !EvUserCustomerKt.hasAutomaticOperationRestriction(context)
+                && !FsTripHelperKt.isCurrentTrip(context)) {
             ss_operation.setmCanClean(false);
             MD_OperationDao operationDao = new MD_OperationDao(
                     context,
@@ -2665,7 +2668,7 @@ public class ToolBox_Inf {
             HMAux ssOperationValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_OPERATION), ssOperationOption);
             setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
             ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
-        }else {
+        } else {
             ss_operation.setVisibility(View.GONE);
             tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
             tv_operation_value.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION));
@@ -2696,7 +2699,7 @@ public class ToolBox_Inf {
                 ArrayList<HMAux> ssZoneOption = getSiteZoneOption(context, hmAux);
                 ToolBox_Inf.setSSmValue(ss_zone, null, null, null, false, true);
                 ss_zone.setmOption(ssZoneOption);
-                if(ssZoneOption != null && ssZoneOption.size() == 1){
+                if (ssZoneOption != null && ssZoneOption.size() == 1) {
                     ss_zone.setmValue(ssZoneOption.get(0));
                 }
             }
@@ -2705,8 +2708,8 @@ public class ToolBox_Inf {
 
     private static HMAux getCurrentmValue(String current_value, ArrayList<HMAux> ssOption) {
         String value_code[] = current_value.split(" - ");
-        for (HMAux value:ssOption) {
-            if(value.get(SearchableSpinner.CODE).equals(value_code[0])){
+        for (HMAux value : ssOption) {
+            if (value.get(SearchableSpinner.CODE).equals(value_code[0])) {
                 return value;
             }
         }
@@ -2790,35 +2793,35 @@ public class ToolBox_Inf {
 
         customerDesc = ToolBox_Con.getPreference_Customer_Code(context) + " - " + ToolBox_Con.getPreference_Customer_Code_NAME(context);
         //
-        if(operation != null && site != null ){
+        if (operation != null && site != null) {
             operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
             //LUCHE - 11/03/2018
             //Modificado query de site para trazer todos os dados e modificado a construção do texto site desc
             //para a linha abaixo.
             siteDesc = site.getSite_code() + " - " + site.getSite_id() + " - " + site.getSite_desc();
-        }else{
+        } else {
             //String sError = "Site ou Operação do footer não encontrado:\n";
-            String sError = HmTrans.get("sys_site_or_operation_not_found_error") +"\n";
+            String sError = HmTrans.get("sys_site_or_operation_not_found_error") + "\n";
             //
-            if(site == null){
+            if (site == null) {
                 //Atualiza var de erro
-                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                sError += Constant.FOOTER_SITE_LBL + " -> " + HmTrans.get("sys_not_found_lbl") + "\n";
                 //Define descricao
                 siteDesc = HmTrans.get("sys_not_found_lbl");
-            }else{
+            } else {
                 siteDesc = site.getSite_code() + " - " + site.getSite_desc();
             }
             //
-            if(operation == null){
+            if (operation == null) {
                 //Atualiza var de erro
-                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                sError += Constant.FOOTER_OPERATION_LBL + " -> " + HmTrans.get("sys_not_found_lbl") + "\n";
                 //Define descricao
                 operationDesc = HmTrans.get("sys_not_found_lbl");
-            }else{
-                operationDesc  = operation.getOperation_code() + " - " + operation.getOperation_desc();
+            } else {
+                operationDesc = operation.getOperation_code() + " - " + operation.getOperation_desc();
             }
             //Gera arquivo de exception
-            registerException(CLASS_NAME,new Exception(sError));
+            registerException(CLASS_NAME, new Exception(sError));
         }
         //
         hmAux.put(Constant.FOOTER_OFFLINE_MODE_LBL, HmTrans.get("footer_dialog_offline_mode_lbl"));
@@ -2841,8 +2844,8 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_ZONE, "");
 
         //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)
-            || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
         ) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
@@ -2915,50 +2918,50 @@ public class ToolBox_Inf {
                         ).toSqlQuery()
                 );
         //
-        if(operation != null && site != null ){
+        if (operation != null && site != null) {
             operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
             //siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
             //LUCHE - 11/03/2019
             //Comentado a linha a cima e modificado query usada no carregamento do obj site.
             siteDesc = site.getSite_desc();
-        }else{
+        } else {
             //String sError = "Site ou Operação do footer não encontrado:\n";
             //LUCHE - 11/03/2019
             //Comentado a linha a cima e add tradução
-            String sError = HmTrans.get("sys_site_or_operation_not_found_error") +"\n";
-             //
-            if(site == null){
+            String sError = HmTrans.get("sys_site_or_operation_not_found_error") + "\n";
+            //
+            if (site == null) {
                 //Add chave que indica erro no carregamento do site.
-                hmAux.put(Constant.FOOTER_SITE_NOT_FOUND, HmTrans.get("footer_dialog_site_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                hmAux.put(Constant.FOOTER_SITE_NOT_FOUND, HmTrans.get("footer_dialog_site_lbl") + " " + HmTrans.get("sys_not_found_lbl"));
                 //Atualiza var de erro
-                sError += Constant.FOOTER_SITE_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                sError += Constant.FOOTER_SITE_LBL + " -> " + HmTrans.get("sys_not_found_lbl") + "\n";
                 //Define descricao
                 siteDesc = HmTrans.get("sys_not_found_lbl");
-            }else{
+            } else {
                 siteDesc = site.getSite_desc().replace(site.getSite_id() + " - ", "").trim();
             }
 
             //
-            if(operation == null){
+            if (operation == null) {
                 //Add chave que indica erro no carregamento dA operação.
-                hmAux.put(Constant.FOOTER_OPERATION_NOT_FOUND,HmTrans.get("footer_dialog_operation_lbl") +" "+ HmTrans.get("sys_not_found_lbl"));
+                hmAux.put(Constant.FOOTER_OPERATION_NOT_FOUND, HmTrans.get("footer_dialog_operation_lbl") + " " + HmTrans.get("sys_not_found_lbl"));
                 //Atualiza var de erro
-                sError += Constant.FOOTER_OPERATION_LBL +" -> " +HmTrans.get("sys_not_found_lbl") +"\n";
+                sError += Constant.FOOTER_OPERATION_LBL + " -> " + HmTrans.get("sys_not_found_lbl") + "\n";
                 //Define descricao
                 operationDesc = HmTrans.get("sys_not_found_lbl");
-            }else{
-                operationDesc  = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
+            } else {
+                operationDesc = operation.getOperation_desc().replace(operation.getOperation_id() + " - ", "").trim();
             }
             //Gera arquivo de exception
-            registerException(CLASS_NAME,new Exception(sError));
+            registerException(CLASS_NAME, new Exception(sError));
         }
 
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
 
         //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO})) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)
-            || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
         ) {
             MD_Site_Zone zone =
                     new MD_Site_ZoneDao(
@@ -3024,7 +3027,8 @@ public class ToolBox_Inf {
      * Metodo ancestral que gera a notificação de agendados e atrasados.
      * Foi modificado em 19/03/2020 substituindo os textos chumbados por constantes e
      * foram adiconado comentarios para facilitar o entendimento do codigo
-     * @param context Contexto
+     *
+     * @param context   Contexto
      * @param parameter Request Code da pedingIntent
      */
     public static void generateNotification(Context context, int parameter) {
@@ -3037,7 +3041,7 @@ public class ToolBox_Inf {
         //
         EV_User_CustomerDao ev_user_customerDao = getEv_user_customerDao(context);
         //Seleciona lista de customers com sessão.
-        ArrayList<HMAux> customers =  (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
+        ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
         //Loop na lista de customer para exibir msg de agendamentos para cada um.
         for (HMAux hmAux : customers) {
             long customerCode = Long.parseLong(hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE));
@@ -3068,15 +3072,15 @@ public class ToolBox_Inf {
                 //Gera lista com a qtd de itens agendados para a proxima 1 horas(future)
                 totals = (ArrayList<HMAux>) scheduleDao.query_HM(
                         new Sql_Notification_Schedule_002(
-                            context,
-                            customerCode
+                                context,
+                                customerCode
                         ).toSqlQuery()
                 );
             }
             //loop na lista dos dados retornados.
             for (HMAux hmAuxTotal : totals) {
                 bInclude = true;
-                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL ) {
+                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL) {
                     if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
                         auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
@@ -3146,9 +3150,9 @@ public class ToolBox_Inf {
         String mModule = "SYS";
         String mResource_name = "SYS_APP";
         //Formata Data para forao de exbição.
-        scheduleDateStart =   millisecondsToString(
-            dateToMilliseconds(scheduleDateStart +" "+ToolBox_Con.getPreference_Customer_TMZ(context)),
-            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        scheduleDateStart = millisecondsToString(
+                dateToMilliseconds(scheduleDateStart + " " + ToolBox_Con.getPreference_Customer_TMZ(context)),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
         );
         //Tratativa para status que só existe no Checklist.
         if (ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(currentStatus)) {
@@ -3163,16 +3167,16 @@ public class ToolBox_Inf {
         transList.add("schedule_notification_user_nick_lbl");
         //
         HMAux hmAuxTrans = setLanguage(
-                            context,
-                            mModule,
-                            getResourceCode(
-                                context,
-                                mModule,
-                                mResource_name
-                            ),
-                            ToolBox_Con.getPreference_Translate_Code(context),
-                            transList
-                        );
+                context,
+                mModule,
+                getResourceCode(
+                        context,
+                        mModule,
+                        mResource_name
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
 
 
         /**
@@ -3181,12 +3185,12 @@ public class ToolBox_Inf {
          */
         //Notificação Small, monsta icone de warning, data de incio e descrição do form,caso seja N-Form, ou desc do tipo de ticket, caos ticket.
         RemoteViews notificationLayoutSmall = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_small);
-        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_date_start,scheduleDateStart);
-        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_desc,scheduleItemDesc);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_date_start, scheduleDateStart);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_desc, scheduleItemDesc);
         //Notificação Big, exibe os dados da Small, mas a troca de Status e user que gerou a ação.
         RemoteViews notificationLayoutBig = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_big);
-        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_date_start,scheduleDateStart);
-        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_desc,scheduleItemDesc);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_date_start, scheduleDateStart);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_desc, scheduleItemDesc);
         notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status_lbl, hmAuxTrans.get("schedule_notification_current_status_lbl"));
         notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status, hmAuxTrans.get(currentStatus));
         notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_new_status_lbl, hmAuxTrans.get("schedule_notification_new_status_lbl"));
@@ -3195,7 +3199,7 @@ public class ToolBox_Inf {
         notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_user_nick_val, userNick);
         //
         NotificationManager nm = (NotificationManager)
-            context.getSystemService(NOTIFICATION_SERVICE);
+                context.getSystemService(NOTIFICATION_SERVICE);
         //
         NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setSmallIcon(R.drawable.ic_calendario);
@@ -3207,7 +3211,7 @@ public class ToolBox_Inf {
         int id = (int) (Calendar.getInstance().getTimeInMillis() / 1000);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             nm.notify(id, builder.build());
-        }else {
+        } else {
             nm.notify(id, builder.getNotification());
         }
     }
@@ -3289,6 +3293,12 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("mdots_alert_form_fields_info", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_alert_form_fields_info") || Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_info").contains(Constant.APP_MODULE + "/") ? "mdots_alert_form_fields_info" : Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_info")));
         Constant.HMAUX_TRANS_LIB.put("mdots_form_fields_required", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_form_fields_required") || Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_required").contains(Constant.APP_MODULE + "/") ? "mdots_form_fields_required" : Constant.HMAUX_TRANS_LIB.get("mdots_form_fields_required")));
 
+        Constant.HMAUX_TRANS_LIB.put("position_barcode_area_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("position_barcode_area_lbl") || Constant.HMAUX_TRANS_LIB.get("position_barcode_area_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.position_barcode_area_lbl) : Constant.HMAUX_TRANS_LIB.get("position_barcode_area_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("enter_text_other_options_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("enter_text_other_options_lbl") || Constant.HMAUX_TRANS_LIB.get("enter_text_other_options_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.enter_text_other_options_lbl) : Constant.HMAUX_TRANS_LIB.get("enter_text_other_options_lbl")));
+
+        Constant.HMAUX_TRANS_LIB.put("btn_rotate_screen_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_rotate_screen_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_rotate_screen_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("btn_touch_flash_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_touch_flash_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_touch_flash_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl")));
+
     }
 
     public static HMAux translationCustomerSys(Context context, String translate_code) {
@@ -3357,7 +3367,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean isDownloadRunning() {
-        if (   Work_DownLoad_Customer_Logo.IS_RUNNING
+        if (Work_DownLoad_Customer_Logo.IS_RUNNING
                 || Work_DownLoad_PDF.IS_RUNNING
                 || Work_DownLoad_Picture.IS_RUNNING
                 || WBR_UpdateSoftware.IS_RUNNING
@@ -3368,11 +3378,11 @@ public class ToolBox_Inf {
     }
 
     public static boolean isUploadRunning() {
-      //  if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
-        if ( Work_Upload_Img.IS_RUNNING
-            || WBR_Upload_Support.IS_RUNNING
-            || Work_Upload_Img_Chat.IS_RUNNING
-            || Work_Upload_Other_User_Img.IS_RUNNING
+        //  if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+        if (Work_Upload_Img.IS_RUNNING
+                || WBR_Upload_Support.IS_RUNNING
+                || Work_Upload_Img_Chat.IS_RUNNING
+                || Work_Upload_Other_User_Img.IS_RUNNING
         ) {
             return true;
         }
@@ -3477,7 +3487,7 @@ public class ToolBox_Inf {
     }
 
     public static Notification callPendencyNotification(Context context) {
-        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+        if (ToolBox_Con.getPreference_Customer_Code(context) > 0) {
             HMAux hmAux_trans = new HMAux();
             List<String> translateList = new ArrayList<>();
             translateList.add("sys_notification_pendency_form_lbl");
@@ -3512,12 +3522,13 @@ public class ToolBox_Inf {
      * BARRIONUEVO - 12/03/2020
      * <p></p>
      * Chamada de notificacao com resumo de pendencia.
-     * @param context Application Context
+     *
+     * @param context     Application Context
      * @param hmAux_Trans Traducao utilizada na Notification eh do Sys
      */
     @NonNull
-    public static Notification callPendencyNotification(Context context, HMAux hmAux_Trans){
-        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+    public static Notification callPendencyNotification(Context context, HMAux hmAux_Trans) {
+        if (ToolBox_Con.getPreference_Customer_Code(context) > 0) {
             NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
             return notificationHelper.call_Notification();
         }
@@ -3577,7 +3588,7 @@ public class ToolBox_Inf {
         );
 
         hmAux_Trans.put("ws_exception_server_not_found",
-            (!hmAux_Trans.containsKey("ws_exception_server_not_found") || hmAux_Trans.get("ws_exception_server_not_found").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_not_found) : hmAux_Trans.get("ws_exception_server_not_found"))
+                (!hmAux_Trans.containsKey("ws_exception_server_not_found") || hmAux_Trans.get("ws_exception_server_not_found").contains(Constant.APP_MODULE + "/") ? context.getString(R.string.ws_exception_server_not_found) : hmAux_Trans.get("ws_exception_server_not_found"))
         );
 
         results = (!hmAux_Trans.containsKey("generic_error_lbl") || hmAux_Trans.get("generic_error_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.generic_error_lbl) : hmAux_Trans.get("generic_error_lbl")).toUpperCase();
@@ -3611,7 +3622,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append("ORACLE!\n");
-                    //.append(e.toString()
+            //.append(e.toString()
 
         } else if (e.toString().toLowerCase().contains("timeout")) {
             sb.append(results).append(" \n")
@@ -3619,7 +3630,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append("Timeout!\n ");
-                    //.append(e.toString()
+            //.append(e.toString()
         } else if (e.toString().contains(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR)) {
             sb.append(results).append(" \n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"))
@@ -3632,7 +3643,7 @@ public class ToolBox_Inf {
                     .append("\n")
                     .append("\n")
                     .append(hmAux_Trans.get("ws_exception_server_connection_failed"));
-                    //.append(e.toString());
+            //.append(e.toString());
         }
         return sb;
     }
@@ -3723,16 +3734,17 @@ public class ToolBox_Inf {
 
     /**
      * 27/11/18 - LUCHE
-     *
+     * <p>
      * Esse metodo possui um problema quando o timezone do user
      * entra no horario de verão: Quando o timezone entra no horario de verão,
      * o timezone usado continua sendo o padrão.
      * EX:
-     *  Padrão Sp = GMT -03:00, Horario de Verão SP = GMT -02:00.
+     * Padrão Sp = GMT -03:00, Horario de Verão SP = GMT -02:00.
      * Independentemente de estar no horario de verão ou não, o GMT usado é o -03:00
-     *
+     * <p>
      * É possivel corrigi-lo usando o metodo getDeviceGMT e codigo similar ao
      * millisecondsToString()
+     *
      * @param date_tmz
      * @return
      */
@@ -3774,7 +3786,7 @@ public class ToolBox_Inf {
         //LUCHE - 18/02/2020
         //Add if verificando data, pois gerava muitas arquivos de exception desnecessariamente quando
         //data vazia ou null
-        if(date_tmz != null && !date_tmz.isEmpty() && !date_tmz.equalsIgnoreCase("null")) {
+        if (date_tmz != null && !date_tmz.isEmpty() && !date_tmz.equalsIgnoreCase("null")) {
             try {
                 calendar.setTime(sdf.parse(date_tmz));
             } catch (ParseException e) {
@@ -3789,7 +3801,7 @@ public class ToolBox_Inf {
     public static long dateToMilliseconds(String date_tmz, String type) {
         String sFormat = "";
 
-        if (date_tmz == null ||  date_tmz.isEmpty()) {
+        if (date_tmz == null || date_tmz.isEmpty()) {
             return 0L;
         }
 
@@ -3865,12 +3877,13 @@ public class ToolBox_Inf {
     /**
      * 26/11/18 - LUCHE
      * Metodo que retorna data formatada ja convertida pro timezone do device.
-     *
+     * <p>
      * Criado nova versão do metodo millisecondsToString , forçando o timezone do Device
      * com o de GMT retornado pelo metodo getDeviceGMT().
      * Por mais louco que pareça, essa mudança foi necessaria pois, as vezes, no horario de verão,
      * a conversão gerava data no timezone sem horario de verão o.O
-     * @param mils - Millisegundas da data a ser formatada
+     *
+     * @param mils   - Millisegundas da data a ser formatada
      * @param format - Formato da data.
      * @return - Data formatada conforme format e convertida no GMT do device.
      */
@@ -3934,71 +3947,71 @@ public class ToolBox_Inf {
         return files;
     }
 
-    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg, String initialText) {
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl, String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick, String errorMsgLbl, String errorMsg, String initialText) {
         StringBuilder sbString = new StringBuilder(initialText != null ? initialText : "");
         SpannableString finalString = null;
         //
-        if(fcmNewStatus != null && !fcmNewStatus.isEmpty()){
+        if (fcmNewStatus != null && !fcmNewStatus.isEmpty()) {
             sbString.append(fcmNewStatusLbl).append("\n").append(fcmNewStatus).append("\n");
         }
-        if(fcmUserNick != null && !fcmUserNick.isEmpty()){
+        if (fcmUserNick != null && !fcmUserNick.isEmpty()) {
             sbString.append(fcmUserNickLbl).append("\n").append(fcmUserNick).append("\n");
         }
-        if(errorMsg != null && !errorMsg.isEmpty()){
+        if (errorMsg != null && !errorMsg.isEmpty()) {
             sbString.append(errorMsgLbl).append("\n").append(errorMsg).append("\n");
         }
         //
         finalString = new SpannableString(sbString.toString());
-        try{
-            if(fcmNewStatus != null && !fcmNewStatus.isEmpty()) {
+        try {
+            if (fcmNewStatus != null && !fcmNewStatus.isEmpty()) {
                 finalString.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    sbString.indexOf(fcmNewStatusLbl),
-                    sbString.indexOf(fcmNewStatus),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                        new StyleSpan(Typeface.BOLD),
+                        sbString.indexOf(fcmNewStatusLbl),
+                        sbString.indexOf(fcmNewStatus),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
 
                 );
             }
-            if(fcmUserNick != null && !fcmUserNick.isEmpty()) {
+            if (fcmUserNick != null && !fcmUserNick.isEmpty()) {
                 finalString.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    sbString.indexOf(fcmUserNickLbl),
-                    sbString.indexOf(fcmUserNick),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                        new StyleSpan(Typeface.BOLD),
+                        sbString.indexOf(fcmUserNickLbl),
+                        sbString.indexOf(fcmUserNick),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
 
                 );
             }
-            if(errorMsg != null && !errorMsg.isEmpty()) {
+            if (errorMsg != null && !errorMsg.isEmpty()) {
                 finalString.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    sbString.indexOf(errorMsgLbl),
-                    sbString.indexOf(errorMsg),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                        new StyleSpan(Typeface.BOLD),
+                        sbString.indexOf(errorMsgLbl),
+                        sbString.indexOf(errorMsg),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
                 );
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //5
         return finalString;
     }
 
-    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg) {
-        return getFormattedScheduleWarningInfo(fcmNewStatusLbl,fcmNewStatus,fcmUserNickLbl,fcmUserNick,errorMsgLbl,errorMsg,null);
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl, String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick, String errorMsgLbl, String errorMsg) {
+        return getFormattedScheduleWarningInfo(fcmNewStatusLbl, fcmNewStatus, fcmUserNickLbl, fcmUserNick, errorMsgLbl, errorMsg, null);
     }
 
-    public static void showScheduleWarningDialog(Context context,String dialogTitle, String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick,String errorMsgLbl,String errorMsg){
+    public static void showScheduleWarningDialog(Context context, String dialogTitle, String fcmNewStatusLbl, String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick, String errorMsgLbl, String errorMsg) {
         android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
         dialogScheduleWarning.setTitle(dialogTitle);
         dialogScheduleWarning.setMessage(
-            getFormattedScheduleWarningInfo(
-                fcmNewStatusLbl,
-                fcmNewStatus,
-                fcmUserNickLbl,
-                fcmUserNick,
-                errorMsgLbl,
-                errorMsg
-            )
+                getFormattedScheduleWarningInfo(
+                        fcmNewStatusLbl,
+                        fcmNewStatus,
+                        fcmUserNickLbl,
+                        fcmUserNick,
+                        errorMsgLbl,
+                        errorMsg
+                )
         );
         dialogScheduleWarning.setCancelable(true);
         dialogScheduleWarning.show();
@@ -4006,7 +4019,7 @@ public class ToolBox_Inf {
 
     public static HMAux hasFormProductSerialWithoutStructure(Context context, int ticketPrefix, int ticketCode) {
         long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
-        if(ticketPrefix == -1 && ticketCode == -1) {
+        if (ticketPrefix == -1 && ticketCode == -1) {
             return null;
         }
         MD_Product_SerialDao md_product_serialDao = new MD_Product_SerialDao(
@@ -4028,6 +4041,7 @@ public class ToolBox_Inf {
     /**
      * Metodo responsavel por verificar se há necessidade de sincronizacao
      * de formularios no fluxo de ticket
+     *
      * @param context - utilizado para instanciar os DAOs
      * @return
      */
@@ -4040,14 +4054,14 @@ public class ToolBox_Inf {
         );
         //
         List<HMAux> hmAuxList;
-        if(ticketPrefix == -1 && ticketCode == -1) {
+        if (ticketPrefix == -1 && ticketCode == -1) {
             hmAuxList =
                     syncChecklistDao.query_HM(
                             new Sync_Checklist_Sql_004(
                                     preference_customer_code
                             ).toSqlQuery()
                     );
-        }else{
+        } else {
             hmAuxList =
                     syncChecklistDao.query_HM(
                             new Sync_Checklist_Sql_004(
@@ -4057,10 +4071,10 @@ public class ToolBox_Inf {
                             ).toSqlQuery()
                     );
         }
-        if(hmAuxList != null
-                && !hmAuxList.isEmpty()){
-            for(HMAux aux: hmAuxList){
-                if(aux.hasConsistentValue(Sync_ChecklistDao.PRODUCT_CODE)) {
+        if (hmAuxList != null
+                && !hmAuxList.isEmpty()) {
+            for (HMAux aux : hmAuxList) {
+                if (aux.hasConsistentValue(Sync_ChecklistDao.PRODUCT_CODE)) {
                     setProductToSync(preference_customer_code, syncChecklistDao, aux);
                 }
             }
@@ -4077,12 +4091,12 @@ public class ToolBox_Inf {
 
     public static boolean isTicketInTokenFile(Context context, int ticket_prefix, int ticket_code) {
         ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
-        if(ticketInToken != null && ticketInToken.size() > 0){
+        if (ticketInToken != null && ticketInToken.size() > 0) {
             for (TK_Ticket tkTicket : ticketInToken) {
-                if( tkTicket.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                if (tkTicket.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
                         && tkTicket.getTicket_prefix() == ticket_prefix
                         && tkTicket.getTicket_code() == ticket_code
-                ){
+                ) {
                     return true;
                 }
             }
@@ -4090,11 +4104,13 @@ public class ToolBox_Inf {
         //
         return false;
     }
+
     /**
      * BARRIONUEVO 01-09-2020
      * Metodo que verifica forms de ctrl que estão em waiting sync.
      * LUCHE - 10/09/2020
      * Modificado query do metodo para incluir tb o os forms com pendencia de GPS.
+     *
      * @param ticket_prefix
      * @param ticket_code
      * @return
@@ -4119,6 +4135,7 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 10/09/2020
      * Verifica se existe alguma form com pendencia de GPS para o ticket passado.
+     *
      * @param context
      * @param ticket_prefix
      * @param ticket_code
@@ -4126,17 +4143,17 @@ public class ToolBox_Inf {
      */
     public static boolean hasFormGpsPendencyWithinTicket(Context context, int ticket_prefix, int ticket_code) {
         GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
         //
         ArrayList<GE_Custom_Form_Data> formWithGpsPendency = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
-            new Sql_Act070_008(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ticket_prefix,
-                ticket_code
-            ).toSqlQuery()
+                new Sql_Act070_008(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code
+                ).toSqlQuery()
         );
         //
         return formWithGpsPendency != null && formWithGpsPendency.size() > 0;
@@ -4184,13 +4201,14 @@ public class ToolBox_Inf {
                 ticket_prefix,
                 ticket_code
         ).toSqlQuery());
-        return query != null && query.size() > 0 ;
+        return query != null && query.size() > 0;
     }
 
     /**
      * LUCHE - 04/06/2021
      * Metodo que analisa se os profiles de O.S ou I.O existem.
      * Metodo usado para saber qual layout o menu principal deve usar
+     *
      * @param context
      * @return
      */
@@ -4202,6 +4220,7 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO
      * VERIFICA SE HORA ESTÁ NO PADRÃO 24 HORAS COM FORMATONN:NN:NN
+     *
      * @param hour
      * @return
      */
@@ -4218,11 +4237,11 @@ public class ToolBox_Inf {
                 context,
                 DB_MULTI_STATUS_ERROR,
                 false
-        )|| ToolBox_Con.getBooleanPreferencesByKey(
+        ) || ToolBox_Con.getBooleanPreferencesByKey(
                 context,
                 DB_BASE_STATUS_ERROR,
                 false
-        )|| ToolBox_Con.getBooleanPreferencesByKey(
+        ) || ToolBox_Con.getBooleanPreferencesByKey(
                 context,
                 DB_CHAT_STATUS_ERROR,
                 false
@@ -4231,7 +4250,7 @@ public class ToolBox_Inf {
 
     //
     public static boolean hasSiteManyZones(Context context, Integer siteCode) {
-        if(siteCode != null){
+        if (siteCode != null) {
             MD_Site_ZoneDao mdSiteZoneDao = new MD_Site_ZoneDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -4255,17 +4274,17 @@ public class ToolBox_Inf {
     }
 
     public static String getOtherActionFileName(int product_code, long serial_code) {
-        return "other_action_" + product_code + "_" + serial_code +  ".json";
+        return "other_action_" + product_code + "_" + serial_code + ".json";
     }
 
     public static void createJsonFile(String file_name, String json, String filePath) throws IOException {
         File file = new File(filePath, file_name);
         //
-        if(file.exists()){
+        if (file.exists()) {
             file.delete();
         }
         //
-        ToolBox_Inf.writeIn(json,file);
+        ToolBox_Inf.writeIn(json, file);
     }
 
     public static HashSet<String> getAllChatFiles(Context applicationContext) {
@@ -4303,10 +4322,10 @@ public class ToolBox_Inf {
         mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
         int pendencies = ToolBox_Inf.getLocationPendencies(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        && pendencies > 0
-        && mode == LOCATION_BACKGROUND) {
+                && pendencies > 0
+                && mode == LOCATION_BACKGROUND) {
             context.startForegroundService(mIntent);
-        }else {
+        } else {
             context.startService(mIntent);
         }
     }
@@ -4332,10 +4351,11 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO 10-02-2021
      * Metodo responsavel
+     *
      * @param context
      */
     public static void stopChatService(Context context) {
-        if(AppBackgroundService.isRunning) {
+        if (AppBackgroundService.isRunning) {
             Intent chatService = new Intent(context, AppBackgroundService.class);
             context.stopService(chatService);
         }
@@ -4344,17 +4364,18 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO 10-02-2021
      * Metodo responsavel pela chamada do chat fora das acts de lista e conversas do chat.
+     *
      * @param context
      */
     public static void callChatService(Context context, String mode) {
-        Log.d("ChatEvent"," callChatService mode : " + mode);
+        Log.d("ChatEvent", " callChatService mode : " + mode);
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, mode);
         AppBackgroundService.serviceChatMode = mode;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        && !CHAT_SERVICE_MODE_ACTIVED.equals(mode)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && !CHAT_SERVICE_MODE_ACTIVED.equals(mode)) {
             context.startForegroundService(mIntent);
-        }else{
+        } else {
             context.startService(mIntent);
         }
     }
@@ -4375,8 +4396,9 @@ public class ToolBox_Inf {
     /**
      * Metodo que gera arquivo texto com registrando dados da exception e local onde ocorreu
      * 09/01/2019 - LUCHE
-     *
+     * <p>
      * Movido o metodo para biblioteca e adicionando chamada do metodo a lib dentro desse metodo.
+     *
      * @param local
      * @param exception
      */
@@ -4400,21 +4422,22 @@ public class ToolBox_Inf {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        if(exception!= null){
+        if (exception != null) {
             ExceptionHelperKt.firebaseRegisterException(exception);
         }
-        ToolBox.registerException(local,exception);
+        ToolBox.registerException(local, exception);
     }
 
     /**
      * 04/12/2018 - LUCHE
      * Metodo chamado pelo Callback de exceptions não tratadas  gerandp arquvio de suport
+     *
      * @param exception
      */
     public static void registerFatalException(Throwable exception) {
         String local = AppBase.class.getSimpleName();
         File exception_file = new File(Constant.SUPPORT_PATH, "fatal_excep_" + getDateHourStr() + ".txt");
-        if(exception!= null){
+        if (exception != null) {
             ExceptionHelperKt.firebaseRegisterException(exception);
         }
         try {
@@ -4425,18 +4448,17 @@ public class ToolBox_Inf {
             //No futuro esse if pode ser melhorado sem usar attribuição de vars
             //porem, por hora, melhor deixar assim para debug.
             Throwable throwable = exception.getCause();
-            if(throwable != null){
+            if (throwable != null) {
                 StackTraceElement[] stack = throwable.getStackTrace();
-                if(stack != null && stack.length > 0 && stack[0] != null){
+                if (stack != null && stack.length > 0 && stack[0] != null) {
                     StackTraceElement stakFirst = stack[0];
                     local = stakFirst.getFileName();
                 }
                 //local = (exception.getCause().getStackTrace())[0].getFileName();
-            }else{
-                if(exception.getStackTrace() != null
-                    &&  exception.getStackTrace().length > 0
-                    && (exception.getStackTrace())[0] != null )
-                {
+            } else {
+                if (exception.getStackTrace() != null
+                        && exception.getStackTrace().length > 0
+                        && (exception.getStackTrace())[0] != null) {
                     local = (exception.getStackTrace())[0].getFileName();
                 }
             }
@@ -4463,12 +4485,13 @@ public class ToolBox_Inf {
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
+
     /*
         BARRIONUEVO - 22/10/2019
         Metodo para esconder keyboard no AlertDialog, inicialmente utilizado nos fragmentos da act043
      */
     public static void hideSoftKeyboard(Context context, View view) {
-        if (view!= null && view.hasFocus()){
+        if (view != null && view.hasFocus()) {
             if (context instanceof AppCompatActivity) {
                 InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -4596,7 +4619,7 @@ public class ToolBox_Inf {
      * os status enviados como parametros...
      *
      * @param hmAux_trans - Traduções dos status
-     * @param status - Lista de status que NÃO SERÃO EXIBIDOS.
+     * @param status      - Lista de status que NÃO SERÃO EXIBIDOS.
      * @return - Lista de status QUE NÃO FORAM ENVIADOS.
      */
     public static ArrayList<HMAux> formApStatusList(HMAux hmAux_trans, String... status) {
@@ -4841,10 +4864,10 @@ public class ToolBox_Inf {
 
     }
 
-    public static Integer getIntOrNull(String value){
-        try{
+    public static Integer getIntOrNull(String value) {
+        try {
             return Integer.parseInt(value);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -5441,15 +5464,15 @@ public class ToolBox_Inf {
         );
         //
         if (hmAux_trans == null || hmAux_trans.size() == 0) {
-            if(hmAux_trans == null){
+            if (hmAux_trans == null) {
                 hmAux_trans = new HMAux();
             }
             //
-            hmAux_trans.put("notification_user_says_lbl",context.getString(R.string.notification_user_says_lbl));
+            hmAux_trans.put("notification_user_says_lbl", context.getString(R.string.notification_user_says_lbl));
             hmAux_trans.put("notification_rooms_lbl", context.getString(R.string.notification_rooms_lbl));
-            hmAux_trans.put("notification_messages_lbl",context.getString(R.string.notification_messages_lbl));
-            hmAux_trans.put("chat_fcm_offline_ttl",context.getString(R.string.chat_fcm_offline_ttl));
-            hmAux_trans.put("chat_fcm_offline_msg",context.getString(R.string.chat_fcm_offline_msg));
+            hmAux_trans.put("notification_messages_lbl", context.getString(R.string.notification_messages_lbl));
+            hmAux_trans.put("chat_fcm_offline_ttl", context.getString(R.string.chat_fcm_offline_ttl));
+            hmAux_trans.put("chat_fcm_offline_msg", context.getString(R.string.chat_fcm_offline_msg));
         }
         //
         NotificationManager nm = (NotificationManager)
@@ -5457,12 +5480,12 @@ public class ToolBox_Inf {
         //
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         /*
-        * LUCHE - 28/01/2022
-        * A partir do androdi 12, uma notificação que chame um service ou receiver que depois chama uma
-        * act, não e mas permitido.
-        * PAra solucionar o problema, ao inves de chamar NotificationReceiver, agora é chamada act088
-        * que possui a mesma logica que o receiver e chama a act034 com a configuração esperada
-        * */
+         * LUCHE - 28/01/2022
+         * A partir do androdi 12, uma notificação que chame um service ou receiver que depois chama uma
+         * act, não e mas permitido.
+         * PAra solucionar o problema, ao inves de chamar NotificationReceiver, agora é chamada act088
+         * que possui a mesma logica que o receiver e chama a act034 com a configuração esperada
+         * */
         Intent mIntent = new Intent(context, Act088Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
@@ -5470,7 +5493,7 @@ public class ToolBox_Inf {
                 context,
                 0,
                 mIntent,
-                getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
+                getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT, true)
         );
         NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setAutoCancel(true);
@@ -5531,7 +5554,7 @@ public class ToolBox_Inf {
                                         context,
                                         0,
                                         mIntent,
-                                        getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
+                                        getMutableFlag(PendingIntent.FLAG_UPDATE_CURRENT, true)
                                 );
 
                                 builder.setContentIntent(pi);
@@ -5540,7 +5563,7 @@ public class ToolBox_Inf {
                             if (
                                     msgInfo.get(Sql_Chat_Notification_001.QTY_ROOM).equals("1") &&
                                             msgInfo.get(Sql_Chat_Notification_001.QTY_MSG).equals("1")
-                                    ) {
+                            ) {
                                 builder.setContentTitle(
                                         msgInfo.get(Sql_Chat_Notification_001.LAST_ROOM) + " " + hmAux_trans.get("notification_user_says_lbl")
                                 );
@@ -5616,6 +5639,7 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO 14-12-2021
      * Trata flag de pendingIntent para Mutable e Immutable atendendo aos requisitos do Android 12.
+     *
      * @param currentFlag
      * @param isMutable
      * @return
@@ -5623,9 +5647,9 @@ public class ToolBox_Inf {
     public static int getMutableFlag(int currentFlag, boolean isMutable) {
         int flags = currentFlag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if(isMutable){
+            if (isMutable) {
                 flags = currentFlag | PendingIntent.FLAG_MUTABLE;
-            }else {
+            } else {
                 flags = currentFlag | PendingIntent.FLAG_IMMUTABLE;
             }
         }
@@ -6114,8 +6138,9 @@ public class ToolBox_Inf {
     /**
      * Metodo é uma versão melhorada do getStatusColor, pois ja retorna resource do id da cor assim,
      * pode ser usado diretamente no setTextColor() se a necessidade de usar context.getResources().getColor()
+     *
      * @param context - contexto
-     * @param status - status
+     * @param status  - status
      * @return retorna o resource da cor
      */
     public static int getStatusColorV2(Context context, String status) {
@@ -6168,12 +6193,11 @@ public class ToolBox_Inf {
                 //Seleciona via room_code e pk concatenada no room_obj
                 String pkConcat =
                         formAp.getCustomer_code() + "|" +
-                        formAp.getCustom_form_type() + "|" +
-                        formAp.getCustom_form_code() + "|" +
-                        formAp.getCustom_form_version() + "|" +
-                        formAp.getCustom_form_data() + "|" +
-                        formAp.getAp_code()
-                        ;
+                                formAp.getCustom_form_type() + "|" +
+                                formAp.getCustom_form_code() + "|" +
+                                formAp.getCustom_form_version() + "|" +
+                                formAp.getCustom_form_data() + "|" +
+                                formAp.getAp_code();
                 //
                 CH_Room chRoom = roomDao.getByString(
                         new CH_Room_Sql_014(
@@ -6226,7 +6250,7 @@ public class ToolBox_Inf {
             if (formAp.getAp_who() == null || formAp.getAp_who() != user_code) {
                 if (!formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                         && !formAp.getAp_status().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED)
-                        ) {
+                ) {
                     if (formAp.getRoom_code() == null) {
                         deleteAP = true;
                     } else {
@@ -6304,7 +6328,6 @@ public class ToolBox_Inf {
         Matcher matcher = pattern.matcher(text);
         return matcher.find();
     }
-
 
 
     public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code) {
@@ -6424,10 +6447,10 @@ public class ToolBox_Inf {
         int qty_UR;
 
         File[] files =
-            getListOfFiles_v5(
-                ConstantBaseApp.TOKEN_PATH,
-                buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SERIAL_PREFIX)
-            );
+                getListOfFiles_v5(
+                        ConstantBaseApp.TOKEN_PATH,
+                        buildTokenPrefixWithCustomer(ToolBox_Con.getPreference_Customer_Code(context), ConstantBaseApp.TOKEN_SERIAL_PREFIX)
+                );
 
         if (files != null && files.length > 0) {
             qty_file_token = files.length;
@@ -6437,8 +6460,8 @@ public class ToolBox_Inf {
 
         try {
             qty_UR = Integer.parseInt(productSerialDao.getByStringHM(
-                    new MD_Product_Serial_Sql_015(
-                            ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+                            new MD_Product_Serial_Sql_015(
+                                    ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
                     ).get(MD_Product_Serial_Sql_015.IN_TOKEN_UR_QTY)
             );
             //
@@ -6580,17 +6603,17 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 08/10/2019
-     *
+     * <p>
      * Formata o price em double do java para formato esperado pela tela
      *
      * @param vDouble - Valor double
-     * @return  - Retorno string no formato esperado pela tela.
+     * @return - Retorno string no formato esperado pela tela.
      */
-    public static String formatDoublePriceToScreen(Double vDouble){
+    public static String formatDoublePriceToScreen(Double vDouble) {
         try {
             return (new DecimalFormat("###0.00").format(vDouble)).replace(",", ".");
-        } catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "0.00";
         }
 
@@ -6638,14 +6661,15 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 22/01/2020
      * Metodo que lista todos os banco na mesma versão de banco do app (DB_VERSION_CUSTOM).
-     *
+     * <p>
      * Metodo usado na identificação de itens pendentes no processo de atualização de App com troca
      * de banco de dados.
+     *
      * @param prefix - "c_"
      * @return - Lista de banco de dados com versão DB_VERSION_CUSTOM
      */
     public static File[] getCurrentDbVersionDbList(final String prefix) {
-        final String suffix = Constant.DB_VERSION_CUSTOM+ ".db3";
+        final String suffix = Constant.DB_VERSION_CUSTOM + ".db3";
         File fileList = new File(Constant.DB_PATH);
         File[] files = fileList.listFiles(new FilenameFilter() {
             @Override
@@ -6672,8 +6696,9 @@ public class ToolBox_Inf {
      * Metodo usado quando app recebe UPDATE_REQUIRED no retorno dos WS de Sync ou GetCustomer.
      * Metodo executa loop na lista de banco e chama a cada iteração do loop o mesmo metodo,
      * mas com segunda assinatura que verifica as pendencias em um customer especifico
+     *
      * @param context - Contexto
-     * @param listDB - Lista de bancos de
+     * @param listDB  - Lista de bancos de
      * @return
      */
     public static boolean hasPendingData(Context context, File[] listDB) {
@@ -6686,9 +6711,9 @@ public class ToolBox_Inf {
             String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
             Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
             //
-            if( customer_code != null && customer_code != -1 ){
+            if (customer_code != null && customer_code != -1) {
                 //
-                if(hasPendingData(context,customer_code)){
+                if (hasPendingData(context, customer_code)) {
                     return true;
                 }
             }
@@ -6696,15 +6721,16 @@ public class ToolBox_Inf {
         //
         return false;
     }
+
     /**
-    * LUCHE - 06/01/2020
-    *
-    * Criado nova versão do metodo hasPendingData, para ao inves de retornar um boolean, retornar
-     *String com lista de customers com dados pendentes de envio.
-    *
-    * @param context - Contexto
-    * @param listDB - Lista de bancos
-    * @return
+     * LUCHE - 06/01/2020
+     * <p>
+     * Criado nova versão do metodo hasPendingData, para ao inves de retornar um boolean, retornar
+     * String com lista de customers com dados pendentes de envio.
+     *
+     * @param context - Contexto
+     * @param listDB  - Lista de bancos
+     * @return
      */
     public static String hasPendingDataV2(Context context, File[] listDB) {
         String customer_list = "";
@@ -6717,41 +6743,41 @@ public class ToolBox_Inf {
             String[] db_full_name = db.getName().contains("_") ? db.getName().split("_") : new String[]{};
             Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
             //
-            if( customer_code != null && customer_code != -1){
+            if (customer_code != null && customer_code != -1) {
                 //
-                if(hasPendingData(context,customer_code)){
-                     EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
+                if (hasPendingData(context, customer_code)) {
+                    EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
                     //
                     EV_User_Customer evUserCustomer = customerDao.getByString(
-                        new EV_User_Customer_Sql_011(
-                            customer_code
-                        ).toSqlQuery()
+                            new EV_User_Customer_Sql_011(
+                                    customer_code
+                            ).toSqlQuery()
                     );
                     //
-                    if(evUserCustomer != null) {
-                        customer_list += evUserCustomer.getCustomer_code()+" - "+evUserCustomer.getCustomer_name()+"\n";
+                    if (evUserCustomer != null) {
+                        customer_list += evUserCustomer.getCustomer_code() + " - " + evUserCustomer.getCustomer_name() + "\n";
                     }
                 }
             }
         }
         //
-        return !customer_list.equalsIgnoreCase("") ? customer_list.substring(0, customer_list.length() -1) : null ;
+        return !customer_list.equalsIgnoreCase("") ? customer_list.substring(0, customer_list.length() - 1) : null;
     }
 
     /**
      * LUCHE - 20/12/18
      * Metodo que verifica se existem dados pendentes no banco do customer especificado.
      * São considerados pendentes, itens pendentes de transmissão e N-Form no status IN_PROCESS.
-     *
+     * <p>
      * LUCHE - 06/01/2020
      * Revisado adicionando a contagem de itens pendentes dos modulos assets e ticket
      *
-     * @param context - Context
+     * @param context       - Context
      * @param customer_code - Codigo do customer
      * @return - Verdadeiro se encontrar algum item pendente de envio.
      */
-    public static boolean hasPendingData(Context context, Long customer_code){
-        if(customer_code != null && customer_code != -1) {
+    public static boolean hasPendingData(Context context, Long customer_code) {
+        if (customer_code != null && customer_code != -1) {
             /**
              * Pendencia de Serial
              * Banco e Token
@@ -6770,11 +6796,11 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
 
-            if( (pendencies != null
+            if ((pendencies != null
                     && pendencies.hasConsistentValue(Sql_Act005_008.BADGE_TO_SEND_QTY)
                     && !pendencies.get(Sql_Act005_008.BADGE_TO_SEND_QTY).equalsIgnoreCase("0"))
                     || isSerialWithinTokenFile(customer_code) > 0
-                    ){
+            ) {
                 return true;
             }
             /**
@@ -6795,10 +6821,10 @@ public class ToolBox_Inf {
                             ).toSqlQuery()
                     );
             //
-            if(pendencies != null
+            if (pendencies != null
                     && pendencies.hasConsistentValue(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES)
                     && !pendencies.get(Sql_Act002_001.QTY_CUSTOMER_PENDENCIES).equalsIgnoreCase("0")
-                ){
+            ) {
                 return true;
             }
             //
@@ -6819,11 +6845,11 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
             //
-            if((pendencies != null &&
+            if ((pendencies != null &&
                     pendencies.hasConsistentValue(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY) &&
                     !pendencies.get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY).equalsIgnoreCase("0")
             ) || isSoWithinTokenFile(customer_code) > 0
-                    ){
+            ) {
                 return true;
             }
             /**
@@ -6843,10 +6869,10 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
             //
-            if(pendencies != null
+            if (pendencies != null
                     && pendencies.hasConsistentValue(Sql_Act005_007.BADGE_TO_SEND_QTY)
                     && !pendencies.get(Sql_Act005_007.BADGE_TO_SEND_QTY).equalsIgnoreCase("0")
-                    ){
+            ) {
                 return true;
             }
 
@@ -6867,10 +6893,10 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
             //
-            if(pendencies != null
+            if (pendencies != null
                     && pendencies.hasConsistentValue(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY)
                     && !pendencies.get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY).equalsIgnoreCase("0")
-                    ){
+            ) {
                 return true;
             }
             /**
@@ -6878,7 +6904,7 @@ public class ToolBox_Inf {
              */
             pendencies.clear();
             //
-            if(!handleAssetsWaitingSync(context,customer_code).equalsIgnoreCase("0")){
+            if (!handleAssetsWaitingSync(context, customer_code).equalsIgnoreCase("0")) {
                 return true;
             }
             //
@@ -6887,7 +6913,7 @@ public class ToolBox_Inf {
              */
             pendencies.clear();
             //
-            if(!handleTicketUpdateRequired(context,customer_code).equalsIgnoreCase("0")){
+            if (!handleTicketUpdateRequired(context, customer_code).equalsIgnoreCase("0")) {
                 return true;
             }
 
@@ -6895,12 +6921,13 @@ public class ToolBox_Inf {
         //
         return false;
     }
+
     /**
      * BARRIONUEVO - 30/04/2020
      * Metodo que contabiliza pendencias de localizacao no N-FORM.
      */
     public static int getLocationPendencies(Context context) {
-        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+        if (ToolBox_Con.getPreference_Customer_Code(context) > 0) {
             GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
             List<GE_Custom_Form_Data> formDataList = ge_custom_form_dataDao.query(
                     new GE_Custom_Form_Data_Sql_006(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
@@ -6915,16 +6942,16 @@ public class ToolBox_Inf {
     /**
      * Metodo que retorna a qtd de S.O dentro do arquivos token de so
      *
-     * @return
      * @param customer_code
+     * @return
      */
     public static int isSoWithinTokenFile(long customer_code) {
         try {
             File[] soToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_SO_PREFIX)
-                );
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
             if (soToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
                 //
@@ -6990,10 +7017,10 @@ public class ToolBox_Inf {
         int qty = 0;
         try {
             File[] serialToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_SERIAL_PREFIX)
-                );
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_SERIAL_PREFIX)
+                    );
 
             if (serialToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().serializeNulls().create();
@@ -7017,11 +7044,11 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Metodo que retorna a qtd de Tickets dentro do arquivos token de Ticket
      *
-     * @return - Qtd de ticket existen no arquivo de token
      * @param customer_code
+     * @return - Qtd de ticket existen no arquivo de token
      */
     public static int getQtyTicketsWithinToken(long customer_code) {
         return getTicketsWithinToken(customer_code).size();
@@ -7029,29 +7056,29 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE  - 06/01/2020
-     *
+     * <p>
      * Metodo retorna que a lista de tickets presentes no arquivo json ou lista vazio caso não existam
      * arquivos json.
      *
-     * @return - Lista dos ticket presente no arquivo de token
      * @param customer_code
+     * @return - Lista dos ticket presente no arquivo de token
      */
     public static ArrayList<TK_Ticket> getTicketsWithinToken(long customer_code) {
         ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
         try {
             File[] ticketToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_TICKET_PREFIX)
-                );
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_TICKET_PREFIX)
+                    );
             if (ticketToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().serializeNulls().create();
                 //
                 token_ticket_list =
-                    gsonEnv.fromJson(
-                        ToolBox_Inf.getContents(ticketToken[0]),
-                        T_TK_Ticket_Save_Env.class
-                    ).getTicket();
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(ticketToken[0]),
+                                T_TK_Ticket_Save_Env.class
+                        ).getTicket();
                 //
                 return token_ticket_list != null ? token_ticket_list : new ArrayList<TK_Ticket>();
             }
@@ -7065,17 +7092,16 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE  - 06/01/2020
-     *
+     * <p>
      * Fachada para metodos que usam hmaux.
      *
      * @return - Se há pendencia de envio para o ticket.
-     *
      */
     public static boolean hasTicketsToken(String customerCode, String ticketPrefix, String ticketCode) {
-        if(customerCode != null
-        && ticketPrefix != null
-        && ticketCode != null
-        ){
+        if (customerCode != null
+                && ticketPrefix != null
+                && ticketCode != null
+        ) {
             return hasTicketsToken(Long.parseLong(customerCode), Integer.parseInt(ticketPrefix), Integer.parseInt(ticketCode));
         }
         return false;
@@ -7083,34 +7109,34 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE  - 06/01/2020
-     *
+     * <p>
      * Metodo retorna se o ticket tem pendencia de envio no arquivo token.
      *
-     * @return - Se há pendencia de envio para o ticket.
      * @param customerCode
+     * @return - Se há pendencia de envio para o ticket.
      */
     public static boolean hasTicketsToken(long customerCode, int ticketPrefix, int ticketCode) {
         ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
         try {
             File[] ticketToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customerCode,ConstantBaseApp.TOKEN_TICKET_PREFIX)
-                );
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customerCode, ConstantBaseApp.TOKEN_TICKET_PREFIX)
+                    );
             if (ticketToken.length > 0) {
                 Gson gsonEnv = new GsonBuilder().serializeNulls().create();
                 //
                 token_ticket_list =
-                    gsonEnv.fromJson(
-                        ToolBox_Inf.getContents(ticketToken[0]),
-                        T_TK_Ticket_Save_Env.class
-                    ).getTicket();
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(ticketToken[0]),
+                                T_TK_Ticket_Save_Env.class
+                        ).getTicket();
                 //
                 for (TK_Ticket tk_ticket : token_ticket_list) {
-                    if( tk_ticket.getCustomer_code() == customerCode
-                    &&  tk_ticket.getTicket_prefix() == ticketPrefix
-                    &&  tk_ticket.getTicket_code() == ticketCode
-                    ){
+                    if (tk_ticket.getCustomer_code() == customerCode
+                            && tk_ticket.getTicket_prefix() == ticketPrefix
+                            && tk_ticket.getTicket_code() == ticketCode
+                    ) {
                         return true;
                     }
                 }
@@ -7125,17 +7151,17 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Metodo que trata o retorno  do metodo que conta a qtd de TICKETS pendentes de envio.
      *
-     * @param context - Contexto
+     * @param context       - Contexto
      * @param customer_code
      * @return - Qty de itens pendentes de envio do modulo N-Ticket
      */
     public static String handleTicketUpdateRequired(Context context, Long customer_code) {
         String qty;//tratar badges de pendentes.
         try {
-            qty = getTicketUpdateRequiredCount(context,customer_code);
+            qty = getTicketUpdateRequiredCount(context, customer_code);
             //
         } catch (Exception e) {
             qty = "0";
@@ -7145,31 +7171,31 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Metodo contabiliza qtd de tickets pendente de envio, incluindo os existentes no arquivo de token
      *
-     * @param context - Contexto
+     * @param context       - Contexto
      * @param customer_code
      * @return - Qty de itens pendentes de envio do modulo N-Ticket
      */
     private static String getTicketUpdateRequiredCount(Context context, Long customer_code) {
-        TK_TicketDao tk_ticketDao = new TK_TicketDao(context,ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
-        int pendencies=0;
+        TK_TicketDao tk_ticketDao = new TK_TicketDao(context, ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
+        int pendencies = 0;
 
         ArrayList<TK_Ticket> ticketUpdateReq = (ArrayList<TK_Ticket>) tk_ticketDao.query((
-                new Sql_WS_TK_Ticket_Save_001(
-                    customer_code
-                )
-            ).toSqlQuery()
+                        new Sql_WS_TK_Ticket_Save_001(
+                                customer_code
+                        )
+                ).toSqlQuery()
         );
         //
-        if(ticketUpdateReq != null && ticketUpdateReq.size() > 0
-        ){
+        if (ticketUpdateReq != null && ticketUpdateReq.size() > 0
+        ) {
             try {
-                pendencies +=  ticketUpdateReq.size();
+                pendencies += ticketUpdateReq.size();
             } catch (Exception e) {
                 pendencies = 0;
-                registerException(CLASS_NAME,e);
+                registerException(CLASS_NAME, e);
             }
 
         }
@@ -7181,18 +7207,19 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Metodo que trata o retorno  do metodo que conta a qtd de processo de Assets pendentes de envio.
-     *
+     * <p>
      * Movido originalmente criado na Act005 por Barrionuevo
-     * @param context - Contexto
+     *
+     * @param context       - Contexto
      * @param customer_code
      * @return - Qty de itens pendentes de envio do modulo N-Assets
      */
     public static String handleAssetsWaitingSync(Context context, Long customer_code) {
         String qty;//tratar badges de pendentes.
         try {
-            qty = getAssetsWaitingSyncCount(context,customer_code);
+            qty = getAssetsWaitingSyncCount(context, customer_code);
             //
         } catch (Exception e) {
             qty = "0";
@@ -7202,13 +7229,13 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 06/01/2020
-     *
+     * <p>
      * Metodo busca em todos os processo do Assets itens pendentes de envio e retorno qtd desses itens.
      * O metodo também contempla itens presentes em arquivos de token
-     *
+     * <p>
      * Movido originalmente criado na Act005 por Barrionuevo
      *
-     * @param context - Contexto
+     * @param context       - Contexto
      * @param customer_code
      * @return Qty de itens pendentes de envio do modulo N-Assets
      */
@@ -7218,14 +7245,14 @@ public class ToolBox_Inf {
         IO_OutboundDao assetOutboundDao = new IO_OutboundDao(context, ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
         //
         HMAux moveWaitingSync = assetMoveDao.getByStringHM((
-                new IO_Move_Order_Item_Sql_005(
-                    customer_code,
-                    ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
-                    0
-                )
-            ).toSqlQuery()
+                        new IO_Move_Order_Item_Sql_005(
+                                customer_code,
+                                ConstantBaseApp.IO_PROCESS_MOVE_PLANNED,
+                                0
+                        )
+                ).toSqlQuery()
         );
-        int pendencies=0;
+        int pendencies = 0;
         if (moveWaitingSync != null && moveWaitingSync.hasConsistentValue(IO_MoveDao.PENDING_QTY)) {
             try {
                 pendencies = Integer.valueOf(moveWaitingSync.get(IO_MoveDao.PENDING_QTY));
@@ -7236,10 +7263,10 @@ public class ToolBox_Inf {
         }
         //Blind Moves
         HMAux blindWaitingSync = assetMoveDao.getByStringHM((
-                new IO_Blind_Move_Sql_006(
-                    customer_code
-                )
-            ).toSqlQuery()
+                        new IO_Blind_Move_Sql_006(
+                                customer_code
+                        )
+                ).toSqlQuery()
         );
         //
         if (blindWaitingSync != null && blindWaitingSync.hasConsistentValue(IO_Blind_MoveDao.PENDING_QTY)) {
@@ -7252,23 +7279,23 @@ public class ToolBox_Inf {
         }
         //
         ArrayList<HMAux> outboundWaitingSync = (ArrayList<HMAux>) assetOutboundDao.query_HM(
-            new IO_Outbound_Sql_013(
-                customer_code
-            ).toSqlQuery()
+                new IO_Outbound_Sql_013(
+                        customer_code
+                ).toSqlQuery()
         );
 
         ArrayList<HMAux> inboundWaitingSync = (ArrayList<HMAux>) assetInboundDao.query_HM(
-            new IO_Inbound_Sql_013(
-                customer_code
-            ).toSqlQuery()
+                new IO_Inbound_Sql_013(
+                        customer_code
+                ).toSqlQuery()
         );
 
         pendencies =
-            pendencies
-                + outboundWaitingSync.size()
-                + inboundWaitingSync.size()
-                + ToolBox_Inf.countInboundsInTokenFile(customer_code)
-                + ToolBox_Inf.countOutboundsInTokenFile(customer_code)
+                pendencies
+                        + outboundWaitingSync.size()
+                        + inboundWaitingSync.size()
+                        + ToolBox_Inf.countInboundsInTokenFile(customer_code)
+                        + ToolBox_Inf.countOutboundsInTokenFile(customer_code)
         ;
         //
         return String.valueOf(pendencies);
@@ -7276,7 +7303,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 30/04/2019
-     *
+     * <p>
      * Metodo que verifica se existe arquivo de token de inbound
      *
      * @return
@@ -7284,10 +7311,10 @@ public class ToolBox_Inf {
     public static boolean exitsInboundTokenFile(long customer_code) {
         try {
             File[] inboundToken =
-                getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_INBOUND_PREFIX)
-                );
+                    getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_INBOUND_PREFIX)
+                    );
             //
             return inboundToken.length > 0;
         } catch (Exception e) {
@@ -7298,7 +7325,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 30/04/2019
-     *
+     * <p>
      * Metodo que verifica se existe arquivo de token de outbound
      *
      * @return
@@ -7306,11 +7333,11 @@ public class ToolBox_Inf {
     public static boolean exitsOutboundTokenFile(long customer_code) {
         try {
             File[] outboundToken =
-                getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
-                );
-           return outboundToken.length > 0;
+                    getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
+                    );
+            return outboundToken.length > 0;
         } catch (Exception e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             return false;
@@ -7319,27 +7346,28 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 30/07/2019
-     *
+     * <p>
      * Retorna qtd de inbounds no arquivo de token
+     *
      * @return
      */
     public static int countInboundsInTokenFile(long customer_code) {
         try {
             Gson gsonRec = new GsonBuilder().serializeNulls().create();
             File[] inboundToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_INBOUND_PREFIX)
-                );
-            if(inboundToken.length > 0) {
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_INBOUND_PREFIX)
+                    );
+            if (inboundToken.length > 0) {
                 //
                 T_IO_Inbound_Item_Env inboundList =
-                    gsonRec.fromJson(
-                        ToolBox_Inf.getContents(inboundToken[0]),
-                        T_IO_Inbound_Item_Env.class
-                    );
+                        gsonRec.fromJson(
+                                ToolBox_Inf.getContents(inboundToken[0]),
+                                T_IO_Inbound_Item_Env.class
+                        );
                 return inboundList.getInbound().size();
-            }else{
+            } else {
                 return 0;
             }
             //
@@ -7348,29 +7376,31 @@ public class ToolBox_Inf {
             return 0;
         }
     }
+
     /**
      * LUCHE - 30/07/2019
-     *
+     * <p>
      * Retorna qtd de outbound no arquivo de token
+     *
      * @return
      */
     public static int countOutboundsInTokenFile(long customer_code) {
         try {
             Gson gsonRec = new GsonBuilder().serializeNulls().create();
             File[] outboundToken =
-                ToolBox_Inf.getListOfFiles_v5(
-                    ConstantBaseApp.TOKEN_PATH,
-                    buildTokenPrefixWithCustomer(customer_code,ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
-                );
-            if(outboundToken.length > 0) {
-                T_IO_Outbound_Item_Env outboundList =
-                    gsonRec.fromJson(
-                        ToolBox_Inf.getContents(outboundToken[0]),
-                        T_IO_Outbound_Item_Env.class
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            buildTokenPrefixWithCustomer(customer_code, ConstantBaseApp.TOKEN_OUTBOUND_PREFIX)
                     );
+            if (outboundToken.length > 0) {
+                T_IO_Outbound_Item_Env outboundList =
+                        gsonRec.fromJson(
+                                ToolBox_Inf.getContents(outboundToken[0]),
+                                T_IO_Outbound_Item_Env.class
+                        );
                 //
                 return outboundList.getOutbound().size();
-            }else{
+            } else {
                 return 0;
             }
         } catch (Exception e) {
@@ -7381,20 +7411,22 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 12/08/2019
+     *
      * @param brandDesc - Descrição da Marca
      * @param modelDesc - Descrição do Modelo
      * @param colorDesc - Descrição da Cor
      * @return - String formatada ou vazia, caso todos itens nulos
      */
-    public static String formatSerialBrandModelColor(String brandDesc, String modelDesc, String colorDesc ) {
-        String serialBrandModelColor = brandDesc == null || brandDesc.isEmpty()? "" : brandDesc;
-        serialBrandModelColor = serialBrandModelColor + (modelDesc == null || modelDesc.isEmpty()? "" : " | " + modelDesc);
-        serialBrandModelColor = serialBrandModelColor + (colorDesc == null || colorDesc.isEmpty()? "" : " | " + colorDesc);
+    public static String formatSerialBrandModelColor(String brandDesc, String modelDesc, String colorDesc) {
+        String serialBrandModelColor = brandDesc == null || brandDesc.isEmpty() ? "" : brandDesc;
+        serialBrandModelColor = serialBrandModelColor + (modelDesc == null || modelDesc.isEmpty() ? "" : " | " + modelDesc);
+        serialBrandModelColor = serialBrandModelColor + (colorDesc == null || colorDesc.isEmpty() ? "" : " | " + colorDesc);
         return serialBrandModelColor;
     }
 
     /**
      * LUCHE - 12/08/2019
+     *
      * @param mdProductSerial - Obj serial
      * @return String formatada ou vazia, caso todos itens nulos ou caso serial null.
      */
@@ -7404,15 +7436,16 @@ public class ToolBox_Inf {
             serialBrandModelColor = serialBrandModelColor + (mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? "" : " | " + mdProductSerial.getModel_desc());
             serialBrandModelColor = serialBrandModelColor + (mdProductSerial.getColor_desc() == null || mdProductSerial.getColor_desc().isEmpty() ? "" : " | " + mdProductSerial.getColor_desc());
             return serialBrandModelColor;
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return null;
         }
     }
 
     /**
      * L.BARRINUEVO - 13/08/2019
-     * @param context - Context
+     *
+     * @param context      - Context
      * @param serviceClass - Classe do serviço aser verificado.
      * @return - Verdadeiro se serviço estiver rodando.
      */
@@ -7430,17 +7463,18 @@ public class ToolBox_Inf {
     public static String buildTicketImgPath(TK_Ticket tkTicket) {
         try {
             return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + ".jpg";
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }
+
     @Nullable
     public static String buildTicketNotExecutedImgPath(TK_Ticket tkTicket) {
         try {
             return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + TK_TICKET_JUSTIFY_SUFIX + ".jpg";
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }
@@ -7454,6 +7488,7 @@ public class ToolBox_Inf {
      * <p>
      * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
      * </p>
+     *
      * @param ctrl - Controle
      * @return - Retorna nome da imagem formatoda ou null se exception
      */
@@ -7467,10 +7502,10 @@ public class ToolBox_Inf {
 //        }
         //LUCHE - 13/03/2020
         //Extraido o codigo acima para novo metodo
-        try{
-            return buildTicketActionImgPath(ctrl.getCustomer_code(),ctrl.getTicket_prefix(),ctrl.getTicket_code(),ctrl.getTicket_seq());
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        try {
+            return buildTicketActionImgPath(ctrl.getCustomer_code(), ctrl.getTicket_prefix(), ctrl.getTicket_code(), ctrl.getTicket_seq());
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }
@@ -7484,6 +7519,7 @@ public class ToolBox_Inf {
      * <p>
      * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
      * </p>
+     *
      * @param action
      * @return
      */
@@ -7499,8 +7535,8 @@ public class ToolBox_Inf {
         //Extraido o codigo acima para novo metodo
         try {
             return buildTicketActionImgPath(action.getCustomer_code(), action.getTicket_prefix(), action.getTicket_code(), action.getTicket_seq());
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }
@@ -7510,18 +7546,19 @@ public class ToolBox_Inf {
      * <p>
      * Metodo que devolve nome da imagem baseado nos itens da pk do ticket_action
      * </p>
-     * @param customerCode - Codigo do Customer
+     *
+     * @param customerCode  - Codigo do Customer
      * @param ticket_prefix - Preixo do ticket
-     * @param ticket_code - Codigo do ticket
-     * @param ticket_seq - Sequencia do Ctrl ou  action
+     * @param ticket_code   - Codigo do ticket
+     * @param ticket_seq    - Sequencia do Ctrl ou  action
      * @return
      */
     @Nullable
-    public static String buildTicketActionImgPath(long customerCode, int ticket_prefix, int ticket_code, int ticket_seq){
-        try{
-            return ConstantBaseApp.TK_TICKET_PREX_IMG + customerCode +"_"+ticket_prefix+"_"+ticket_code+"_"+ticket_seq+ ".png";
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+    public static String buildTicketActionImgPath(long customerCode, int ticket_prefix, int ticket_code, int ticket_seq) {
+        try {
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + customerCode + "_" + ticket_prefix + "_" + ticket_code + "_" + ticket_seq + ".png";
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
             return null;
         }
     }
@@ -7529,9 +7566,10 @@ public class ToolBox_Inf {
     /**
      * Retorna array de inteiros com a porcentagem width e height relativo ao tamanho da tela
      * Indices:
-     *        0 -> Width
-     *        1 -> Height
-     * @param context - Context
+     * 0 -> Width
+     * 1 -> Height
+     *
+     * @param context  - Context
      * @param wPercent - Percentual de largura
      * @param hPercent - Percentual de altura
      * @return - Array int de 2 posições sendo 0 -> Width e 1 -> Height
@@ -7541,16 +7579,18 @@ public class ToolBox_Inf {
         try {
             percentMetrics[0] = (int) (percentMetrics[0] * wPercent);
             percentMetrics[1] = (int) (percentMetrics[1] * hPercent);
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
         }
         return percentMetrics;
     }
+
     /**
      * Retorna array de int com o Width e Height da tela do device
      * Indices:
-     *       0 -> Width
-     *       1 -> Height
+     * 0 -> Width
+     * 1 -> Height
+     *
      * @param context - Context
      * @return Array int[2] com valores da tela ou 0 se exception
      */
@@ -7561,8 +7601,8 @@ public class ToolBox_Inf {
             ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             metrics[0] = displayMetrics.widthPixels;
             metrics[1] = displayMetrics.heightPixels;
-        }catch (Exception e){
-            registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            registerException(CLASS_NAME, e);
         }
         //
         return metrics;
@@ -7583,7 +7623,7 @@ public class ToolBox_Inf {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(path,options);
+            BitmapFactory.decodeFile(path, options);
             //
             return options.outWidth <= 3840 && options.outHeight <= 3840;
         } catch (Exception e) {
@@ -7596,31 +7636,31 @@ public class ToolBox_Inf {
      * LUCHE - 03/01/2020
      * Após lançamento do Android 10, as ações que utilizam uma actvity/app externo para abrir um
      * arquivo do nosso app pararam de funcionar devido a nova mudança de permissões de acesso a arquivos.
-     *
+     * <p>
      * Esse metodo analisa a versão do Android do Device e retorna a implementação correta para abertura
      * do PDF via app externo.
-     *
+     * <p>
      * Para a implementação no Android 10+, foi necessario usar o FileProvider com configuração de xml
      * de acesso a diretorios externos e adicionar a flag FLAG_GRANT_READ_URI_PERMISSION
-     *
+     * <p>
      * LUCHE - 29/01/2021
      * Após mudana do diretorio do pdf para o SandBox em produção, foi removido o IF que condicionava
      * qual metodologia usar, agora todoas as versões usarão o fileprovider.
      *
-     * @param context - Contexto
+     * @param context  - Contexto
      * @param pathname - Caminho + /+ nome do arquivo
      * @return - Intent usando URI via FileProvider
      */
-    public static Intent getOpenPdfIntent(Context context, String pathname){
+    public static Intent getOpenPdfIntent(Context context, String pathname) {
         Intent intent;
         Uri uri;
         File pdfFile = new File(pathname);
         //
         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent = new Intent(Intent.ACTION_VIEW);
-            uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
-            intent.setDataAndType(uri, "application/pdf");
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent = new Intent(Intent.ACTION_VIEW);
+        uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
+        intent.setDataAndType(uri, "application/pdf");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
 //        } else {
 //            intent = new Intent(Intent.ACTION_VIEW);
 //            uri = Uri.fromFile(pdfFile);
@@ -7632,30 +7672,30 @@ public class ToolBox_Inf {
     }
 
     //region WS Token Process
-    public static String buildTokenPrefixWithCustomer(Context context,String prefix){
+    public static String buildTokenPrefixWithCustomer(Context context, String prefix) {
         return prefix + ToolBox_Con.getPreference_Customer_Code(context) + "_";
     }
 
-    public static String buildTokenPrefixWithCustomer(long customer_code,String prefix){
+    public static String buildTokenPrefixWithCustomer(long customer_code, String prefix) {
         return prefix + customer_code + "_";
     }
 
-    public static String buildTokenFileName(Context context,String prefix,String token){
-        return buildTokenPrefixWithCustomer(context,prefix) + token+ ".json";
+    public static String buildTokenFileName(Context context, String prefix, String token) {
+        return buildTokenPrefixWithCustomer(context, prefix) + token + ".json";
     }
 
-    public static String buildTokenFileAbsPath(Context context, String prefix,String token,@NonNull String dirPath){
+    public static String buildTokenFileAbsPath(Context context, String prefix, String token, @NonNull String dirPath) {
         String tokenFileName = "";
         //
-        if(dirPath != null && !dirPath.isEmpty()){
-            tokenFileName = dirPath + "/"+ buildTokenFileName(context,prefix,token);
+        if (dirPath != null && !dirPath.isEmpty()) {
+            tokenFileName = dirPath + "/" + buildTokenFileName(context, prefix, token);
         }
         //
         return tokenFileName;
     }
 
-    public static String buildTokenFileAbsPath(Context context, String prefix, String token){
-        return buildTokenFileAbsPath(context,prefix,token,ConstantBaseApp.TOKEN_PATH);
+    public static String buildTokenFileAbsPath(Context context, String prefix, String token) {
+        return buildTokenFileAbsPath(context, prefix, token, ConstantBaseApp.TOKEN_PATH);
     }
 
     public static boolean checksumJsonToken(String json_token_content, File jsonToken) {
@@ -7690,17 +7730,18 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 10/01/2020
-     *
+     * <p>
      * Metodo que retorna se o processo de hide serial deve ser usado.
-     *
+     * <p>
      * O metodo leva primeiramente a existencia do profile PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
      * caso ele exista, ignora o valor da preferencia.
      * Caso não exista, utilizar o valor da preferencia.
+     *
      * @param context
      * @return
      */
     public static boolean hasForceNotShowSerialInfo(Context context) {
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO)){
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO)) {
             return true;
         }
         //
@@ -7709,30 +7750,31 @@ public class ToolBox_Inf {
 
     public static String formatSchedulePk(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
         return formatSchedulePk(
-            String.valueOf(schedule_prefix),
-            String.valueOf(schedule_code),
-            String.valueOf(schedule_exec)
+                String.valueOf(schedule_prefix),
+                String.valueOf(schedule_code),
+                String.valueOf(schedule_exec)
         );
     }
 
     public static String formatSchedulePk(String schedule_prefix, String schedule_code, String schedule_exec) {
-        if(
-            schedule_prefix == null || schedule_prefix.equalsIgnoreCase("null")
-            || schedule_code == null || schedule_code.equalsIgnoreCase("null")
-            || schedule_exec == null || schedule_exec.equalsIgnoreCase("null")
-        ){
+        if (
+                schedule_prefix == null || schedule_prefix.equalsIgnoreCase("null")
+                        || schedule_code == null || schedule_code.equalsIgnoreCase("null")
+                        || schedule_exec == null || schedule_exec.equalsIgnoreCase("null")
+        ) {
             return "";
         }
         //
-        return  schedule_prefix +"."+
-                schedule_code +"."+
-                schedule_exec ;
+        return schedule_prefix + "." +
+                schedule_code + "." +
+                schedule_exec;
     }
 
     /**
      * LUCHE - 17/02/2020
-     *
+     * <p>
      * Formata a data do agedamento SEM APLICAR GMT.(Pedido do backend)
+     *
      * @param context
      * @param date
      * @return
@@ -7741,8 +7783,8 @@ public class ToolBox_Inf {
         SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         SimpleDateFormat dateFormatOut;
         String format = ToolBox_Inf.nlsDateFormat(context);
-        try{
-            if( format == null || format.equalsIgnoreCase("")){
+        try {
+            if (format == null || format.equalsIgnoreCase("")) {
                 format = "dd-MM-yyyy";
             }
             //
@@ -7750,20 +7792,21 @@ public class ToolBox_Inf {
             dateFormatOut = new SimpleDateFormat(format);
             //
             return dateFormatOut.format(dateFormatIn.parse(date));
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "01-01-1900";
         }
     }
 
     /**
      * LUCHE - 17/02/2020
-     *
+     * <p>
      * Formata a apresentacao de um intervalo de datas:
-     *  1) Para dias diferentes:
-     *     - "yyyy-MM-dd HH:mm - yyyy-MM-dd HH:mm"
-     *  2) Para dias iguais:
-     *     - "yyyy-MM-dd HH:mm - HH:mm"
+     * 1) Para dias diferentes:
+     * - "yyyy-MM-dd HH:mm - yyyy-MM-dd HH:mm"
+     * 2) Para dias iguais:
+     * - "yyyy-MM-dd HH:mm - HH:mm"
+     *
      * @param startDate
      * @param endDate
      * @return
@@ -7772,13 +7815,13 @@ public class ToolBox_Inf {
         SimpleDateFormat dateFormatIn = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
-        if(checkSameDayDate(startDate, endDate)){
+        if (checkSameDayDate(startDate, endDate)) {
             dateFormatEnd = new SimpleDateFormat("HH:mm");
         }
-        try{
+        try {
             return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "01-01-1900";
         }
     }
@@ -7786,52 +7829,56 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO 14-06-2021
      * Data convertida para a do device pois é a data que é visualizada.
+     *
      * @param startDate
      * @param endDate
      * @return
      */
     public static boolean checkSameDayDate(String startDate, String endDate) {
-        return convertToDeviceTMZ(startDate).substring(0, 10).equals(convertToDeviceTMZ(endDate).substring(0,10));
+        return convertToDeviceTMZ(startDate).substring(0, 10).equals(convertToDeviceTMZ(endDate).substring(0, 10));
     }
 
 
     /**
      * LUCHE - 17/02/2020
-     *
+     * <p>
      * Metodo que avalia se form é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     *
      * @param customFormLocal
      * @return
      */
     public static boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
         return customFormLocal != null
-            && customFormLocal.getSchedule_prefix() != null
-            && customFormLocal.getSchedule_code() != null
-            && customFormLocal.getSchedule_exec() != null
-            && customFormLocal.getSchedule_prefix() > 0
-            && customFormLocal.getSchedule_code() > 0
-            && customFormLocal.getSchedule_exec() > 0;
+                && customFormLocal.getSchedule_prefix() != null
+                && customFormLocal.getSchedule_code() != null
+                && customFormLocal.getSchedule_exec() != null
+                && customFormLocal.getSchedule_prefix() > 0
+                && customFormLocal.getSchedule_code() > 0
+                && customFormLocal.getSchedule_exec() > 0;
     }
 
     /**
      * LUCHE - 17/02/2020
-     *
+     * <p>
      * Metodo que avalia se customFormData é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     *
      * @param customFormData
      * @return
      */
     public static boolean isScheduleForm(GE_Custom_Form_Data customFormData) {
         return customFormData != null
-            && customFormData.getSchedule_prefix() != null
-            && customFormData.getSchedule_code() != null
-            && customFormData.getSchedule_exec() != null
-            && customFormData.getSchedule_prefix() > 0
-            && customFormData.getSchedule_code() > 0
-            && customFormData.getSchedule_exec() > 0;
+                && customFormData.getSchedule_prefix() != null
+                && customFormData.getSchedule_code() != null
+                && customFormData.getSchedule_exec() != null
+                && customFormData.getSchedule_prefix() > 0
+                && customFormData.getSchedule_code() > 0
+                && customFormData.getSchedule_exec() > 0;
     }
 
     /**
      * LUCHE - 27/02/2020
      * Metodo que retorna String formatada com descrição do tipo e descrição do form
+     *
      * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
      * @return - String formatada
      */
@@ -7842,39 +7889,42 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 27/02/2020
      * Metodo que retorna String formatada com PK + descrição do agendamento
+     *
      * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
      * @return - String formatada
      */
     public static String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
-        return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
+        return error_process.getSchedule_pk() + " - " + error_process.getSchedule_desc();
     }
 
     /**
      * LUCHE - 28/02/2020
      * Metodo que retorna Id Descrição do produto formatada SEM "-"
-     * @param productId - ID do produto
+     *
+     * @param productId   - ID do produto
      * @param productDesc - Descrição do produto
      * @return
      */
     public static String getFormatedProductIdDesc(String productId, String productDesc) {
-        if(productId != null && !productId.equalsIgnoreCase("null") && !productId.isEmpty()
-            && productDesc != null && !productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
-        ){
-            return productId +" "+ productDesc;
+        if (productId != null && !productId.equalsIgnoreCase("null") && !productId.isEmpty()
+                && productDesc != null && !productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
+        ) {
+            return productId + " " + productDesc;
         }
         //
-        return productId +" "+ productDesc;
+        return productId + " " + productDesc;
     }
 
     /**
      * LUCHE - 11/03/2020
      * Metodo que retorna Id Descrição formatada COM "-"
-     * @param objId - ID do obj
+     *
+     * @param objId   - ID do obj
      * @param objDesc - Descrição do obj
      * @return
      */
     public static String getFormattedGenericIdDesc(String objId, String objDesc) {
-        return getFormattedGenericIdDesc(objId,objDesc,"-");
+        return getFormattedGenericIdDesc(objId, objDesc, "-");
     }
 
     /**
@@ -7882,26 +7932,27 @@ public class ToolBox_Inf {
      * <p></p>
      * Metodo que retorna o primeiro e segundo param concatenado pelo terceiro param,
      * caso os 2 primeiros existam.
-     * @param objId - ID
-     * @param objDesc - Desc
+     *
+     * @param objId     - ID
+     * @param objDesc   - Desc
      * @param separator - Caracter separado sem espaços
      * @return
      */
-    public static String getFormattedGenericIdDesc(String objId, String objDesc,@Nullable String separator) {
+    public static String getFormattedGenericIdDesc(String objId, String objDesc, @Nullable String separator) {
         separator = separator == null || separator.isEmpty() ? " " : " " + separator.trim() + " ";
         //
-        if(objId != null && !objId.equalsIgnoreCase("null") && !objId.isEmpty()
-            && objDesc != null && !objDesc.equalsIgnoreCase("null") && !objDesc.isEmpty()
-        ){
+        if (objId != null && !objId.equalsIgnoreCase("null") && !objId.isEmpty()
+                && objDesc != null && !objDesc.equalsIgnoreCase("null") && !objDesc.isEmpty()
+        ) {
             return objId + separator + objDesc;
         }
         //
-        return objId +" " + objDesc;
+        return objId + " " + objDesc;
     }
 
     /**
      * LUCHE - 06/03/2020
-     *
+     * <p>
      * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
      * seleção de serial.
      *
@@ -7912,20 +7963,20 @@ public class ToolBox_Inf {
     public static boolean productConfigPreventToProceed(HMAux auxSchedule) {
         try {
             boolean followToAct020 =
-                 auxSchedule.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
-                 && auxSchedule.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equalsIgnoreCase("1");
+                    auxSchedule.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
+                            && auxSchedule.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equalsIgnoreCase("1");
             //
             return !followToAct020;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            registerException(CLASS_NAME,e);
+            registerException(CLASS_NAME, e);
             return false;
         }
     }
 
     /**
      * LUCHE - 18/05/2021
-     *
+     * <p>
      * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
      * seleção de serial.
      *
@@ -7939,9 +7990,9 @@ public class ToolBox_Inf {
                     auxSchedule.getSerial_id().isEmpty() && auxSchedule.getAllow_new_serial_cl() == 1;
             //
             return !followToAct020;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            registerException(CLASS_NAME,e);
+            registerException(CLASS_NAME, e);
             return false;
         }
     }
@@ -7950,17 +8001,17 @@ public class ToolBox_Inf {
      * LUCHE - 17/03/2020
      * Metodo que formata a exibição de Schedule Pk + Ticket Pk.
      *
-     * @param schedulePk - PK concatenada por .
+     * @param schedulePk   - PK concatenada por .
      * @param ticketPrefix - Ticket Prefix
-     * @param ticketCode - Ticket Code
+     * @param ticketCode   - Ticket Code
      * @return - Dados formatado
      */
     public static String getFormattedTicketSeqExec(String schedulePk, String ticketPrefix, String ticketCode) {
-        String formmattedTicketSeqExec =  schedulePk;
-        if( ticketPrefix != null && !ticketPrefix.isEmpty()
-            && ticketCode != null && !ticketCode.isEmpty()
-        ){
-            formmattedTicketSeqExec += " ["+ticketPrefix+"."+ticketCode+"]";
+        String formmattedTicketSeqExec = schedulePk;
+        if (ticketPrefix != null && !ticketPrefix.isEmpty()
+                && ticketCode != null && !ticketCode.isEmpty()
+        ) {
+            formmattedTicketSeqExec += " [" + ticketPrefix + "." + ticketCode + "]";
         }
         return formmattedTicketSeqExec;
     }
@@ -7968,176 +8019,175 @@ public class ToolBox_Inf {
     /**
      * Metodo que faz o agendamento do Work de upload de Imgs
      * Configuração:
-     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
-     *  - Em caso de falha, faz nova tentativa após 60 segundos.
-     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
-     *  a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
-     *  conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
-     *  chamada anterior
+     * - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     * - Em caso de falha, faz nova tentativa após 60 segundos.
+     * - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     * a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
+     * conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
+     * chamada anterior
      */
-    public static void scheduleUploadImgWork(Context context){
+    public static void scheduleUploadImgWork(Context context) {
         Data inputData =
-            new Data.Builder().putLong(
-                Constant.LOGIN_CUSTOMER_CODE,
-                ToolBox_Con.getPreference_Customer_Code(context)
-            ).build();
+                new Data.Builder().putLong(
+                        Constant.LOGIN_CUSTOMER_CODE,
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).build();
         //
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workUploadImgRequest =
                 new OneTimeWorkRequest.Builder(Work_Upload_Img.class)
-                    .setInputData(inputData)
-                    .setBackoffCriteria(
-                        BackoffPolicy.LINEAR,
-                        10,
-                        TimeUnit.SECONDS
-                    )
-                    .setConstraints(constraints)
-                    .build();
+                        .setInputData(inputData)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                10,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Upload_Img.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
-                workUploadImgRequest
-            );
+                .enqueueUniqueWork(
+                        Work_Upload_Img.WORKER_TAG,
+                        ExistingWorkPolicy.REPLACE,
+                        workUploadImgRequest
+                );
     }
 
     /**
      * Metodo que faz o agendamento do Work de upload de Imgs do chat
      * Configuração:
-     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
-     *  - Em caso de falha, faz nova tentativa após 60 segundos.
-     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
-     *  a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
-     *  conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
-     *  chamada anterior
+     * - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     * - Em caso de falha, faz nova tentativa após 60 segundos.
+     * - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     * a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
+     * conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
+     * chamada anterior
      */
-    public static void scheduleUploadOtherUserImgWork(Context context){
+    public static void scheduleUploadOtherUserImgWork(Context context) {
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workUploadOtherUsrImgRequest =
-            new OneTimeWorkRequest.Builder(Work_Upload_Other_User_Img.class)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    60,
-                    TimeUnit.SECONDS
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_Upload_Other_User_Img.class)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                60,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Upload_Other_User_Img.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
-                workUploadOtherUsrImgRequest
-            );
+                .enqueueUniqueWork(
+                        Work_Upload_Other_User_Img.WORKER_TAG,
+                        ExistingWorkPolicy.REPLACE,
+                        workUploadOtherUsrImgRequest
+                );
     }
 
-    public static void scheduleUploadImgChat(Context context){
+    public static void scheduleUploadImgChat(Context context) {
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workUploadImgChatRequest =
-            new OneTimeWorkRequest.Builder(Work_Upload_Img_Chat.class)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    60,
-                    TimeUnit.SECONDS
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_Upload_Img_Chat.class)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                60,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Upload_Img_Chat.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
-                workUploadImgChatRequest
-            );
+                .enqueueUniqueWork(
+                        Work_Upload_Img_Chat.WORKER_TAG,
+                        ExistingWorkPolicy.REPLACE,
+                        workUploadImgChatRequest
+                );
     }
-
 
 
     /**
      * Metodo que faz o agendamento do Work verifica os agendamentos a cada 15 min
      * Configuração:
-     *  - O agendamento deve ser imediato
-     *  - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
-     *  recorrente
-     *  - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
-     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
+     * - O agendamento deve ser imediato
+     * - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
+     * recorrente
+     * - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
+     * - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
      */
-    public static void scheduleQuarterScheduleNotification(Context context){
+    public static void scheduleQuarterScheduleNotification(Context context) {
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
-        PeriodicWorkRequest  workQuarterScheduleNotification =
-             new PeriodicWorkRequest.Builder(
-                 Work_Quarter_Schedule_Notification.class,
-                 15 , TimeUnit.MINUTES //Periodicidade
-                 //,5,  TimeUnit.MINUTES //Flexibilidade
-             )
-             .setBackoffCriteria(
-                 BackoffPolicy.LINEAR,
-                 PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                 TimeUnit.MILLISECONDS)
-             .build();
+        PeriodicWorkRequest workQuarterScheduleNotification =
+                new PeriodicWorkRequest.Builder(
+                        Work_Quarter_Schedule_Notification.class,
+                        15, TimeUnit.MINUTES //Periodicidade
+                        //,5,  TimeUnit.MINUTES //Flexibilidade
+                )
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                                TimeUnit.MILLISECONDS)
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                Work_Quarter_Schedule_Notification.WORKER_TAG,
-                ExistingPeriodicWorkPolicy.KEEP,
-                workQuarterScheduleNotification
-            );
+                .enqueueUniquePeriodicWork(
+                        Work_Quarter_Schedule_Notification.WORKER_TAG,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        workQuarterScheduleNotification
+                );
     }
 
     /**
      * Metodo que faz o agendamento do Work verifica os agendamentos a cada 4 hrs
      * Configuração:
-     *  - O agendamento deve ser imediato
-     *  - Execução recorrente a cada 4 horas com flexibilidade de 1 horas, ou seja, a partir de
-     *  3 hrs pode ser rodado
-     *  - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
-     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
+     * - O agendamento deve ser imediato
+     * - Execução recorrente a cada 4 horas com flexibilidade de 1 horas, ou seja, a partir de
+     * 3 hrs pode ser rodado
+     * - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
+     * - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
      */
-    public static void schedule4HoursScheduleNotification(Context context){
+    public static void schedule4HoursScheduleNotification(Context context) {
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
-        PeriodicWorkRequest  work4HoursScheduleNotification =
-            new PeriodicWorkRequest.Builder(
-                Work_Four_Hour_Schedule_Notification.class,
-                4 , TimeUnit.HOURS //Periodicidade
-                ,1,  TimeUnit.HOURS //Flexibilidade
-            )
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                    TimeUnit.MILLISECONDS)
-                .build();
+        PeriodicWorkRequest work4HoursScheduleNotification =
+                new PeriodicWorkRequest.Builder(
+                        Work_Four_Hour_Schedule_Notification.class,
+                        4, TimeUnit.HOURS //Periodicidade
+                        , 1, TimeUnit.HOURS //Flexibilidade
+                )
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                                TimeUnit.MILLISECONDS)
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                Work_Four_Hour_Schedule_Notification.WORKER_TAG,
-                ExistingPeriodicWorkPolicy.KEEP,
-                work4HoursScheduleNotification
-            );
+                .enqueueUniquePeriodicWork(
+                        Work_Four_Hour_Schedule_Notification.WORKER_TAG,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        work4HoursScheduleNotification
+                );
     }
 
-    public static void schedule10MinutesLocationAvailabilityNotification(Context context){
+    public static void schedule10MinutesLocationAvailabilityNotification(Context context) {
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
 
         Log.d("TRIP_LOCATION", "--------schedule10MinutesLocationAvailabilityNotification-------");
-        PeriodicWorkRequest  work10MinutesLocationAvailabilityNotification =
+        PeriodicWorkRequest work10MinutesLocationAvailabilityNotification =
                 new PeriodicWorkRequest.Builder(
                         WorkLocationAvailability.class,
                         10,
@@ -8145,11 +8195,11 @@ public class ToolBox_Inf {
                         10,
                         TimeUnit.SECONDS
                 )
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                    TimeUnit.MILLISECONDS)
-                .build();
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                                TimeUnit.MILLISECONDS)
+                        .build();
         //
         WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
@@ -8162,183 +8212,186 @@ public class ToolBox_Inf {
     /**
      * Metodo que faz o agendamento do Work da rotina de limpeza
      * Configuração:
-     *  - O agendamento deve ser imediato
-     *  - Execução recorrente a cada 12 horas com flexibilidade de 1 horas, ou seja, a partir de
-     *  11 hrs pode ser rodado
-     *  - Em caso de erro, tenta executar novamente depois de 1 hr
-     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
-     *
+     * - O agendamento deve ser imediato
+     * - Execução recorrente a cada 12 horas com flexibilidade de 1 horas, ou seja, a partir de
+     * 11 hrs pode ser rodado
+     * - Em caso de erro, tenta executar novamente depois de 1 hr
+     * - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
      */
-    public static void scheduleCleanningWork(Context context){
+    public static void scheduleCleanningWork(Context context) {
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
-        PeriodicWorkRequest  workCleanningRequest =
-            new PeriodicWorkRequest.Builder(
-                Work_Cleanning_Data.class,
-                12 , TimeUnit.HOURS //Periodicidade
-                ,1,  TimeUnit.HOURS //Flexibilidade
-            )
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                1,
-                TimeUnit.HOURS
-            )
-            .build();
+        PeriodicWorkRequest workCleanningRequest =
+                new PeriodicWorkRequest.Builder(
+                        Work_Cleanning_Data.class,
+                        12, TimeUnit.HOURS //Periodicidade
+                        , 1, TimeUnit.HOURS //Flexibilidade
+                )
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                1,
+                                TimeUnit.HOURS
+                        )
+                        .build();
         //
         WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                Work_Cleanning_Data.WORKER_TAG,
-                ExistingPeriodicWorkPolicy.KEEP,
-                workCleanningRequest
-            );
+                .enqueueUniquePeriodicWork(
+                        Work_Cleanning_Data.WORKER_TAG,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        workCleanningRequest
+                );
     }
 
     /**
      * Metodo que faz o agendamento do Work de download de logo do customer
      * Configuração:
-     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
-     *  - Em caso de falha, faz nova tentativa após 10 segundos.
-     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
+     * - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     * - Em caso de falha, faz nova tentativa após 10 segundos.
+     * - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
+     *
      * @param context
      */
-    public static void scheduleDownloadCustomerLogoWork(Context context){
+    public static void scheduleDownloadCustomerLogoWork(Context context) {
         Data inputData =
-            new Data.Builder()
-                .putLong(
-                    Constant.LOGIN_CUSTOMER_CODE,
-                    ToolBox_Con.getPreference_Customer_Code(context)
-                )
-                .putString(
-                    Constant.LOGIN_USER_CODE,
-                    ToolBox_Con.getPreference_User_Code(context)
-                )
-                .build();
+                new Data.Builder()
+                        .putLong(
+                                Constant.LOGIN_CUSTOMER_CODE,
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                        .putString(
+                                Constant.LOGIN_USER_CODE,
+                                ToolBox_Con.getPreference_User_Code(context)
+                        )
+                        .build();
         //
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workDownloadCustomerLogoRequest =
-            new OneTimeWorkRequest.Builder(Work_DownLoad_Customer_Logo.class)
-                .setInputData(inputData)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    10,
-                    TimeUnit.SECONDS
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_DownLoad_Customer_Logo.class)
+                        .setInputData(inputData)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                10,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_DownLoad_Customer_Logo.WORKER_TAG,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workDownloadCustomerLogoRequest
-            );
+                .enqueueUniqueWork(
+                        Work_DownLoad_Customer_Logo.WORKER_TAG,
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        workDownloadCustomerLogoRequest
+                );
     }
 
     /**
      * Metodo que faz o agendamento do Work de download de PDF
      * Configuração:
-     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
-     *  - Em caso de falha, faz nova tentativa após 10 segundos.
-     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
+     * - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     * - Em caso de falha, faz nova tentativa após 10 segundos.
+     * - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
+     *
      * @param context
      */
 
-    public static void scheduleDownloadPdfWork(Context context){
+    public static void scheduleDownloadPdfWork(Context context) {
         Data inputData =
-            new Data.Builder()
-                .putLong(
-                    Constant.LOGIN_CUSTOMER_CODE,
-                    ToolBox_Con.getPreference_Customer_Code(context)
-                )
-                .build();
+                new Data.Builder()
+                        .putLong(
+                                Constant.LOGIN_CUSTOMER_CODE,
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                        .build();
         //Define constraint que precisa estar conectado.
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //Cria uma tarefa que não se repete, incluindo os dados de customer no inputData
         //E defindo uma nova tentativa em caso de falha para daqui a 10 segundos.
         OneTimeWorkRequest workDownloadPdfRequest =
-            new OneTimeWorkRequest.Builder(Work_DownLoad_PDF.class)
-                .setInputData(inputData)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    10,
-                    TimeUnit.SECONDS
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_DownLoad_PDF.class)
+                        .setInputData(inputData)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                10,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //
         //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_DownLoad_PDF.WORKER_TAG,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workDownloadPdfRequest
-            );
+                .enqueueUniqueWork(
+                        Work_DownLoad_PDF.WORKER_TAG,
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        workDownloadPdfRequest
+                );
     }
 
     /**
      * Metodo que faz o agendamento do Work de download de Imgs
      * Configuração:
-     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
-     *  - Em caso de falha, faz nova tentativa após 10 segundos.
-     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
-     *  a ultima chamada será ignora e a primeira será mantida.
+     * - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     * - Em caso de falha, faz nova tentativa após 10 segundos.
+     * - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     * a ultima chamada será ignora e a primeira será mantida.
+     *
      * @param context
      */
-    public static void scheduleDownloadPictureWork(Context context){
+    public static void scheduleDownloadPictureWork(Context context) {
         Data inputData =
-            new Data.Builder()
-                .putLong(
-                    Constant.LOGIN_CUSTOMER_CODE,
-                    ToolBox_Con.getPreference_Customer_Code(context)
-                )
-                .build();
+                new Data.Builder()
+                        .putLong(
+                                Constant.LOGIN_CUSTOMER_CODE,
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        )
+                        .build();
         //
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workDownloadPictureRequest =
-            new OneTimeWorkRequest.Builder(Work_DownLoad_Picture.class)
-                .setInputData(inputData)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    10,
-                    TimeUnit.SECONDS
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_DownLoad_Picture.class)
+                        .setInputData(inputData)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                10,
+                                TimeUnit.SECONDS
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_DownLoad_Picture.WORKER_TAG,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
-                workDownloadPictureRequest
-            );
+                .enqueueUniqueWork(
+                        Work_DownLoad_Picture.WORKER_TAG,
+                        ExistingWorkPolicy.APPEND_OR_REPLACE,
+                        workDownloadPictureRequest
+                );
     }
     //TODO Comentar os metodos que chamam os Workers
 
     /**
      * Metodo que faz o agendamento de todos os workers de downloa
+     *
      * @param context
      */
     public static void scheduleAllDownloadWorkers(Context context) {
@@ -8357,15 +8410,14 @@ public class ToolBox_Inf {
     /**
      * Metodo que faz o agendamento do Work verifica msg do chat a cada 15 min
      * Configuração:
-     *  - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
-     *  recorrente
-     *  - Verifica se usuário está logado ou com customer válido.
-     *  - Em caso de exception o worker tenta de novo.
-     *
+     * - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
+     * recorrente
+     * - Verifica se usuário está logado ou com customer válido.
+     * - Em caso de exception o worker tenta de novo.
      */
-    public static void scheduleWorkQuarterChatRefresh(Context context){
+    public static void scheduleWorkQuarterChatRefresh(Context context) {
         //
-        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkQuarterChatRefresh \n");
+        Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkQuarterChatRefresh \n");
         //Periodicidade
         //
         Constraints networkConstraints = new Constraints.Builder()
@@ -8375,15 +8427,15 @@ public class ToolBox_Inf {
         PeriodicWorkRequest workQuarterChatRefresh =
                 new PeriodicWorkRequest.Builder(
                         Work_Quarter_Chat_Refresh.class,
-                        15 , TimeUnit.MINUTES //Periodicidade
-                         //,5,  TimeUnit.MINUTES //Flexibilidade
+                        15, TimeUnit.MINUTES //Periodicidade
+                        //,5,  TimeUnit.MINUTES //Flexibilidade
                 )
-                .setConstraints(networkConstraints)
-                .setBackoffCriteria(
-                        BackoffPolicy.LINEAR,
-                        PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                        TimeUnit.MILLISECONDS)
-                .build();
+                        .setConstraints(networkConstraints)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                                TimeUnit.MILLISECONDS)
+                        .build();
         //
         WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
@@ -8401,29 +8453,29 @@ public class ToolBox_Inf {
      */
     public static void scheduleFirebaseRegistrationWork(Context context) {
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workFirebaseResgistrationRequest =
-            new OneTimeWorkRequest.Builder(Work_Firebase_Registration.class)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    5,
-                    TimeUnit.MINUTES
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_Firebase_Registration.class)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                5,
+                                TimeUnit.MINUTES
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Firebase_Registration.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
-                workFirebaseResgistrationRequest
-            );
+                .enqueueUniqueWork(
+                        Work_Firebase_Registration.WORKER_TAG,
+                        ExistingWorkPolicy.KEEP,
+                        workFirebaseResgistrationRequest
+                );
     }
 
     /**
@@ -8433,35 +8485,36 @@ public class ToolBox_Inf {
      */
     public static void scheduleFirebaseID_ReportWork(Context context) {
         Constraints constraints =
-            new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+                new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
         //
         OneTimeWorkRequest workReportFirebasIdRequest =
-            new OneTimeWorkRequest.Builder(Work_Firebase_ID_Report.class)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    5,
-                    TimeUnit.MINUTES
-                )
-                .setConstraints(constraints)
-                .build();
+                new OneTimeWorkRequest.Builder(Work_Firebase_ID_Report.class)
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                5,
+                                TimeUnit.MINUTES
+                        )
+                        .setConstraints(constraints)
+                        .build();
         //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Firebase_ID_Report.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
-                workReportFirebasIdRequest
-            );
+                .enqueueUniqueWork(
+                        Work_Firebase_ID_Report.WORKER_TAG,
+                        ExistingWorkPolicy.KEEP,
+                        workReportFirebasIdRequest
+                );
     }
 
     /**
      * LUCHE - 08/07/2020
      * <p></p>
      * Metodo que valida string tem um valor diferente de null ou vazia
+     *
      * @param value Texto
      * @return True se string != null e != de vazia
      */
@@ -8473,12 +8526,13 @@ public class ToolBox_Inf {
      * LUCHE - 13/07/2020
      * <p></p>
      * Metodo que retorna se o site passado é o mesmo que o site logado.
-     * @param context Contexto
+     *
+     * @param context  Contexto
      * @param siteCode SiteCode a ser comparado
      * @return Verdadeiro se siteCode != null ,!= vazio e igual ao site da preferencia.
      */
-    public static boolean equalsToLoggedSite(Context context, String siteCode){
-        return  hasConsistentValueString(siteCode)
+    public static boolean equalsToLoggedSite(Context context, String siteCode) {
+        return hasConsistentValueString(siteCode)
                 && siteCode.equals(ToolBox_Con.getPreference_Site_Code(context));
     }
 
@@ -8486,31 +8540,32 @@ public class ToolBox_Inf {
      * LUCHE - 16/07/2020
      * <p></p>
      * Formata a data da seguinte maneira:
-     *  - Se apenas data de inicio, data hora
-     *  - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
-     *  - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     * - Se apenas data de inicio, data hora
+     * - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
+     * - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     *
      * @param context
      * @param startDate Data Inicio
-     * @param endDate Data Fim
+     * @param endDate   Data Fim
      * @return - Retorna data formata
      */
-    public static String getStepStartEndDateFormated(Context context, String startDate, String endDate ){
+    public static String getStepStartEndDateFormated(Context context, String startDate, String endDate) {
         SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         //
         try {
-            if(ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)){
+            if (ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)) {
                 if (ToolBox_Inf.checkSameDayDate(startDate, endDate)) {
                     dateFormatEnd = new SimpleDateFormat("HH:mm");
                 }
                 //
                 return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
-            }else{
+            } else {
                 return dateFormatStart.format(dateFormatIn.parse(startDate));
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "01-01-1900";
         }
     }
@@ -8523,12 +8578,11 @@ public class ToolBox_Inf {
      * Copia o arquivo para qualquer diretorio existente.
      *
      * @param originalFile - Arquivo original
-     * @param copyFile - Arquivo para qual será copiado.
-     * @throws IOException
-     * TODO MELHOR ADICIONANDO CRIACAO DE DIR DESTINO?
+     * @param copyFile     - Arquivo para qual será copiado.
+     * @throws IOException TODO MELHOR ADICIONANDO CRIACAO DE DIR DESTINO?
      */
     public static void copyAndRenameFile(File originalFile, File copyFile) throws IOException {
-        if(!copyFile.exists()){
+        if (!copyFile.exists()) {
             copyFile.createNewFile();
         }
         FileChannel outputChannel = null;
@@ -8548,17 +8602,19 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 01/09/2020
      * Metodo que retorna String formatada com PK + descrição do agendamento
+     *
      * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
      * @return - String formatada
      */
     public static String formatTicketErroLabel(TSave_Rec.Error_Process error_process) {
-        return error_process.getTicket_step_pk() +" - "+ error_process.getTicket_step_desc();
+        return error_process.getTicket_step_pk() + " - " + error_process.getTicket_step_desc();
     }
 
     /**
      * LUCHE - 01/09/2020
      * <p></p>
      * Gera o HmAux de error baseado no tipo do obj, atualmente, schedule e ticket.
+     *
      * @param error_process
      * @return HmAux a ser exibido.
      */
@@ -8567,12 +8623,12 @@ public class ToolBox_Inf {
         String label = "";
         String type = "";
         String status = "";
-        String final_status ="";
+        String final_status = "";
         //
-        if(TSave_Rec.Error_Process.ERROR_TYPE_TICKET.equals(error_process.getError_type())){
+        if (TSave_Rec.Error_Process.ERROR_TYPE_TICKET.equals(error_process.getError_type())) {
             label = ToolBox_Inf.formatTicketErroLabel(error_process);
             type = TSave_Rec.Error_Process.ERROR_TYPE_TICKET;
-        }else{
+        } else {
             label = ToolBox_Inf.formatScheduleErroLabel(error_process);
             type = ConstantBaseApp.SYS_STATUS_SCHEDULE;
         }
@@ -8592,17 +8648,18 @@ public class ToolBox_Inf {
      * Metodo que define a exição da descrição da origem do ticket, baseada no tipo.
      * Até a presente data, só existe um que deve ser tratado diferente, ma sja deixei as constantes
      * e switch criados pro futuro.
+     *
      * @param ticketOriginType Tipo da Origem
      * @param ticketOriginDesc Descricao da origem
-     * @param ticketTypeDesc Descrição do tipo do ticket
+     * @param ticketTypeDesc   Descrição do tipo do ticket
      * @return
      */
     @NonNull
     public static String getFormattedTicketOriginDesc(String ticketOriginType, String ticketOriginDesc, String ticketTypeDesc) {
-        if(ticketOriginType == null){
+        if (ticketOriginType == null) {
             return "\\" + ticketOriginDesc;
         }
-        switch (ticketOriginType){
+        switch (ticketOriginType) {
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
                 return ticketTypeDesc;
@@ -8618,7 +8675,7 @@ public class ToolBox_Inf {
     }
 
     public static Intent getOriginIntent(Context context, String origin_type) {
-        switch (origin_type){
+        switch (origin_type) {
             case TK_TICKET_ORIGIN_TYPE_MEASURE:
             case TK_TICKET_ORIGIN_TYPE_SCHEDULE:
             case TK_TICKET_ORIGIN_TYPE_BARCODE:
@@ -8633,15 +8690,15 @@ public class ToolBox_Inf {
         }
     }
 
-    public static int getScoreFormColor(@NonNull String score_status){
+    public static int getScoreFormColor(@NonNull String score_status) {
 
-        if(RANGE_RED.equalsIgnoreCase(score_status)){
+        if (RANGE_RED.equalsIgnoreCase(score_status)) {
             return R.color.namoa_color_danger_red;
         }
-        if(RANGE_YELLOW.equalsIgnoreCase(score_status)){
+        if (RANGE_YELLOW.equalsIgnoreCase(score_status)) {
             return R.color.namoa_color_yellow_2;
         }
-        if(RANGE_GREEN.equalsIgnoreCase(score_status)){
+        if (RANGE_GREEN.equalsIgnoreCase(score_status)) {
             return R.color.namoa_color_success_green;
         }
 
@@ -8652,6 +8709,7 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 03/11/2020
      * Metodo que verifica se alguma serial do ticket esta marcado com update required.
+     *
      * @param context
      * @param ticket_prefix
      * @param ticket_code
@@ -8661,11 +8719,11 @@ public class ToolBox_Inf {
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
         //
         List<MD_Product_Serial> serialList = serialDao.query(
-            new MD_Product_Serial_x_TK_Ticket_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ticket_prefix,
-                ticket_code
-            ).toSqlQuery()
+                new MD_Product_Serial_x_TK_Ticket_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code
+                ).toSqlQuery()
         );
         //
         return serialList != null && serialList.size() > 0;
@@ -8675,17 +8733,18 @@ public class ToolBox_Inf {
      * LUCHE - 09/11/2020
      * Metodo que executa obj none pendente ao executar check-in manual no step.
      * Regra solicita em 09/11/2020
+     *
      * @param ticketStep
      * @param setStepUpdateOnForceNone - Define se ao "finalizar" um none, deve setar o step como
-     * update_required.(faz sentido na chamada da act011)
+     *                                 update_required.(faz sentido na chamada da act011)
      */
     public static boolean forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
         boolean anyNoneFinalizaed = false;
-        if(ticketStep.getCtrl() != null) {
+        if (ticketStep.getCtrl() != null) {
             for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
-                if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
-                    && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
-                ){
+                if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
+                        && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                ) {
                     ticketCtrl.setCtrl_start_date(ticketStep.getStep_start_date());
                     ticketCtrl.setCtrl_start_user(ticketStep.getStep_start_user());
                     ticketCtrl.setCtrl_start_user_name(ticketStep.getStep_start_user_nick());
@@ -8696,7 +8755,7 @@ public class ToolBox_Inf {
                     ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                     ticketCtrl.setUpdate_required(1);
                     //Se flag true, seta o step tb para atualização.
-                    if(setStepUpdateOnForceNone){
+                    if (setStepUpdateOnForceNone) {
                         ticketStep.setUpdate_required(1);
                     }
                     //
@@ -8718,9 +8777,9 @@ public class ToolBox_Inf {
         long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
         long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
 
-        if(isDatetimeValid) {
+        if (isDatetimeValid) {
             if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
-                if(currentTimeMillis >= lastValidTime) {
+                if (currentTimeMillis >= lastValidTime) {
                     ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
                 }
                 return true;
@@ -8737,14 +8796,15 @@ public class ToolBox_Inf {
      * LUCHE - 10/06/2021
      * Add chamada do metodo removeAllFabMenuItens antes de setar dos menuItens. Esse metodo, remove
      * todos itens anteriores tando da lista quando do layout
-     * @param context   Deve ser o contexto da Activity e nao da Applicacao
+     *
+     * @param context     Deve ser o contexto da Activity e nao da Applicacao
      * @param fabMenu
      * @param hmAux_Trans
      * @param ticket
      * @param listener
      */
     public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, TK_Ticket ticket, FabMenu.IFabMenu listener) {
-        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticket);
+        ArrayList<FabMenuItem> fabMenuItems = initFabMenuItens(context, hmAux_Trans, ticket);
         //LUCHE - 10/06/2021 - Add chamada do metodo que remove todos itens dalista de e "do layout"
         fabMenu.removeAllFabMenuItens();
         //
@@ -8768,7 +8828,7 @@ public class ToolBox_Inf {
         int iconColor = context.getResources().getColor(R.color.colorPrimary);
         fabMenuItems.clear();
         //atalho para edicao de cabecalho.
-        if(ticket.getKanban() != 1) {
+        if (ticket.getKanban() != 1) {
             fabEditHeader = new FabMenuItem(context);
             fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
             fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
@@ -8780,8 +8840,8 @@ public class ToolBox_Inf {
             fabMenuItems.add(fabEditHeader);
         }
         //atalho para edicao de grupo de trabalho.
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
-        && !ticket.isReadOnly(context)) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
+                && !ticket.isReadOnly(context)) {
             FabMenuItem fabEditWorkGroup;
             fabEditWorkGroup = new FabMenuItem(context);
             fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);
@@ -8824,9 +8884,9 @@ public class ToolBox_Inf {
 //        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
 //        fabMenuItems.add(fabProduct);
         //Nao executar.
-        if(!ticket.isReadOnly(context)
-        && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED)
-        && context instanceof Act070_Main) {
+        if (!ticket.isReadOnly(context)
+                && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED)
+                && context instanceof Act070_Main) {
             fabNotExecuted = new FabMenuItem(context);
             fabNotExecuted.setTag(ConstantBaseApp.FAB_NOT_EXECUTE_LBL);
             fabNotExecuted.setmLabel(hmAux_Trans.get("to_not_execute_lbl"));
@@ -8844,67 +8904,71 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 13/01/2021
      * Metodo que retorna o obj Ev_user_customer do customer logado.
+     *
      * @param context
      * @return
      */
     public static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
         return new EV_User_CustomerDao(
-            context,
-            Constant.DB_FULL_BASE,
-            Constant.DB_VERSION_BASE
+                context,
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
         ).getByString(
-            new EV_User_Customer_Sql_002(
-                ToolBox_Con.getPreference_User_Code(context),
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-            ).toSqlQuery()
+                new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
         );
     }
 
     /**
      * LUCHE - 13/01/2021
      * Metodo que retorna o obj site do site logado
+     *
      * @param context
      * @return
      */
     private static MD_Site getCurrentSiteObjInfo(Context context) {
         return new MD_SiteDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         ).getByString(
-            new MD_Site_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ToolBox_Con.getPreference_Site_Code(context)
-            ).toSqlQuery()
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
         );
     }
 
     /**
      * LUCHE - 13/01/2021
      * Metodo que retorna o obj site do site logado
+     *
      * @param context
      * @return
      */
     public static MD_Site getSiteObjInfo(Context context, String site_code) {
         return new MD_SiteDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         ).getByString(
-            new MD_Site_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                    site_code
-            ).toSqlQuery()
+                new MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        site_code
+                ).toSqlQuery()
         );
     }
 
     /**
      * LUCHE - 13/01/2021
      * Metodo que verifica se o tipo de licença do customer logado é o tipo de licença por site.
+     *
      * @param context
      * @return Verdadeiro se o tipo de licença for LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE
      */
-    public static boolean isConcurrentBySiteLicense(Context context){
+    public static boolean isConcurrentBySiteLicense(Context context) {
         EV_User_Customer userCustomer = getCurrentEvUsrCustomerInfo(context);
         return userCustomer != null && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(userCustomer.getLicense_control_type());
     }
@@ -8912,23 +8976,25 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 13/01/2021
      * Metodo que verifica se o site logado possui licença habilitada.
+     *
      * @param context
      * @return
      */
-    public static boolean isSiteLicenseDisabled(Context context){
-        return isSiteLicenseDisabled(context,ToolBox_Con.getPreference_Site_Code(context));
+    public static boolean isSiteLicenseDisabled(Context context) {
+        return isSiteLicenseDisabled(context, ToolBox_Con.getPreference_Site_Code(context));
     }
+
     /**
      * LUCHE - 13/01/2021
      * Metodo que verifica se o site logado possui licença habilitada.
+     *
      * @param context
      * @return
      */
-    public static boolean isSiteLicenseDisabled(Context context, String site_code){
+    public static boolean isSiteLicenseDisabled(Context context, String site_code) {
         MD_Site mdSite = getSiteObjInfo(context, site_code);
         return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
     }
-
 
 
     /**
@@ -8937,27 +9003,28 @@ public class ToolBox_Inf {
      * Os campos Free_executions_max e Free_executions_count são enviados pelo servidor, ja o campo
      * getApp_executions_count é contabilizado pelo app e para calcular o numero de execuções disponiveis,
      * é necessario somar os 2 campos.
+     *
      * @param context
      * @return
      */
-    public static boolean hasFreeExecutionAvailable(Context context){
+    public static boolean hasFreeExecutionAvailable(Context context) {
         return hasFreeExecutionAvailable(context, ToolBox_Con.getPreference_Site_Code(context));
     }
 
     private static boolean hasFreeExecutionAvailable(Context context, String site_code) {
         MD_Site mdSite = getSiteObjInfo(context, site_code);
-        if(mdSite != null){
+        if (mdSite != null) {
             //Em teste se site tem licença ativa não deveria ser usado esse metodo, uma vez que com
             // licença ativa, NÃO HÁ LIMITE DE EXECUÇÃO, mas fica a tratativa
-            if(mdSite.getLicense_enabled() == 1){
+            if (mdSite.getLicense_enabled() == 1) {
                 return true;
-            }else{
+            } else {
                 //Se um dos itens de calculo for null, ja deu algum b.o, retorna falso
-                if( mdSite.getFree_executions_max() == null
+                if (mdSite.getFree_executions_max() == null
                         || mdSite.getFree_executions_count() == null
-                ){
+                ) {
                     return false;
-                }else{
+                } else {
                     /*
                         Se todos campos preenchidos, faz o calculo
                         QtdMax - (QtdExecDoServer + QtdExecDoApp)
@@ -8973,16 +9040,17 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 14/01/2021
      * Metodo que verifica se o site logado esta bloquado analizando a proprieade License_blocked
+     *
      * @param context
      * @return
      */
-    public static boolean isCurrentSiteBlockedByExecution(Context context){
+    public static boolean isCurrentSiteBlockedByExecution(Context context) {
         return isCurrentSiteBlockedByExecution(context, ToolBox_Con.getPreference_Site_Code(context));
     }
 
     private static boolean isCurrentSiteBlockedByExecution(Context context, String site_code) {
         MD_Site mdSite = getSiteObjInfo(context, site_code);
-        if(mdSite != null){
+        if (mdSite != null) {
             return mdSite.getLicense_blocked() == 1;
         }
         //
@@ -8993,6 +9061,7 @@ public class ToolBox_Inf {
      * LUCHE - 14/01/2021
      * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
      * quando o calculo de execuções disponiveis
+     *
      * @param context
      * @return
      */
@@ -9005,16 +9074,17 @@ public class ToolBox_Inf {
      * LUCHE - 14/01/2021
      * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
      * quando o calculo de execuções disponiveis
+     *
      * @param context
      * @return
      */
     public static boolean isSiteBlockedOrLimitExecutionReached(Context context, String site_code) {
-        if(site_code == null){
+        if (site_code == null) {
             return false;
         }
         return
                 ToolBox_Inf.isCurrentSiteBlockedByExecution(context, site_code)
-                        ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
+                        || (ToolBox_Inf.isConcurrentBySiteLicense(context)
                         && ToolBox_Inf.isSiteLicenseDisabled(context, site_code)
                         && !ToolBox_Inf.hasFreeExecutionAvailable(context, site_code)
                 );
@@ -9023,43 +9093,44 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 30/03/2021
      * Cancela os alarms que foram substituidos pelos workers
+     *
      * @param context
      */
-    public static void cancelAlarmsTarget21(Context context){
+    public static void cancelAlarmsTarget21(Context context) {
         AlarmManager am = (AlarmManager)
-            context.getSystemService(Context.ALARM_SERVICE);
+                context.getSystemService(Context.ALARM_SERVICE);
 
         Intent cleanningAlarmIntent = new Intent(context,
-            WBR_Cleanning.class
+                WBR_Cleanning.class
         );
         //
         PendingIntent piCleanning = PendingIntent.getBroadcast(
-            context,
-            0,
-            cleanningAlarmIntent,
-                ToolBox_Inf.getMutableFlag( 0, false)
+                context,
+                0,
+                cleanningAlarmIntent,
+                ToolBox_Inf.getMutableFlag(0, false)
         );
         //
         Intent mIntent_Full = new Intent(context,
-            WBR_AL_Full.class
+                WBR_AL_Full.class
         );
         PendingIntent piFull = PendingIntent.getBroadcast(
-            context,
-            //100,
-            ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-            mIntent_Full,
-                ToolBox_Inf.getMutableFlag( 0, false)
+                context,
+                //100,
+                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+                mIntent_Full,
+                ToolBox_Inf.getMutableFlag(0, false)
         );
         //
         Intent mIntent_Quarter = new Intent(context,
-            WBR_AL_Quarter.class
+                WBR_AL_Quarter.class
         );
         PendingIntent piQuarter = PendingIntent.getBroadcast(
-            context,
-            //200,
-            ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-            mIntent_Quarter,
-                ToolBox_Inf.getMutableFlag( 0, false)
+                context,
+                //200,
+                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+                mIntent_Quarter,
+                ToolBox_Inf.getMutableFlag(0, false)
         );
         //
         am.cancel(piCleanning);
@@ -9071,17 +9142,17 @@ public class ToolBox_Inf {
     public static MdTag getMdTagInfo(Context context, int tag_operational_code) {
         long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         MdTagDao tagDao = new MdTagDao(
-            context,
-            ToolBox_Con.customDBPath(customer_code),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
         );
         //
-        if(tagDao != null){
+        if (tagDao != null) {
             return tagDao.getByString(
-                new MdTagSql001(
-                    (int) customer_code,
-                    tag_operational_code
-                ).toSqlQuery()
+                    new MdTagSql001(
+                            (int) customer_code,
+                            tag_operational_code
+                    ).toSqlQuery()
             );
         }
         return null;
@@ -9092,23 +9163,24 @@ public class ToolBox_Inf {
      * LUCHE - 16/07/2020
      * <p></p>
      * Formata a data da seguinte maneira:
-     *  - Se apenas data de inicio, data hora
-     *  - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
-     *  - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     * - Se apenas data de inicio, data hora
+     * - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
+     * - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     *
      * @param context
      * @param startDate Data Inicio
-     * @param endDate Data Fim
+     * @param endDate   Data Fim
      * @return - Retorna data formata
      */
-    public static String getMyActionStartEndDateFormated(Context context, String startDate, String endDate ){
+    public static String getMyActionStartEndDateFormated(Context context, String startDate, String endDate) {
         SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
         SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
         //
         try {
-            if(ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)){
+            if (ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)) {
                 //Se for a mesma data e hora, não faz nada pois o return fora do if resolve
-                if(!checkSameDayAndHourDate(startDate, endDate)) {
+                if (!checkSameDayAndHourDate(startDate, endDate)) {
                     if (ToolBox_Inf.checkSameDayDate(startDate, endDate)) {
                         dateFormatEnd = new SimpleDateFormat("HH:mm");
                     }
@@ -9118,8 +9190,8 @@ public class ToolBox_Inf {
             }
             //
             return dateFormatStart.format(dateFormatIn.parse(startDate));
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "01-01-1900";
         }
     }
@@ -9128,6 +9200,7 @@ public class ToolBox_Inf {
      * LUCHE - 10/05/2021
      * Verifica se o millisegundos das data são iguais.
      * A data deve estar no formato do banco yyyy-MM-dd HH:mm:ss Z
+     *
      * @param startDate
      * @param endDate
      * @return Verdadeiro se iguais.
@@ -9140,10 +9213,11 @@ public class ToolBox_Inf {
      * LUCHE - 11/05/2021
      * Verifica se data passada é menor ou igual a atual.
      * Data enviada deve estar no formato "yyyy-MM-dd HH:mm:ss Z"
+     *
      * @param itemDateWithTmz - Data no formato "yyyy-MM-dd HH:mm:ss Z"
      * @return
      */
-    public static boolean isItemLate(String itemDateWithTmz){
+    public static boolean isItemLate(String itemDateWithTmz) {
         long itemMill = dateToMilliseconds(itemDateWithTmz);
         long nowMs = dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
@@ -9155,21 +9229,21 @@ public class ToolBox_Inf {
         MyActionFilterParam mActionFilterParam = null;
         try {
             mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
         }
         if (mActionFilterParam == null) {
             mActionFilterParam = new MyActionFilterParam(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
             );
         }
         mActionFilterParam.setOriginFlow(bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005));
@@ -9180,7 +9254,7 @@ public class ToolBox_Inf {
     public static boolean checkTicketMdProfile(Context context, String s_site_code, long operationCode, long productCode, int tagCode) {
         long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
 
-        try{
+        try {
             MD_SiteDao siteDao = new MD_SiteDao(
                     context,
                     ToolBox_Con.customDBPath(customerCode),
@@ -9223,7 +9297,7 @@ public class ToolBox_Inf {
             );
             //
             MdTag tag = null;
-            if(tagCode > -1) {
+            if (tagCode > -1) {
                 tag = mdTagDao.getByString(
                         new MdTagSql001(
                                 (int) customerCode,
@@ -9236,23 +9310,24 @@ public class ToolBox_Inf {
                         && operation != null && operation.getCustomer_code() > -1
                         && product != null && product.getCustomer_code() > -1
                         && tag != null && tag.getCustomer_code() > -1;
-            }else{
+            } else {
                 return site != null && site.getCustomer_code() > -1
                         && operation != null && operation.getCustomer_code() > -1
                         && product != null && product.getCustomer_code() > -1;
             }
             //
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox_Inf.registerException(context.getClass().getName(), e);
             return false;
         }
     }
+
     public static boolean checkTicketMdProfile(Context context, String s_site_code, String s_operation_code, String s_product_code, String s_tag_operational_code) {
         //
         long operationCode = Long.parseLong(s_operation_code);
         long productCode = Long.parseLong(s_product_code);
-        int tagCode=-1;
-        if(!s_tag_operational_code.isEmpty()) {
+        int tagCode = -1;
+        if (!s_tag_operational_code.isEmpty()) {
             tagCode = Integer.parseInt(s_tag_operational_code);
         }
         return checkTicketMdProfile(context, s_site_code, operationCode, productCode, tagCode);
@@ -9261,22 +9336,23 @@ public class ToolBox_Inf {
     /**
      * Metodo que retorno o nome da origem como titulo da tela.
      * NÃO DEVE SER USADO NA LISTA DE ACTION , POIS A REGRA LA É OUTRA.
+     *
      * @param context
-     * @param originFlow - Fluxo e origem resgatado via bundle
-     * @param hmAuxTrans - HmAux com trad da tela e do sys
+     * @param originFlow         - Fluxo e origem resgatado via bundle
+     * @param hmAuxTrans         - HmAux com trad da tela e do sys
      * @param defaultActTitleKey - Chave para a tradução original da tela.Ex,: act082_title
      * @return
      */
-    public static String getActTitleByOrigin(Context context, String originFlow,HMAux hmAuxTrans,String defaultActTitleKey){
-        if(originFlow == null || ToolBox_Inf.hasSoOrIOProfile(context)){
+    public static String getActTitleByOrigin(Context context, String originFlow, HMAux hmAuxTrans, String defaultActTitleKey) {
+        if (originFlow == null || ToolBox_Inf.hasSoOrIOProfile(context)) {
             return hmAuxTrans.get(defaultActTitleKey);
         }
-        switch (originFlow){
-            case ConstantBaseApp.ACT006 :
+        switch (originFlow) {
+            case ConstantBaseApp.ACT006:
                 return hmAuxTrans.get("sys_main_menu_assets_local_lbl");
-            case ConstantBaseApp.ACT016 :
+            case ConstantBaseApp.ACT016:
                 return hmAuxTrans.get("sys_main_menu_calendar_lbl");
-            case ConstantBaseApp.ACT068 :
+            case ConstantBaseApp.ACT068:
                 return hmAuxTrans.get("sys_main_menu_search_lbl");
             default:
                 return hmAuxTrans.get(defaultActTitleKey);
@@ -9288,22 +9364,23 @@ public class ToolBox_Inf {
      * <p></p>
      * Metodo que verifica se produto ja existe na lista de sincronismos de form.
      * <p></p>
+     *
      * @param context
      * @param productCode
      * @return True Se registro existe.
      */
-    public static boolean isProductInSyncChecklist(Context context, int productCode){
+    public static boolean isProductInSyncChecklist(Context context, int productCode) {
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
         //
         Sync_Checklist syncChecklist = syncChecklistDao.getByString(
-            new Sync_Checklist_Sql_002(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                productCode
-            ).toSqlQuery()
+                new Sync_Checklist_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        productCode
+                ).toSqlQuery()
         );
         //
         return syncChecklist != null && syncChecklist.getCustomer_code() > 0 && syncChecklist.getProduct_code() == productCode;
@@ -9314,13 +9391,14 @@ public class ToolBox_Inf {
      * <p></p>
      * Metodo que verifica se existe ao menos um form para os 3 params enviados.
      * <p></p>
+     *
      * @param context
      * @param productCode
      * @param operationCode
      * @param siteCode
      * @return True se houver ao menos um form que de match para os 3 parametros: productCode, operationCode e siteCode
      */
-    public static boolean hasAnyAllParamFormMatch(Context context, long productCode, long operationCode, String siteCode){
+    public static boolean hasAnyAllParamFormMatch(Context context, long productCode, long operationCode, String siteCode) {
         boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), productCode);
         boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), operationCode);
         boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(context, ToolBox_Con.getPreference_Customer_Code(context), siteCode);
@@ -9334,22 +9412,23 @@ public class ToolBox_Inf {
      * Metodo que define o valor do campo BlockSpontaneous pela origem.
      * <p></p>
      * Se origem null ou vazia
-     *      *   - Layout Menu O.S = null
-     *      *   - Layout padrap = 0 (decidi restringir nesse caso,pois nesse layout NUNCA DEVERIA TER ORIGEM VAZIA)
-     *      *  Se origem definida:
-     *      *   - Ativo/local(Act006) = 0
-     *      *   - Qualquer outro null.
+     * *   - Layout Menu O.S = null
+     * *   - Layout padrap = 0 (decidi restringir nesse caso,pois nesse layout NUNCA DEVERIA TER ORIGEM VAZIA)
+     * *  Se origem definida:
+     * *   - Ativo/local(Act006) = 0
+     * *   - Qualquer outro null.
+     *
      * @param context
      * @param originFlow - Origin do processo.
      * @return 0 ou null
      */
     @Nullable
     public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow, boolean has_tk_ticket_is_form_off_hand) {
-        if(originFlow == null || originFlow.isEmpty()){
+        if (originFlow == null || originFlow.isEmpty()) {
             return hasSoOrIOProfile(context) ? null : 0;
         }
         //
-        if(has_tk_ticket_is_form_off_hand){
+        if (has_tk_ticket_is_form_off_hand) {
             return null;
         }
         //
@@ -9367,10 +9446,11 @@ public class ToolBox_Inf {
 
     /**
      * Metodo que retorna se data passa esta no futuro.
+     *
      * @param date - Data no formato yyyy-MM-dd HH:mm:ss Z
      * @return true - Se millisegundos da data maior que millisegundos atual.
      */
-    public static boolean isFutureDate(String date){
+    public static boolean isFutureDate(String date) {
         long currentMilliseconds = Calendar.getInstance().getTimeInMillis();
         long dateMilliseconds = dateToMilliseconds(date);
         //
@@ -9380,11 +9460,11 @@ public class ToolBox_Inf {
 
 
     public static String getDateDiferenceInHHMM(String firstDate, String secoundDate) {
-        long diference =  getDateDiferenceInMilliseconds(firstDate, secoundDate);
+        long diference = getDateDiferenceInMilliseconds(firstDate, secoundDate);
         long hour = TimeUnit.MILLISECONDS.toHours(diference);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(diference) - TimeUnit.HOURS.toMinutes(hour);
 
-        return String.format("%02d:%02d",hour, minutes);
+        return String.format("%02d:%02d", hour, minutes);
     }
 
     public static long getDateDiferenceInMilliseconds(String firstDate, String secoundDate) {
@@ -9437,52 +9517,53 @@ public class ToolBox_Inf {
      * LUCHE - 02/12/2021
      * Alterado maneira de criar o BigDecimal pois o cast de float pra double por vezes gerava valores
      * bizarros. Utilizado a conversão de float pra String para então criar o BigDecimal
+     *
      * @param valor
      * @param decimalScale
      * @param applyDecimalSeparatorByLocale
      * @return
      */
-    public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale){
-        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)).setScale(decimalScale, RoundingMode.HALF_DOWN));
-        if(applyDecimalSeparatorByLocale){
-                return  applyDecimalSeparatorByUserLocale(convertedValue);
-            }
+    public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale) {
+        String convertedValue = new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)).setScale(decimalScale, RoundingMode.HALF_DOWN));
+        if (applyDecimalSeparatorByLocale) {
+            return applyDecimalSeparatorByUserLocale(convertedValue);
+        }
         //
         return convertedValue;
     }
 
-    public static String formatLastMeaseureInfo(Context context, String valueSufix, Float lastMeasureValue, String lastMeasureDate){
+    public static String formatLastMeaseureInfo(Context context, String valueSufix, Float lastMeasureValue, String lastMeasureDate) {
         String meSufix = "";
-        if(valueSufix != null){
+        if (valueSufix != null) {
             //O espaço esta na var meSufix
             meSufix = " " + valueSufix;
         }
         //
-        if(lastMeasureValue != null && lastMeasureDate != null){
+        if (lastMeasureValue != null && lastMeasureDate != null) {
 
             return convertFloatToBigDecimalString(
                     lastMeasureValue,
                     true
-                    ) +
+            ) +
                     meSufix + " - " +
                     millisecondsToString(
-                        dateToMilliseconds(
-                            lastMeasureDate
-                        ),
-                        nlsDateFormat(context) + " HH:mm"
-            );
-        }else{
+                            dateToMilliseconds(
+                                    lastMeasureDate
+                            ),
+                            nlsDateFormat(context) + " HH:mm"
+                    );
+        } else {
             String info = "";
             //
-            if(lastMeasureValue != null){
-                info  +=  convertFloatToBigDecimalString(
+            if (lastMeasureValue != null) {
+                info += convertFloatToBigDecimalString(
                         lastMeasureValue,
                         true
                 ) + meSufix;
             }
             //
-            if(lastMeasureDate != null){
-                info  +=  millisecondsToString(
+            if (lastMeasureDate != null) {
+                info += millisecondsToString(
                         dateToMilliseconds(
                                 lastMeasureDate,
                                 ConstantBaseApp.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
@@ -9498,22 +9579,24 @@ public class ToolBox_Inf {
      * LUCHE - 09/02/2022
      * Metodo que recebe valor float e o formata para String
      * Se applyDecimalSeparatorByLocale verdadeira, usa o separado decimal  baseado no locale
+     *
      * @param valor*
      * @param applyDecimalSeparatorByLocale
      * @return
      */
-    public static String convertFloatToBigDecimalString(float valor, boolean applyDecimalSeparatorByLocale){
-        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
-        if(applyDecimalSeparatorByLocale){
-            return  applyDecimalSeparatorByUserLocale(convertedValue);
+    public static String convertFloatToBigDecimalString(float valor, boolean applyDecimalSeparatorByLocale) {
+        String convertedValue = new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
+        if (applyDecimalSeparatorByLocale) {
+            return applyDecimalSeparatorByUserLocale(convertedValue);
         }
         //
         return convertedValue;
     }
-    public static String convertFloatToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale){
-        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
-        if(applyDecimalSeparatorByLocale){
-            return  applyDecimalSeparatorByUserLocale(convertedValue);
+
+    public static String convertFloatToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale) {
+        String convertedValue = new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
+        if (applyDecimalSeparatorByLocale) {
+            return applyDecimalSeparatorByUserLocale(convertedValue);
         }
         //
         return convertedValue;
@@ -9523,20 +9606,20 @@ public class ToolBox_Inf {
             Double lastFixed,
             String measureValueSufix,
             Integer restrictionDecimal
-    ){
+    ) {
         String lastFixedFormatted = ToolBox_Inf.convertFloatToBigDecimalString(lastFixed, true);
 
-        if(measureValueSufix != null){
+        if (measureValueSufix != null) {
             lastFixedFormatted += " " + measureValueSufix;
         }
 
         return lastFixedFormatted;
     }
 
-    public static String convertDoubleToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale){
-        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
-        if(applyDecimalSeparatorByLocale){
-            return  applyDecimalSeparatorByUserLocale(convertedValue);
+    public static String convertDoubleToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale) {
+        String convertedValue = new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
+        if (applyDecimalSeparatorByLocale) {
+            return applyDecimalSeparatorByUserLocale(convertedValue);
         }
         //
         return convertedValue;
@@ -9546,24 +9629,25 @@ public class ToolBox_Inf {
      * LUCHE - 25/10/2021
      * Metodo que recebe um data no formato full timestamp tz e joga o horario
      * para o ultimo minutos do dia.
+     *
      * @param date
      * @return
      */
-    public static String getDateLastMinute(String date){
+    public static String getDateLastMinute(String date) {
         int fullTimeZoneFormat = "1900-01-01 00:00:00 +00:00".length();
-        try{
-            if(date.length() == fullTimeZoneFormat
-    && date.trim().indexOf(" ") == 10
-                && date.trim().lastIndexOf(" ") == 19
-            ){
+        try {
+            if (date.length() == fullTimeZoneFormat
+                    && date.trim().indexOf(" ") == 10
+                    && date.trim().lastIndexOf(" ") == 19
+            ) {
                 String[] splitedDate = date.split(" ");
                 //
-                return splitedDate[0] +" 23:59:59 " + splitedDate[2];
-            }else{
+                return splitedDate[0] + " 23:59:59 " + splitedDate[2];
+            } else {
                 return date;
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(CLASS_NAME,e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
             return "1900-01-01 00:00:00 +00:00";
         }
     }
@@ -9574,11 +9658,12 @@ public class ToolBox_Inf {
      * comando GLOB do sqlite.
      * Basicamente, para as letras que podem ter caracter especial, o caracter é substituido pela
      * sequencia de caracteres que podem equivaler ao caracter originalmente digitado
+     *
      * @param text
      * @return
      */
-    public static  String getNoAccentStringForGlobSql(String text){
-        if(text == null){
+    public static String getNoAccentStringForGlobSql(String text) {
+        if (text == null) {
             return text;
         }
         StringBuilder sbText = new StringBuilder(text);
@@ -9667,8 +9752,8 @@ public class ToolBox_Inf {
                     default:
                         noAccentText.append(sbText.charAt(i));
                 }
-            }catch (Exception e){
-                registerException(CLASS_NAME,e);
+            } catch (Exception e) {
+                registerException(CLASS_NAME, e);
             }
         }
         //
@@ -9680,8 +9765,8 @@ public class ToolBox_Inf {
             @Override
             public int compare(HMAux product, HMAux productAux) {
 
-                String description = Normalizer.normalize(product.get("desc")!= null ? Objects.requireNonNull(product.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
-                String descriptionAux = Normalizer.normalize(productAux.get("desc")!= null ? Objects.requireNonNull(productAux.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
+                String description = Normalizer.normalize(product.get("desc") != null ? Objects.requireNonNull(product.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
+                String descriptionAux = Normalizer.normalize(productAux.get("desc") != null ? Objects.requireNonNull(productAux.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
 
                 return Collator.getInstance().compare(description, descriptionAux);
             }
@@ -9740,7 +9825,7 @@ public class ToolBox_Inf {
      * @return
      */
     public static String getActionTimeDefaultOption(Context context) {
-        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
+        if (!ToolBox_Inf.hasSoOrIOProfile(context)) {
             if (ToolBox_Inf.profileExists(
                     context,
                     ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
@@ -9754,12 +9839,12 @@ public class ToolBox_Inf {
 
     /**
      * BARRIONUEVO 19-04-202
-     *  - Verifica se o site da açõa possui mais de uma zona.
-     *  - Verifica se o serial da açõa existe e se seu site é igual ao da acao.
-     *  - Caso o serial nao exista, utiliza a zona que esta preenchida na acao.
-     *  - Verifica qual zona deve ser utilizada para preencher o card das ações.
-     *  - A prioridade da zona é a do serial. Caso o serial nao exista deve se usar a zona da ação.
-     *  - A zona só deve ser preenchida se o site possuir mais de uma zona e o site da ação for igual ao site do serial
+     * - Verifica se o site da açõa possui mais de uma zona.
+     * - Verifica se o serial da açõa existe e se seu site é igual ao da acao.
+     * - Caso o serial nao exista, utiliza a zona que esta preenchida na acao.
+     * - Verifica qual zona deve ser utilizada para preencher o card das ações.
+     * - A prioridade da zona é a do serial. Caso o serial nao exista deve se usar a zona da ação.
+     * - A zona só deve ser preenchida se o site possuir mais de uma zona e o site da ação for igual ao site do serial
      *
      * @param context
      * @param siteCode
@@ -9769,15 +9854,15 @@ public class ToolBox_Inf {
      * @param serialId
      * @return
      */
-    public static String getProductSerialZone(Context context, int siteCode, String actionZoneDesc, MD_Product_SerialDao dao, long productCode, String serialId){
+    public static String getProductSerialZone(Context context, int siteCode, String actionZoneDesc, MD_Product_SerialDao dao, long productCode, String serialId) {
         //
-        if(!ToolBox_Inf.hasSiteManyZones(context, siteCode)){
+        if (!ToolBox_Inf.hasSiteManyZones(context, siteCode)) {
             return null;
         }
         //
         MD_Product_Serial productSerial = getProductSerial(context, dao, productCode, serialId);
-        if(productSerial != null){
-            if(productSerial.getSite_code() != null &&  siteCode == productSerial.getSite_code()) {
+        if (productSerial != null) {
+            if (productSerial.getSite_code() != null && siteCode == productSerial.getSite_code()) {
                 return productSerial.getZone_desc();
             }
             return null;
@@ -9785,8 +9870,9 @@ public class ToolBox_Inf {
         //
         return actionZoneDesc;
     }
+
     //
-    public static MD_Product_Serial getProductSerial(Context context, MD_Product_SerialDao dao, long productCode, String serialId){
+    public static MD_Product_Serial getProductSerial(Context context, MD_Product_SerialDao dao, long productCode, String serialId) {
         return dao.getByString(new MD_Product_Serial_Sql_002(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 productCode,
@@ -9808,7 +9894,7 @@ public class ToolBox_Inf {
                     context
             );
             serialDao.addUpdateTmp(rec.getRecord().get(0));
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             ToolBox_Inf.registerException(context.getClass().getName(), e);
         }
     }
@@ -9849,19 +9935,19 @@ public class ToolBox_Inf {
     }
 
     public static boolean hasSerialOnList(ArrayList<MD_Product_Serial> serial_list, String serialId) {
-        String serialIdFormatted =serialId;
-        if(serialId == null ||
-                serialId.isEmpty()){
+        String serialIdFormatted = serialId;
+        if (serialId == null ||
+                serialId.isEmpty()) {
             return false;
-        }else{
+        } else {
             serialIdFormatted = StringHelperKt.stripAccents(serialId).toUpperCase();
         }
         for (MD_Product_Serial md_product_serial : serial_list) {
-            String serialListedFormatted ="";
-            if(md_product_serial.getSerial_id() != null) {
+            String serialListedFormatted = "";
+            if (md_product_serial.getSerial_id() != null) {
                 serialListedFormatted = StringHelperKt.stripAccents(md_product_serial.getSerial_id()).toUpperCase();
             }
-            if(serialListedFormatted.equals(serialIdFormatted)){
+            if (serialListedFormatted.equals(serialIdFormatted)) {
                 return true;
             }
         }

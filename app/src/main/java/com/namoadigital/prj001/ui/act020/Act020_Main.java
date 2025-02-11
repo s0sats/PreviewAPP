@@ -1097,8 +1097,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
         bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
         bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
-
-
         Intent mIntent = new Intent(this, Act021_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);

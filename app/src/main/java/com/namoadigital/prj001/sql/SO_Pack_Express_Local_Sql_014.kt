@@ -30,7 +30,8 @@ class SO_Pack_Express_Local_Sql_014(
                     AND ${SO_Pack_Express_LocalDao.SO_STATUS}  <> '${ConstantBaseApp.SYS_STATUS_PROCESS}'
                     )
                   OR ( ${SO_Pack_Express_LocalDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_SENT}' 
-                       AND ${SO_Pack_Express_LocalDao.SO_STATUS} <> '${ConstantBaseApp.SYS_STATUS_DENIED}' 
+                       AND ${SO_Pack_Express_LocalDao.SO_STATUS} 
+                            NOT IN ('${ConstantBaseApp.SYS_STATUS_DENIED}', '${ConstantBaseApp.SYS_STATUS_ERROR}')  
                       )
                 )                                    
           ORDER BY

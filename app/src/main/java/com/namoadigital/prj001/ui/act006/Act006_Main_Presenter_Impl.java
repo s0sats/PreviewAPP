@@ -10,18 +10,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeFlow;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
+import com.namoadigital.prj001.core.data.local.preferences.barcode_settings.BarCodeFlowPref;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
-import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
-import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
@@ -31,7 +32,6 @@ import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +83,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     private ArrayList<MD_Product> productsList;
+
     @Override
     public void getMD_Products() {
         productsList = (ArrayList<MD_Product>) productDao.query(
@@ -110,7 +111,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             if (finalizeds.get(0).get(GE_Custom_Form_Local_Sql_009.FINALIZED_QTY).equalsIgnoreCase("0")) {
                 mView.showMsg(
                         hmAux_Trans.get("alert_no_pendencies_title"),
-                        hmAux_Trans.get("alert_no_pendencies_msg")
+                        hmAux_Trans.get("alert_no_pendencies_msg"),
+                        null
                 );
             } else {
                 //se não avança para proxima tela.
@@ -127,7 +129,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         mTracking = tracking;
 
         if (ToolBox_Con.isOnline(context)
-        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+                && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")
@@ -136,7 +138,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct!= null ?  String.valueOf(mdProduct.getProduct_code()) : null );
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct != null ? String.valueOf(mdProduct.getProduct_code()) : null);
             //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
@@ -154,6 +156,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     /**
      * LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
      * Alterado assinatua do metodo , add param que indica se a cusca deve ser exata ou por like
+     *
      * @param forceExactSearch
      */
     @Override
@@ -163,11 +166,18 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         if (serial_list.size() > 0) {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
         } else {
-            if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
+            if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1)) {
                 //LUCHE - 28/04/2021 - Modificado msg para msg traduzida.
                 mView.showMsg(
                         hmAux_Trans.get("alert_serial_offline_not_found_ttl"),
-                        hmAux_Trans.get("alert_serial_offline_not_found_msg")
+                        hmAux_Trans.get("alert_no_serial_found_msg") + ": " + mSerial_id + "\n" + hmAux_Trans.get("alert_serial_offline_not_found_msg"),
+                        (dialog, which) -> {
+                            if (isFlowBarCode()) {
+                                mView.callBarCodeActivity();
+                            } else {
+                                dialog.dismiss();
+                            }
+                        }
                 );
             } else {
                 defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
@@ -178,6 +188,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     /**
      * LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
      * Add para forceExactSearch que indica query se a busca do serial deve ser exata ou like
+     *
      * @param product_id
      * @param serial_id
      * @param tracking
@@ -220,14 +231,21 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
-                    hmAux_Trans.get("alert_no_serial_found_msg")
+                    hmAux_Trans.get("alert_no_serial_found_msg") + ": " + mSerial_id,
+                    (dialog, which) -> {
+                        if (isFlowBarCode()) {
+                            mView.callBarCodeActivity();
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
             );
         } else {
 
 //            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
             //LUCHE - 03/05/2021 - Aplicado corte limite de 100 item para evitar crash ao passar
             //lista via bundle e compatibilizar o comportamento com o da busca online.
-            if(serial_list != null && serial_list.size() > 101){
+            if (serial_list != null && serial_list.size() > 101) {
                 record_page = 100;
                 serial_list = new ArrayList<>(serial_list.subList(0, 100));
             }
@@ -240,13 +258,13 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 //                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
 //                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
 //            } else {
-                if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
-                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                } else {
-                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
-                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                }
+            if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            } else {
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
+            }
 //            }
 
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
@@ -265,23 +283,23 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
 
     private void setActionFlowParams(Bundle bundle) {
         MyActionFilterParam myActionFilterParam = new MyActionFilterParam(
-            null,
-            null,
-            mdProduct != null ? (int) mdProduct.getProduct_code() : null,
-            mProduct_id != null && !mProduct_id.isEmpty() ? mProduct_id : null,
-            mdProduct != null ? mdProduct.getProduct_desc() : null,
                 null,
-            mSerial_id,
-            null,
-            null,
+                null,
+                mdProduct != null ? (int) mdProduct.getProduct_code() : null,
+                mProduct_id != null && !mProduct_id.isEmpty() ? mProduct_id : null,
+                mdProduct != null ? mdProduct.getProduct_desc() : null,
+                null,
+                mSerial_id,
+                null,
+                null,
                 null);
         //
         myActionFilterParam.setOriginFlow(ConstantBaseApp.ACT006);
         //
         bundle.putSerializable(
-            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-            myActionFilterParam
-            );
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+        );
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT006);
     }
 
@@ -410,4 +428,23 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }
+
+
+    @Override
+    public boolean isFlowBarCode() {
+        BarCodeFlowPref settingsPref = BarCodeFlowPref.Companion.instance(context);
+        BarCodeFlow settings = settingsPref.read();
+        return settings.getFlowBarcode() == BarCodeTypeFlow.CAM;
+    }
+
+    @Override
+    public void updateBarCodeFlow(BarCodeTypeFlow flow) {
+        BarCodeFlowPref settingsPref = BarCodeFlowPref.Companion.instance(context);
+        BarCodeFlow settings = settingsPref.read();
+        if(settings.getFlowBarcode() != flow) {
+            settings.setFlowBarcode(flow);
+            settingsPref.write(settings);
+        }
+    }
+
 }

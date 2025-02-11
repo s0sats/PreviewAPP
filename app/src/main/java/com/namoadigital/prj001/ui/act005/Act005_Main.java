@@ -936,7 +936,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         mPresenter.checkUpdateAvailable(appUpdateManager);
 
 
-        if(mPresenter.hasTicketForDownload()){
+        if (mPresenter.hasTicketForDownload()) {
             TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
             WorkerHelperKt.scheduleDownloadTicket(context);
         }
@@ -1799,6 +1799,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1894,6 +1896,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void callAct021(Context context) {
         Intent mIntent = new Intent(context, Act021_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -2628,7 +2632,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 () -> {
                     try {
                         sendResumeDialog.updateResumeStatusTrip(true);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -2797,7 +2801,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
         //
         if (progressDialog != null) {
-             progressDialog.dismiss();
+            progressDialog.dismiss();
         }
         //
         ToolBox.alertMSG(
@@ -3294,36 +3298,36 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.hasPositionUpdateRequired(),
                 mPresenter.hasTripWithUpdateRequired() != null,
                 new SendResumeDialog.OnDialogClickListener() {
-            @Override
-            public void onConfirm() {
-                if (sendResumeDialog != null) {
-                    sendResumeDialog.dismiss();
-                }
-                progressDialog.dismiss();
-                invalidateOptionsMenu();
-                refreshUiData();
-
-                if (wsResults.size() > 0) {
-                    showResults(wsResults);
-                } else {
-                    if (masterDataSyncFlow) {
-                        ToolBox_Inf.hasFormProductOutdate(context);
-                        executeSync();
-                    } else {
-                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                            mPresenter.executeSerialStructureUpdate();
-                        } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
-                            mPresenter.executeWSSoSync();
-                        } else if (mPresenter.hasTicketSyncRequired()) {
-                            mPresenter.executeWSTicketDownload();
-                        } else if (mPresenter.hasTripSyncRequired()) {
-                            mPresenter.executeTripDownload();
+                    @Override
+                    public void onConfirm() {
+                        if (sendResumeDialog != null) {
+                            sendResumeDialog.dismiss();
                         }
-                    }
-                }
+                        progressDialog.dismiss();
+                        invalidateOptionsMenu();
+                        refreshUiData();
 
-            }
-        });
+                        if (wsResults.size() > 0) {
+                            showResults(wsResults);
+                        } else {
+                            if (masterDataSyncFlow) {
+                                ToolBox_Inf.hasFormProductOutdate(context);
+                                executeSync();
+                            } else {
+                                if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                                    mPresenter.executeSerialStructureUpdate();
+                                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                                    mPresenter.executeWSSoSync();
+                                } else if (mPresenter.hasTicketSyncRequired()) {
+                                    mPresenter.executeWSTicketDownload();
+                                } else if (mPresenter.hasTripSyncRequired()) {
+                                    mPresenter.executeTripDownload();
+                                }
+                            }
+                        }
+
+                    }
+                });
     }
 
     /**
@@ -3550,9 +3554,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else if (hasUpdateRequired) {
             if (ToolBox_Con.isOnline(context)) {
                 //executeSaveProcess();
-                if(mPresenter.hasTripWithUpdateRequired() != null){
+                if (mPresenter.hasTripWithUpdateRequired() != null) {
                     sendTripUpdateRequired();
-                }else{
+                } else {
                     setWsProcess(Act005_Main.WS_PROCESS_SEND);
                     setWsSoProcess(WS_Serial_Save.class.getSimpleName());
                     showPD();
@@ -3821,7 +3825,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         Integer initialTripFrag = getInitialTripFrag();
         if (initialTripFrag == null) {
             NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
-            if(mPresenter.isFieldServiceModeAble()) {
+            if (mPresenter.isFieldServiceModeAble()) {
                 NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_homeTripFragment);
             }
         } else {

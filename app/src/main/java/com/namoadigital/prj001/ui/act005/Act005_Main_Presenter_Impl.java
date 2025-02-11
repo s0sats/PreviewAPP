@@ -160,6 +160,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import kotlin.Unit;
 
@@ -471,17 +472,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         customFormPendentAmount = Integer.parseInt(qty);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-
+            int soCount = 0;
             try {
-                qtySO = soDao.getByStringHM(
+                soCount = Integer.parseInt(Objects.requireNonNull(soDao.getByStringHM(
                         new Sql_Act021_003(
                                 ToolBox_Con.getPreference_Customer_Code(context)
                         ).toSqlQuery()
-                ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
+                ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY)));
             } catch (Exception e) {
-                qtySO = "0";
+                soCount = 0;
             }
-
+            qtySO = String.valueOf(soCount + ToolBox_Inf.isSoWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
             try {
                 qtySO_Express = soPackExpressLocalDao.getByStringHM(

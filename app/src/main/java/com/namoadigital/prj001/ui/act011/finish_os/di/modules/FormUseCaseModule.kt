@@ -87,15 +87,16 @@ object FormUseCaseModule {
         return GetMeasureTpByCode(repository)
     }
 
+
     @Provides
     @ViewModelScoped
     fun providesValidateFormUseCase(
         getGeOsByIdUseCase: GetGeOsByIdUseCase,
-        getMeasureTpByCode: GetMeasureTpByCode
+        getMeasureTpByCode: GetMeasureTpByCode,
     ): ValidateFinishOSUseCase {
         return ValidateFinishOSUseCase(
             getGeOsByIdUseCase = getGeOsByIdUseCase,
-            getMeasureTpByCode = getMeasureTpByCode
+            getMeasureTpByCode = getMeasureTpByCode,
         )
     }
 }

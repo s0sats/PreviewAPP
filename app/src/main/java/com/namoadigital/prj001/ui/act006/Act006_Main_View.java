@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act006;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.model.MD_Product;
@@ -23,9 +24,11 @@ public interface Act006_Main_View {
 
     void setProduto(ArrayList<MD_Product> list);
 
-    void showMsg(String title, String msg);
+    void showMsg(String title, String msg, DialogInterface.OnClickListener listener);
 
     void showPD(String title, String msg);
 
     void showExecutionBlockMsg();
+
+    void callBarCodeActivity();
 }

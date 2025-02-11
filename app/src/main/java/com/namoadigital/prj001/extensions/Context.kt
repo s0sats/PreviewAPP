@@ -103,7 +103,7 @@ fun Context.sendCommandToServiceTripLocation(action: String) {
     }
 }
 
- fun Context.loadGenericTranslation(): HMAux {
+fun Context.loadGenericTranslation(): HMAux {
     val translist = listOf(
         "generic_sending_data_msg",
         "generic_receiving_data_msg",
@@ -245,7 +245,7 @@ fun Context.getDrawableId(@DrawableRes id: Int, theme: Resources.Theme? = null) 
 fun Context.getColorStateListId(@ColorRes id: Int, theme: Resources.Theme? = null) = ResourcesCompat
     .getColorStateList(this.resources, id, theme)
 
-fun Context.sendFCMStatus(module_type:String){
+fun Context.sendFCMStatus(module_type: String) {
     val mIntent = Intent()
     mIntent.setAction(Constant.WS_FCM)
     mIntent.addCategory(Intent.CATEGORY_DEFAULT)
@@ -253,4 +253,13 @@ fun Context.sendFCMStatus(module_type:String){
 
     //
     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(mIntent)
+}
+
+fun Context.isPackageInstalled(packageName: String): Boolean {
+    return try {
+        this.packageManager.getPackageInfo(packageName, 0)
+        true
+    } catch (e: PackageManager.NameNotFoundException) {
+        false
+    }
 }

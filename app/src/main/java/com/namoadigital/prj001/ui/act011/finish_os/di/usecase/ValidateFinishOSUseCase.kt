@@ -6,6 +6,7 @@ import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.date.isDateBefore
+import com.namoadigital.prj001.extensions.date.isDateBeforeOrEquals
 import com.namoadigital.prj001.extensions.date.isDateEquals
 import com.namoadigital.prj001.extensions.suspendResults
 import com.namoadigital.prj001.model.GeOs
@@ -139,7 +140,7 @@ class ValidateFinishOSUseCase constructor(
                     map[Component.InfoOS] = Component.InfoOS.InvalidStartDate
                 }
                 //
-                geOs?.measure_value != null -> {
+                partialExecutionOS == null && geOs?.measure_value != null -> {
 
                     val validationMeasure = measureTp?.isMeasureRestrictionInvalid(
                         bypassMinValidation = geOs.allowFormInThePast == 1,
@@ -155,7 +156,7 @@ class ValidateFinishOSUseCase constructor(
                     }
                 }
                 //
-                partialExecutionOS != null && isDateBefore(
+                partialExecutionOS != null && isDateBeforeOrEquals(
                     infoOs.dateStart,
                     partialExecutionOS
                 ) -> {

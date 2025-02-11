@@ -1,10 +1,6 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -12,6 +8,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.extensions.formatSyncSoList
 import com.namoadigital.prj001.model.SM_SO
+import com.namoadigital.prj001.model.TSO_Save_Env
 import com.namoadigital.prj001.model.TSO_Search_Env
 import com.namoadigital.prj001.model.TSO_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_SO_Sync
@@ -62,6 +59,10 @@ class WS_SO_Sync: BaseWsIntentService("WS_SO_Sync", IntentServiceMode.SYNC_SO_DA
         val soDao = SM_SODao(applicationContext)
         soList.addAll(soDao.getSoSyncList(customerCode))
         //
+        if(soList.isNotEmpty()) {
+            removeSoTokenFileFromSyncList(soList)
+        }
+        //
         processedSoSize = 0
         ToolBox.sendBCStatus(
             applicationContext,
@@ -103,6 +104,34 @@ class WS_SO_Sync: BaseWsIntentService("WS_SO_Sync", IntentServiceMode.SYNC_SO_DA
             "",
             "0"
         )
+    }
+
+    private fun removeSoTokenFileFromSyncList(soList: MutableList<SM_SO>) {
+        //
+        val files = ToolBox_Inf.checkTokenToSend(
+            applicationContext,
+            ConstantBaseApp.TOKEN_PATH,
+            ConstantBaseApp.TOKEN_SO_PREFIX
+        )
+        //
+        if (!files.isNullOrEmpty()) {
+            //
+            val gsonEnv =
+                GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create()
+            //
+            val tokenRequest: TSO_Save_Env =
+                gsonEnv.fromJson(
+                    ToolBox_Inf.getContents(files[0]),
+                    TSO_Save_Env::class.java
+                )
+            //
+            if (!tokenRequest.so.isNullOrEmpty()) {
+                val tokenListPk = tokenRequest.so.map { it.so_prefix to it.so_code }.toSet()
+                soList.removeAll { item1 ->
+                    (item1.so_prefix to item1.so_code) in tokenListPk
+                }
+            }
+        }
     }
 
     private fun sendSoToSync(

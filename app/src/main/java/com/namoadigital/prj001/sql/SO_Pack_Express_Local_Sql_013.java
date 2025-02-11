@@ -54,7 +54,10 @@ public class SO_Pack_Express_Local_Sql_013 implements Specification {
                         "    AND S.express_code =    '" + express_code + "'\n" +
                         "    AND S.serial_id =    '" + serial_id + "'\n" +
                         "    AND (strftime('%s',s.log_date) * 1000) >= (strftime('%s','now','-3 hours') * 1000)\n" +
-                        "    AND S.so_status !=    '" + ConstantBaseApp.SYS_STATUS_PROCESS + "'\n" +
+                        "    AND S.so_status NOT IN    \n" +
+                        "('" + ConstantBaseApp.SYS_STATUS_PROCESS + "',\n" +
+                        "'" + ConstantBaseApp.SYS_STATUS_DENIED + "',\n" +
+                        "'" + ConstantBaseApp.SYS_STATUS_ERROR + "')\n" +
                         " ORDER BY" +
                         "    s.log_date DESC" +
                         " LIMIT 1 \n"

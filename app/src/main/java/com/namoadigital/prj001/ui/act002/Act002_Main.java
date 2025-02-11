@@ -26,6 +26,7 @@ import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -392,7 +393,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processSync() {
         //super.processSync();
-        if (mPresenter.checkSoSyncNeed()) {
+        if (mPresenter.checkSoSendNeed()) {
+            callSOUpload();
+        } else if (mPresenter.checkSoSyncNeed()) {
             callSODownload();
         } else if (mPresenter.checkTripSyncNeed()) {
             callTripUpdateFull();
@@ -429,6 +432,23 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
              * ticket sem ele saber, o ticket estará atualizado quando ele chegar na act005...
              */
             mPresenter.executeWSSoDownload();
+        } else {
+            progressDialog.dismiss();
+            ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
+        }
+    }
+
+    private void callSOUpload() {
+        if (ToolBox_Con.isOnline(context, true)) {
+            //Seta variavel que define ação do metodo processCloseACT.
+            /*
+             * LUCHE - 30/06/2021
+             * Sempre que fizer o login e houvem ticket baixados,será chamado o ws_tickt_download com
+             * TODOS os tickets para que o servidor avalie a necessidade se enviar o ticket full.
+             * Necessidade "identificada" pois caso o usr perca sessão e atualizações sejam feitas no
+             * ticket sem ele saber, o ticket estará atualizado quando ele chegar na act005...
+             */
+            mPresenter.executeWSSoSave();
         } else {
             progressDialog.dismiss();
             ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
@@ -520,6 +540,14 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             progressDialog.dismiss();
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
+        } else if(wsProcess.equals(WS_SO_Save.class.getName())){
+            if (mPresenter.checkSoSyncNeed()) {
+                callSODownload();
+            } else if (mPresenter.checkTripSyncNeed()) {
+                callTripUpdateFull();
+            } else {
+                callTicketDownload();
+            }
         } else if(wsProcess.equals(WS_SO_Sync.class.getName())){
             if (mPresenter.checkTripSyncNeed()) {
                 callTripUpdateFull();

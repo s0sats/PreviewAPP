@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act006;
 
+import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
@@ -20,6 +21,7 @@ public interface Act006_Main_Presenter {
     void checkPendenciesFlow(int pendencies_qty);
 
     void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch);
+
     //LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
     void offlineSerialSearch(boolean forceExactSearch);
 
@@ -32,4 +34,7 @@ public interface Act006_Main_Presenter {
 
     MD_Product searchProduct(String product_id);
 
+    boolean isFlowBarCode();
+
+    void updateBarCodeFlow(BarCodeTypeFlow flow);
 }

@@ -7,6 +7,9 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeFlow;
+import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
+import com.namoadigital.prj001.core.data.local.preferences.barcode_settings.BarCodeFlowPref;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -358,5 +361,20 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
+    }
+
+    @Override
+    public void updateBarCodeFlow(BarCodeTypeFlow flow) {
+        BarCodeFlowPref settingsPref = BarCodeFlowPref.Companion.instance(context);
+        BarCodeFlow settings = settingsPref.read();
+        settings.setFlowBarcode(flow);
+        settingsPref.write(settings);
+    }
+
+    @Override
+    public boolean isFlowBarCode() {
+        BarCodeFlowPref settingsPref = BarCodeFlowPref.Companion.instance(context);
+        BarCodeFlow settings = settingsPref.read();
+        return settings.getFlowBarcode() == BarCodeTypeFlow.CAM;
     }
 }

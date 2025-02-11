@@ -170,7 +170,7 @@ fun InfoOSComponent(
             )
             DateTimePicker(
                 modifier = Modifier.fillMaxWidth(),
-                isDateEnabled = false,
+                isDateEnabled = infoOs?.partitionMinDate != null,
                 isTimeEnabled = isEnabledEditDate,
                 initialDate = initialDate,
                 isError = initialDateError.first,

@@ -121,6 +121,7 @@
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
     <string name="act002_upload_trip_error_msg">Fehler beim Datenabrufen. Versuchen Sie bitte erneut sich anzumelden.</string>
+    <string name="act002_ws_so_upload_msg">Aufträge werden hochgeladen...</string>
     <string name="act002_ws_trip_upload_ttl">Daten werden aktualisiert</string>
     <string name="act002_ws_trip_upload_msg">Daten werden synchronisiert</string>
     <string name="license_site_dialog_ttl">Auswahl: Standort mit Lizenz</string>
@@ -175,5 +176,12 @@
     <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
     <string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN.\n\nFolgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
     <string name="msg_login_invalid_json_response">Ungültige Daten empfangen. Versuchen Sie bitte später erneut oder kontaktieren Sie bitte NAMOAs Support-Team, um die Verfügbarkeit des Services zu überprüfen.</string>
+    <string name="act002_ws_so_download_msg">Aufträge, die Aktualisierung brauchen, werden heruntergeladen...</string>
+    <string name="act002_ws_so_upload_ttl">Hochladen</string>
+    <string name="act002_ws_so_download_ttl">Herunterladen</string>
+    <string name="enter_text_other_options_lbl">Eintippen oder weiteres</string>
+    <string name="position_barcode_area_lbl">Positionieren Sie den Barcode in den unteren Bereich</string>
+    <string name="btn_touch_flash_lbl">Blitz</string>
+    <string name="btn_rotate_screen_lbl">\tBildschirm drehen</string>
 
 </resources>

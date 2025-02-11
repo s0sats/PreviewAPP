@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.view.frag.frg_serial_search;
 
 import static com.namoadigital.prj001.extensions.StringHelperKt.removeLastCharEnterOrTab;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT005;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +24,11 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.BarCode_Activity;
+import com.namoa_digital.namoa_library.view.Ocr_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -141,13 +145,33 @@ public class Frg_Serial_Search extends Fragment {
 
     private I_Frg_Serial_Search delegate;
 
+    public void callBarCodeActivity() {
+        mket_serial.setText("");
+        Intent intent;
+        boolean isOcrEnabled = ToolBox.isOcrPackageInstalled(getContext());
+        boolean useOcrActivity = mket_serial.ismOCR() && isOcrEnabled;
+
+        if (useOcrActivity) {
+            intent = new Intent(getActivity(), Ocr_Activity.class);
+        } else {
+            intent = new Intent(getActivity(), BarCode_Activity.class);
+            intent.putExtra(BarCode_Activity.CUSTOM_ON_BACK_PRESSED, ACT005);
+        }
+
+        intent.putExtra(ConstantBase.B_C_O_N_ID, mket_serial.getId());
+        intent.putExtra(ConstantBase.PREFERENCES_UI_TYPE, mket_serial.getmRType());
+        startActivity(intent);
+    }
+
     public interface I_Frg_Serial_Search {
 
         void onSearchClick(String btn_Action, HMAux optionsInfo);
 
     }
+
     private I_Frg_Serial_Search_Load load_delegate;
-    public interface I_Frg_Serial_Search_Load{
+
+    public interface I_Frg_Serial_Search_Load {
         /**
          * Interface disparada após rodar Setar as views.
          */
@@ -177,12 +201,12 @@ public class Frg_Serial_Search extends Fragment {
         }
         //LUCHE - 10/11/2020
         //Tenta inicializar interface via context da act.
-        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+        if (context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener) {
             mFragOnProductSelectionReturnListener = (On_Frg_Serial_Search.onProductSelectionReturnListener) context;
         }
         //LUCHE - 13/11/2020
         //Inicializa interface via context da act
-        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+        if (context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener) {
             mFragOnProductTypingListener = (On_Frg_Serial_Search.onProductTypingListener) context;
         }
     }
@@ -195,7 +219,7 @@ public class Frg_Serial_Search extends Fragment {
         mPresenter = new Frg_Serial_Search_Presenter(getContext());
         iniVar(view);
 
-        if(load_delegate != null){
+        if (load_delegate != null) {
             load_delegate.onFragIsReady();
         }
 
@@ -234,16 +258,16 @@ public class Frg_Serial_Search extends Fragment {
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
         //via parametro do profile.
         mket_serial.setmBARCODE(
-            ToolBox_Inf.profileExists(
-                getActivity(),
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
-            )
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
         );
         //
 
         mket_serial.setmOCR(ToolBox_Inf.profileExists(
-            getActivity(),
+                getActivity(),
                 Constant.PROFILE_MENU_PROFILE,
                 Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
         ));
@@ -279,7 +303,6 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
-
     public void setVisibilityBtnOption01(int visibility) {
         btn_option_01.setVisibility(visibility);
         chekBottomButtonsVisibility();
@@ -291,7 +314,7 @@ public class Frg_Serial_Search extends Fragment {
             if (btn_nfc_reader.getVisibility() == View.VISIBLE || btn_option_01.getVisibility() == View.VISIBLE) {
                 cl_bottom_buttons.setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
             if (btn_option_01.getVisibility() == View.VISIBLE) {
                 cl_bottom_buttons.setVisibility(View.VISIBLE);
             }
@@ -309,7 +332,7 @@ public class Frg_Serial_Search extends Fragment {
     private void configChk() {
         if (mFragListener.hasHideSerialInfoChk()) {
             if (!mPresenter.getProfileForHideSerialInfo()
-                && !mPresenter.getProfileForceNotShowSerialInfo()) {
+                    && !mPresenter.getProfileForceNotShowSerialInfo()) {
                 sw_hide_serial_info.setVisibility(View.GONE);
                 tv_hide_serial_info.setVisibility(View.GONE);
                 sw_hide_serial_info.setChecked(false);
@@ -353,7 +376,7 @@ public class Frg_Serial_Search extends Fragment {
                 forceExactSearch = true;
                 //LUCHE - 08/06/2021
                 //Verifica se deve forçar clique apos leitura do barcode. Comportamento padrão
-                if(performClickOnEspecialistReturn) {
+                if (performClickOnEspecialistReturn) {
                     btn_option_01.performClick();
                 }
             }
@@ -460,28 +483,27 @@ public class Frg_Serial_Search extends Fragment {
             MD_Product mdProductAux = productValidCheck(values.get(PRODUCT_ID));
 
             if (btnAction.equalsIgnoreCase(BTN_OPTION_01)) {
-
                 if (mdProductAux == null && !values.get(PRODUCT_ID).isEmpty()) {
                     ToolBox.alertMSG(
-                        getActivity(),
-                        hmAux_Trans.get("alert_no_product_ttl"),
-                        hmAux_Trans.get("alert_no_product_msg"),
-                        null,
-                        0
+                            getActivity(),
+                            hmAux_Trans.get("alert_no_product_ttl"),
+                            hmAux_Trans.get("alert_no_product_msg"),
+                            null,
+                            0
                     );
 
                 } else if (ToolBox_Con.isOnline(getActivity())
                         && ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()
-                    && ( (getActivity() instanceof Act006_Main || getActivity() instanceof Act081_Main)
-                         && !ToolBox_Con.getBooleanPreferencesByKey(getContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
-                        )
-                    ) {
+                        && ((getActivity() instanceof Act006_Main || getActivity() instanceof Act081_Main)
+                        && !ToolBox_Con.getBooleanPreferencesByKey(getContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+                )
+                ) {
                     ToolBox.alertMSG(
-                        getActivity(),
-                        hmAux_Trans.get("alert_serial_pendencies_ttl"),
-                        hmAux_Trans.get("alert_serial_pendencies_msg"),
-                        null,
-                        0
+                            getActivity(),
+                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                            hmAux_Trans.get("alert_serial_pendencies_msg"),
+                            null,
+                            0
                     );
                 } else {
                     //LUCHE - 10/01/2020
@@ -492,8 +514,8 @@ public class Frg_Serial_Search extends Fragment {
                     }*/
                     if (delegate != null) {
                         delegate.onSearchClick(
-                            btnAction,
-                            values
+                                btnAction,
+                                values
                         );
                     }
                 }
@@ -587,7 +609,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_02_BackGround(int status) {
-       // btn_option_02.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
+        // btn_option_02.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_02_Visibility(int status) {
@@ -599,7 +621,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_03_BackGround(int status) {
-       // btn_option_03.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
+        // btn_option_03.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_03_Visibility(int status) {
@@ -611,7 +633,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_04_BackGround(int status) {
-      //  btn_option_04.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
+        //  btn_option_04.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_04_Visibility(int status) {
@@ -624,7 +646,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_05_BackGround(int status) {
-       // btn_option_05.setBackground(getActivity().getDrawable(status));
+        // btn_option_05.setBackground(getActivity().getDrawable(status));
     }
 
     public void setBtn_Option_05_Visibility(int status) {
@@ -653,6 +675,7 @@ public class Frg_Serial_Search extends Fragment {
         //
         setTranslation();
     }
+
     private void setTranslation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
@@ -815,11 +838,11 @@ public class Frg_Serial_Search extends Fragment {
         MD_ProductDao productDao = new MD_ProductDao(getActivity());
 
         MD_Product md_product = productDao.getByString(
-            new MD_Product_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(getActivity()),
-                "",
-                product_id
-            ).toSqlQuery()
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                        "",
+                        product_id
+                ).toSqlQuery()
         );
 
         return md_product;
@@ -829,11 +852,11 @@ public class Frg_Serial_Search extends Fragment {
         MD_ProductDao productDao = new MD_ProductDao(getActivity());
 
         MD_Product md_product = productDao.getByString(
-            new MD_Product_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(getActivity()),
-                product_code,
-                product_id
-            ).toSqlQuery()
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(getActivity()),
+                        product_code,
+                        product_id
+                ).toSqlQuery()
         );
         //
         if (md_product != null) {
@@ -868,15 +891,15 @@ public class Frg_Serial_Search extends Fragment {
 
     /**
      * LUCHE - 07/11/2019
-     *
+     * <p>
      * Metodo que seta no textHelper as regras do produto.
-     *
+     * <p>
      * A validação helper != null é uma gambiarra para corrigir o que parece ser um problema
      * de "redesenho" da espaço do textHelper.
      * A correção foi necessaria pois, quando o produto é selecionado via act de seleção de produto,
      * ao setar o valor no textHelper, o topo do texto ficava "comido", como se tivesse por baixo
      * do Mket do serial.
-     *
+     * <p>
      * LUCHE - 08/11/2019
      * Removido a gambiarra de desabilitar e abilitar o textHelper, pois
      * descobrimos que o que gerava o "bug" era a segunda chamada do metodo
@@ -889,12 +912,12 @@ public class Frg_Serial_Search extends Fragment {
     private void setSerialHelper(String serial_rule, Integer min, Integer max) {
         //Chama metodo que retorna texto ja formatado
         til_serial.setHelperText(
-            mPresenter.getFormattedRuleHelper(
-                hmAux_Trans,
-                serial_rule,
-                min,
-                max
-            )
+                mPresenter.getFormattedRuleHelper(
+                        hmAux_Trans,
+                        serial_rule,
+                        min,
+                        max
+                )
         );
     }
 
@@ -939,4 +962,11 @@ public class Frg_Serial_Search extends Fragment {
         return transListFrag;
     }
 
+    public boolean lastMketIsSerial(Integer id) {
+        return mket_serial.getId() == id;
+    }
+
+    public void flowBarcode() {
+        callBarCodeActivity();
+    }
 }

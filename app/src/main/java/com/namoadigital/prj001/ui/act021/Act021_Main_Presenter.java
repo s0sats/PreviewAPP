@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act021;
 
+import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
@@ -34,4 +35,8 @@ public interface Act021_Main_Presenter {
     String searchProductInfo(String product_code, String product_id);
 
     MD_Product searchProduct(String product_id);
+
+    void updateBarCodeFlow(BarCodeTypeFlow flow);
+
+    boolean isFlowBarCode();
 }

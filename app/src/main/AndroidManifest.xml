@@ -6,6 +6,8 @@
         <!-- Explicit apps you know in advance about: -->
         <package android:name="com.namoadigital.prj001.production" />
         <package android:name="com.namoadigital.prj001.development" />
+        <package android:name="com.mosolf.vinocr" />
+
     </queries>
     <!--    Android 13-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

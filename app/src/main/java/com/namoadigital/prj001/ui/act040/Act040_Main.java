@@ -107,6 +107,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private Act040MainContentBinding binding;
     private Act040SOExpressPackServicesAdapter mAdapter;
+    private boolean updateRequiredFLow = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -844,6 +845,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.clFinalizeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateRequiredFLow = false;
                 //Seta variavel de controle.
                 exitProcess = false;
                 final String finalSerial = ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString());
@@ -1200,31 +1202,33 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void automationCleanForm() {
-        //Reseta infos do serial
-        binding.mketSerial.setText("");
-        binding.clSerial.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_error));
-        binding.clSerialSearch.setVisibility(View.GONE);
-        binding.clSerialSearchBtn.setEnabled(true);
-        //Reseta infos de billing
-        binding.mketAddInfo1.setText("");
-        binding.mketAddInfo2.setText("");
-        binding.mketAddInfo3.setText("");
+        if(!updateRequiredFLow) {
+            //Reseta infos do serial
+            binding.mketSerial.setText("");
+            binding.clSerial.setBackground(ContextCompat.getDrawable(context, com.namoa_digital.namoa_library.R.drawable.shape_error));
+            binding.clSerialSearch.setVisibility(View.GONE);
+            binding.clSerialSearchBtn.setEnabled(true);
+            //Reseta infos de billing
+            binding.mketAddInfo1.setText("");
+            binding.mketAddInfo2.setText("");
+            binding.mketAddInfo3.setText("");
 //        Log.d("TESTES", "automationCleanForm bundle_express_tmp: " + bundle_express_tmp);
-        bundle_express_tmp =-1;
-        //LUCHE - 30/11/2021 -
-        //Os dados de pacote agora são mantidos após o save, então chama metodo que revalida campos
-        //configura helper do serial e libera lupa de busca.
-        //Add var para caso campo null, não crashar(acontecia se clicasse na nuvem de enviar sem ter
-        // conexão e sem pack definido) Tratado tando aqui quando no clique da nuvem offline.
-        if(mSo_pack_express != null) {
-            loadSO_Pack_Express(mSo_pack_express, mSo_pack_express.getExpress_code());
+            bundle_express_tmp = -1;
+            //LUCHE - 30/11/2021 -
+            //Os dados de pacote agora são mantidos após o save, então chama metodo que revalida campos
+            //configura helper do serial e libera lupa de busca.
+            //Add var para caso campo null, não crashar(acontecia se clicasse na nuvem de enviar sem ter
+            // conexão e sem pack definido) Tratado tando aqui quando no clique da nuvem offline.
+            if (mSo_pack_express != null) {
+                loadSO_Pack_Express(mSo_pack_express, mSo_pack_express.getExpress_code());
+            }
+            //Da foco no serial
+            binding.mketSerial.requestFocus();
+            wsAuxResult.clear();
+            exitProcess = false;
+            //Chama Refresh do ultimo item enviado.
+            mPresenter.getLastExpressInfoInSiteOper();
         }
-        //Da foco no serial
-        binding.mketSerial.requestFocus();
-        wsAuxResult.clear();
-        exitProcess = false;
-        //Chama Refresh do ultimo item enviado.
-        mPresenter.getLastExpressInfoInSiteOper();
     }
 
     @Override
@@ -1270,6 +1274,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
             if(ToolBox_Con.isOnline(context)) {
+                updateRequiredFLow = true;
                 if (mPresenter.hasSerialUpdateRequired()) {
                     mPresenter.executeSerialSave();
                 } else {
@@ -1371,6 +1376,21 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        if(wsProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getName())) {
+            //
+            automationCleanForm();
+            invalidateOptionsMenu();
+            //
+            showMsg(
+                    hmAux_Trans.get("alert_express_general_error_ttl"),
+                    hmAux_Trans.get("alert_express_general_error_msg")
+            );
+        }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
+            showMsg(
+                    hmAux_Trans.get("alert_serial_save_error_ttl"),
+                    hmAux_Trans.get("alert_serial_save_error_msg")
+            );
+        }
     }
 
     @Override
