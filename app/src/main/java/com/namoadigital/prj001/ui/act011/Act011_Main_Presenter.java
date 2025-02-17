@@ -80,7 +80,7 @@ public interface Act011_Main_Presenter {
 
     boolean hasGpsPendecy(long customer_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data);
 
-    GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data);
+    GE_Custom_Form_Data getGeCustomFormDataAndFieldsByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data);
 
     void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
@@ -114,6 +114,8 @@ public interface Act011_Main_Presenter {
     void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String dateStart, String dateEnd);
 
     void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate);
+
+    List<GE_File> getGeFilesFromFormData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles);
 
     InspectionCell setAlreadyOkItem(String itemPk, String date_start);
 

@@ -1168,7 +1168,7 @@ public class Act011_Main extends Base_Activity
 
                                 @Override
                                 public void action() {
-                                    formData = mPresenter.getGeCustomFormDataByPk(
+                                    formData = mPresenter.getGeCustomFormDataAndFieldsByPk(
                                             formData.getCustomer_code(),
                                             formData.getCustom_form_type(),
                                             formData.getCustom_form_code(),
@@ -3410,8 +3410,22 @@ public class Act011_Main extends Base_Activity
     protected void getSignatueF(String mValue) {
         String sName = mValue;
         canSave = mPresenter.isInProcessing(formLocal);
+        formData = mPresenter.getGeCustomFormDataAndFieldsByPk(
+                formData.getCustomer_code(),
+                formData.getCustom_form_type(),
+                formData.getCustom_form_code(),
+                formData.getCustom_form_version(),
+                Integer.parseInt(String.valueOf(formData.getCustom_form_data()))
+        );
         if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature)) {
-
+            if (geFiles == null){
+                geFiles = new ArrayList<>();
+            }
+            if (geFiles.isEmpty()) {
+                geFiles.addAll(mPresenter.getGeFilesFromFormData(formData, geFiles));
+                sDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
+                mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles, sDate);
+            }
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
                 formData.setSignature(mSignature);
@@ -3495,6 +3509,14 @@ public class Act011_Main extends Base_Activity
     protected void getNFCResults(String mValue) {
         String sResults = mValue;
         canSave = mPresenter.isInProcessing(formLocal);
+        formData = mPresenter.getGeCustomFormDataAndFieldsByPk(
+                formData.getCustomer_code(),
+                formData.getCustom_form_type(),
+                formData.getCustom_form_code(),
+                formData.getCustom_form_version(),
+                Integer.parseInt(String.valueOf(formData.getCustom_form_data()))
+        );
+
         //Se resultado
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
             require_serial_done_ok = ConstantBaseApp.MAIN_RESULT_OK;
@@ -3506,8 +3528,13 @@ public class Act011_Main extends Base_Activity
              * no onResume era identificado os dados da tela de confirmacao de serial e entrava no fluxo de envio automatico causando o envio de form sem
              * assinatura e sem as imagens em anexo.
              */
-            if (geFiles == null || geFiles.isEmpty()) {
-                setGeFilesList();
+            if (geFiles == null){
+                geFiles = new ArrayList<>();
+            }
+            if (geFiles.isEmpty()) {
+                geFiles.addAll(mPresenter.getGeFilesFromFormData(formData, geFiles));
+                sDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
+                mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles, sDate);
                 if (signature == 1) {
                     addSignatureToGeFiles();
                 }
@@ -3540,6 +3567,7 @@ public class Act011_Main extends Base_Activity
     public void callNFCResults() {
         require_serial_done_ok = "";
         canSave = false;
+        saveV2(false);
         try {
             Bundle bundle = new Bundle();
             bundle.putInt(ConstantBase.PID, -1);

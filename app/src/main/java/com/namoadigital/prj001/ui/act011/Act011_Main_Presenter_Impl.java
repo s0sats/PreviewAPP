@@ -1348,8 +1348,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @param custom_form_data
      * @return
      */
-    @Override
-    public GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
+    private GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
         return custom_form_dataDao.getByString(
                 new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
                         String.valueOf(customer_code),
@@ -1360,6 +1359,36 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery()
         );
     }
+
+    @Override
+    public GE_Custom_Form_Data getGeCustomFormDataAndFieldsByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
+        GE_Custom_Form_Data formLocal = custom_form_dataDao.getByString(
+                new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                        String.valueOf(customer_code),
+                        String.valueOf(custom_form_type),
+                        String.valueOf(custom_form_code),
+                        String.valueOf(custom_form_version),
+                        String.valueOf(custom_form_data)
+                ).toSqlQuery()
+        );
+        if(formLocal != null){
+            formLocal.setDataFields(
+                    custom_form_data_fieldDao.query(
+                            new GE_Custom_Form_Data_Field_MULTI_SqlSpecification(
+                                    String.valueOf(formLocal.getCustomer_code()),
+                                    String.valueOf(formLocal.getCustom_form_type()),
+                                    String.valueOf(formLocal.getCustom_form_code()),
+                                    String.valueOf(formLocal.getCustom_form_version()),
+                                    String.valueOf(formLocal.getCustom_form_data())
+                            ).toSqlQuery().toLowerCase()
+                    )
+            );
+        }
+        return formLocal;
+
+    }
+
+
 
     private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {
         DaoObjReturn daoObjRet = new DaoObjReturn();
@@ -1903,42 +1932,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
         );
         //
-        /***
-         *     BARRIONUEVO 20-09-2024
-         *     Este codigo é um remendo para garantir que as imagens vao para o upload.
-         *     Sera necessario uma analise mais minunciosa para identificar a real causa de nao ter
-         *     as fotos das respostas e do dots na tabela de upload, o caso ocorreu na BAUKO.
-          */
-        List<GE_File> filesTemp = new ArrayList<>();
-        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-            String sFile_v = df.getValue();
-            String valueExtra = df.getValue_extra();
-            GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
-            //
-            GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
-
-            if(FileHelperKt.hasFileForFileName(sFile_v)
-            && !ListHelperKt.findFilePath(geFiles, sFile_v)){
-                filesTemp.add(setGE_FileForCurrentForm(sFile_v));
-            }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto1())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto1())){
-                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto1()));
-            }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto2())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto2())){
-                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto2()));
-            }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto3())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto3())){
-                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto3()));
-            }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto4())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto4())){
-                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto4()));
-            }
-            //
-        }
+        List<GE_File> filesTemp = getGeFilesFromFormData(formData, geFiles);
         geFiles.addAll(filesTemp);
         geFileDao.addUpdate(geFiles, false);
         //LUCHE - 26/06/2020 - Substituido IntentService pel worker de upload de imagem
@@ -1969,6 +1963,48 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.defineFinalizeFlow();
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public List<GE_File> getGeFilesFromFormData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles) {
+        /***
+         *     BARRIONUEVO 20-09-2024
+         *     Este codigo é um remendo para garantir que as imagens vao para o upload.
+         *     Sera necessario uma analise mais minunciosa para identificar a real causa de nao ter
+         *     as fotos das respostas e do dots na tabela de upload, o caso ocorreu na BAUKO.
+          */
+        List<GE_File> filesTemp = new ArrayList<>();
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            String sFile_v = df.getValue();
+            String valueExtra = df.getValue_extra();
+            GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
+            //
+            GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
+            //
+            if(FileHelperKt.hasFileForFileName(sFile_v)
+            && !ListHelperKt.findFilePath(geFiles, sFile_v)){
+                filesTemp.add(setGE_FileForCurrentForm(sFile_v));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto1())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto1())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto1()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto2())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto2())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto2()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto3())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto3())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto3()));
+            }
+            if(FileHelperKt.hasFileForFileName(content.getPhoto4())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto4())){
+                filesTemp.add(setGE_FileForCurrentForm(content.getPhoto4()));
+            }
+            //
+        }
+        return filesTemp;
     }
 
     private GE_File setGE_FileForCurrentForm(String photoCode) {
