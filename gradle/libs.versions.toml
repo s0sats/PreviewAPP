@@ -5,6 +5,7 @@ appUpdateKtx = "2.1.0"
 concurrentFutures = "1.1.0"
 constraintlayout = "2.1.4"
 constraintlayoutCompose = "1.0.1"
+core = "3.4.1"
 firebaseIid = "21.1.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -21,7 +22,7 @@ composeBom = "2024.06.00"
 dagger = "2.48"
 dagger-viewModel = "1.2.0"
 lifecycleViewmodelKtx = "2.8.3"
-material3 = "1.2.1"
+materialDefault = "1.5.0"
 materialIconsExtended = "1.6.8"
 mockitoCore = "5.0.0"
 mockitoKotlin = "3.2.0"
@@ -29,11 +30,11 @@ mockitoInline = "3.11.2"
 mockk = "1.13.3"
 navigationFragmentKtx = "2.7.7"
 navigationUiKtx = "2.7.7"
+plainPie = "v0.2.9"
 playServicesLocation = "21.0.1"
 recyclerview = "1.1.0"
 room = "2.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
+appcompat = "1.1.0"
 navigationRuntimeKtx = "2.7.7"
 navigationCommonKtx = "2.7.7"
 composeNavigation = "2.7.7"
@@ -45,8 +46,10 @@ lifecycleExtensions = "2.2.0"
 gson = "2.10.1"
 turbine = "0.7.0"
 workRuntime = "2.7.1"
-namoaLib = "2.6.10"
+namoaLib = "2.8.1"
 safeArgs = "2.7.7"
+activity = "1.7.0"
+guavaVersion = "29.0-android"
 
 [libraries]
 androidbootstrap = { module = "com.beardedhen:androidbootstrap", version.ref = "androidbootstrap" }
@@ -65,6 +68,7 @@ androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdateKtx" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdateKtx" }
+core-v341 = { module = "com.google.zxing:core", version.ref = "core" }
 firebase-iid = { module = "com.google.firebase:firebase-iid", version.ref = "firebaseIid" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
@@ -81,6 +85,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material2 = { group = "com.google.android.material", name = "material", version.ref = "materialDefault" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "dagger-viewModel" }
@@ -93,6 +98,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+plain-pie = { module = "com.github.zurche:plain-pie", version.ref = "plainPie" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -109,7 +115,15 @@ androidx-lifecycle-extensions = { group = "androidx.lifecycle", name = "lifecycl
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 namoa-library = { group = "com.namoa_digital", name = "library", version.ref = "namoaLib" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version = "1.0.0" }
 
+kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
+
+zxing-android = { module = "com.journeyapps:zxing-android-embedded", version = "3.6.0" }
+photoeditor = { module = "com.burhanrashid52:photoeditor", version = "1.5.1" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+
+guava-free = { group = "com.google.guava", name = "guava", version.ref = "guavaVersion" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

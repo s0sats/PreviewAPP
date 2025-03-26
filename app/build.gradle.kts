@@ -10,7 +10,7 @@ plugins {
 
 android {
     compileSdk = 34
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "34.0.0"
     namespace = "com.namoadigital.prj001"
 
 
@@ -18,8 +18,8 @@ android {
         applicationId = "com.namoadigital.prj001"
         minSdk = 21
         targetSdk = 34
-        versionCode = 368
-        versionName = "6.7.4"
+        versionCode = 376
+        versionName = "6.8.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled = true
@@ -39,7 +39,7 @@ android {
             isMinifyEnabled = true // Ativa a ofuscação
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
-        release{
+        release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.concurrent.futures)
+    implementation(libs.androidx.material2)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -147,6 +148,8 @@ dependencies {
 // Google Play Dependency
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+// import de dependecia do guava pelo conflito entre lib de exoplay e concurrent-future
+    implementation(libs.guava.free)
 
 // Namoa Library
     configurations.getByName("developmentImplementation") {

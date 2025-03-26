@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderFF.MEDIA_EXTENSION;
+import static com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderView.MICROPHONE_PERMISSION_REQUEST_CODE;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
@@ -30,7 +32,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -69,6 +70,9 @@ import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
 import com.namoa_digital.namoa_library.ctls.RatingImageFF;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.ctls.audio.ui.AudioInteraction;
+import com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderFF;
+import com.namoa_digital.namoa_library.ctls.video.VideoComponentFF;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -186,8 +190,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class Act011_Main extends Base_Activity
-        implements
-        Act011_Main_View,
+        implements Act011_Main_View,
         FormOsHeaderFrgMeasureInteraction,
         Act011BaseFrgInteractionNavegation,
         Act011FrgFFInteraction,
@@ -202,6 +205,7 @@ public class Act011_Main extends Base_Activity
     public static final int SHOW_MSG_TYPE_INVALID_SYS_END_DATE = 10;
     public static final String PNG_EXTENSION = ".png";
     public static final String JPG_EXTENSION = ".jpg";
+
     public static final String PAGE = "page";
     public static final String CONTENT = "CONTENT";
     public static final String DECIMAL = "DECIMAL";
@@ -250,9 +254,9 @@ public class Act011_Main extends Base_Activity
     private String so_prefix;
     private String so_code;
 
-    private boolean gpsCanceled = false;
+    private final boolean gpsCanceled = false;
 
-    private boolean ignoreUpdate = false;
+    private final boolean ignoreUpdate = false;
 
     private boolean bNew = false;
 
@@ -261,15 +265,15 @@ public class Act011_Main extends Base_Activity
 
     private boolean includeField;
 
-    private int oldPageIndex = 0;
-    private int currentPageIndex = 1;
+    private final int oldPageIndex = 0;
+    private final int currentPageIndex = 1;
 
     private int index_old = 0;
     private int index = 1;
 
     private transient Dialog infoDialog;
 
-    private boolean hasNFCSupport = false;
+    private final boolean hasNFCSupport = false;
 
     private Integer mSo_Prefix;
     private Integer mSo_Code;
@@ -277,7 +281,7 @@ public class Act011_Main extends Base_Activity
     private Integer mOperation_Code;
 
     private String wsSoProcess = "";
-    private ArrayList<HMAux> wsResults = new ArrayList<>();
+    private final ArrayList<HMAux> wsResults = new ArrayList<>();
     private boolean finalizeNewFlow = false;
     private boolean canSave;
     private String filter_search;
@@ -328,7 +332,7 @@ public class Act011_Main extends Base_Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act011_main);
         //
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
         /**
@@ -591,6 +595,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         transList.add("finish_os_tab_name");
+        transList.add("act011_title_os");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -668,15 +673,17 @@ public class Act011_Main extends Base_Activity
 
             @Override
             public void previosTab() {
-                if ((index - 1) >= 1) {
-                    tabSelectedAction(index - 1);
+                int newTab = index - 1;
+                if (newTab >= 1) {
+                    tabSelectedAction(newTab);
                 }
             }
 
             @Override
             public void nextTab() {
-                if ((index + 1) <= pager.getAdapter().getCount()) {
-                    tabSelectedAction(index + 1);
+                int newTab = index + 1;
+                if (newTab <= pager.getAdapter().getCount()) {
+                    tabSelectedAction(newTab);
                 }
             }
 
@@ -748,13 +755,12 @@ public class Act011_Main extends Base_Activity
     private void initVars() {
         fm = getSupportFragmentManager();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        mDrawerLayout = (DrawerLayout)
-                findViewById(R.id.ge_cf_form_drawer);
+        mDrawerLayout = findViewById(R.id.ge_cf_form_drawer);
         //
-        pager = (ViewPager) findViewById(R.id.act011_pager);
+        pager = findViewById(R.id.act011_pager);
         //
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act011_Main.this,
@@ -1235,7 +1241,7 @@ public class Act011_Main extends Base_Activity
      */
     @Override
     public boolean allowFinalizeWithNewBtn() {
-        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
                 && mSo_Prefix == null
                 && mSo_Code == null
                 && !ToolBox_Inf.isScheduleForm(formLocal)
@@ -1243,11 +1249,7 @@ public class Act011_Main extends Base_Activity
                 && !serial_id.isEmpty()
                 //LUCHE - 28/08/2020
                 && (!mPresenter.isFormCreateByTicket(formLocal) || isOffHandForm)
-                && !mPresenter.isFormTicketKanban(formLocal.getTicket_prefix(), formLocal.getTicket_code())
-        ) {
-            return true;
-        }
-        return false;
+                && !mPresenter.isFormTicketKanban(formLocal.getTicket_prefix(), formLocal.getTicket_code());
     }
 
     private boolean showQuestionFormOsConcludesTickets() {
@@ -1311,11 +1313,11 @@ public class Act011_Main extends Base_Activity
             String sFile_e_3 = customFFs.get(i).getmDots_photo3();
             String sFile_e_4 = customFFs.get(i).getmDots_photo4();
 
-            if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION)) {
+            if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION) || sFile_v.endsWith(MEDIA_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_v.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
+                    geFile.setFile_code(sFile_v.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, "").replace(MEDIA_EXTENSION, ""));
                     geFile.setFile_path(sFile_v);
                     geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
@@ -1432,7 +1434,7 @@ public class Act011_Main extends Base_Activity
         //
         if (mPresenter.isaTicketFlowForm()) {
             callAct070();
-        } else{
+        } else {
             mPresenter.clearTicketDownloadSingleton();
             if (ConstantBaseApp.ACT084.equals(requestingAct)) {
                 callAct084();
@@ -1582,12 +1584,29 @@ public class Act011_Main extends Base_Activity
         //Tratativa necessaria quando o carregamento dos itens é abortado pelo erro de insert na ge_custom_form_local
         //pois nesse fluxo, o adapter do pager não é setado.
         if (pager != null && pager.getAdapter() != null) {
-            setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+            setTitleForm();
         } else {
             setTitleLanguage();
         }
         setFooter();
     }
+
+    private void setTitleForm() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        TextView leftText = findViewById(R.id.toolbar_left_text);
+        TextView centerText = findViewById(R.id.toolbar_center_text);
+
+        String count = "(" + index + "/" + pager.getAdapter().getCount() + ")";
+
+        if (!isFormOs) {
+            leftText.setText(hmAux_Trans.get(mAct_Title));
+        } else {
+            leftText.setText(hmAux_Trans.get("act011_title_os"));
+        }
+        centerText.setText(count);
+    }
+
 
     @Override
     protected void footerCreateDialog() {
@@ -1625,7 +1644,7 @@ public class Act011_Main extends Base_Activity
         }
 
 
-        includeField = formData.getDataFields().size() == 0 ? true : false;
+        includeField = formData.getDataFields().size() == 0;
 
         int pages = 0;
         boolean automatic = false;
@@ -1712,6 +1731,12 @@ public class Act011_Main extends Base_Activity
                     case CustomFF.PHOTO:
                         customField = cfg_Photo(cf);
                         break;
+                    case CustomFF.AUDIO:
+                        customField = cfg_Audio(cf);
+                        break;
+                    case CustomFF.VIDEO:
+                        customField = cfg_Video(cf);
+                        break;
                     default:
                         break;
                 }
@@ -1721,7 +1746,6 @@ public class Act011_Main extends Base_Activity
                     if (formLocal.getNc_recognize_email_in_comment() == 1) {
                         customField.setOnSiteEmailList(() -> mPresenter.getSiteEmailList(formLocal.getSite_code()));
                     }
-                    ;
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
                     //Add na lista de customFF
@@ -1828,15 +1852,23 @@ public class Act011_Main extends Base_Activity
                     index_old = index;
                     index = position + 1;
                     //
-                    setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
+                    setTitleForm();
                     //
                     updateTabStatusIntoDrawer(
                             returnValidateTabObj(index_old)
                     );
+
+                    filterCustomFF(CustomFF.AUDIO, each -> {
+                        AudioRecorderFF audioFF = ((AudioRecorderFF) each);
+                        if (audioFF.getmPage() == index_old) {
+                            audioFF.setForceStopAudio(true);
+                        }
+                    });
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
+
                 }
             });
             //Seta dados no drawer
@@ -1914,7 +1946,7 @@ public class Act011_Main extends Base_Activity
                             //
                             Toast.makeText(
                                     context,
-                                    hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
+                                    hmAux_Trans.get("qty_automatic_answer_msg") + ": " + quantidade,
                                     Toast.LENGTH_SHORT
                             ).show();
                         }
@@ -2046,6 +2078,8 @@ public class Act011_Main extends Base_Activity
         labelFF.setmPage(Integer.parseInt(cf.get(PAGE)));
         labelFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
+        labelFF.showButtons(false, false, false);
+
         return labelFF;
     }
 
@@ -2068,7 +2102,7 @@ public class Act011_Main extends Base_Activity
         mkEditTextNMFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         mkEditTextNMFF.setId(View.generateViewId());
-        mkEditTextNMFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        mkEditTextNMFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         mkEditTextNMFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2081,6 +2115,12 @@ public class Act011_Main extends Base_Activity
 //        } else {
 //            mkEditTextNMFF.setmNFC(false);
 //        }
+
+        mkEditTextNMFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         if (cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.DATE)) {
             mkEditTextNMFF.setmBARCODE(false);
@@ -2125,7 +2165,7 @@ public class Act011_Main extends Base_Activity
             );
         }
 
-        mkEditTextNMFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        mkEditTextNMFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         mkEditTextNMFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2134,14 +2174,9 @@ public class Act011_Main extends Base_Activity
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            mkEditTextNMFF.setmEnabled(false);
-        } else {
-            mkEditTextNMFF.setmEnabled(true);
-        }
+        //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        mkEditTextNMFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return mkEditTextNMFF;
     }
@@ -2177,7 +2212,7 @@ public class Act011_Main extends Base_Activity
         comboBoxFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         comboBoxFF.setId(View.generateViewId());
-        comboBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        comboBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         comboBoxFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         comboBoxFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         comboBoxFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2186,9 +2221,14 @@ public class Act011_Main extends Base_Activity
 
         comboBoxFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        comboBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        comboBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         comboBoxFF.setmPre(prefix);
 
+        comboBoxFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
@@ -2196,14 +2236,9 @@ public class Act011_Main extends Base_Activity
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            comboBoxFF.setmEnabled(false);
-        } else {
-            comboBoxFF.setmEnabled(true);
-        }
+        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        comboBoxFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return comboBoxFF;
     }
@@ -2227,7 +2262,7 @@ public class Act011_Main extends Base_Activity
         checkBoxFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         checkBoxFF.setId(View.generateViewId());
-        checkBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        checkBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         checkBoxFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         checkBoxFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         checkBoxFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2236,8 +2271,14 @@ public class Act011_Main extends Base_Activity
 
         checkBoxFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        checkBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        checkBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         checkBoxFF.setmPre(prefix);
+
+        checkBoxFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
@@ -2248,14 +2289,9 @@ public class Act011_Main extends Base_Activity
         checkBoxFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            checkBoxFF.setmEnabled(false);
-        } else {
-            checkBoxFF.setmEnabled(true);
-        }
+        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        checkBoxFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return checkBoxFF;
     }
@@ -2266,7 +2302,7 @@ public class Act011_Main extends Base_Activity
         ratingImageFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         ratingImageFF.setId(View.generateViewId());
-        ratingImageFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        ratingImageFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         ratingImageFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         ratingImageFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         ratingImageFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2275,8 +2311,14 @@ public class Act011_Main extends Base_Activity
 
         ratingImageFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        ratingImageFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        ratingImageFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         ratingImageFF.setmPre(prefix);
+
+        ratingImageFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
@@ -2288,14 +2330,9 @@ public class Act011_Main extends Base_Activity
         ratingImageFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            ratingImageFF.setmEnabled(false);
-        } else {
-            ratingImageFF.setmEnabled(true);
-        }
+        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        ratingImageFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return ratingImageFF;
     }
@@ -2306,7 +2343,7 @@ public class Act011_Main extends Base_Activity
         ratingBarFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         ratingBarFF.setId(View.generateViewId());
-        ratingBarFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        ratingBarFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         ratingBarFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         ratingBarFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         ratingBarFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2315,7 +2352,7 @@ public class Act011_Main extends Base_Activity
 
         ratingBarFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        ratingBarFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        ratingBarFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         ratingBarFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2325,14 +2362,15 @@ public class Act011_Main extends Base_Activity
         ratingBarFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            ratingBarFF.setmEnabled(false);
-        } else {
-            ratingBarFF.setmEnabled(true);
-        }
+        //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        ratingBarFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
+
+        ratingBarFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         return ratingBarFF;
     }
@@ -2343,7 +2381,7 @@ public class Act011_Main extends Base_Activity
         pictureFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         pictureFF.setId(View.generateViewId());
-        pictureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        pictureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         pictureFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         pictureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         pictureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2353,8 +2391,14 @@ public class Act011_Main extends Base_Activity
         pictureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
         pictureFF.setmFName(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
 
-        pictureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        pictureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         pictureFF.setmPre(prefix);
+
+        pictureFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
@@ -2362,14 +2406,9 @@ public class Act011_Main extends Base_Activity
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            pictureFF.setmEnabled(false);
-        } else {
-            pictureFF.setmEnabled(true);
-        }
+        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        pictureFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return pictureFF;
     }
@@ -2380,7 +2419,7 @@ public class Act011_Main extends Base_Activity
         photoFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         photoFF.setId(View.generateViewId());
-        photoFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        photoFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         photoFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         photoFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         photoFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2389,8 +2428,14 @@ public class Act011_Main extends Base_Activity
 
         photoFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        photoFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        photoFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         photoFF.setmPre(prefix);
+
+        photoFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
@@ -2408,16 +2453,154 @@ public class Act011_Main extends Base_Activity
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            photoFF.setmEnabled(false);
-        } else {
-            photoFF.setmEnabled(true);
-        }
+        //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        photoFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
         return photoFF;
+    }
+
+    private final boolean audioRunning = false;
+
+    private CustomFF cfg_Audio(HMAux cf) {
+        AudioRecorderFF audioFF = new AudioRecorderFF(Act011_Main.this);
+
+        audioFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
+
+        audioFF.setId(View.generateViewId());
+        audioFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
+        audioFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        audioFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        audioFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        audioFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        audioFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
+
+        audioFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+
+        audioFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
+        audioFF.setmPre(prefix);
+
+        audioFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
+
+        audioFF.setAudioInteraction(new AudioInteraction() {
+            @Override
+            public void onAudioStop(int i) {
+                enableAudioList();
+            }
+
+            @Override
+            public void onAudioPlay(int viewId) {
+                updateAudioList(viewId);
+            }
+
+            @Override
+            public void onStartAudio(int viewId) {
+                updateAudioList(viewId);
+            }
+
+            @Override
+            public void onAudioRecorded(@NonNull String fileName) {
+                enableAudioList();
+            }
+
+            @Override
+            public void onAudioDeleted() {
+                enableAudioList();
+            }
+
+            private void updateAudioList(int viewId) {
+                filterCustomFF(CustomFF.AUDIO, each -> {
+                    AudioRecorderFF audioComponent = ((AudioRecorderFF) each);
+                    audioComponent.audioEnabled(viewId == audioComponent.viewId());
+                });
+            }
+
+            private void enableAudioList() {
+                filterCustomFF(CustomFF.AUDIO, each -> {
+                    AudioRecorderFF audioComponent = ((AudioRecorderFF) each);
+                    audioComponent.audioEnabled(true);
+                });
+            }
+        });
+
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+
+        if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
+                && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+            audioFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        }
+        audioFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        audioFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
+
+        return audioFF;
+    }
+
+    private CustomFF cfg_Video(HMAux cf) {
+        VideoComponentFF videoFF = new VideoComponentFF(Act011_Main.this);
+
+        videoFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
+
+        videoFF.setId(View.generateViewId());
+        videoFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
+        videoFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        videoFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        videoFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        videoFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        videoFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
+
+        videoFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+
+        videoFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
+        videoFF.setmPre(prefix);
+
+        videoFF.showButtons(
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_NC).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO).equalsIgnoreCase("1"),
+                cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
+        );
+
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+
+        if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
+                && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+            videoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        }else{
+            videoFF.initializeFormValue();
+        }
+        videoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        videoFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
+
+        return videoFF;
+    }
+
+    private void filterCustomFF(String component, CustomFFListOperation filterOperation) {
+        if (customFFs.isEmpty()) return;
+        for (CustomFF ff : customFFs) {
+            if (ff.getmType().equalsIgnoreCase(component)) {
+                filterOperation.filter(ff);
+            }
+        }
+    }
+
+    interface CustomFFListOperation {
+        void filter(CustomFF customFF);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MICROPHONE_PERMISSION_REQUEST_CODE) {
+//            filterCustomFF(CustomFF.AUDIO, each -> {
+//                AudioRecorderFF audioComponent = ((AudioRecorderFF) each);
+//                audioComponent.onRequestPermissionsResult(requestCode, grantResults);
+//            });
+        }
     }
 
     //
@@ -2470,7 +2653,7 @@ public class Act011_Main extends Base_Activity
         measureFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         measureFF.setId(View.generateViewId());
-        measureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        measureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1"));
         measureFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
         measureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         measureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2479,7 +2662,7 @@ public class Act011_Main extends Base_Activity
 
         measureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        measureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        measureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1"));
         measureFF.setmPre(prefix);
 
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
@@ -2490,14 +2673,9 @@ public class Act011_Main extends Base_Activity
         measureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-        ) {
-            measureFF.setmEnabled(false);
-        } else {
-            measureFF.setmEnabled(true);
-        }
+        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        measureFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
+                !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
         //
         return measureFF;
     }
@@ -2551,7 +2729,7 @@ public class Act011_Main extends Base_Activity
         try {
             if (ipage == -1) {
                 for (Act011BaseFrg act011BaseFrg : screens) {
-                    numberOfErrors += ((Act011FrgFF) act011BaseFrg).getTabErrorCount();
+                    numberOfErrors += act011BaseFrg.getTabErrorCount();
                 }
             } else if (ipage > 0) {
                 ipage = ipage - 1;
@@ -2789,7 +2967,7 @@ public class Act011_Main extends Base_Activity
     private class ScreenAdapter extends FragmentPagerAdapter {
 
         //private ArrayList<Fragment> data;
-        private ArrayList<Act011BaseFrg> data;
+        private final ArrayList<Act011BaseFrg> data;
 
         public ScreenAdapter(FragmentManager fm, ArrayList<Act011BaseFrg> dados) {
             super(fm);
@@ -2818,19 +2996,6 @@ public class Act011_Main extends Base_Activity
 //    }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
-
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -2842,8 +3007,6 @@ public class Act011_Main extends Base_Activity
         }
 
         if (id == R.id.act11_action_settings) {
-
-
             return true;
         }
 
@@ -3418,7 +3581,7 @@ public class Act011_Main extends Base_Activity
                 Integer.parseInt(String.valueOf(formData.getCustom_form_data()))
         );
         if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature)) {
-            if (geFiles == null){
+            if (geFiles == null) {
                 geFiles = new ArrayList<>();
             }
             if (geFiles.isEmpty()) {
@@ -3528,7 +3691,7 @@ public class Act011_Main extends Base_Activity
              * no onResume era identificado os dados da tela de confirmacao de serial e entrava no fluxo de envio automatico causando o envio de form sem
              * assinatura e sem as imagens em anexo.
              */
-            if (geFiles == null){
+            if (geFiles == null) {
                 geFiles = new ArrayList<>();
             }
             if (geFiles.isEmpty()) {
@@ -3596,89 +3759,90 @@ public class Act011_Main extends Base_Activity
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.act011_dialog_form_info, null);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_title);
+        TextView tv_title = view.findViewById(R.id.act_011_dialog_tv_title);
 
-        TextView tv_product_title_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_title_lbl);
+        TextView tv_product_title_lbl = view.findViewById(R.id.act_011_dialog_tv_product_title_lbl);
 //        TextView tv_product_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_lbl);
 //        TextView tv_product_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_code_val);
 //        TextView tv_product_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_lbl);
 //        TextView tv_product_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_id_val);
 
-        TextView tv_product_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_product_desc);
+        TextView tv_product_desc = view.findViewById(R.id.act_011_dialog_tv_product_desc);
         //
-        TextView tv_serial_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
-        TextView tv_serial_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
-        TextView tv_serial_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_id);
+        TextView tv_serial_lbl = view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
+        TextView tv_serial_val = view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
+        TextView tv_serial_desc = view.findViewById(R.id.act_011_dialog_tv_serial_id);
         //
-        TextView tv_form_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_title);
-        TextView tv_form_type_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
-        TextView tv_form_type_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
+        TextView tv_form_title = view.findViewById(R.id.act_011_dialog_tv_form_title);
+        TextView tv_form_type_lbl = view.findViewById(R.id.act_011_dialog_tv_form_type_lbl);
+        TextView tv_form_type_desc = view.findViewById(R.id.act_011_dialog_tv_form_type_desc);
         //
-        TextView tv_form_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_lbl);
-        TextView tv_form_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_val);
-        TextView tv_form_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_code_desc);
+        TextView tv_form_code_lbl = view.findViewById(R.id.act_011_dialog_tv_form_code_lbl);
+        TextView tv_form_code_val = view.findViewById(R.id.act_011_dialog_tv_form_code_val);
+        TextView tv_form_code_desc = view.findViewById(R.id.act_011_dialog_tv_form_code_desc);
         //
-        TextView tv_form_version_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
-        TextView tv_form_version_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_form_version_val);
+        TextView tv_form_version_lbl = view.findViewById(R.id.act_011_dialog_tv_form_version_lbl);
+        TextView tv_form_version_val = view.findViewById(R.id.act_011_dialog_tv_form_version_val);
         //
-        LinearLayout ll_schedule_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_scheduel_info);
+        LinearLayout ll_schedule_info = view.findViewById(R.id.act_011_dialog_ll_scheduel_info);
         //
-        TextView tv_so_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_lbl);
-        TextView tv_so_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_desc);
+        TextView tv_so_code_lbl = view.findViewById(R.id.act_011_dialog_tv_so_code_lbl);
+        TextView tv_so_code_desc = view.findViewById(R.id.act_011_dialog_tv_so_code_desc);
         //
-        TextView tv_ticket_info_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_lbl);
-        TextView tv_ticket_info_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_desc);
+        TextView tv_ticket_info_lbl = view.findViewById(R.id.act_011_dialog_tv_ticket_info_lbl);
+        TextView tv_ticket_info_desc = view.findViewById(R.id.act_011_dialog_tv_ticket_info_desc);
         //
-        TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
-        TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
+        TextView tv_data_serv_lbl = view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
+        TextView tv_data_serv_val = view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
         //
-        TextView tv_dt_schedule_start_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_lbl);
-        TextView tv_dt_schedule_start_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_val);
+        TextView tv_dt_schedule_start_lbl = view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_lbl);
+        TextView tv_dt_schedule_start_val = view.findViewById(R.id.act_011_dialog_tv_schedule_dt_start_val);
         //
-        TextView tv_dt_schedule_end_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_lbl);
-        TextView tv_dt_schedule_end_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_val);
+        TextView tv_dt_schedule_end_lbl = view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_lbl);
+        TextView tv_dt_schedule_end_val = view.findViewById(R.id.act_011_dialog_tv_schedule_dt_end_val);
         //
-        TextView tv_title_pdf = (TextView) view.findViewById(R.id.act_011_dialog_tv_title_pdf);
-        ListView lv_pdfs = (ListView) view.findViewById(R.id.act_011_dialog_lv_pdfs);
+        TextView tv_title_pdf = view.findViewById(R.id.act_011_dialog_tv_title_pdf);
+        ListView lv_pdfs = view.findViewById(R.id.act_011_dialog_lv_pdfs);
 
 
 //      Para o controle de visibilidade de elementos com dados
-        LinearLayout ll_serial_info = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial_info);
-        LinearLayout ll_serial = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_serial);
-        LinearLayout ll_class = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_class);
-        LinearLayout ll_category = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_category);
-        LinearLayout ll_segment = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_segment);
-        LinearLayout ll_site = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_site);
-        LinearLayout ll_zone = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_zone);
-        LinearLayout ll_position = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_position);
-        LinearLayout ll_tracking = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking);
-        LinearLayout ll_tracking_val = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_tracking_val);
-        LinearLayout ll_info_1 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_1);
-        LinearLayout ll_info_2 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_2);
-        LinearLayout ll_info_3 = (LinearLayout) view.findViewById(R.id.act_011_dialog_ll_info_3);
 
-        TextView tv_descriptions = (TextView) view.findViewById(R.id.act_011_dialog_tv_description);
-        TextView tv_serial_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
-        TextView tv_classe_id_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_class_id_val);
-        TextView tv_categoria_code_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_category_code_val);
-        TextView tv_segmento_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_segment_val);
-        TextView tv_site_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_site_val);
-        TextView tv_zona_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_zone_val);
-        TextView tv_posicao_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_position_val);
-        TextView tv_info_1_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_1_val);
-        TextView tv_info_2_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_val);
-        TextView tv_info_3_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_val);
+        LinearLayout ll_serial_info = view.findViewById(R.id.act_011_dialog_ll_serial_info);
+        LinearLayout ll_serial = view.findViewById(R.id.act_011_dialog_ll_serial);
+        LinearLayout ll_class = view.findViewById(R.id.act_011_dialog_ll_class);
+        LinearLayout ll_category = view.findViewById(R.id.act_011_dialog_ll_category);
+        LinearLayout ll_segment = view.findViewById(R.id.act_011_dialog_ll_segment);
+        LinearLayout ll_site = view.findViewById(R.id.act_011_dialog_ll_site);
+        LinearLayout ll_zone = view.findViewById(R.id.act_011_dialog_ll_zone);
+        LinearLayout ll_position = view.findViewById(R.id.act_011_dialog_ll_position);
+        LinearLayout ll_tracking = view.findViewById(R.id.act_011_dialog_ll_tracking);
+        LinearLayout ll_tracking_val = view.findViewById(R.id.act_011_dialog_ll_tracking_val);
+        LinearLayout ll_info_1 = view.findViewById(R.id.act_011_dialog_ll_info_1);
+        LinearLayout ll_info_2 = view.findViewById(R.id.act_011_dialog_ll_info_2);
+        LinearLayout ll_info_3 = view.findViewById(R.id.act_011_dialog_ll_info_3);
 
-        TextView tv_serial_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
-        TextView tv_class_id_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_class_id_lbl);
-        TextView tv_category_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_category_code_lbl);
-        TextView tv_segment_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_segment_lbl);
-        TextView tv_site_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_site_lbl);
-        TextView tv_zone_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_zone_lbl);
-        TextView tv_position_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_position_lbl);
-        TextView tv_info_1_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_1_lbl);
-        TextView tv_info_2_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_2_lbl);
-        TextView tv_info_3_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_info_3_lbl);
+        TextView tv_descriptions = view.findViewById(R.id.act_011_dialog_tv_description);
+        TextView tv_serial_code_val = view.findViewById(R.id.act_011_dialog_tv_serial_code_val);
+        TextView tv_classe_id_val = view.findViewById(R.id.act_011_dialog_tv_class_id_val);
+        TextView tv_categoria_code_val = view.findViewById(R.id.act_011_dialog_tv_category_code_val);
+        TextView tv_segmento_val = view.findViewById(R.id.act_011_dialog_tv_segment_val);
+        TextView tv_site_val = view.findViewById(R.id.act_011_dialog_tv_site_val);
+        TextView tv_zona_val = view.findViewById(R.id.act_011_dialog_tv_zone_val);
+        TextView tv_posicao_val = view.findViewById(R.id.act_011_dialog_tv_position_val);
+        TextView tv_info_1_val = view.findViewById(R.id.act_011_dialog_tv_info_1_val);
+        TextView tv_info_2_val = view.findViewById(R.id.act_011_dialog_tv_info_2_val);
+        TextView tv_info_3_val = view.findViewById(R.id.act_011_dialog_tv_info_3_val);
+
+        TextView tv_serial_code_lbl = view.findViewById(R.id.act_011_dialog_tv_serial_code_lbl);
+        TextView tv_class_id_lbl = view.findViewById(R.id.act_011_dialog_tv_class_id_lbl);
+        TextView tv_category_code_lbl = view.findViewById(R.id.act_011_dialog_tv_category_code_lbl);
+        TextView tv_segment_lbl = view.findViewById(R.id.act_011_dialog_tv_segment_lbl);
+        TextView tv_site_lbl = view.findViewById(R.id.act_011_dialog_tv_site_lbl);
+        TextView tv_zone_lbl = view.findViewById(R.id.act_011_dialog_tv_zone_lbl);
+        TextView tv_position_lbl = view.findViewById(R.id.act_011_dialog_tv_position_lbl);
+        TextView tv_info_1_lbl = view.findViewById(R.id.act_011_dialog_tv_info_1_lbl);
+        TextView tv_info_2_lbl = view.findViewById(R.id.act_011_dialog_tv_info_2_lbl);
+        TextView tv_info_3_lbl = view.findViewById(R.id.act_011_dialog_tv_info_3_lbl);
 
         //Campos que sempre existem
         tv_title.setText(hmAux_Trans.get("dialog_info_title_lbl"));
@@ -3733,7 +3897,7 @@ public class Act011_Main extends Base_Activity
         }
         //Campos da S.O que podem ou não existir
         if (mSo_Code != null) {
-            tv_so_code_desc.setText(String.valueOf(mSo_Prefix) + "." + String.valueOf(mSo_Code));
+            tv_so_code_desc.setText(mSo_Prefix + "." + mSo_Code);
         } else {
             tv_so_code_desc.setText("");
             //
@@ -3933,9 +4097,9 @@ public class Act011_Main extends Base_Activity
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.act011_dialog_form_signature, null);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act_011_dialog_tv_siganture_title);
-        TextView tv_name = (TextView) view.findViewById(R.id.act_011_dialog_tv_siganture_name);
-        ImageView iv_signature = (ImageView) view.findViewById(R.id.act_011_dialog_iv_siganture);
+        TextView tv_title = view.findViewById(R.id.act_011_dialog_tv_siganture_title);
+        TextView tv_name = view.findViewById(R.id.act_011_dialog_tv_siganture_name);
+        ImageView iv_signature = view.findViewById(R.id.act_011_dialog_iv_siganture);
 
         tv_title.setText(hmAux_Trans.get("dialog_signature_title_lbl"));
         tv_name.setText(formData.getSignature_name());
@@ -4602,7 +4766,7 @@ public class Act011_Main extends Base_Activity
                     String productInfo = getProductInfo(Long.parseLong(pk[0]));
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+                    mHmAux.put("label", productInfo + " - " + pk[1]);
                     mHmAux.put("type", "SERIAL");
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
@@ -4771,9 +4935,9 @@ public class Act011_Main extends Base_Activity
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));

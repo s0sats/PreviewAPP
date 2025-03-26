@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.extensions
 
 import android.content.Context
+import com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderFF.Companion.MEDIA_EXTENSION
 import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -37,7 +38,7 @@ fun Context.imgFileAbsolutePath(file_name: String?): String {
 //
 fun hasFileForFileName(filename: String?): Boolean {
     filename?.let {
-        if (filename.endsWith(Act011_Main.PNG_EXTENSION) || filename.endsWith(Act011_Main.JPG_EXTENSION)) {
+        if (filename.endsWith(Act011_Main.PNG_EXTENSION) || filename.endsWith(Act011_Main.JPG_EXTENSION) || filename.endsWith(MEDIA_EXTENSION)) {
             val sFile = File(ConstantBase.CACHE_PATH_PHOTO + "/" + filename)
             if (sFile.exists()
                 && sFile.isFile

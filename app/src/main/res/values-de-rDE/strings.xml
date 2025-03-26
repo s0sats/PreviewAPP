@@ -77,10 +77,10 @@
     <string name="ws_exception_contact_admin_oracle">Fehler in der Datenbank!\nBitte Ihr Supportteam kontaktieren.</string>
     <string name="ws_exception_contact_admin_timeout">Fehler: Wartezeit überschritten!\nBitte Ihre Internetverbindung prüfen.</string>
 
-	<string name="ws_exception_connection_error">Fehler: Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
+    <string name="ws_exception_connection_error">Fehler: Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
     <string name="ws_exception_unexpected_error">Fehler: Unbekannter Fehler!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
 
-	<string name="generic_error_lbl">Fehler:</string>
+    <string name="generic_error_lbl">Fehler:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Bitte APP synchronisieren.</string>
     <string name="message_received_notification_sync">Empfangene Nachrichten</string>
@@ -113,9 +113,9 @@
     <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
     <string name="msg_customer_pendencies_list">Account :\n</string>
     <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die ausstehende Daten, um aktualisieren zu können.</string>
-    
-	<!--Licenças por Site-->
-	<string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
+
+    <!--Licenças por Site-->
+    <string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
     <string name="act002_ws_site_license_ttl">Lizenzierte Standorte</string>
     <string name="act002_ws_site_license_msg">Standorte mit verfügbaren Lizenzen werden geladen.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
@@ -131,8 +131,8 @@
     <string name="act002_alt_no_licenses_returned_msg">Kein Standort mit verfügbarer Lizenz für diesen Benutzer gefunden.\nVersuchen Sie es bitte später erneut oder kontaktieren Sie Ihr IT-Team, um die Anzahl der verfügbaren Lizenzen zu prüfen.</string>
     <string name="act002_alt_license_list_not_found_ttl">Fehler: Lizenzierte Standorte</string>
     <string name="act002_alt_license_list_not_found_msg">Standortliste lässt sich nicht laden.\nVersuchen Sie es bitte erneut.</string>
-    
-	<!--Permissão da camera-->
+
+    <!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Erlauben</string>
     <string name="lib_alert_deny_btn">Verweigern</string>
     <string name="lib_alert_settings_btn">Einstellungen</string>
@@ -140,14 +140,14 @@
     <string name="lib_alert_camera_never_ask_again_msg">Die Berechtigung zum Zugriff auf die Kamera wurde dauerhaft verweigert!\nUm die Verwendung der Kamera zu erlauben, klicken Sie auf die Schaltfläche unter Einstellungen, Berechtigungen -> Kamera -> Zulassen</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Kameraerlaubnis</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">Um einen Barcode zu lesen, ist der Zugriff auf die Kamera des Mobiltelefons erforderlich.\nMöchten Sie den Zugriff erlauben?</string>
-    
-	<!--Text Helpers -->
+
+    <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
     <string name="msg_synchronizing_data">Daten werden synchronisiert</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
     <string name="msg_cancelled_by_user">Aktualisierung abgebrochen</string>
-	<string name="alert_support_finish_ttl">Support Daten</string>
+    <string name="alert_support_finish_ttl">Support Daten</string>
     <string name="alert_support_finish_msg">Datenpaket wurde erfolgreich gesendet! \nBEMERKUNG: Vergessen Sie nicht bei Ihrem Support anzufragen, den Fehlerbehebungsprozess anzustoßen.</string>
     <string name="progress_support_ttl">Support Daten</string>
     <string name="progress_support_msg">Daten werden vorbereitet.</string>
@@ -183,5 +183,26 @@
     <string name="position_barcode_area_lbl">Positionieren Sie den Barcode in den unteren Bereich</string>
     <string name="btn_touch_flash_lbl">Blitz</string>
     <string name="btn_rotate_screen_lbl">\tBildschirm drehen</string>
+    <string name="lib_audio_permission_btn">Mikrofon erlauben</string>
+    <string name="lib_permission_mic_rationale_ttl">Mikrofon Zugriff</string>
+    <string name="lib_permission_mic_rationale_msg">Um Ton aufzunehmen, müssen Sie die Verwendung des Mikrofons erlauben. Bitte erlauben Sie den Zugriff auf das Mikrofon in den Einstellungen der NAMOA App.</string>
+    <string name="lib_permission_mic_denied_ttl">Erlaubnis verweigert</string>
+    <string name="lib_permission_mic_denied_msg">Der NAMOA App wurde die Erlaubnis verweigert, das Mikrofon zu benutzen. Gehen Sie bitte zu den Einstellungen der NAMOA-App und gewähren Sie bitte manuell den Zugriff auf dem Mikrofon, damit die Tonaufnahme im Formular ermöglicht wird.</string>
+    <string name="lib_toast_error_audio_decrease_second">Die Tonaufnahme darf nicht kürzer als 1 Sekunde sein.</string>
+    <string name="lib_toast_increase_audio_volume">Bitte stellen Sie die Lautstärke lauter</string>
+    <string name="lib_toast_error_recording_audio">Bei der Tonaufnahme ist ein Fehler aufgetreten, bitte versuchen Sie es erneut.</string>
+    <string name="lib_dialog_audio_delete_ttl">Ton löschen</string>
+    <string name="lib_dialog_audio_delete_msg">Möchten Sie den aufgenommenen Ton löschen?</string>
+    <string name="mdots_photo">Fotos</string>
+    <string name="mdots_comment">Kommentar</string>
 
+    <string name="lib_video_permission_btn">Kamera erlauben</string>
+    <string name="lib_permission_video_rationale_ttl">Kamera Zugriff</string>
+    <string name="lib_permission_video_rationale_msg">Um Video aufzunehmen, müssen Sie die Verwendung des Kameras erlauben. Bitte erlauben Sie den Zugriff auf das Kamera in den Einstellungen der NAMOA App.</string>
+    <string name="lib_permission_video_denied_ttl">Erlaubnis verweigert</string>
+    <string name="lib_permission_video_denied_msg">Der NAMOA App wurde die Erlaubnis verweigert, das Kamera zu benutzen. Gehen Sie bitte zu den Einstellungen der NAMOA-App und gewähren Sie bitte manuell den Zugriff auf dem Kamera, damit die Videoaufnahme im Formular ermöglicht wird.</string>
+    <string name="lib_toast_error_recording_video">Bei der Videoaufnahme ist ein Fehler aufgetreten, bitte versuchen Sie es erneut.</string>
+    <string name="lib_dialog_video_delete_ttl">Video löschen</string>
+    <string name="lib_dialog_video_delete_msg">Möchten Sie den aufgenommenen Video löschen?</string>
+    <string name="lib_recording_video_lbl">Video aufnehmen</string>
 </resources>

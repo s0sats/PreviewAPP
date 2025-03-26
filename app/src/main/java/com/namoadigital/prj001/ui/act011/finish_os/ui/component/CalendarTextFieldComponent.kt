@@ -15,8 +15,8 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -250,7 +250,7 @@ private fun CalendarTextField(
     isError: Boolean = false,
     onClick: () -> Unit
 ) {
-    TextField(
+    OutlinedTextField(
         value = text,
         readOnly = true,
         textStyle = ApplicationTheme.typography.bodyMedium,

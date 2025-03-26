@@ -100,6 +100,8 @@ import com.google.gson.JsonArray;
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderView;
+import com.namoa_digital.namoa_library.ctls.video.VideoComponentView;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -3299,6 +3301,64 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("btn_rotate_screen_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_rotate_screen_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_rotate_screen_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl")));
         Constant.HMAUX_TRANS_LIB.put("btn_touch_flash_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_touch_flash_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_touch_flash_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl")));
 
+
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_TOAST_ERROR_RECORDING_AUDIO, getTranslation(AudioRecorderView.LIB_TOAST_ERROR_RECORDING_AUDIO, getResourceString(context, R.string.lib_toast_error_recording_audio)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_TOAST_INCREASE_AUDIO_VOLUME, getTranslation(AudioRecorderView.LIB_TOAST_INCREASE_AUDIO_VOLUME, getResourceString(context, R.string.lib_toast_increase_audio_volume)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_DIALOG_AUDIO_DELETE_MSG, getTranslation(AudioRecorderView.LIB_DIALOG_AUDIO_DELETE_MSG, getResourceString(context, R.string.lib_dialog_audio_delete_msg)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_DIALOG_AUDIO_DELETE_TTL, getTranslation(AudioRecorderView.LIB_DIALOG_AUDIO_DELETE_TTL, getResourceString(context, R.string.lib_dialog_audio_delete_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_TOAST_ERROR_AUDIO_DECREASE_SECOND, getTranslation(AudioRecorderView.LIB_TOAST_ERROR_AUDIO_DECREASE_SECOND, getResourceString(context, R.string.lib_toast_error_audio_decrease_second)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_AUDIO_PERMISSION_BTN, getTranslation(AudioRecorderView.LIB_AUDIO_PERMISSION_BTN, getResourceString(context, R.string.lib_audio_permission_btn)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_PERMISSION_MIC_RATIONALE_TTL, getTranslation(AudioRecorderView.LIB_PERMISSION_MIC_RATIONALE_TTL, getResourceString(context, R.string.lib_permission_mic_rationale_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_PERMISSION_MIC_RATIONALE_MSG, getTranslation(AudioRecorderView.LIB_PERMISSION_MIC_RATIONALE_MSG, getResourceString(context, R.string.lib_permission_mic_rationale_msg)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_PERMISSION_MIC_DENIED_TTL, getTranslation(AudioRecorderView.LIB_PERMISSION_MIC_DENIED_TTL, getResourceString(context, R.string.lib_permission_mic_denied_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(AudioRecorderView.LIB_PERMISSION_MIC_DENIED_MSG, getTranslation(AudioRecorderView.LIB_PERMISSION_MIC_DENIED_MSG, getResourceString(context, R.string.lib_permission_mic_denied_msg)));
+
+        Constant.HMAUX_TRANS_LIB.put("mdots_photo", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_photo") || Constant.HMAUX_TRANS_LIB.get("mdots_photo").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_photo) : Constant.HMAUX_TRANS_LIB.get("mdots_photo")));
+        Constant.HMAUX_TRANS_LIB.put("mdots_comment", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_comment") || Constant.HMAUX_TRANS_LIB.get("mdots_comment").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.mdots_comment) : Constant.HMAUX_TRANS_LIB.get("mdots_comment")));
+
+        Constant.HMAUX_TRANS_LIB.put("mdots_alert_form_fields_add_photo", (!Constant.HMAUX_TRANS_LIB.containsKey("mdots_alert_form_fields_add_photo") || Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_add_photo").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("mdots_alert_form_fields_add_photo")));
+        Constant.HMAUX_TRANS_LIB.put("photoff_add_photo", (!Constant.HMAUX_TRANS_LIB.containsKey("photoff_add_photo") || Constant.HMAUX_TRANS_LIB.get("photoff_add_photo").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("photoff_add_photo")));
+
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_cpf", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_cpf") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cpf").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cpf")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_cnpj", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_cnpj") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cnpj").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cnpj")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_cep", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_cep") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cep").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_cep")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_placa_br", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_placa_br") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_placa_br").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_placa_br")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_email", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_email") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_email").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_email")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_telephone", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_telephone") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_telephone").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_telephone")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_interval", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_interval") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_interval").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_interval")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_vin", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_vin") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_vin").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_vin")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_plate_br", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_plate_br") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_plate_br").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_plate_br")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_char", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_char") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_char").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_char")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_number", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_number") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_number").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_number")));
+        Constant.HMAUX_TRANS_LIB.put("msg_error_invalid_number_char", (!Constant.HMAUX_TRANS_LIB.containsKey("msg_error_invalid_number_char") || Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_number_char").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("msg_error_invalid_number_char")));
+
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_VIDEO_PERMISSION_BTN, getTranslation(VideoComponentView.LIB_VIDEO_PERMISSION_BTN, getResourceString(context, R.string.lib_video_permission_btn)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_RATIONALE_TTL, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_RATIONALE_TTL, getResourceString(context, R.string.lib_permission_video_rationale_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_RATIONALE_MSG, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_RATIONALE_MSG, getResourceString(context, R.string.lib_permission_video_rationale_msg)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_DENIED_TTL, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_DENIED_TTL, getResourceString(context, R.string.lib_permission_video_denied_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_DENIED_MSG, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_DENIED_MSG, getResourceString(context, R.string.lib_permission_video_denied_msg)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_TOAST_ERROR_RECORDING_VIDEO, getTranslation(VideoComponentView.LIB_TOAST_ERROR_RECORDING_VIDEO, getResourceString(context, R.string.lib_toast_error_recording_video)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_TOAST_ERROR_RECORDING_VIDEO, getTranslation(VideoComponentView.LIB_TOAST_ERROR_RECORDING_VIDEO, getResourceString(context, R.string.lib_toast_error_recording_video)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_DIALOG_VIDEO_DELETE_TTL, getTranslation(VideoComponentView.LIB_DIALOG_VIDEO_DELETE_TTL, getResourceString(context, R.string.lib_dialog_video_delete_ttl)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_DIALOG_VIDEO_DELETE_MSG, getTranslation(VideoComponentView.LIB_DIALOG_VIDEO_DELETE_MSG, getResourceString(context, R.string.lib_dialog_video_delete_msg)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_RECORDING_VIDEO_LBL, getTranslation(VideoComponentView.LIB_RECORDING_VIDEO_LBL, getResourceString(context, R.string.lib_recording_video_lbl)));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_TOAST_ERROR_VIDEO_DECREASE_SECOND, getTranslation(VideoComponentView.LIB_TOAST_ERROR_VIDEO_DECREASE_SECOND, "LIB_TOAST_ERROR_VIDEO_DECREASE_SECOND"));
+
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_TTL, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_TTL, "LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_TTL"));
+        Constant.HMAUX_TRANS_LIB.put(VideoComponentView.LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_MSG, getTranslation(VideoComponentView.LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_MSG, "LIB_PERMISSION_VIDEO_NEVER_ASK_AGAIN_MSG"));
+                              
+    }
+
+    private static String getResourceString(Context context, int resourceId) {
+        return context.getResources().getString(resourceId);
+    }
+
+    private static String getTranslation(String key, String defaultResId) {
+        if (!Constant.HMAUX_TRANS_LIB.containsKey(key) ||
+                Constant.HMAUX_TRANS_LIB.get(key).contains(Constant.APP_MODULE + "/")) {
+            return defaultResId;
+        }
+        return Constant.HMAUX_TRANS_LIB.get(key);
     }
 
     public static HMAux translationCustomerSys(Context context, String translate_code) {
@@ -3323,7 +3383,6 @@ public class ToolBox_Inf {
 
         return hmAux;
     }
-
 
     public static boolean hasNFC(Context context) {
         if (NfcAdapter.getDefaultAdapter(context) != null) {

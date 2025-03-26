@@ -124,7 +124,7 @@ public class GE_Custom_Form_Data_Field {
 
                 String jValue = value;
 
-                if (value.endsWith(".png") || value.endsWith(".jpg")) {
+                if (value.endsWith(".png") || value.endsWith(".jpg") || value.endsWith(".mp4")) {
                     File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + value);
                     if (sFile.exists()) {
                         jValue = value;

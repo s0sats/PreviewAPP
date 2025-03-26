@@ -25,6 +25,9 @@ public class GE_Custom_Form_Field_Local {
     private String comment;
     private String require_photo_on_nc;
     private String custom_form_field_desc;
+    private Integer button_nc;
+    private Integer button_photo;
+    private Integer button_comment;
 
     public long getCustomer_code() {
         return customer_code;
@@ -176,5 +179,29 @@ public class GE_Custom_Form_Field_Local {
 
     public void setCustom_form_field_desc(String custom_form_field_desc) {
         this.custom_form_field_desc = custom_form_field_desc;
+    }
+
+    public Integer getButton_nc() {
+        return button_nc;
+    }
+
+    public void setButton_nc(Integer button_nc) {
+        this.button_nc = button_nc;
+    }
+
+    public Integer getButton_photo() {
+        return button_photo;
+    }
+
+    public void setButton_photo(Integer button_photo) {
+        this.button_photo = button_photo;
+    }
+
+    public Integer getButton_comment() {
+        return button_comment;
+    }
+
+    public void setButton_comment(Integer button_comment) {
+        this.button_comment = button_comment;
     }
 }

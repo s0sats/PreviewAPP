@@ -182,5 +182,28 @@
     <string name="position_barcode_area_lbl">Position the barcode inside the area below</string>
     <string name="btn_touch_flash_lbl">Flash</string>
     <string name="btn_rotate_screen_lbl">Rotate screen</string>
+    <string name="lib_audio_permission_btn">Enable microphone</string>
+    <string name="lib_permission_mic_rationale_ttl">Microphone access</string>
+    <string name="lib_permission_mic_rationale_msg">To record audio, you need to grant permission to use the microphone. Please allow access to the microphone in the App settings.</string>
+    <string name="lib_permission_mic_denied_ttl">Permission denied</string>
+    <string name="lib_permission_mic_denied_msg">The NAMOA app has been denied permission to use the microphone. Please go to the settings of the NAMOA app and manually grant access to the microphone to enable audio recording in the form.</string>
+    <string name="lib_toast_error_audio_decrease_second">Audio cannot be shorter than 1 second</string>
+    <string name="lib_toast_increase_audio_volume">Please turn up the volume</string>
+    <string name="lib_toast_error_recording_audio">There was an error recording the audio, please try again</string>
+    <string name="lib_dialog_audio_delete_ttl">Erase audio recorded</string>
+    <string name="lib_dialog_audio_delete_msg">Do you want to delete the recorded audio?</string>
+    <string name="mdots_photo">Photos</string>
+    <string name="mdots_comment">Comment</string>
+
+    <string name="lib_video_permission_btn">Enable camera</string>
+    <string name="lib_permission_video_rationale_ttl">camera access</string>
+    <string name="lib_permission_video_rationale_msg">To record video, you need to grant permission to use the camera. Please allow access to the camera in the App settings.</string>
+    <string name="lib_permission_video_denied_ttl">Permission denied</string>
+    <string name="lib_permission_video_denied_msg">The NAMOA app has been denied permission to use the camera. Please go to the settings of the NAMOA app and manually grant access to the camera to enable video recording in the form.</string>
+    <string name="lib_toast_error_recording_video">There was an error recording the video, please try again</string>
+    <string name="lib_dialog_video_delete_ttl">Erase video recorded</string>
+    <string name="lib_dialog_video_delete_msg">Do you want to delete the recorded video?</string>
+    <string name="lib_recording_video_lbl">Record video</string>
+
 
 </resources>

@@ -40,6 +40,10 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
     public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
+    //
+    public static final String BUTTON_NC = "button_nc";
+    public static final String BUTTON_PHOTO = "button_photo";
+    public static final String BUTTON_COMMENT = "button_comment";
 
     public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -108,7 +112,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -161,7 +165,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -185,7 +189,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -211,7 +215,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -235,7 +239,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -279,6 +283,10 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_field.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             custom_form_field.setRequire_photo_on_nc(cursor.getString(cursor.getColumnIndex(REQUIRE_PHOTO_ON_NC)));
+
+            custom_form_field.setButton_nc(cursor.getInt(cursor.getColumnIndex(BUTTON_NC)));
+            custom_form_field.setButton_photo(cursor.getInt(cursor.getColumnIndex(BUTTON_PHOTO)));
+            custom_form_field.setButton_comment(cursor.getInt(cursor.getColumnIndex(BUTTON_COMMENT)));
 
             return custom_form_field;
         }
@@ -337,8 +345,26 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_field.getComment() != null) {
                 contentValues.put(COMMENT, custom_form_field.getComment());
             }
-            if (custom_form_field.getRequire_photo_on_nc() != null){
+            if (custom_form_field.getRequire_photo_on_nc() != null) {
                 contentValues.put(REQUIRE_PHOTO_ON_NC, custom_form_field.getRequire_photo_on_nc());
+            }
+
+            if (custom_form_field.getButton_nc() == null) {
+                contentValues.put(BUTTON_NC, 1);
+            } else {
+                contentValues.put(BUTTON_NC, custom_form_field.getButton_nc());
+            }
+
+            if (custom_form_field.getButton_photo() == null) {
+                contentValues.put(BUTTON_PHOTO, 1);
+            } else {
+                contentValues.put(BUTTON_PHOTO, custom_form_field.getButton_photo());
+            }
+
+            if (custom_form_field.getButton_comment() == null) {
+                contentValues.put(BUTTON_COMMENT, 1);
+            } else {
+                contentValues.put(BUTTON_COMMENT, custom_form_field.getButton_comment());
             }
 
             return contentValues;

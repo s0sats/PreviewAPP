@@ -3,16 +3,17 @@ package com.namoadigital.prj001.ui.act022;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -46,9 +47,10 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     private TextView tv_product_desc;
     private MKEditTextNM mk_serial_id;
+    private TextInputLayout til_mk_serial;
     private ImageView iv_nfc;
-    private Button btn_cancel;
-    private Button btn_ok;
+    private MaterialButton btn_cancel;
+    private MaterialButton btn_ok;
 
     private boolean isShowingAlert = false;
 
@@ -111,13 +113,14 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
         tv_product_desc = (TextView) findViewById(R.id.act022_tv_product_desc_value);
         mk_serial_id = (MKEditTextNM) findViewById(R.id.act022_mket_serial_id);
+        til_mk_serial = findViewById(R.id.til_mket_serial);
         iv_nfc = (ImageView) findViewById(R.id.act022_iv_nfc);
-        btn_cancel = (Button) findViewById(R.id.act022_btn_cancel);
+        btn_cancel = findViewById(R.id.act022_btn_cancel);
         btn_cancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
-        btn_ok = (Button) findViewById(R.id.act022_btn_ok);
+        btn_ok = findViewById(R.id.act022_btn_ok);
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
 
-        mk_serial_id.setHint(hmAux_Trans.get("serial_hint_lbl"));
+        til_mk_serial.setHint(hmAux_Trans.get("serial_hint_lbl"));
         //LUCHE - 10/06/2019
         setupMketSerialInputTech();
 
@@ -142,7 +145,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
         mdProduct = mPresenter.getMD_Produt(product_code);
 
-        tv_product_desc.setText(mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
+        tv_product_desc.setText(mdProduct.getProduct_desc());
         //LUCHE - 10/06/2019
         setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
     }
@@ -268,6 +271,13 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         );
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        return true;
+    }
+
     /**
      * 14/11/18 - LUCHE
      * Adicionando metodo para que a validação a "quebra de leitura de vin" fosse possivel. Necessidade
@@ -364,15 +374,4 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 //                -1
 //        );
 //    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
 }

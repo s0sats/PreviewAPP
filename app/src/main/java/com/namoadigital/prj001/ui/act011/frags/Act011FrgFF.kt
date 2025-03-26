@@ -14,7 +14,7 @@ import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
+class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
     private val NO_LABEL_FOUND = "No label"
 
@@ -26,7 +26,8 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
      * Fun static para construcao do obj
      */
     companion object {
-        @JvmStatic fun newInstance(
+        @JvmStatic
+        fun newInstance(
             hmAuxTrans: HMAux,
             tabIndex: Int = 0,
             tabLastIndex: Int = 0,
@@ -35,7 +36,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             scheduleComments: String?,
             isFormOs: Boolean
         ) = Act011FrgFF()
-            .apply{
+            .apply {
                 this.hmAuxTrans = hmAuxTrans
                 this.formStatus = formStatus
                 this.tabIndex = tabIndex
@@ -45,12 +46,12 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
                 this.isFormOs = isFormOs
                 //
                 arguments = Bundle().apply {
-                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
-                    putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
-                    putInt(PARAM_LAST_INDEX,tabLastIndex)
-                    putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
-                    putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
-                    putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
+                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
+                    putInt(GE_Custom_Form_Field_LocalDao.PAGE, tabIndex)
+                    putInt(PARAM_LAST_INDEX, tabLastIndex)
+                    putString(MD_Schedule_ExecDao.SCHEDULE_DESC, scheduleDesc)
+                    putString(GE_Custom_Form_Field_LocalDao.COMMENT, scheduleComments)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
                 }
             }
 
@@ -58,19 +59,19 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let{
+        arguments?.let {
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
-            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
+            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
-            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        savedInstanceState?.let{
+        savedInstanceState?.let {
             customFF = mFrgListener.getCustomFF()
         }
         //
@@ -79,9 +80,9 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is Act011FrgFFInteraction){
+        if (context is Act011FrgFFInteraction) {
             _mFrgListener = context
-        }else{
+        } else {
             throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
         }
     }
@@ -94,14 +95,18 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
      * Seta os componentes dessa tab no fragmento, adicionando "indice" da pergunta no label.
      */
     private fun loadControls() {
-        if(!customFF.isNullOrEmpty()){
+        if (!customFF.isNullOrEmpty()) {
             var count = 0
-             customFF.filter {
+            customFF.filter {
                 it.getmPage() == tabIndex
             }.forEach { ff ->
-                if(ff.getmInclude() == 1){
+                if (ff.getmInclude() == 1) {
                     count++
-                    ff.setmLabel("$tabIndex.$count. ${ff.getmLabel()}")
+                    if (!isFormOs) {
+                        ff.setmLabel("$tabIndex.$count. ${ff.getmLabel()}")
+                    } else {
+                        ff.setmLabel(ff.getmLabel())
+                    }
                 }
                 //
                 binding.llControls.addView(ff)
@@ -111,11 +116,11 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     override fun getTabErrorCount(): Int {
         var errorCount = 0
-        if(!customFF.isNullOrEmpty()){
+        if (!customFF.isNullOrEmpty()) {
             customFF.filter {
                 it.getmPage() == tabIndex
             }.forEach { ff ->
-                if(!ff.isValid || !ff.isValidDots){
+                if (!ff.isValid || !ff.isValidDots) {
                     errorCount++
                 }
                 ff.setValidationBackGroundDots()
@@ -124,32 +129,32 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
         return errorCount
     }
 
-    override fun getTabCount() :Int{
-        return if(!customFF.isNullOrEmpty()){
+    override fun getTabCount(): Int {
+        return if (!customFF.isNullOrEmpty()) {
             customFF.filter {
                 it.getmPage() == tabIndex && it.getmInclude() == 1
             }.size
-        }else{
+        } else {
             0
         }
     }
 
     override fun getTabStatus(): Act011FormTabStatus {
-        return if(getTabErrorCount() == 0){
+        return if (getTabErrorCount() == 0) {
             Act011FormTabStatus.OK
-        }else{
+        } else {
             Act011FormTabStatus.ERROR
         }
     }
 
     override fun getTabName(): String {
-        return if(!customFF.isNullOrEmpty()){
+        return if (!customFF.isNullOrEmpty()) {
             customFF.find {
-                it.getmPage() == tabIndex && it.getmType().equals(CustomFF.TAB,true)
+                it.getmPage() == tabIndex && it.getmType().equals(CustomFF.TAB, true)
             }?.let {
                 it.getmLabel()
-            }?: NO_LABEL_FOUND
-        }else{
+            } ?: NO_LABEL_FOUND
+        } else {
             NO_LABEL_FOUND
         }
     }
@@ -164,13 +169,13 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
-            status = if(skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
         )
     }
 
     override fun applyAutoAnswer(): Int {
         var count = 0
-        if(!customFF.isNullOrEmpty()) {
+        if (!customFF.isNullOrEmpty()) {
             customFF.filter {
                 it.getmPage() == tabIndex
             }.forEach { ff ->
@@ -184,9 +189,9 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     }
 
     override fun scrollToSelectedView(customFF: CustomFF) {
-        try{
-            binding.svMain.smoothScrollTo(0,customFF.y.toInt())
-        }catch (e: Exception){
+        try {
+            binding.svMain.smoothScrollTo(0, customFF.y.toInt())
+        } catch (e: Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         }
     }

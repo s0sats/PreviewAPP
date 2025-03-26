@@ -38,8 +38,7 @@ class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
     Act011BaseFrgInteraction,
     Act087MainContract.I_View,
-    FormOsHeaderFrgCreationInteraction
-{
+    FormOsHeaderFrgCreationInteraction {
 
     private lateinit var binding: Act087MainContentBinding
     private lateinit var formOsHeaderFrg: FormOsHeaderFrg
@@ -126,10 +125,10 @@ class Act087Main : Base_Activity_Frag(),
     private var originFlow: String = ConstantBaseApp.ACT005
     private lateinit var bundle: Bundle
     private var act083Bundle: Bundle? = null
-    private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
+    private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy {
         formOsHeaderFrg
     }
-    private var mScheduleObj : MD_Schedule_Exec? = null
+    private var mScheduleObj: MD_Schedule_Exec? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,7 +153,8 @@ class Act087Main : Base_Activity_Frag(),
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        )
     }
 
     private fun iniTrans() {
@@ -163,8 +163,8 @@ class Act087Main : Base_Activity_Frag(),
 
     private fun initVars() {
         checkIfHasPassedDays()
-        if(mPresenter.validateBundleParams()) {
-            if(mPresenter.checkFormExists()) {
+        if (mPresenter.validateBundleParams()) {
+            if (mPresenter.checkFormExists()) {
                 if (mPresenter.isSchedule()) {
                     mScheduleObj = mPresenter.getScheduleExecObj()
                     if (mScheduleObj == null) {
@@ -182,7 +182,7 @@ class Act087Main : Base_Activity_Frag(),
                 } else {
                     setFormOsHeaderFrg()
                 }
-            }else{
+            } else {
                 showAlert(
                     hmAux_Trans["alert_form_not_found_ttl"],
                     hmAux_Trans["alert_form_not_found_msg"],
@@ -243,8 +243,8 @@ class Act087Main : Base_Activity_Frag(),
             hmAuxTrans = mPresenter.getTranslation(),
             formStatus = ConstantBaseApp.SYS_STATUS_PENDING,
             scheduleDesc = mScheduleObj?.schedule_desc,
-            scheduleComments =  mScheduleObj?.comments,
-            formOsHeader = osHeaderObj ,
+            scheduleComments = mScheduleObj?.comments,
+            formOsHeader = osHeaderObj,
             initialSerialState = initialSerialState,
             isOsCreation = true
         )
@@ -257,16 +257,16 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun recoverIntentsInfo() {
-        intent?.extras?.let { bundle->
+        intent?.extras?.let { bundle ->
             this.bundle = bundle
             //
-            with(bundle){
-                customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,-1)
-                customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,-1)
-                customFormVersion = getInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION,-1)
-                productCode = getInt(MD_Product_SerialDao.PRODUCT_CODE,-1)
-                serialCode = getInt(MD_Product_SerialDao.SERIAL_CODE,-1)
-                serialId = getString(MD_Product_SerialDao.SERIAL_ID,"")
+            with(bundle) {
+                customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE, -1)
+                customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE, -1)
+                customFormVersion = getInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION, -1)
+                productCode = getInt(MD_Product_SerialDao.PRODUCT_CODE, -1)
+                serialCode = getInt(MD_Product_SerialDao.SERIAL_CODE, -1)
+                serialId = getString(MD_Product_SerialDao.SERIAL_ID, "")
                 schedulePrefix = getInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
@@ -298,7 +298,7 @@ class Act087Main : Base_Activity_Frag(),
                     )
                 }
             }
-        }?:Bundle()
+        } ?: Bundle()
     }
 
     override fun openDrawer() {
@@ -358,7 +358,7 @@ class Act087Main : Base_Activity_Frag(),
      */
     override fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean) {
         controls_sta.clear()
-        if(addAction) {
+        if (addAction) {
             controls_sta.addAll(control_sta)
         }
     }
@@ -380,7 +380,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun getTkTicketContinousForm(): TK_Ticket_Form? {
-        if(isContinousForm()) {
+        if (isContinousForm()) {
             return mPresenter.getTkTicketForm()
         }
         return null
@@ -442,7 +442,7 @@ class Act087Main : Base_Activity_Frag(),
         serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         onlineSearch: Boolean
     ) {
-        mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList,onlineSearch)
+        mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList, onlineSearch)
     }
 
     /**
@@ -473,19 +473,24 @@ class Act087Main : Base_Activity_Frag(),
         ToolBox_Inf.buildFooterDialog(context)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return true
+    }
+
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {
         super.processCloseACT(mLink, mRequired)
-        processCloseACT(mLink,mRequired, HMAux())
+        processCloseACT(mLink, mRequired, HMAux())
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
         super.processCloseACT(mLink, mRequired, hmAux)
-        when(wsProcess){
-            WS_Product_Serial_Backup::class.java.name ->{
+        when (wsProcess) {
+            WS_Product_Serial_Backup::class.java.name -> {
                 resetWsResources()
                 mPresenter.processWsBkpMachineResult(mLink)
             }
+
             else -> resetWsResources()
         }
     }
@@ -502,9 +507,9 @@ class Act087Main : Base_Activity_Frag(),
         //Tratativa necessaria pois, caso de erro antes de formOsHeaderFrg ser inicializado,
         //a interface mFormHeaderFragListener tb não será inicializada e causará crash.
         //Nesse caso, o param anyDataChanged é setado como falso, exitando a chama do dialog de confirmação.
-        val anyDataChanged = if(!::formOsHeaderFrg.isInitialized){
+        val anyDataChanged = if (!::formOsHeaderFrg.isInitialized) {
             false
-        }else{
+        } else {
             mFormHeaderFragListener.isAnyDataChanged()
         }
         mPresenter.onBackPressedClicked(anyDataChanged)
@@ -560,7 +565,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun getMyActionsParam(mBundle: Bundle) {
-        act083Bundle?.let{
+        act083Bundle?.let {
             mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
             val myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(it)
             it.putSerializable(
@@ -583,8 +588,9 @@ class Act087Main : Base_Activity_Frag(),
     }
 
 
-    companion object{
-        @JvmStatic fun getBundleInstance(
+    companion object {
+        @JvmStatic
+        fun getBundleInstance(
             customFormType: String,
             customFormCode: String,
             customFormVersion: String,
@@ -594,28 +600,19 @@ class Act087Main : Base_Activity_Frag(),
             schedulePrefix: String = "-1",
             scheduleCode: String = "-1",
             scheduleExec: String = "-1"
-        ): Bundle{
+        ): Bundle {
             return Bundle().apply {
-                putInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,customFormCode.toInt())
-                putInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,customFormType.toInt())
-                putInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion.toInt())
-                putInt(MD_Product_SerialDao.PRODUCT_CODE,productCode.toInt())
-                putInt(MD_Product_SerialDao.SERIAL_CODE,serialCode.toInt())
-                putString(MD_Product_SerialDao.SERIAL_ID,serialId)
-                putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX,schedulePrefix.toInt())
-                putInt(MD_Schedule_ExecDao.SCHEDULE_CODE,scheduleCode.toInt())
-                putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC,scheduleExec.toInt())
+                putInt(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode.toInt())
+                putInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE, customFormType.toInt())
+                putInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION, customFormVersion.toInt())
+                putInt(MD_Product_SerialDao.PRODUCT_CODE, productCode.toInt())
+                putInt(MD_Product_SerialDao.SERIAL_CODE, serialCode.toInt())
+                putString(MD_Product_SerialDao.SERIAL_ID, serialId)
+                putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, schedulePrefix.toInt())
+                putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleCode.toInt())
+                putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.toInt())
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
-        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
-        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        return true
     }
 
     //TRATA MSG SESSION NOT FOUND

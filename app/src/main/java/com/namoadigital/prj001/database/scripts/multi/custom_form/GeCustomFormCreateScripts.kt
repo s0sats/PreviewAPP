@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.database.scripts.multi
+package com.namoadigital.prj001.database.scripts.multi.custom_form
 
 
 const val GE_CUSTOM_FORM_FORM_CREATE_SCRIPT =

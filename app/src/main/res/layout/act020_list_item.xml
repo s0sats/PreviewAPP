@@ -14,8 +14,8 @@
     android:minHeight="80dp"
     android:elevation="0dp"
     style="@style/Widget.Material3.CardView.Filled">
-    
-    
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -79,12 +79,12 @@
             android:textStyle="normal"
             android:visibility="gone"
             style="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/m3_namoa_onSurfaceVariant"/>
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
         <View
             android:id="@+id/space_site"
             android:layout_width="match_parent"
-            android:layout_height="16dp"/>
+            android:layout_height="16dp" />
 
         <TextView
             android:id="@+id/list_trackings"
@@ -93,13 +93,13 @@
             android:textStyle="normal"
             android:visibility="gone"
             style="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/m3_namoa_onSurfaceVariant"/>
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
         <View
             android:id="@+id/space_site2"
             android:layout_width="match_parent"
             android:layout_height="16dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/site_and_zone"
@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             style="@style/TextAppearance.Material3.TitleSmall"
-            android:textColor="@color/m3_namoa_onSurfaceVariant"/>
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

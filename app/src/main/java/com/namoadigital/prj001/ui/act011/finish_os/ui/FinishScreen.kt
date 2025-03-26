@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011.finish_os.ui
 
 import android.content.Context
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -506,7 +507,7 @@ fun ButtonFinishComponent(
                         bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
                     },
-                shape = RoundedCornerShape(ApplicationTheme.spacing.small),
+                shape = RoundedCornerShape(ApplicationTheme.spacing.mediumLarge),
                 onClick = onCancel
             ) {
                 Text(
@@ -526,7 +527,7 @@ fun ButtonFinishComponent(
                         bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
                     },
-                shape = RoundedCornerShape(ApplicationTheme.spacing.small),
+                shape = RoundedCornerShape(ApplicationTheme.spacing.mediumLarge),
                 onClick = onDone,
                 enabled = isEnabled
             ) {

@@ -64,10 +64,10 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(context);
             //
-            convertView = mInflater.inflate(resource,parent,false);
+            convertView = mInflater.inflate(resource, parent, false);
         }
         //Resgata HmAux com as informações
         HMAux item = sourceFilter.get(position);
@@ -93,7 +93,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
         String code = item.get(EV_User_CustomerDao.CUSTOMER_NAME) + " (" + item.get(EV_User_CustomerDao.CUSTOMER_CODE) + ")";
         SpannableString id_string = new SpannableString(code);
         id_string.setSpan(
-                new TextAppearanceSpan(context, com.namoa_digital.namoa_library.R.style.Base_TextAppearance_Material3_LabelSmall),
+                new TextAppearanceSpan(context, com.google.android.material.R.style.TextAppearance_Material3_LabelSmall),
                 code.indexOf("("),
                 code.length(),
                 0
@@ -123,7 +123,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
                 iv002.setImageResource(R.drawable.ic_lock_black_24dp);
                 iv002.setColorFilter(context.getResources().getColor(R.color.m3_namoa_error));
             }
-        }else{
+        } else {
             //Configura icone de sessession baseado no valor.
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0) {
                 iv001.setVisibility(View.GONE);

@@ -46,6 +46,10 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
     public static final String CUSTOM_FORM_FIELD_DESC = "custom_form_field_desc";
 
+    public static final String BUTTON_NC = "button_nc";
+    public static final String BUTTON_PHOTO = "button_photo";
+    public static final String BUTTON_COMMENT = "button_comment";
+
     public GE_Custom_Form_Field_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
@@ -118,7 +122,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -155,7 +159,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -208,7 +212,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -232,7 +236,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -258,7 +262,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -282,9 +286,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                 String data = cursor.getString(0);
                 String column_name = cursor.getColumnName(0);
 
-                HashMap<String,String> map = new HashMap<String,String>();
-                map.put("column_value",data);
-                map.put("column_name",column_name);
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("column_value", data);
+                map.put("column_name", column_name);
 
 
                 custom_form_field_locals.add(CursorToHMAuxMapper.mapN(cursor));
@@ -292,7 +296,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -340,6 +344,11 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setRequire_photo_on_nc(cursor.getString(cursor.getColumnIndex(REQUIRE_PHOTO_ON_NC)));
 
             custom_form_field_local.setCustom_form_field_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_FIELD_DESC)));
+
+            custom_form_field_local.setButton_nc(cursor.getInt(cursor.getColumnIndex(BUTTON_NC)));
+            custom_form_field_local.setButton_photo(cursor.getInt(cursor.getColumnIndex(BUTTON_PHOTO)));
+            custom_form_field_local.setButton_comment(cursor.getInt(cursor.getColumnIndex(BUTTON_COMMENT)));
+
 
             return custom_form_field_local;
         }
@@ -403,7 +412,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                 contentValues.put(COMMENT, custom_form_field_local.getComment());
             }
 
-            if (custom_form_field_local.getRequire_photo_on_nc() != null){
+            if (custom_form_field_local.getRequire_photo_on_nc() != null) {
                 contentValues.put(REQUIRE_PHOTO_ON_NC, custom_form_field_local.getRequire_photo_on_nc());
             }
 
@@ -411,6 +420,23 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
                 contentValues.put(CUSTOM_FORM_FIELD_DESC, custom_form_field_local.getCustom_form_field_desc());
             }
 
+            if (custom_form_field_local.getButton_nc() == null) {
+                contentValues.put(BUTTON_NC, 1);
+            } else {
+                contentValues.put(BUTTON_NC, custom_form_field_local.getButton_nc());
+            }
+
+            if (custom_form_field_local.getButton_photo() == null) {
+                contentValues.put(BUTTON_PHOTO, 1);
+            } else {
+                contentValues.put(BUTTON_PHOTO, custom_form_field_local.getButton_photo());
+            }
+
+            if (custom_form_field_local.getButton_comment() == null) {
+                contentValues.put(BUTTON_COMMENT, 1);
+            } else {
+                contentValues.put(BUTTON_COMMENT, custom_form_field_local.getButton_comment());
+            }
             return contentValues;
 
         }
@@ -436,12 +462,16 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             contentValues.put(CUSTOM_FORM_ORDER, hmAux.get(CUSTOM_FORM_ORDER));
             contentValues.put(PAGE, hmAux.get(PAGE));
             contentValues.put(REQUIRED, hmAux.get(REQUIRED));
-            if(hmAux.hasConsistentValue(DEVICE_TP_CODE) && !Objects.requireNonNull(hmAux.get(DEVICE_TP_CODE)).isEmpty()) {
+            if (hmAux.hasConsistentValue(DEVICE_TP_CODE) && !Objects.requireNonNull(hmAux.get(DEVICE_TP_CODE)).isEmpty()) {
                 contentValues.put(DEVICE_TP_CODE, hmAux.get(DEVICE_TP_CODE));
             }
             contentValues.put(AUTOMATIC, hmAux.get(AUTOMATIC));
             contentValues.put(COMMENT, hmAux.get(COMMENT));
             contentValues.put(REQUIRE_PHOTO_ON_NC, hmAux.get(REQUIRE_PHOTO_ON_NC));
+
+            contentValues.put(BUTTON_NC, hmAux.get(BUTTON_NC));
+            contentValues.put(BUTTON_PHOTO, hmAux.get(BUTTON_PHOTO));
+            contentValues.put(BUTTON_COMMENT, hmAux.get(BUTTON_COMMENT));
 
             //contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get(CUSTOM_FORM_FIELD_DESC));
             contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get("TXT_VALUE".toLowerCase()));

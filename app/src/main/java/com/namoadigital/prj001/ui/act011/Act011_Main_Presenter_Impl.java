@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoa_digital.namoa_library.ctls.audio.ui.AudioRecorderFF.MEDIA_EXTENSION;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PROCESS;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_WAITING_SYNC;
@@ -1978,6 +1979,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
             String sFile_v = df.getValue();
             String valueExtra = df.getValue_extra();
+
             GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
             //
             GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
@@ -2009,7 +2011,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private GE_File setGE_FileForCurrentForm(String photoCode) {
         GE_File temp = new GE_File();
-        temp.setFile_code(photoCode.replace(Act011_Main.PNG_EXTENSION, "").replace(Act011_Main.JPG_EXTENSION, ""));
+        temp.setFile_code(photoCode.replace(Act011_Main.PNG_EXTENSION, "").replace(Act011_Main.JPG_EXTENSION, "").replace(MEDIA_EXTENSION, ""));
         temp.setFile_path(photoCode);
         temp.setFile_status(GE_File.OPENED);
         temp.setFile_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));

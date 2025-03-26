@@ -45,15 +45,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_os_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:paddingStart="10dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_serial_initial_state"
                 app:layout_constraintBottom_toTopOf="@id/inc_navegation"
-                >
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cl_serial_initial_state">
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/gd_start"
@@ -67,10 +67,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:padding="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:padding="2dp">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/gd_bkp_machine_start"
@@ -81,13 +81,13 @@
 
                     <TextView
                         android:id="@+id/tv_os_machine_lbl"
+                        style="@style/TextAppearance.Material3.BodyMedium"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginStart="16dp"
+                        android:layout_marginEnd="8dp"
                         android:gravity="center_vertical"
                         android:minHeight="48dp"
-                        style="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="@color/namoa_color_black"
                         app:layout_constraintEnd_toStartOf="@id/br_switch"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -105,9 +105,8 @@
                         android:id="@+id/gp_bkp_machine_val"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="til_mket_serial,iv_serial_search"
                         android:visibility="visible"
-                        />
+                        app:constraint_referenced_ids="til_mket_serial,iv_serial_search" />
 
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/sw_machine"
@@ -124,14 +123,17 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_mket_serial"
+                        style="@style/NamoaTheme3.TextInputLayout.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:helperText="Informe o serial"
-                        app:helperTextEnabled="false"
-                        app:errorTextAppearance="@style/TextInputLayoutHelperTextColorRequired"
-                        app:hintEnabled="false"
                         android:layout_marginStart="16dp"
                         android:layout_marginBottom="4dp"
+                        android:minHeight="48dp"
+                        android:hint="Digite o serial"
+                        app:hintTextColor="@color/m3_namoa_onSurfaceVariant"
+                        app:errorTextAppearance="@style/TextInputLayoutHelperTextColorRequired"
+                        app:helperText="Informe o serial"
+                        app:helperTextEnabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/tv_os_machine_lbl"
                         app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
@@ -141,8 +143,7 @@
                             android:id="@+id/mket_machine_serial_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Digite o serial"
-                            android:minHeight="48dp"
+                            android:textColor="@color/m3_namoa_onSurface"
                             app:mBARCODE="true"
                             app:mNFC="false"
                             app:mOCR="false"
@@ -152,14 +153,13 @@
                     <ImageView
                         android:id="@+id/iv_serial_search"
                         style="@style/ImageViewButtonStd"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="16dp"
                         android:background="@drawable/my_action_toogle_default_inset"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/sw_machine"
-                        app:layout_constraintTop_toTopOf="@id/til_mket_serial"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_os_machine_lbl"
                         app:srcCompat="@drawable/ic_baseline_search_24"
-                        app:tint="@color/namoa_outlined_button_font_states"
-                        />
+                        app:tint="@color/namoa_outlined_button_font_states" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -167,26 +167,24 @@
                     android:id="@+id/tv_info_os_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    tools:text="Informações da OS "
-                    android:textColor="@color/namoa_color_black"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/font_size_font_20"
                     android:layout_marginTop="24dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:textColor="@color/namoa_color_black"
+                    android:textSize="@dimen/font_size_font_20"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl_machine_edit"
-                    />
+                    tools:text="Informações da OS " />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/ll_schedule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@id/tv_info_os_lbl"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:visibility="gone"
-                    >
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_info_os_lbl">
 
                     <TextView
                         android:id="@+id/tv_schedule_desc"
@@ -195,13 +193,13 @@
                         android:text="Titulo do Comentário"
                         android:textColor="@color/namoa_color_blue_dark_chat"
                         android:textSize="@dimen/font_size_title"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_comments"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Sem Valor"/>
+                        android:text="Sem Valor" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
 
@@ -210,8 +208,8 @@
                     style="@style/TextAppearance.Material3.BodyMedium"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
                     android:textColor="@color/namoa_color_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -223,14 +221,13 @@
                     android:id="@+id/cl_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_namoa_spinner"
                     android:minHeight="36dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl"
-                    android:background="@drawable/bg_namoa_spinner"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl">
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/sp_os_type"
@@ -238,11 +235,10 @@
                         android:layout_height="wrap_content"
                         android:minHeight="36dp"
                         android:textColor="@color/namoa_color_black"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -252,8 +248,8 @@
                     layout="@layout/notication_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginVertical="8dp"
+                    android:layout_marginStart="16dp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -264,8 +260,8 @@
                     android:id="@+id/tv_os_start_date_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
                     android:textColor="@color/namoa_color_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
@@ -278,10 +274,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:textColor="@color/namoa_color_black"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_os_start_date_lbl"
-                    />
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_os_start_date_lbl" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_main_measure"
@@ -289,86 +284,81 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
-                    app:layout_constraintTop_toBottomOf="@id/mkdt_start_date"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/mkdt_start_date">
 
-                    <TextView
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tv_os_main_measure_lbl"
+                        style="@style/NamoaTheme3.TextInputLayout.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:textColor="@color/namoa_color_black"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
                         app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="4. Horimetro" />
+                        tools:hint="Horimetro">
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                        android:id="@+id/mket_os_main_measure_val"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:hint="Digite o valor atual"
-                        android:inputType="numberDecimal"
-                        android:layout_marginStart="16dp"
-                        android:textColor="@color/namoa_color_black"
-                        app:mInputType="NUMBER"
-                        app:layout_constraintEnd_toStartOf="@+id/ib_telemetry"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_os_main_measure_lbl"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false"
-                        app:mOCRVin="false" />
+                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                            android:id="@+id/mket_os_main_measure_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/namoa_color_black"
+                            app:mBARCODE="false"
+                            app:mInputType="NUMBER"
+                            app:mNFC="false"
+                            app:mOCR="false"
+                            app:mOCRVin="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:id="@+id/tv_horimeter_alert_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
                         android:layout_marginStart="16dp"
+                        android:layout_marginTop="2dp"
                         android:text="Alerta de medicao"
-                        android:visibility="gone"
                         android:textColor="@color/text_red"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/mket_os_main_measure_val"
-                         />
+                        app:layout_constraintTop_toBottomOf="@id/tv_os_main_measure_lbl" />
 
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ib_telemetry"
-                        app:icon="@drawable/ic_telemetry"
-                        app:iconTint="@color/namoa_color_black"
+                        style="@style/NamoaTheme3.Button.Icon.Filled"
                         android:backgroundTint="@color/namoa_color_gray_divider"
                         android:foregroundTint="@color/namoa_color_black"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_telemetry"
+                        app:iconTint="@color/namoa_color_black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        style="@style/NamoaTheme3.Button.Icon.Filled"
-                        android:visibility="gone"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_last_measure"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintTop_toBottomOf="@id/cl_main_measure">
 
                     <TextView
                         android:id="@+id/tv_os_last_measure_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Ultimo valor:"
                         android:layout_marginStart="16dp"
-                        app:layout_constraintWidth_percent="0.25"
                         android:layout_marginTop="2dp"
+                        android:text="Ultimo valor:"
                         android:textColor="@color/namoa_color_gray_9"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.25" />
 
                     <TextView
                         android:id="@+id/tv_os_last_measure_val"
@@ -380,7 +370,7 @@
                         android:textSize="@dimen/font_size_font_16"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_os_last_measure_lbl"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -388,22 +378,22 @@
                     android:id="@+id/sw_allow_form_so_in_the_past"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="15dp"
+                    android:layout_marginStart="16dp"
                     android:checked="false"
-                    tools:text="10400h - 31/08/2021 15:30 "
+                    android:paddingVertical="15dp"
                     android:textColor="@color/namoa_color_gray_9"
                     android:textSize="@dimen/font_size_font_16"
-                    android:layout_marginStart="16dp"
+                    android:thumb="@drawable/namoa_switch_states"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
-                    android:thumb="@drawable/namoa_switch_states"
+                    app:layout_constraintTop_toBottomOf="@id/cl_last_measure"
                     app:thumbTint="@color/namoa_switch_color_states"
                     app:trackTint="@color/namoa_switch_track_color_states"
-                    app:layout_constraintTop_toBottomOf="@id/cl_last_measure"/>
+                    tools:text="10400h - 31/08/2021 15:30 " />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_save"
-                    style="@style/NamoaSaveButtonDarkBlue"
+                    style="@style/NamoaTheme3.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"

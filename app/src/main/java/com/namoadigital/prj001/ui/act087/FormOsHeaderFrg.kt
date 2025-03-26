@@ -244,9 +244,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             tvOsTypeLbl.text = hmAuxTrans["order_type_lbl"]
             tvOsMachineLbl.text = hmAuxTrans["use_backup_lbl"]
             tvOsStartDateLbl.text = hmAuxTrans["start_date_lbl"]
-            mketMachineSerialEdit.hint = hmAuxTrans["backup_serial_hint"]
-            tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
-            mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
+            tilMketSerial.hint = hmAuxTrans["backup_serial_hint"]
+            tilMketSerial.error = hmAuxTrans["backup_serial_help_lbl"]
+//            mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
             tvHorimeterAlertLbl.text = hmAuxTrans["alert_horimeter_type_lbl"]
@@ -557,6 +557,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketMachineSerialEdit.isEnabled = false
                     mketMachineSerialEdit.setmBARCODE(false)
                     tilMketSerial.isErrorEnabled = false
+                    mketMachineSerialEdit.isError = false
                     ivSerialSearch.isEnabled = false
                     /*ivSwapMachine.visibility =
                         if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE*/
@@ -622,6 +623,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         return true
     }
 
+
     private fun hasBarcodeSerialMatch(
         serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         productCode: Int,
@@ -653,6 +655,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     com.namoa_digital.namoa_library.R.drawable.shape_ok
                 )
             tilMketSerial.isErrorEnabled = false
+            mketMachineSerialEdit.isError = false
             selectedBkpMachineSerialCode = serialBkp.serialCode
             selectedBkpMachineSerialId = serialBkp.serialId
             ivSerialSearch.setImageDrawable(
@@ -701,7 +704,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mainMeasureTp = getMainMeasureTp(it, ticketForm!!.customer_code)
                 }
                 ticketForm!!.measure_tp_desc?.let {
-                    tvOsMainMeasureLbl.text = it
+                    tvOsMainMeasureLbl.hint = it
                 }
                 ticketForm?.measure_value?.let {
                     mketOsMainMeasureVal.setText(
@@ -745,7 +748,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mainMeasureTp = getMainMeasureTp(it, formOsHeader.customer_code)
                 }
                 formOsHeader.measure_tp_desc?.let {
-                    tvOsMainMeasureLbl.text = it
+                    tvOsMainMeasureLbl.hint = it
                 }
                 //todo rever o save do float no obj
                 formOsHeader.measure_value?.let {
@@ -813,20 +816,24 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 val diffTime =
                     it.horimeter_date?.getDateDiferenceInMinutes(currentTime) ?: Long.MAX_VALUE
 
-                it.measure_block_input_time?.let { block_input ->
-                    if (isBlockInputTime(diffTime, block_input)) {
-                        mketOsMainMeasureVal.isEnabled = false
+                if(initialSerialState?.horimeter_supplier_uid != null) {
+                    it.measure_block_input_time?.let { block_input ->
+                        if (isBlockInputTime(diffTime, block_input)) {
+                            mketOsMainMeasureVal.isEnabled = false
+                        }
                     }
-                }
-                it.measure_alert_input_time?.let { alert_input ->
-                    if (diffTime >= alert_input
-                        && isOsCreation
-                        && !isContinuosFormPartition()
-                    ) {
-                        tvHorimeterAlertLbl.visibility = getTelemetryVisibility()
-                        mketOsMainMeasureVal.setText("")
-                    } else {
-                        tvHorimeterAlertLbl.visibility = View.GONE
+                    it.measure_alert_input_time?.let { alert_input ->
+                        if (diffTime >= alert_input
+                            && isOsCreation
+                            && !isContinuosFormPartition()
+                        ) {
+                            tvHorimeterAlertLbl.visibility = getTelemetryVisibility()
+                            if (initialSerialState?.horimeter_supplier_uid != null) {
+                                mketOsMainMeasureVal.setText("")
+                            }
+                        } else {
+                            tvHorimeterAlertLbl.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -834,14 +841,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getTelemetryVisibility(): Int {
-        return if((isOsCreation
-                    || isContinuosFormPartition())
-            && initialSerialState?.horimeter_supplier_uid != null
-            )
+        return if(handleTelemetry())
                 View.VISIBLE
             else
                 View.GONE
     }
+
+    private fun handleTelemetry() = ((isOsCreation
+            || isContinuosFormPartition())
+                && initialSerialState?.horimeter_supplier_uid != null)
 
 
     private fun checkLateTelemetryMeasureDate(
@@ -1460,6 +1468,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                                 selectedBkpMachineSerialId = null
                             }
                             tilMketSerial.isErrorEnabled = true
+                            tilMketSerial.errorIconDrawable = null
+//                            mketMachineSerialEdit.isError = true
                             tilMketSerial.error = hmAuxTrans["backup_serial_help_lbl"]
                             clMachineEdit.background =
                                 ContextCompat.getDrawable(
@@ -1502,7 +1512,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             initialSerialState?.horimeter_date?.getDateDiferenceInMinutes(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))
                 ?: Long.MAX_VALUE
         val isBlockInput = initialSerialState?.measure_block_input_time?.let {
-            isBlockInputTime(diffTime, it)
+            isBlockInputTime(diffTime, it) && initialSerialState?.horimeter_supplier_uid != null
         } ?: false
         //
         if (isBlockInput) {

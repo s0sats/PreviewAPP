@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.ui.act011.finish_os.ui.screen_component
 
+import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
@@ -53,8 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
+import com.namoa_digital.namoa_library.R.color
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
@@ -93,7 +98,7 @@ fun BackupMachineSerialComponent(
 ) {
     //
     val requiredColor =
-        colorResource(id = com.namoa_digital.namoa_library.R.color.customff_required_on_color)
+        colorResource(id = color.m3_namoa_error_form_fields)
     //
     var showMachineBackupListDialog by remember {
         mutableStateOf(false)
@@ -105,9 +110,7 @@ fun BackupMachineSerialComponent(
     var backupMachineListState by remember {
         mutableStateOf(backupMachineList)
     }
-    val serialSearchMode = backupMachine?.let {
-        it.serialId.isNullOrBlank()
-    } ?: true
+    val serialSearchMode = backupMachine?.serialId?.isBlank() ?: true
 
     var serialIdSearchField by remember {
         mutableStateOf("")
@@ -143,7 +146,7 @@ fun BackupMachineSerialComponent(
         Box(
             modifier = Modifier
                 .padding(top = ApplicationTheme.spacing.extraExtraSmall)
-                .border(width = 1.dp, color = rowColor)
+                .border(width = 1.dp, color = rowColor, shape = RoundedCornerShape(8.dp))
         ) {
 
             TitleSwitch(
@@ -186,23 +189,45 @@ fun BackupMachineSerialComponent(
                             modifier = modifier.padding(bottom = ApplicationTheme.spacing.extraExtraSmall),
                             factory = { context ->
                                 //
-                                val textInputLayout = TextInputLayout(context).apply {
-                                    layoutParams = ViewGroup.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.WRAP_CONTENT
+                                val textInputLayout = TextInputLayout(context, null, R.style.NamoaTheme3_TextInputLayout_Outlined).apply {
+                                    layoutParams = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
                                     )
                                     setErrorTextAppearance(R.style.TextInputLayoutHelperTextColorRequired)
+                                    isHintEnabled = true
+                                    isErrorEnabled = false
+                                    isHelperTextEnabled = true
+                                    helperText = backupMachine?.productDesc
+                                    hint = translateMap.translate(DIALOG_SELECT_BACKUP_SERIAL_HINT)
+                                    boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+                                    val cornerRadiusPx = TypedValue.applyDimension(
+                                        TypedValue.COMPLEX_UNIT_DIP,
+                                        6f,
+                                        context.resources.displayMetrics
+                                    )
+                                    setBoxCornerRadii(cornerRadiusPx, cornerRadiusPx, cornerRadiusPx, cornerRadiusPx)
                                 }
                                 //
                                 val mkEditTextNM = MKEditTextNM(context)
                                 mkEditTextNM.id = View.generateViewId()
                                 onBarcodeMkEditText(mkEditTextNM)
                                 mkEditTextNM.apply {
-                                    // Sets up listeners for View -> Compose communication
+                                    isEnabled = serialSearchMode
+                                    val density = context.resources.displayMetrics.density
+                                    setPadding(
+                                        (16 * density).toInt(),
+                                        (16 * density).toInt(),
+                                        (16 * density).toInt(),
+                                        (16 * density).toInt()
+                                    )
+                                    background = null
+                                    setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_onSurface)))
+
+
                                     backupMachine?.let {
                                         setText(it.serialId)
                                     }
-                                    hint = translateMap.translate(DIALOG_SELECT_BACKUP_SERIAL_HINT)
                                     addTextChangedListener {
                                         serialIdSearchField = it.toString()
                                     }
@@ -213,20 +238,9 @@ fun BackupMachineSerialComponent(
                                         }
                                     }
                                 }
-
-                                mkEditTextNM.apply {
-                                    // Sets up listeners for View -> Compose communication
-                                    isEnabled = serialSearchMode
-                                }
-
                                 textInputLayout.addView(mkEditTextNM)
 
-                                textInputLayout.apply {
-                                    isHintEnabled = false
-                                    isErrorEnabled = false
-                                    isHelperTextEnabled = false
-                                    helperText = backupMachine?.productDesc
-                                }
+                                textInputLayout
                             },
                             update = { textInputLayout ->
                                 //
@@ -263,8 +277,7 @@ fun BackupMachineSerialComponent(
 
                         IconButton(
                             modifier = Modifier
-                                .size(36.dp)
-//                        .padding(vertical = ApplicationTheme.spacing.mediumSmall)
+                                .size(40.dp)
                                 .border(1.dp, Color.Gray, CircleShape)
                                 .clip(CircleShape),
                             enabled = !(serialSearchMode && serialIdSearchField.isNullOrBlank()) && !isReadOnly,
@@ -287,14 +300,14 @@ fun BackupMachineSerialComponent(
                         ) {
                             if (serialSearchMode) {
                                 Icon(
-                                    modifier = Modifier.size(13.dp),
+                                    modifier = Modifier.size(18.dp),
                                     imageVector = Icons.Filled.Search,
                                     contentDescription = null,
                                 )
                             } else {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_delete),
-                                    modifier = Modifier.size(16.dp),
+                                    modifier = Modifier.size(18.dp),
                                     contentDescription = null,
                                 )
                             }

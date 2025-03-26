@@ -188,6 +188,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             //act086VerificationFrgClPhoto.setOnClickListener(null)
             //
             act086VerificationFrgMketComment.isEnabled = enable
+            act086VerificationFrgTilComment.isEnabled = enable
         }
     }
 
@@ -389,8 +390,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     isManualDescInEdit = isEnabled
                     setText(geOsDeviceItem.manual_desc)
                     tag = geOsDeviceItem.manual_desc
-                    hint = hmAux_Trans["manual_desc_hint"]
                 }
+
+                tilAct086VerificationFrgMketManualDesc.hint = hmAux_Trans["manual_desc_hint"]
+
+
                 act086VerificationFrgIvManualHandler.apply {
                     //Se resposta vazia, vai define icone como check
                     setImageDrawable(getIvManualDescIcon(emptyAnswer))
@@ -478,7 +482,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
             act086VerificationFrgTvRequireFields.text = hmAux_Trans["fill_below_fields_lbl"]
             act086VerificationFrgTvSupplementaryDataTtl.text = hmAux_Trans["supplementary_data_lbl"]
-            act086VerificationFrgMketComment.hint = hmAux_Trans["comment_hint"]
+            act086VerificationFrgTilComment.hint = hmAux_Trans["comment_hint"]
             act086VerificationFrgTvMaterialTtl.text = getMaterialLbl()
             act086VerificationFrgTvPhotoTtl.text = hmAux_Trans["photo_lbl"]
             act086VerificationFrgTvDeleteLbl.text = getDeleteLbl()
@@ -532,6 +536,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding) {
             val enableState = act086VerificationFrgRgAnswers.checkedRadioButtonId != -1
             act086VerificationFrgMketComment.isEnabled = enableState
+            act086VerificationFrgTilComment.isEnabled = enableState
             act086VerificationFrgIvAddMaterial.isEnabled = enableState
             act086VerificationFrgIvAddPhoto.isEnabled = enableState
             act086VerificationFrgClDeleteInfos.isEnabled = enableState
@@ -1100,7 +1105,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     )
                     act086VerificationFrgMketManualDesc.apply {
                         isEnabled = isManualDescInEdit
-                        setTextColor(ContextCompat.getColor(context, R.color.namoa_dark_blue))
                     }
                 }
             }

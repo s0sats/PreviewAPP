@@ -28,7 +28,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
     private List<HMAux> data;
     private HMAux hmAux_Trans;
 
-    public Act_Product_Selectio_Adapter_Groups_Products(Context context, int resource, List<HMAux> data , HMAux hmAux_Trans) {
+    public Act_Product_Selectio_Adapter_Groups_Products(Context context, int resource, List<HMAux> data, HMAux hmAux_Trans) {
         this.context = context;
         this.resource = resource;
         this.data = data;
@@ -78,8 +78,8 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
         ImageView icon_paste = convertView.findViewById(R.id.act_product_selection_content_cell_iv_icon_paste);
 
         //String codeText = hmAux_Trans.get("lbl_code") + "" ;
-        String idText =  /*hmAux_Trans.get("lbl_id") + */"" ;
-        String descText =  /*hmAux_Trans.get("lbl_desc") + " "*/ "" ;
+        String idText =  /*hmAux_Trans.get("lbl_id") + */"";
+        String descText =  /*hmAux_Trans.get("lbl_desc") + " "*/ "";
 
 
         if (item.get("type").equalsIgnoreCase("group")) {
@@ -103,7 +103,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
                 if (customId.contains("(")) {
                     SpannableString id_string = new SpannableString(item.get("full_desc"));
                     id_string.setSpan(
-                            new TextAppearanceSpan(context, com.namoa_digital.namoa_library.R.style.Base_TextAppearance_Material3_LabelSmall),
+                            new TextAppearanceSpan(context, com.google.android.material.R.style.TextAppearance_Material3_LabelSmall),
                             item.get("full_desc").indexOf("("),
                             item.get("full_desc").length(),
                             0

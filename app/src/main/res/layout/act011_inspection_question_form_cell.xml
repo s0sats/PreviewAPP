@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
+    android:layout_marginBottom="12dp"
     app:cardCornerRadius="8dp">
 
     <LinearLayout
@@ -147,34 +145,34 @@
                 tools:text="Continuar"
                 tools:visibility="gone" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/iv_inspect_answered"-->
-<!--                android:layout_width="18dp"-->
-<!--                android:layout_height="18dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:src="@drawable/ic_build_black_24dp"-->
-<!--                app:layout_constraintBottom_toBottomOf="@+id/tv_inspect_answered"-->
-<!--                app:layout_constraintStart_toEndOf="@id/ll_answer_info"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/tv_inspect_answered"-->
-<!--                app:tint="@color/namoa_color_cone_item"-->
-<!--                />-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/iv_inspect_answered"-->
+            <!--                android:layout_width="18dp"-->
+            <!--                android:layout_height="18dp"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:src="@drawable/ic_build_black_24dp"-->
+            <!--                app:layout_constraintBottom_toBottomOf="@+id/tv_inspect_answered"-->
+            <!--                app:layout_constraintStart_toEndOf="@id/ll_answer_info"-->
+            <!--                app:layout_constraintTop_toTopOf="@+id/tv_inspect_answered"-->
+            <!--                app:tint="@color/namoa_color_cone_item"-->
+            <!--                />-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/tv_inspect_answered"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="4dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_marginEnd="16dp"-->
-<!--                android:layout_marginBottom="12dp"-->
-<!--                android:visibility="visible"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintHorizontal_bias="1"-->
-<!--                app:layout_constraintStart_toEndOf="@+id/iv_inspect_answered"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"-->
-<!--                tools:text="Já estava ok"-->
-<!--                />-->
+            <!--            <TextView-->
+            <!--                android:id="@+id/tv_inspect_answered"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="4dp"-->
+            <!--                android:layout_marginTop="8dp"-->
+            <!--                android:layout_marginEnd="16dp"-->
+            <!--                android:layout_marginBottom="12dp"-->
+            <!--                android:visibility="visible"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="1"-->
+            <!--                app:layout_constraintStart_toEndOf="@+id/iv_inspect_answered"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"-->
+            <!--                tools:text="Já estava ok"-->
+            <!--                />-->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_inspect_answered"
@@ -244,8 +242,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="8dp"
                     android:gravity="center"
-                    tools:text="1"
-                    />
+                    tools:text="1" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

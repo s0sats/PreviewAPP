@@ -26,32 +26,40 @@
                 android:id="@+id/act086_verification_frg_iv_manual_handler"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_mket_manual_desc"
+                app:layout_constraintBottom_toBottomOf="@+id/til_act086_verification_frg_mket_manual_desc"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_mket_manual_desc"
+                app:layout_constraintTop_toTopOf="@+id/til_act086_verification_frg_mket_manual_desc"
                 app:srcCompat="@drawable/ic_done_black_24dp"
                 app:tint="@drawable/os_form_verify_item_ic_color_states"
                 android:background="@drawable/namoa_icon_bg_states"
                 />
 
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act086_verification_frg_mket_manual_desc"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_act086_verification_frg_mket_manual_desc"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:textColorHint="@color/namoa_color_gray_9"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="32dp"
-                android:maxLength="100"
-                tools:hint="Informar nome do novo item de verificação para a posteridade"
+                app:hintTextColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_manual_handler"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:mBARCODE="false"
-                app:mNFC="false"
-                app:mOCR="false"
-                app:mOCRVin="false"
-                />
+                tools:hint="Informar nome do novo item de verificação para a posteridade">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act086_verification_frg_mket_manual_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:maxLength="100"
+                    android:textColor="@color/m3_namoa_onSurface"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false"
+                    app:mOCRVin="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -136,29 +144,40 @@
             android:id="@+id/act086_verification_frg_iv_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_mket_comment"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_til_comment"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_mket_comment"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_til_comment"
             app:srcCompat="@drawable/ic_baseline_notes_24"
             app:tint="@color/namoa_pipeline_header_icon"
             android:enabled="false"
             />
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act086_verification_frg_mket_comment"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/act086_verification_frg_til_comment"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="1000"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_comment"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_supplementary_data_ttl"
-            app:mBARCODE="false"
-            android:maxLength="1000"
-            tools:hint="Inserir comentario"
-            android:textColor="@color/os_form_verify_item_label_text_color_states"
-            android:textSize="@dimen/font_size_font_16"
-            />
+            tools:hint="Inserir comentario">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act086_verification_frg_mket_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:maxLength="1000"
+                android:textColor="@color/m3_namoa_onSurface"
+                android:textSize="@dimen/font_size_font_16"
+                app:mBARCODE="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_material"
@@ -166,7 +185,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_mket_comment"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_til_comment"
             android:background="@drawable/namoa_icon_bg_states"
             android:clickable="false"
             android:enabled="false"
@@ -375,7 +394,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/act086_verification_frg_btn_ok"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -383,15 +402,13 @@
             android:layout_marginBottom="16dp"
             android:layout_marginStart="46dp"
             android:layout_marginEnd="46dp"
-            android:background="@drawable/namoa_cell_12_states"
             android:text="Ok"
-            android:textColor="@color/padrao_WHITE"
+            style="@style/NamoaTheme3.Button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_delete_infos"
-            app:layout_constraintWidth_percent="0.5"
-            style="@style/NamoaSaveButtonDarkBlue"/>
+            app:layout_constraintWidth_percent="0.5"/>
 
         <TextView
             android:id="@+id/act086_verification_frg_tv_require_fields"

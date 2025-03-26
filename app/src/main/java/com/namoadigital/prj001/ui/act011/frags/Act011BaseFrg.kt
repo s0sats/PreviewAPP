@@ -218,17 +218,17 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun setNavegationListeners(incNavegation: Act011FrgIncludeNavegationBinding) {
         with(incNavegation){
-            clPrev.setOnClickListener {
+            clPrevBtn.setOnClickListener {
                 mNavListener.previosTab()
             }
-            clDrawer.setOnClickListener {
+            clDrawerBtn.setOnClickListener {
                 mNavListener.openDrawer()
             }
-            clNext.setOnClickListener {
+            clNextBtn.setOnClickListener {
                 mNavListener.nextTab()
             }
             //
-            clCheck.setOnClickListener {
+            clCheckBtn.setOnClickListener {
                 mNavListener.check()
             }
         }
@@ -250,28 +250,16 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun handleNavegationUI(navegationBinding: Act011FrgIncludeNavegationBinding) {
         with(navegationBinding) {
-            tvDrawer.text = hmAuxTrans["btn_open_drawer"]
+            clDrawerBtn.text = hmAuxTrans["btn_open_drawer"]
             //
             //val prevEnabled = (tabIndex > 1)
             val prevEnabled = !isFirstTab()
-            clPrev.apply {
-                isEnabled = prevEnabled
-            }
             clPrevBtn.apply {
-                isEnabled = prevEnabled
-            }
-            ivPrevIcon.apply {
                 isEnabled = prevEnabled
             }
             //
             val nextEnabled = (tabIndex != tabLastIndex)
-            clNext.apply {
-                isEnabled = nextEnabled
-            }
             clNextBtn.apply {
-                isEnabled = nextEnabled
-            }
-            ivNextIcon.apply {
                 isEnabled = nextEnabled
             }
         }
@@ -283,13 +271,13 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     private fun handleCheckUI(navegationBinding: Act011FrgIncludeNavegationBinding) {
         val readOnlyStatus = readOnlyStatus()
         with(navegationBinding) {
-            tvCheck.text = hmAuxTrans["btn_check"]
+            clCheckBtn.text = hmAuxTrans["btn_check"]
             //
-            if(readOnlyStatus){
-                clCheck.visibility = View.GONE
-            }else{
+            if (readOnlyStatus) {
+                clCheckBtn.visibility = View.GONE
+            } else {
                 //Se for um status editavel e for a ultima tab
-                clCheck.apply {
+                clCheckBtn.apply {
                     visibility = if (tabIndex == tabLastIndex) View.VISIBLE else View.GONE
                     isEnabled = (tabIndex == tabLastIndex)
                     //

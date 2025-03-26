@@ -112,7 +112,7 @@
     <string name="msg_customer_pendencies_list">Cliente :\n</string>
     <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes.</string>
 
-	<!--Licenças por Site-->
+    <!--Licenças por Site-->
     <string name="msg_login_invalid_current_time">A data/hora do seu aparelho está incompatível com o servidor Namoa.\nAjuste a data/hora do seu aparelho e tente novamente.</string>
     <string name="act002_ws_site_license_ttl">Sites licenciados</string>
     <string name="act002_ws_site_license_msg">Carregando lista de Sites com licenças disponíveis.</string>
@@ -126,8 +126,8 @@
     <string name="act002_alt_no_licenses_returned_msg">Nenhum Site licenciado disponível para o Usuário. Favor tentar novamente mais tarde ou entrar em contato com a sua equipe de TI interna para verificar a quantidade de licenças disponíveis.</string>
     <string name="act002_alt_license_list_not_found_ttl">Falha: Sites licenciados</string>
     <string name="act002_alt_license_list_not_found_msg">Erro ao caregar lista de sites licenciados!\nArquivo ou lista de licenças não encontradas.\nTente novamente.</string>
-    
-	<!--Permissão da camera-->
+
+    <!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Permitir</string>
     <string name="lib_alert_deny_btn">Negar</string>
     <string name="lib_alert_settings_btn">Configurações</string>
@@ -135,8 +135,8 @@
     <string name="lib_alert_camera_never_ask_again_msg">A permissão de acesso a câmera foi negada permanentemente!\nPara permitir o uso da câmera, click no botão em Configurações, Permissões -> Câmera -> Permitir</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Permissão de Câmera</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">Para ler um código de barras é necessário acesso a câmera do celular.\nDeseja permitir o acesso ?</string>
-    
-	<!--Text Helpers -->
+
+    <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
     <string name="msg_synchronizing_data">Sincronizando dados</string>
@@ -145,31 +145,31 @@
     <string name="alert_support_finish_ttl">Dados enviados</string>
     <string name="alert_support_finish_msg">Dados enviados com sucesso.</string>
     <string name="progress_support_ttl">Enviando suporte</string>
-	<string name="progress_support_msg">Enviando os dados para o suporte...</string>
-	<string name="alert_support_msg">Mensagem para a análise</string>
-	<string name="alert_support_contact">Contato</string>
-	<string name="alert_support_hint">Por favor descreva o motivo da análise. \nEsse campo é obrigatório!</string>
-	<string name="alert_support_contact_hint">Digite um e-mail ou telefone de contato</string>
-	<string name="alert_support_ttl">Enviar dados para análise</string>
-	<string name="alert_support_empty_contact">O campo de contato é obrigatório!</string>
-	<string name="alert_support_empty_msg">Campo de mensagem vazio.</string>
-	<string name="send_support_btn">Enviar dados</string>
-    
-	<!--Database Error and Reset -->
+    <string name="progress_support_msg">Enviando os dados para o suporte...</string>
+    <string name="alert_support_msg">Mensagem para a análise</string>
+    <string name="alert_support_contact">Contato</string>
+    <string name="alert_support_hint">Por favor descreva o motivo da análise. \nEsse campo é obrigatório!</string>
+    <string name="alert_support_contact_hint">Digite um e-mail ou telefone de contato</string>
+    <string name="alert_support_ttl">Enviar dados para análise</string>
+    <string name="alert_support_empty_contact">O campo de contato é obrigatório!</string>
+    <string name="alert_support_empty_msg">Campo de mensagem vazio.</string>
+    <string name="send_support_btn">Enviar dados</string>
+
+    <!--Database Error and Reset -->
     <string name="act089_database_error_ttl">Dados locais corrompidos!</string>
     <string name="act089_database_error_msg">Os dados do App NAMOA salvos neste aparelho não podem mais ser utilizados, pois o banco de dados local está corrompido.\n\nPara você poder usar o App NAMOA novamente, será necessário apagar o banco de dados local e depois você precisará fazer login no App novamente.</string>
-	<string name="act089_database_error_reset_btn">Apagar dados locais do App</string>
+    <string name="act089_database_error_reset_btn">Apagar dados locais do App</string>
     <string name="act089_dialog_database_reset_msg">Se você prosseguir, você apagará o banco de dados atual (que está corrompido) e um novo banco de dados será criado para você começar de novo seu trabalho. \n\nOBS: Apagar o banco de dados atual significa que você apagará as informações que não foram enviadas para o Servidor até agora, pois esses dados serão perdidos e não poderão ser recuperados. \n\nDeseja prosseguir?</string>
     <string name="act089_dialog_database_reset_ttl">Apagar dados locais do App</string>
     <string name="act089_dialog_database_reset_cancel_btn">Cancel</string>
-	<string name="act089_dialog_database_reset_confirm_btn">Sim, quero apagar</string>
-    
-	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Desinstale o App antigo</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">Uma versão antiga do APP NAMOA está instalada neste aparelho (Versão 4.12 ou anterior). \n\nPor favor, desinstale-a para depois passar a usar esta nova versão. \n\nATENÇÃO: Finalize os processos antes de desinstalar. Para isso, abra a versão antiga do APP, conclua processos em andamento, envie todos os dados para o servidor e depois desinstale a versão.</string>
+    <string name="act089_dialog_database_reset_confirm_btn">Sim, quero apagar</string>
 
-	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
-	<string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho.\n\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
+    <!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
+    <string name="act001_locked_standalone_namoa_app_found_ttl">Desinstale o App antigo</string>
+    <string name="act001_locked_standalone_namoa_app_found_msg">Uma versão antiga do APP NAMOA está instalada neste aparelho (Versão 4.12 ou anterior). \n\nPor favor, desinstale-a para depois passar a usar esta nova versão. \n\nATENÇÃO: Finalize os processos antes de desinstalar. Para isso, abra a versão antiga do APP, conclua processos em andamento, envie todos os dados para o servidor e depois desinstale a versão.</string>
+
+    <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+    <string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho.\n\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
     <string name="empty_list_license">Sem opções para seleção. Tente alterar os filtros...</string>
     <string name="msg_login_invalid_json_response">Dados inválidos recebidos. Tente novamente mais tarde ou entre em contato com a equipe de TI para verificar a disponibilidade.</string>
     <string name="act002_ws_so_upload_msg">Enviando dados de OS pendentes.</string>
@@ -180,5 +180,28 @@
     <string name="position_barcode_area_lbl">Posicione o código de barras dentro da área abaixo</string>
     <string name="btn_touch_flash_lbl">Flash</string>
     <string name="btn_rotate_screen_lbl">\tGirar câmera</string>
+    <string name="lib_audio_permission_btn">Habilitar microfone</string>
+    <string name="lib_permission_mic_rationale_ttl">Acesso ao microfone</string>
+    <string name="lib_permission_mic_rationale_msg">Para gravar áudio, é necessário conceder permissão para usar o microfone. Por favor, permita o acesso ao microfone nas configurações do aplicativo.</string>
+    <string name="lib_permission_mic_denied_ttl">Permissão negada</string>
+    <string name="lib_permission_mic_denied_msg">Você negou a permissão para usar o microfone. Para conceder o acesso, vá até as configurações do aplicativo NAMOA e conceda a permissão manualmente.</string>
+    <string name="lib_toast_error_audio_decrease_second">Áudio não pode ser menor que 1 segundo</string>
+    <string name="lib_toast_increase_audio_volume">Favor aumentar o volume</string>
+    <string name="lib_toast_error_recording_audio">Ocorreu um erro ao gravar o audio, tente novamente</string>
+    <string name="lib_dialog_audio_delete_ttl">Deletar áudio</string>
+    <string name="lib_dialog_audio_delete_msg">Você deseja deletar o áudio gravado?</string>
+    <string name="mdots_photo">Fotos</string>
+    <string name="mdots_comment">Comentário</string>
+
+    <string name="lib_video_permission_btn">Habilitar câmera</string>
+    <string name="lib_permission_video_rationale_ttl">Acesso ao câmera</string>
+    <string name="lib_permission_video_rationale_msg">Para gravar vídeo, é necessário conceder permissão para usar o câmera. Por favor, permita o acesso ao câmera nas configurações do aplicativo.</string>
+    <string name="lib_permission_video_denied_ttl">Permissão negada</string>
+    <string name="lib_permission_video_denied_msg">Você negou a permissão para usar o câmera. Para conceder o acesso, vá até as configurações do aplicativo NAMOA e conceda a permissão manualmente.</string>
+    <string name="lib_toast_error_recording_video">Ocorreu um erro ao gravar o vídeo, tente novamente</string>
+    <string name="lib_dialog_video_delete_ttl">Deletar vídeo</string>
+    <string name="lib_dialog_video_delete_msg">Você deseja deletar o vídeo gravado?</string>
+    <string name="lib_recording_video_lbl">Gravar vídeo</string>
+
 
 </resources>

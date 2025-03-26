@@ -2,8 +2,14 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.namoadigital.prj001.core.database.ColumnType
+import com.namoadigital.prj001.core.database.DatabaseTable
+import com.namoadigital.prj001.core.database.addMissingColumns
+import com.namoadigital.prj001.core.database.updateColumn
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
@@ -979,6 +985,61 @@ val migrationV16 = object : MigrationSQLite(16, 17) {
 
 }
 
+val migrationV17 = object : MigrationSQLite(17, 18) {
+    override fun migrate(db: SQLiteDatabase) {
+
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_FieldDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_FieldDao.BUTTON_NC,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_FieldDao.BUTTON_PHOTO,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_FieldDao.BUTTON_COMMENT,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                )
+            )
+        )
+
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_Field_LocalDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_Field_LocalDao.BUTTON_NC,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                DatabaseTable.Column(
+                    name = GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                )
+            )
+        )
+    }
+}
+
+
+@Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(
     tableName: String,
     columnsToAdd: () -> Map<String, String>
@@ -990,6 +1051,7 @@ fun SQLiteDatabase.addMissingColumnsIfNecessary(
     }
 }
 
+@Deprecated(message = "Use a função com objeto Column")
 private fun SQLiteDatabase.addColumn(tableName: String, columnName: String, columnType: String) {
     execSQL(
         """
@@ -999,25 +1061,6 @@ private fun SQLiteDatabase.addColumn(tableName: String, columnName: String, colu
     )
 }
 
-private fun SQLiteDatabase.updateColumn(tableName: String, columnName: String, value: String) {
-    execSQL(
-        """
-        UPDATE $tableName
-        SET $columnName = $value;
-    """.trimIndent()
-    )
-}
-
-
-inline fun SQLiteDatabase.checkIfFieldExist(
-    tableName: String,
-    fieldName: String,
-    block: SQLiteDatabase.() -> Unit
-) {
-    if (!isFieldExist(this, tableName, fieldName)) {
-        block()
-    }
-}
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
 
@@ -1033,4 +1076,12 @@ fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Bool
     return false
 }
 
-
+inline fun SQLiteDatabase.checkIfFieldExist(
+    tableName: String,
+    fieldName: String,
+    block: SQLiteDatabase.() -> Unit
+) {
+    if (!isFieldExist(this, tableName, fieldName)) {
+        block()
+    }
+}
