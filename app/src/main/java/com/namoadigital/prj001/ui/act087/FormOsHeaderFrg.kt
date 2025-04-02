@@ -20,15 +20,15 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.FormOsHeaderFrgSerialBkpAdapter
+import com.namoadigital.prj001.adapter.GenericSerialListDialog
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
-import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
 import com.namoadigital.prj001.databinding.FormSupplierDialogBinding
+import com.namoadigital.prj001.databinding.BackupSerialSearchListDialogBinding
 import com.namoadigital.prj001.databinding.IncSerialInitialStateBinding
 import com.namoadigital.prj001.extensions.date.getDateDiferenceInMinutes
 import com.namoadigital.prj001.extensions.date.isDateBefore
@@ -37,8 +37,7 @@ import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
@@ -586,11 +585,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun reportSerialBkpMachineToFrag(
-        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<BaseSerialSearchItem>,
         onlineSearch: Boolean
     ) {
         if (serialBkpMachineList.size == 1) {
-            val serialBkp = serialBkpMachineList[0] as FormOsHeaderFrgSerialBkpItem
+            val serialBkp = serialBkpMachineList[0] as BaseSerialSearchItem.BackupMachineSerialItem
             if (serialBkp.serialId.equals(binding.mketMachineSerialEdit.text.toString(), true)) {
                 setSelectedBkpMachineSerial(serialBkp, autoSelection = true)
             } else {
@@ -605,7 +604,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 )
                 if (idx > -1) {
                     setSelectedBkpMachineSerial(
-                        serialBkpMachineList[idx] as FormOsHeaderFrgSerialBkpItem,
+                        serialBkpMachineList[idx] as BaseSerialSearchItem.BackupMachineSerialItem,
                         autoSelection = true
                     )
                 } else {
@@ -625,12 +624,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
 
     private fun hasBarcodeSerialMatch(
-        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<BaseSerialSearchItem>,
         productCode: Int,
         serialIdSearched: String
     ): Int {
         serialBkpMachineList.forEachIndexed { idx, obj ->
-            if (obj is FormOsHeaderFrgSerialBkpItem) {
+            if (obj is BaseSerialSearchItem.BackupMachineSerialItem) {
                 if (obj.productCode == productCode && obj.serialId.equals(serialIdSearched, true)) {
                     return idx
                 }
@@ -640,7 +639,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun setSelectedBkpMachineSerial(
-        serialBkp: FormOsHeaderFrgSerialBkpItem,
+        serialBkp: BaseSerialSearchItem.BackupMachineSerialItem,
         autoSelection: Boolean = false
     ) {
         with(binding) {
@@ -1827,11 +1826,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     fun showBkpMachineDialog(
-        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<BaseSerialSearchItem>,
         onlineSearch: Boolean
     ) {
         val builder = AlertDialog.Builder(requireContext())
-        val dialogBinding = FormOsHeaderFrgBackupMachineDialogBinding.inflate(layoutInflater)
+        val dialogBinding = BackupSerialSearchListDialogBinding.inflate(layoutInflater)
         with(dialogBinding) {
             tvDialogTtl.text = hmAuxTrans["alert_bkp_serial_ttl"]
             //
@@ -1841,9 +1840,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 View.VISIBLE
             }
             //
-            rvBkpSerial.apply {
+            rvSerialList.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = FormOsHeaderFrgSerialBkpAdapter(
+                adapter = GenericSerialListDialog(
                     serialBkpMachineList,
                     ToolBox_Con.getPreference_Site_Code(context).toInt(),
                     ::setSelectedBkpMachineSerial

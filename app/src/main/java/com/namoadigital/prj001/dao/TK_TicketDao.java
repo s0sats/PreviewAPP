@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import kotlin.jvm.Throws;
+
 public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     private final Mapper<TK_Ticket, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, TK_Ticket> toTK_TicketMapper;
@@ -167,6 +169,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String IS_SERIAL_STOPPED = "is_serial_stopped";
     public static final String STOPPED_DATE = "stopped_date";
     public static final String DESIRED_DATE = "desired_date";
+    public static final String IS_TMP = "is_tmp";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -1275,6 +1278,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setOpenSerialStopped(cursor.getString(cursor.getColumnIndex(OPEN_SERIAL_STOPPED)));
             tk_ticket.setOpenDesiredDate(cursor.getString(cursor.getColumnIndex(OPEN_DESIRED_DATE)));
             tk_ticket.setIsSerialStopped(cursor.getInt(cursor.getColumnIndex(IS_SERIAL_STOPPED)));
+            tk_ticket.setIsTmp(cursor.getInt(cursor.getColumnIndex(IS_TMP)));
 
 
             int columnIndexStopped = cursor.getColumnIndex(STOPPED_DATE);
@@ -1525,6 +1529,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if(tk_ticket.getIsSerialStopped() > -1){
                 contentValues.put(IS_SERIAL_STOPPED, tk_ticket.getIsSerialStopped());
             }
+
+            contentValues.put(IS_TMP, tk_ticket.getIsTmp());
             contentValues.put(STOPPED_DATE, tk_ticket.getStoppedDate());
             contentValues.put(DESIRED_DATE, tk_ticket.getDesiredDate());
             //
@@ -1586,6 +1592,19 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
         }
         //
+        addUpdate(ticket);
+    }
+
+    public void updateSyncRequired(
+            long customerCode,
+            int prefix,
+            int code
+    ) throws Exception {
+        //Consultad do Ticket
+        TK_Ticket ticket = getTicket(customerCode, prefix, code);
+        if(ticket == null) new Exception("Ticket not found");
+
+        ticket.setSync_required(1);
         addUpdate(ticket);
     }
 }

@@ -56,7 +56,8 @@ data class ActionUseCases(
     val createFormLocalForSchedule: CreateFormLocalForScheduleUseCase,
     val serialSearch: SerialSearchUseCase,
     val processLocalSearchForSerialAction: ProcessLocalSearchForSerialActionUseCase,
-    val checkTicketFlowAndCreate: CheckTicketFlowAndCreateUseCase
+    val checkTicketFlowAndCreate: CheckTicketFlowAndCreateUseCase,
+    val flowTicketSiteAccess: FlowTicketAccessUseCase
 ) {
 
     companion object {
@@ -106,7 +107,8 @@ data class ActionUseCases(
                         context,
                         repository,
                         getScheduleFromMyActionUseCase
-                    )
+                    ),
+                    flowTicketSiteAccess = FlowTicketAccessUseCase(context, repository)
                 )
             }
         }

@@ -32,7 +32,7 @@
         app:tint="@color/namoa_color_gray_9" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bkp_serial"
+        android:id="@+id/rv_serial_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHeight_default="wrap"

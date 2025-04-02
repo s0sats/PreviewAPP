@@ -144,7 +144,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date, String timeAction, String internalComments, int move_other_date, int move_steps) {
+    public void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date, String kanban_date, String timeAction, String internalComments, int move_other_date, int move_steps) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_TK_Header_N_Group_Save.class.getName());
             //
@@ -178,6 +178,9 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             //
             if(internalComments != null) {
                 bundle.putString(TK_TicketDao.INTERNAL_COMMENTS, internalComments);
+            }
+            if(kanban_date != null) {
+                bundle.putString(TK_TicketDao.KANBAN_DATE, kanban_date);
             }
             bundle.putString(WS_TK_Header_N_Group_Save.TIME_ACTION, timeAction);
             bundle.putInt(WS_TK_Header_N_Group_Save.MOVE_OTHER_DATE, move_other_date);
@@ -249,7 +252,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean chk_shift_ticket_start_dateChecked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked) {
+    public boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm,String kanbanDate, boolean chk_shift_ticket_start_dateChecked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked) {
         //Stunks, mas se não teve alteração, não precisa salvar o arquivo e o retorn é true.
         if(!hasAnyFieldValueChange){
             return true;
@@ -264,6 +267,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             mkStartDate,
             mkEndDate,
             forecasttimeFromForm,
+            kanbanDate,
             chk_shift_ticket_start_dateChecked,
             chk_shift_step_start_dateChecked,
             chk_shift_ticket_end_dateChecked,
@@ -397,6 +401,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
                 tkTicket.getStart_date(),
                 tkTicket.getForecast_date(),
                 tkTicket.getForecast_time(),
+                tkTicket.getKanban_date(),
                 false,
                 false,
                 false,

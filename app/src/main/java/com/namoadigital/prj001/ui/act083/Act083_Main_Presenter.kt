@@ -20,6 +20,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseC
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
+import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.*
@@ -31,8 +32,12 @@ import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterP
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
+import com.namoadigital.prj001.ui.act092.Act092Presenter.Companion.ZONE_NOT_FOUND
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main.Companion.SELECT_DESTINATION_MODEL
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
@@ -61,7 +66,8 @@ class Act083_Main_Presenter(
     private val sharedPreferences: MyActionsFilterParamPreferences,
     private val hmAux_Trans: HMAux?,
     private val useCase: SerialSiteInventoryUseCase,
-    private val actionUseCases: ActionPreferenceUseCases,
+    private val actionPrefUseCases: ActionPreferenceUseCases,
+    private val ticketAccessUseCase: FlowTicketAccessUseCase
 ) : Act083_Main_Contract.I_Presenter {
 
     private lateinit var myActionFilterParam: MyActionFilterParam
@@ -145,7 +151,7 @@ class Act083_Main_Presenter(
                     )
                 ) {
                     callSerialSiteServce()
-                }else {
+                } else {
                     updateMyActionList(1)
                 }
             }
@@ -573,24 +579,88 @@ class Act083_Main_Presenter(
     }
 
     private fun processCachedTicketClick(myAction: MyActions) {
+        actionSelected = myAction
         val ticketSplit = myAction.processPk.split(".")
-        val containTicketLocal = actionUseCases.getTicket?.invoke(GetTicketByIdUseCase.GetTicketParams(ticketSplit[0].toInt(), ticketSplit[1].toInt()))
+        val containTicketLocal = actionPrefUseCases.getTicket?.invoke(
+            GetTicketByIdUseCase.GetTicketParams(
+                ticketSplit[0].toInt(),
+                ticketSplit[1].toInt()
+            )
+        )
 
         containTicketLocal?.let {
-            processLocalTicketClick(myAction)
+            performClickFlowTicket()
             return
         }
 
         if (ToolBox_Con.isOnline(context)) {
-            mView.setProcess(WS_TK_Ticket_Download::class.java.name)
-            mView.showPD(
-                hmAux_Trans?.get("dialog_download_ticket_ttl"),
-                hmAux_Trans?.get("dialog_download_ticket_start")
-            )
-            //
-            prepareWsTicketDownload(myAction)
+            performClickFlowTicket(true)
         } else {
             ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+
+    private fun performClickFlowTicket(downloadTicket: Boolean = false) {
+        actionSelected?.let { action ->
+            CoroutineScope(Dispatchers.IO).launch {
+                ticketAccessUseCase(action.siteCode.toString())
+                    .collect {
+                        it.watchStatus(
+                            success = {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    if (!downloadTicket) {
+                                        processLocalTicketClick(action)
+                                    } else {
+                                        prepareWsTicketDownload(action)
+                                    }
+                                }
+                            },
+                            error = { message, _ ->
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    when (message!!) {
+                                        FlowTicketAccessError.SITE_NOT_ACCESS -> {
+                                            mView.showMsg(SITE_RESTRICTION_NO_ACCESS, action, downloadTicket)
+                                        }
+
+                                        FlowTicketAccessError.SITE_ACCESS_CONFIRM -> {
+                                            mView.showMsg(message, action, downloadTicket)
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+            }
+        }
+    }
+
+    fun flowTicketSiteRestriction(item: MyActions, downloadTicket: Boolean = false) {
+        val itemZoneCode = MD_Product_SerialDao(context).let { dao ->
+            val productSerial: MD_Product_Serial? = ToolBox_Inf.getProductSerial(
+                context,
+                dao,
+                item.productCode!!.toLong(),
+                item.serialId!!
+            )
+
+            productSerial?.zone_code
+        }
+
+        ToolBox_Con.setPreference_Site_Code(
+            context,
+            item.siteCode.toString()
+        )
+
+        ToolBox_Con.setPreference_Zone_Code(
+            context,
+            itemZoneCode ?: -1
+        )
+
+        if (!downloadTicket) {
+            processLocalTicketClick(item)
+        } else {
+            prepareWsTicketDownload(item)
         }
     }
 
@@ -1116,6 +1186,11 @@ class Act083_Main_Presenter(
     }
 
     override fun prepareWsTicketDownload(myAction: MyActions) {
+        mView.setProcess(WS_TK_Ticket_Download::class.java.name)
+        mView.showPD(
+            hmAux_Trans?.get("dialog_download_ticket_ttl"),
+            hmAux_Trans?.get("dialog_download_ticket_start")
+        )
         val mIntent = Intent(context, WBR_TK_Ticket_Download::class.java)
         val bundle = Bundle()
         bundle.putString(
@@ -2157,7 +2232,7 @@ class Act083_Main_Presenter(
         }
         //Se o fluxo de origem for o da pesquisa, só devem ser contabilizados os tickets.
         if (getScheduleFormApAndFormItens()) {
-            if(!isCurrentUserOnTrip()) {
+            if (!isCurrentUserOnTrip()) {
                 counter += getSchedules(otherTab).size
                 counter += getFormAp(otherTab).size
             }
@@ -2480,11 +2555,11 @@ class Act083_Main_Presenter(
     }
 
     override fun clear092Preference() {
-        actionUseCases.reset?.invoke()
+        actionPrefUseCases.reset?.invoke()
     }
 
     private fun setSerialModel(model: SerialSiteInventory) {
-        actionUseCases.setPreferences?.invoke(
+        actionPrefUseCases.setPreferences?.invoke(
             SerialModel(
                 originFlow = if (originFlow.isEmpty() || originFlow == ConstantBaseApp.ACT083) ConstantBaseApp.ACT068 else originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
@@ -2506,7 +2581,7 @@ class Act083_Main_Presenter(
         val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
         dao.getTrip()?.let { trip ->
 
-            if(!ToolBox_Con.isOnline(context)){
+            if (!ToolBox_Con.isOnline(context)) {
                 saveDestination(context = context, destination = selectionDestinationAvailable!!)
                 return
             }

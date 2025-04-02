@@ -70,7 +70,13 @@ import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterP
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.Companion
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
@@ -103,6 +109,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         const val PROFILE_MENU_TICKET_NOT_FOUND = "profile_menu_ticket_not_found"
         const val FREE_EXECUTION_BLOCKED = "free_execution_blocked"
         const val WS_SCHEDULE_NOT_EXECUTED = "WS_SCHEDULE_NOT_EXECUTED"
+        const val SITE_RESTRICTION_NO_ACCESS = "SITE_RESTRICTION_NO_ACCESS"
     }
 
     private var hasConnectionFail: Boolean = false
@@ -172,7 +179,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             ),
             hmAux_Trans,
             SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase(),
-            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build()
+            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build(),
+            FlowTicketAccessUseCase.Companion.Factory(context).build()
         )
     }
 
@@ -1304,7 +1312,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     }
 
-    override fun showMsg(type: String, item: MyActions) {
+    override fun showMsg(type: String, item: MyActions, isDownloadedTicket: Boolean) {
         var title: String? = ""
         var msg: String? = ""
         var listener: DialogInterface.OnClickListener? = null
@@ -1324,6 +1332,22 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 listener = DialogInterface.OnClickListener { dialogInterface, i ->
                     mPresenter.checkFormFlow(item)
                 }
+            }
+
+            SITE_RESTRICTION_NO_ACCESS -> {
+                title = hmAux_Trans["alert_form_site_restriction_ttl"]
+                msg = hmAux_Trans["alert_form_site_restriction_no_access_msg"]
+                btnNegative = 0
+            }
+
+            FlowTicketAccessError.SITE_ACCESS_CONFIRM -> {
+                title = hmAux_Trans["alert_form_site_restriction_ttl"]
+                msg = hmAux_Trans["alert_form_site_restriction_confirm"]
+                listener = DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.dismiss()
+                    mPresenter.flowTicketSiteRestriction(item, isDownloadedTicket)
+                }
+                btnNegative = 1
             }
 
             MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {

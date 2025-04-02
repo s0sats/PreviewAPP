@@ -31,7 +31,15 @@ import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.TranslateResource
-import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.service.WS_Generate_NForm_PDF
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
+import com.namoadigital.prj001.service.WS_Save
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act092.Act092Presenter
@@ -197,6 +205,7 @@ class Act092_Main : BaseActivityMvp
                         presenter.syncFilesForm()
                     }
                 }
+
                 callAct(
                     Act070_Main::class.java,
                     presenter.getCacheTicketBundle(hmAux)
@@ -221,7 +230,7 @@ class Act092_Main : BaseActivityMvp
                 }
             }
 
-             WS_Product_Serial_Structure::class.java.simpleName -> {
+            WS_Product_Serial_Structure::class.java.simpleName -> {
                 wsProcess.value = ""
                 progressDialog.dismiss()
                 //
@@ -256,7 +265,8 @@ class Act092_Main : BaseActivityMvp
                 progressDialog.dismiss()
                 presenter.extractSearchResult(mLink, presenter.getActionSelected())
             }
-            WS_Generate_NForm_PDF::class.java.name ->{
+
+            WS_Generate_NForm_PDF::class.java.name -> {
                 //
                 progressDialog.dismiss()
                 if (hmAux != null && hmAux.hasConsistentValue(WS_Generate_NForm_PDF.NFORM_PK_KEY)
@@ -264,19 +274,19 @@ class Act092_Main : BaseActivityMvp
                 ) {
                     //
                     val position = presenter.actionSelectedPosition
-                    if(position >0) {
+                    if (position > 0) {
                         var myActionSelected = mAdapter.getActionByPosition(position)
-                        myActionSelected?.let{
+                        myActionSelected?.let {
                             myActionSelected.pdfUrl = hmAux[GE_Custom_Form_BlobDao.BLOB_URL]
-                            presenter.executeNFormPDFDownload(context,myActionSelected,position)
-                        }?: ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans["alert_generate_form_pdf_error_ttl"],
-                                hmAux_Trans["alert_generate_form_pdf_error_msg"],
-                                null,
-                                0
-                            )
-                    }else{
+                            presenter.executeNFormPDFDownload(context, myActionSelected, position)
+                        } ?: ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans["alert_generate_form_pdf_error_ttl"],
+                            hmAux_Trans["alert_generate_form_pdf_error_msg"],
+                            null,
+                            0
+                        )
+                    } else {
                         ToolBox.alertMSG(
                             context,
                             hmAux_Trans["alert_generate_form_pdf_error_ttl"],
@@ -295,6 +305,7 @@ class Act092_Main : BaseActivityMvp
                     )
                 }
             }
+
             else -> {
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()
@@ -306,7 +317,6 @@ class Act092_Main : BaseActivityMvp
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context)
     }
-
 
 
     override fun initSetup() {
@@ -400,7 +410,7 @@ class Act092_Main : BaseActivityMvp
 
             btnOtherSerial.setOnClickListener {
                 _focusState.value = focusState.value.copy(
-                    mainUser = if(context.isCurrentTrip()) true else false,
+                    mainUser = if (context.isCurrentTrip()) true else false,
                     userFocus = !focusState.value.userFocus
                 )
 
@@ -511,9 +521,11 @@ class Act092_Main : BaseActivityMvp
                 is Act092UiEvent.FilterMainUser -> {
                     toggleMainUserFilter()
                 }
+
                 is OpenDialog -> {
                     openDialog(state.dialogType)
                 }
+
                 is Act092UiEvent.CallAct -> {
                     presenter.saveFilterWhenLeftActivity()
                     callAct(state.classe, state.bundle)
@@ -615,9 +627,9 @@ class Act092_Main : BaseActivityMvp
             mainUserSelection.apply {
                 isEnabled = focusState && !context.isCurrentTrip()
                 background = mainUserCircle
-                if(context.isCurrentTrip() && focusState){
+                if (context.isCurrentTrip() && focusState) {
                     selectMainUserLayout()
-                }else {
+                } else {
                     setImageResource(mainUserPerson)
                     setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
                 }
@@ -987,9 +999,10 @@ class Act092_Main : BaseActivityMvp
                     context,
                     hmAux_Trans[dialogType.title],
                     dialogType.message,
-                    { dialog, _ ->
+                    dialogType.action ?: DialogInterface.OnClickListener { dialog, _ ->
                         dialog.dismiss()
-                    }, 0
+                    },
+                    0
                 )
             }
 

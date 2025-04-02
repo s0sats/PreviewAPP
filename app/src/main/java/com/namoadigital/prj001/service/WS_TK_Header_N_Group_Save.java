@@ -75,6 +75,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
     private String start_date;
     private String forecast_date;
     private String internalComments;
+    private String kanbanDate;
     private List<TK_Ticket> ticketToSend = new ArrayList<>();
     private T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket;
 
@@ -107,6 +108,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
             forecast_date = bundle.getString(TK_TicketDao.FORECAST_DATE);
             timeAction = bundle.getString(TIME_ACTION, "");
             internalComments = bundle.getString(TK_TicketDao.INTERNAL_COMMENTS);
+            kanbanDate = bundle.getString(TK_TicketDao.KANBAN_DATE);
             move_other_date = bundle.getInt(MOVE_OTHER_DATE, 0);
             move_steps = bundle.getInt(MOVE_STEPS, 0);
             is_header_datetime_changes = bundle.getBoolean(IS_HEADER_DATETIME_CHANGES);
@@ -190,6 +192,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                 case ConstantBaseApp.TK_TICKET_START_DATE_AND_HEADER:
                 case ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER:
                 case ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_KANBAN_DATE:
                 case ConstantBaseApp.TK_TICKET_EDIT_HEADER:
                     //
                     if(internalComments != null) {
@@ -206,6 +209,9 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                             ticket.setMain_user_name(mainUserName);
                             ticket.setMain_user_nick(mainUserNick);
                         }
+                    }
+                    if(kanbanDate != null){
+                        ticket.setKanban_date(kanbanDate);
                     }
             }
             //

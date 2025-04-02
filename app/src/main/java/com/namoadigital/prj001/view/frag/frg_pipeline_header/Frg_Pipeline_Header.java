@@ -603,7 +603,7 @@ public class Frg_Pipeline_Header extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if(mSyncListener != null) {
-                            mSyncListener.syncPipeline();
+                            mSyncListener.syncPipeline(false);
                         }
                     }
                 });
@@ -720,7 +720,7 @@ public class Frg_Pipeline_Header extends Fragment {
     }
 
     public interface OnPipelineFragmentInteractionListener {
-        void syncPipeline();
+        void syncPipeline(boolean isSkipConfirm);
     }
 
     public interface OnPipelineFragmentOriginListener {

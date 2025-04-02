@@ -49,7 +49,7 @@ public interface Act082_Main_Contract {
 
         String getTimeFromForm(String day, String hour, String minutes);
 
-        void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date, String timeAction, String internalComments, int move_other_date, int move_steps);
+        void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date,String kanban_date, String timeAction, String internalComments, int move_other_date, int move_steps);
 
         Long getElapsedTime(TK_Ticket mTk_ticket);
 
@@ -57,7 +57,7 @@ public interface Act082_Main_Contract {
 
         Long getRemainingTime(TK_Ticket mTk_ticket);
 
-        boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean checked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked);
+        boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, String kanbanDate, boolean checked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked);
 
         void processMainUserList();
 

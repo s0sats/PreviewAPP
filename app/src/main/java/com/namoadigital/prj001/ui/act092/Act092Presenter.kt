@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.extensions.isCurrentTrip
+import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActionFilterParam
@@ -71,6 +72,7 @@ import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCas
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_WITHOUT_STRUCTURE
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_CONFIRM
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
+import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
 import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
 import com.namoadigital.prj001.ui.act092.usecases.ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam
 import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
@@ -109,7 +111,7 @@ class Act092Presenter constructor(
 
     private lateinit var view: Act092_Contract.View
 
-    private var launch : Job? = null
+    private var launch: Job? = null
 
     private var _serialModel = MutableStateFlow(SerialModel())
     override val serialModel: StateFlow<SerialModel> = _serialModel
@@ -158,12 +160,12 @@ class Act092Presenter constructor(
     }
 
     private fun loadFilter(context: Context) {
-        if(context.isCurrentTrip()){
+        if (context.isCurrentTrip()) {
             _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
             view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
             view.focusState.value.mainUser = true
             view.filterText.value = _serialModel.value.editFilter ?: ""
-        }else{
+        } else {
             _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
             view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
             view.focusState.value.mainUser = _serialModel.value.mainUserFocus
@@ -238,10 +240,10 @@ class Act092Presenter constructor(
                 }
 
                 it.isLoading { isLoading, message ->
-                        view.onEvent(Act092UiEvent.IsLoading(isLoading, message))
-                    }
-
+                    view.onEvent(Act092UiEvent.IsLoading(isLoading, message))
                 }
+
+            }
         }
     }
 
@@ -261,11 +263,13 @@ class Act092Presenter constructor(
                 )
                 )
             }
+
             ConstantBaseApp.ACT016 -> {
                 view.onEvent(Act092UiEvent.CallAct(Act016_Main::class.java, bundle.apply {
                     putString(ConstantBaseApp.ACT_SELECTED_DATE, _serialModel.value.calendarDate)
                 }))
             }
+
             ConstantBaseApp.ACT068 -> view.onEvent(Act092UiEvent.CallAct(Act068_Main::class.java))
             ConstantBaseApp.ACT083 -> view.onEvent(
                 Act092UiEvent.CallAct(
@@ -284,6 +288,7 @@ class Act092Presenter constructor(
                         )
                     })
             )
+
             else -> view.onEvent(Act092UiEvent.CallAct(Act005_Main::class.java))
         }
     }
@@ -312,64 +317,49 @@ class Act092Presenter constructor(
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
+        actionSelected = action
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
-                val slippedPk = action.getSplippedPk()
-                setSeletedActionInfosIntoFilterParam(
-                    action.actionType,
-                    action.processPk,
-                    action.isMainUserTicket
-                )
+                if (action.siteCode == null) {
+                    showMsg(SITE_NOT_FOUND, action)
+                    return
+                }
 
-                view.onEvent(
-                    Act092UiEvent.CallAct(
-                        Act070_Main::class.java,
-                        ticketBundle(slippedPk[0].toInt(), slippedPk[1].toInt())
-                    )
-                )
+                performClickFlowTicket()
             }
 
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> {
-                if (ToolBox_Con.isOnline(context)) {
-                    view.wsProcess.value = WS_TK_Ticket_Download::class.java.name
-                    view.onEvent(
-                        Act092UiEvent.OpenDialog(
-                            DialogType.PROCESS(
-                                Act092Translate.DIALOG_DOWNLOAD_TICKET_TTL,
-                                Act092Translate.DIALOG_DOWNLOAD_TICKET_START
-                            )
-                        )
-                    )
-
-                    actionUseCases.downloadTicket(action.processPk.replace(".", "|"))
-
-                } else {
+                if (!ToolBox_Con.isOnline(context)) {
                     ToolBox_Inf.showNoConnectionDialog(context)
+                    return
                 }
+
+                performClickFlowTicket(true)
             }
 
+
             MyActions.MY_ACTION_TYPE_SCHEDULE -> {
-                if(!action.pdfName.isNullOrEmpty()){
-                    if(!action.pdfUrl.isNullOrEmpty()) {
+                if (!action.pdfName.isNullOrEmpty()) {
+                    if (!action.pdfUrl.isNullOrEmpty()) {
                         executeNFormPDFDownload(context, action, position)
-                    }else{
+                    } else {
                         actionSelectedPosition = position
                         executeNFormPDFGeneration(context, action, position)
                     }
-                }else {
+                } else {
                     checkScheduleFlow(action)
                 }
             }
 
             MyActions.MY_ACTION_TYPE_FORM -> {
-                if(!action.pdfName.isNullOrEmpty()){
-                    if(!action.pdfUrl.isNullOrEmpty()) {
+                if (!action.pdfName.isNullOrEmpty()) {
+                    if (!action.pdfUrl.isNullOrEmpty()) {
                         executeNFormPDFDownload(context, action, position)
-                    }else{
+                    } else {
                         actionSelectedPosition = position
                         executeNFormPDFGeneration(context, action, position)
                     }
-                }else{
+                } else {
                     setSeletedActionInfosIntoFilterParam(
                         action.actionType,
                         "",
@@ -383,6 +373,66 @@ class Act092Presenter constructor(
                 }
             }
         }
+    }
+
+    private fun performClickFlowTicket(downloadTicket: Boolean = false) {
+        actionSelected?.let { action ->
+            CoroutineScope(Dispatchers.IO).launch {
+                actionUseCases.flowTicketSiteAccess(action.siteCode.toString())
+                    .collect {
+                        it.watchStatus(
+                            success = {
+                                if (!downloadTicket) {
+                                    goToAct070(action)
+                                } else {
+                                    flowDownloadTicket(action)
+                                }
+                            },
+                            error = { message, _ ->
+                                when (message!!) {
+                                    FlowTicketAccessError.SITE_NOT_ACCESS -> {
+                                        showMsg(SITE_RESTRICTION_NO_ACCESS, action, downloadTicket)
+                                    }
+
+                                    FlowTicketAccessError.SITE_ACCESS_CONFIRM -> {
+                                        showMsg(message, action, downloadTicket)
+                                    }
+                                }
+                            }
+                        )
+                    }
+            }
+        }
+    }
+
+    private fun flowDownloadTicket(action: MyActions) {
+        view.wsProcess.value = WS_TK_Ticket_Download::class.java.name
+        view.onEvent(
+            Act092UiEvent.OpenDialog(
+                DialogType.PROCESS(
+                    Act092Translate.DIALOG_DOWNLOAD_TICKET_TTL,
+                    Act092Translate.DIALOG_DOWNLOAD_TICKET_START
+                )
+            )
+        )
+
+        actionUseCases.downloadTicket(action.processPk.replace(".", "|"))
+    }
+
+    private fun goToAct070(action: MyActions) {
+        val slippedPk = action.getSplippedPk()
+        setSeletedActionInfosIntoFilterParam(
+            action.actionType,
+            action.processPk,
+            action.isMainUserTicket
+        )
+
+        view.onEvent(
+            Act092UiEvent.CallAct(
+                Act070_Main::class.java,
+                ticketBundle(slippedPk[0].toInt(), slippedPk[1].toInt())
+            )
+        )
     }
 
     private fun getFormBundle(myAction: MyActions): Bundle {
@@ -426,14 +476,14 @@ class Act092Presenter constructor(
                             return@isSuccess
                         }
                         //
-                        if(action.processStatus == ConstantBaseApp.SYS_STATUS_DONE){
+                        if (action.processStatus == ConstantBaseApp.SYS_STATUS_DONE) {
                             processActSchedule(
                                 action,
                                 transform.actType,
                                 transform.scheduleExec,
                                 transform.productSerial
                             )
-                        }else {
+                        } else {
                             view.onEvent(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.ACTION(
@@ -470,7 +520,7 @@ class Act092Presenter constructor(
     }
 
     override fun callFormSave(context: Context) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_Save::class.java.simpleName
             //
 
@@ -501,13 +551,13 @@ class Act092Presenter constructor(
                 "",
                 "0"
             )
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
 
     override fun callTicketSave(context: Context) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_TK_Ticket_Save::class.java.simpleName
             //
             view.onEvent(
@@ -566,7 +616,10 @@ class Act092Presenter constructor(
     }
 
     private fun getTicketPendency(context: Context): Boolean {
-        return ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context)).toInt() > 0
+        return ToolBox_Inf.handleTicketUpdateRequired(
+            context,
+            ToolBox_Con.getPreference_Customer_Code(context)
+        ).toInt() > 0
     }
 
     private fun getSerialStructurePendency(context: Context): Boolean {
@@ -600,19 +653,47 @@ class Act092Presenter constructor(
         }
     }
 
-    private fun showMsg(type: String, item: MyActions) {
+    private fun showMsg(type: String, item: MyActions, downloadTicket: Boolean = false) {
         CoroutineScope(Dispatchers.Main).launch {
             when (type) {
+
+                SITE_NOT_FOUND -> {
+                    view.onEvent(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.CUSTOM_OK(
+                                title = Act092Translate.ALERT_SITE_NOT_FOUND_TTL,
+                                message = Act092Translate.ALERT_SITE_NOT_FOUND_MSG,
+                                action = { dialog, _ ->
+                                    dialog.dismiss()
+                                    getMyActionList()
+                                }
+                            )
+                        )
+                    )
+                }
+
+
+                ZONE_NOT_FOUND -> {
+                    view.onEvent(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.CUSTOM_OK(
+                                title = Act092Translate.ALERT_ZONE_NOT_FOUND_TTL,
+                                message = Act092Translate.ALERT_ZONE_NOT_FOUND_MSG,
+                                action = { dialog, _ ->
+                                    dialog.dismiss()
+                                    getMyActionList()
+                                }
+                            )
+                        )
+                    )
+                }
 
                 SITE_RESTRICTION_NO_ACCESS -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
-                            DialogType.ACTION(
+                            DialogType.DEFAULT_OK(
                                 title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
                                 message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
-                                action = { dialog, i ->
-
-                                }
                             )
                         )
                     )
@@ -640,13 +721,31 @@ class Act092Presenter constructor(
                             DialogType.ACTION(
                                 title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
                                 message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
-                                { dialog, i ->
+                                { dialog, _ ->
+                                    dialog.dismiss()
                                     noRestriction(item)
                                 }, negativeBtn = 1
                             )
                         )
                     )
                 }
+
+                FlowTicketAccessError.SITE_ACCESS_CONFIRM -> {
+                    view.onEvent(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.ACTION(
+                                title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+                                message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
+                                action = { dialog, _ ->
+                                    dialog.dismiss()
+                                    flowTicketSiteRestriction(item, downloadTicket)
+                                },
+                                negativeBtn = 1
+                            )
+                        )
+                    )
+                }
+
                 MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -657,6 +756,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -667,6 +767,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 EMPTY_SERIAL_SEARCH -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -677,6 +778,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 SERIAL_CREATION_DENIED -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -687,6 +789,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 MODULE_TICKET_EXEC_CONFIRM -> {
                     view.onEvent(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
@@ -699,6 +802,7 @@ class Act092Presenter constructor(
                         )
                     ))
                 }
+
                 MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -709,6 +813,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -719,6 +824,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 PROFILE_PRJ001_AP_NOT_FOUND -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -729,6 +835,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 PROFILE_MENU_TICKET_NOT_FOUND -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -739,6 +846,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 SERIAL_SITE_OUT_OF_LICENSE -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -749,6 +857,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+
                 SERIAL_WITHOUT_STRUCTURE -> {
                     view.onEvent(
                         Act092UiEvent.OpenDialog(
@@ -771,6 +880,37 @@ class Act092Presenter constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun flowTicketSiteRestriction(item: MyActions, downloadTicket: Boolean = false) {
+        val context = translateResource.context
+
+        val itemZoneCode = MD_Product_SerialDao(context).let { dao ->
+            val productSerial: MD_Product_Serial? = ToolBox_Inf.getProductSerial(
+                context,
+                dao,
+                item.productCode!!.toLong(),
+                item.serialId!!
+            )
+
+            productSerial?.zone_code
+        }
+
+        ToolBox_Con.setPreference_Site_Code(
+            context,
+            item.siteCode.toString()
+        )
+
+        ToolBox_Con.setPreference_Zone_Code(
+            context,
+            itemZoneCode ?: -1
+        )
+
+        if (!downloadTicket) {
+            goToAct070(item)
+        } else {
+            flowDownloadTicket(item)
         }
     }
 
@@ -868,7 +1008,10 @@ class Act092Presenter constructor(
                 MY_ACTIONS_ORIGIN_FLOW,
                 Constant.ACT092
             )
-            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, action.scheduleCustomFormData)
+            bundle.putString(
+                GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                action.scheduleCustomFormData
+            )
             bundle.putAll(view.bundle)
         }
     }
@@ -883,7 +1026,13 @@ class Act092Presenter constructor(
         CoroutineScope(Dispatchers.Main).launch {
             when (actType) {
                 Constant.ACT011 -> {
-                    if(actionUseCases.createFormLocalForSchedule(actionUseCases.scheduleFormLocalExists(scheduleExec, action).first, scheduleExec, action)){
+                    if (actionUseCases.createFormLocalForSchedule(
+                            actionUseCases.scheduleFormLocalExists(
+                                scheduleExec,
+                                action
+                            ).first, scheduleExec, action
+                        )
+                    ) {
                         setSeletedActionInfosIntoFilterParam(
                             action.actionType, action.processPk,
                         )
@@ -894,7 +1043,7 @@ class Act092Presenter constructor(
                                 getScheduleBundle(scheduleExec, serial, action)
                             )
                         )
-                    }else{
+                    } else {
                         view.onEvent(
                             Act092UiEvent.OpenDialog(
                                 DialogType.DEFAULT_OK(
@@ -1085,7 +1234,7 @@ class Act092Presenter constructor(
                         hmAux_Trans,
                         _serialModel.value.productCode?.toLong() ?: -1L
                     )
-                }else{
+                } else {
                     validateCreateNewForm()
                 }
             }
@@ -1104,7 +1253,7 @@ class Act092Presenter constructor(
                     myActionFilterParam.paramItemSelectedPk = null
                     myActionFilterParam.paramItemSelectedType = null
 
-                    if(ConstantBaseApp.ACT006 == originFlow) {
+                    if (ConstantBaseApp.ACT006 == originFlow) {
                         myActionFilterParam.originFlow = originFlow
                         bundle.putString(
                             MY_ACTIONS_ORIGIN_FLOW,
@@ -1121,34 +1270,34 @@ class Act092Presenter constructor(
                                 )
                             }
                         ))
-            }
+                }
 
-            it.isFailed { exception ->
-                when (exception) {
-                    is ValidateNewFormUseCaseException -> {
-                        if (exception.message != "ALERT_PRODUCT_OR_SERIAL") {
-                            view.onEvent(
-                                Act092UiEvent.OpenDialog(
-                                    DialogType.CUSTOM_OK(
-                                        title = Act092Translate.ALERT_NO_FORM_TTL,
-                                        message = exception.message
+                it.isFailed { exception ->
+                    when (exception) {
+                        is ValidateNewFormUseCaseException -> {
+                            if (exception.message != "ALERT_PRODUCT_OR_SERIAL") {
+                                view.onEvent(
+                                    Act092UiEvent.OpenDialog(
+                                        DialogType.CUSTOM_OK(
+                                            title = Act092Translate.ALERT_NO_FORM_TTL,
+                                            message = exception.message
+                                        )
                                     )
                                 )
-                            )
-                        } else {
-                            view.onEvent(
-                                Act092UiEvent.OpenDialog(
-                                    DialogType.DEFAULT_OK(
-                                        title = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
-                                        message = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_MSG
+                            } else {
+                                view.onEvent(
+                                    Act092UiEvent.OpenDialog(
+                                        DialogType.DEFAULT_OK(
+                                            title = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
+                                            message = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_MSG
+                                        )
                                     )
                                 )
-                            )
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     private fun setSeletedActionInfosIntoFilterParam(
@@ -1184,7 +1333,7 @@ class Act092Presenter constructor(
     }
 
     override fun getUnfocusHistoricalList(context: Context) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_UnfocusAndHistoric::class.java.simpleName
             //
             view.onEvent(
@@ -1201,7 +1350,7 @@ class Act092Presenter constructor(
                 _serialModel.value.productCode ?: -1,
                 _serialModel.value.serialCode ?: 0L
             )
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
@@ -1261,7 +1410,12 @@ class Act092Presenter constructor(
             val mIntent = Intent(context, WBR_Generate_NForm_PDF::class.java)
             val bundle = Bundle()
             //
-            val nformPkFormatted = """${ToolBox_Con.getPreference_Customer_Code(context)}|${action.processPk.replace(".", "|")}"""
+            val nformPkFormatted = """${ToolBox_Con.getPreference_Customer_Code(context)}|${
+                action.processPk.replace(
+                    ".",
+                    "|"
+                )
+            }"""
             bundle.putString(WS_Generate_NForm_PDF.NFORM_PK_KEY, nformPkFormatted)
             bundle.putString(WS_Generate_NForm_PDF.TYPE_KEY, action.actionType)
             //
@@ -1392,9 +1546,9 @@ class Act092Presenter constructor(
         actionSelectedPosition = -1
         if (ToolBox_Con.isOnline(context)) {
             val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
-            if(pdfFile.exists() && pdfFile.isFile){
+            if (pdfFile.exists() && pdfFile.isFile) {
                 openPDF(context, myAction.pdfName!!)
-            }else {
+            } else {
                 launch?.let {
                     if (it.isActive) {
                         it.cancel()
@@ -1442,8 +1596,8 @@ class Act092Presenter constructor(
                         //
                         if (myAction.pdfName != null) {
                             val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
-                            if(pdfFile.exists() && pdfFile.isFile){
-                                myAction.processMidIcon =  R.drawable.ic_baseline_cloud_done_24_blue
+                            if (pdfFile.exists() && pdfFile.isFile) {
+                                myAction.processMidIcon = R.drawable.ic_baseline_cloud_done_24_blue
                                 view.setItemAsDownloaded(position, myAction)
                             }
                             //
@@ -1463,12 +1617,12 @@ class Act092Presenter constructor(
         } else {
             myAction.pdfName?.let {
                 val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
-                if(pdfFile.exists() && pdfFile.isFile){
+                if (pdfFile.exists() && pdfFile.isFile) {
                     openPDF(context, myAction.pdfName)
-                }else {
+                } else {
                     ToolBox_Inf.showNoConnectionDialog(context)
                 }
-            }?: ToolBox_Inf.showNoConnectionDialog(context)
+            } ?: ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
 
@@ -1600,5 +1754,8 @@ class Act092Presenter constructor(
     companion object {
         const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR =
             "MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR"
+
+        const val ZONE_NOT_FOUND = "ZONE_NOT_FOUND"
+        const val SITE_NOT_FOUND = "SITE_NOT_FOUND"
     }
 }

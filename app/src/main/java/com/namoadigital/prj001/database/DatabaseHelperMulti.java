@@ -13,7 +13,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.namoadigital.prj001.database.scripts.multi.FSCreateScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.GeOsScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.SmSoScriptKt;
-import com.namoadigital.prj001.database.scripts.multi.TkCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormFieldsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormLocalFieldsKt;
@@ -21,6 +20,7 @@ import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductScriptKt
 import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductSerialScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.ticket.TkCreateScriptsKt;
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -275,6 +275,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV16().migrate(db);
                 case 17:
                     MigrationsKt.getMigrationV17().migrate(db);
+                case 18:
+                    MigrationsKt.getMigrationV18().migrate(db);
                     break;
             }
 

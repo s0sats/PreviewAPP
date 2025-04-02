@@ -11,7 +11,7 @@ import com.namoadigital.prj001.extensions.coroutines.dispatchersIO
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.loadGenericTranslation
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Env
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Rec
@@ -102,9 +102,9 @@ class ProductSerialRepositoryImp @Inject constructor(
                     )
 
                     rec?.let{
-                        val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? =
+                        val bkpSerialItemList: List<BaseSerialSearchItem.BackupMachineSerialItem>? =
                             it.records?.map { bkpOffline ->
-                                FormOsHeaderFrgSerialBkpItem(
+                                BaseSerialSearchItem.BackupMachineSerialItem(
                                     bkpOffline.productCode,
                                     bkpOffline.productId,
                                     bkpOffline.productDesc,
@@ -117,7 +117,7 @@ class ProductSerialRepositoryImp @Inject constructor(
                         emit(success(FinishFormBackupMachineList(false, bkpSerialItemList)))
                     }
                 } else {
-                    val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? = dao.query(
+                    val bkpSerialItemList: List<BaseSerialSearchItem.BackupMachineSerialItem>? = dao.query(
                         Act087Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             serial.product_code,
@@ -126,7 +126,7 @@ class ProductSerialRepositoryImp @Inject constructor(
                             ToolBox_Con.getPreference_Site_Code(context).toInt()
                         ).toSqlQuery()
                     )?.map { bkpOffline ->
-                        FormOsHeaderFrgSerialBkpItem(
+                        BaseSerialSearchItem.BackupMachineSerialItem(
                             bkpOffline.product_code.toInt(),
                             bkpOffline.product_id,
                             bkpOffline.product_desc,

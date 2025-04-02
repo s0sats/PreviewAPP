@@ -464,7 +464,7 @@ class Act087MainPresenter(
      */
     private fun searchBkpMachineInDb(bkpSerialId: String) {
         //
-        val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? = serialDao.query(
+        val bkpSerialItemList: List<BaseSerialSearchItem.BackupMachineSerialItem>? = serialDao.query(
             Act087Sql_001(
                 serialObj.customer_code,
                 serialObj.product_code,
@@ -473,15 +473,15 @@ class Act087MainPresenter(
                 ToolBox_Con.getPreference_Site_Code(context).toInt()
             ).toSqlQuery()
         )?.map { bkpOffline ->
-                FormOsHeaderFrgSerialBkpItem(
-                    bkpOffline.product_code.toInt(),
-                    bkpOffline.product_id,
-                    bkpOffline.product_desc,
-                    bkpOffline.serial_code.toInt(),
-                    bkpOffline.serial_id,
-                    bkpOffline.site_code,
-                    bkpOffline.site_desc
-                )
+            BaseSerialSearchItem.BackupMachineSerialItem(
+                bkpOffline.product_code.toInt(),
+                bkpOffline.product_id,
+                bkpOffline.product_desc,
+                bkpOffline.serial_code.toInt(),
+                bkpOffline.serial_id,
+                bkpOffline.site_code,
+                bkpOffline.site_desc
+            )
         }
         //
         if(bkpSerialItemList.isNullOrEmpty()){
@@ -551,8 +551,8 @@ class Act087MainPresenter(
         foundQty: Int,
         onlineSearch: Boolean
     ) {
-        val bkpSerialItemList: MutableList<FormOsHeaderFrgSerialBkpItemAbs> = records.map { bkp ->
-            FormOsHeaderFrgSerialBkpItem(
+        val bkpSerialItemList: MutableList<BaseSerialSearchItem> = records.map { bkp ->
+            BaseSerialSearchItem.BackupMachineSerialItem(
                 bkp.productCode,
                 bkp.productId,
                 bkp.productDesc,
@@ -565,7 +565,7 @@ class Act087MainPresenter(
         //
         if(foundQty > records.size ){
             bkpSerialItemList.add(
-                FormOsHeaderFrgSerialBkpExceededItem(
+                BaseSerialSearchItem.SerialSearchExceededItem(
                     hmAuxTrans["alert_qty_records_exceeded_msg"]!!,
                     hmAuxTrans["records_display_limit_lbl"]!!,
                     page,

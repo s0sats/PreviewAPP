@@ -14,7 +14,7 @@ import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvaila
 
 interface Act083_Main_Contract {
     interface I_View {
-        fun showMsg(type: String, item: MyActions)
+        fun showMsg(type: String, item: MyActions, isDownloadedTicket: Boolean = false)
         fun showAlertMsg(ttl: String, msg: String)
         fun showToast(msg: String)
         fun callAct070(bundle: Bundle)

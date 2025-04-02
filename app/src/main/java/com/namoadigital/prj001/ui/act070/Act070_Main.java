@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act070;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FAB_TO_EQUIPMENT_LBL;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,12 +26,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -38,8 +42,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -55,6 +62,7 @@ import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding;
+import com.namoadigital.prj001.model.BaseSerialSearchItem;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
@@ -66,6 +74,8 @@ import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.ticket.WsSerialSearchList;
+import com.namoadigital.prj001.service.ticket.WsTicketSerialTmpSet;
 import com.namoadigital.prj001.service.trip.WsGetTripFull;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -75,6 +85,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.SerialSearch;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
@@ -82,6 +93,8 @@ import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
+import com.namoadigital.prj001.ui.act070.view.composable.OnActionListSerialSearchItems;
+import com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
@@ -95,16 +108,20 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.util.singleton.ticket.TicketDownloadRestriction;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
+public class Act070_Main extends Base_Activity_Frag implements
+        Act070_Main_Contract.I_View,
+        Frg_Pipeline_Header.OnPipelineFragmentInteractionListener,
+        Frg_Pipeline_Header.OnPipelineFragmentOriginListener,
+        OnActionListSerialSearchItems {
 
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
     public static final String PARAM_CTRL_CREATION = "PARAM_CTRL_CREATION";
@@ -128,13 +145,19 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String room_code;
     private FCMReceiver fcmReceiver;
     private int currentStepFirstPosition = -1;
-    private ArrayList<HMAux> wsResult = new ArrayList<>();
+    private final ArrayList<HMAux> wsResult = new ArrayList<>();
     /**
      * Iniciando terraplanagem e reinicio da tela.
      *
      * @param savedInstanceState
      */
     private RecyclerView rvTicketPipeline;
+    private LinearLayout layoutSerialSearch;
+    private TextInputLayout textLayoutSerialSearch;
+    private MKEditTextNM editTextSerialSearch;
+    private TextView titleSearchSerial;
+    private MaterialButton confirmSerialSearch;
+    private MaterialButton searchOrDeleteSerial;
     private Act070_Steps_Adapter mAdapter;
     private ArrayList<BaseStep> sources = new ArrayList<>();
     private FabMenu fabMenu;
@@ -159,14 +182,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private boolean fromCamera = false;
     private boolean assertSingleTouch = true;
     private boolean isCheckinFlow = false;
-    private String wsSaveResult="";
+    private String wsSaveResult = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act070_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
         iniSetup();
@@ -380,6 +403,29 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_trip_update_msg");
         transList.add("alert_trip_update_required_ttl");
         transList.add("alert_trip_update_required_msg");
+
+        transList.add(DialogSerialSearchFragment.HINT_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.TITLE_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_TITLE_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.BTN_CONFIRM_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_HINT_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_SECTION_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_LIST_EXCEEDED_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_EXCEEDED_LIMIT_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_EXCEEDED_FOUNDS_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_CARD_SITE_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.DIALOG_LABEL_CARD_TICKET_OPEN_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.TITLE_SERVICE_PROCESS_GET_LIST_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.TITLE_SERVICE_PROCESS_CONFIRM_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.MSG_SERVICE_PROCESS_GET_LIST_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.MSG_SERVICE_PROCESS_CONFIRM_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.TITLE_SERVICE_ERROR_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.MSG_SERVICE_ERROR_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.TITLE_SERVICE_EMPTY_LIST_SERIAL_SEARCH);
+        transList.add(DialogSerialSearchFragment.MSG_SERVICE_EMPTY_LIST_SERIAL_SEARCH);
+        transList.add(FAB_TO_EQUIPMENT_LBL);
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -420,7 +466,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mPresenter.deleteHeaderEditionFiles();
         //
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
-            updateTicketData();
+            updateTicketData(false);
             //o metodo estah aqui pois o metodo updateTicketData() recupera o valor do ticket.
             if (mTicket != null) {
                 //
@@ -789,7 +835,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void toogleIntoEditMode() {
         inWgEditMode = !inWgEditMode;
         mPresenter.deleteWorkgroupEditionFileIfNeeds();
-        updateTicketData();
+        updateTicketData(false);
     }
 
     private void callAct082() {
@@ -842,17 +888,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     @Override
-    public void syncPipeline() {
-        if(mPresenter.checkTripUpdateRequired()){
+    public void syncPipeline(boolean isSkipConfirm) {
+        if (mPresenter.checkTripUpdateRequired()) {
             showAlert(
                     hmAux_Trans.get("alert_trip_update_required_ttl"),
                     hmAux_Trans.get("alert_trip_update_required_msg"),
                     null,
                     false
-                    );
-        }else{
+            );
+        } else {
             if (!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)) {
-                syncPipelineFlow(false);
+                syncPipelineFlow(isSkipConfirm);
             } else {
                 showAlert(
                         hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
@@ -879,8 +925,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void syncPipelineFlow(boolean skipSyncConfirm) {
         if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
             showAlert(
-                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
-                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
             );
         } else {
             if (skipSyncConfirm) {
@@ -902,7 +948,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void refreshUi() {
-        updateTicketData();
+        updateTicketData(true);
     }
 
     @Override
@@ -953,6 +999,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void bindViews() {
         rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
+        titleSearchSerial = findViewById(R.id.act070_tv_serial_search);
+        layoutSerialSearch = findViewById(R.id.layout_serial_search);
+        textLayoutSerialSearch = findViewById(R.id.til_mket_serial);
+        editTextSerialSearch = findViewById(R.id.mket_machine_serial_edit);
+        searchOrDeleteSerial = findViewById(R.id.iv_serial_search);
+        searchOrDeleteSerial.setEnabled(false);
+        confirmSerialSearch = findViewById(R.id.btn_save_serial_search);
+        confirmSerialSearch.setEnabled(false);
         fabMenu = findViewById(R.id.act070_fabMenu_anchor);
         clEditMode = findViewById(R.id.act070_cl_edit_mode);
         btnCancelEdit = findViewById(R.id.act070_btn_cancel);
@@ -961,7 +1015,149 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         setTranslation();
     }
 
+
+    private void setupSerialSearch() {
+        //
+        rvTicketPipeline.setVisibility(View.GONE);
+        layoutSerialSearch.setVisibility(View.VISIBLE);
+        //
+        List<View> editableComponents = Arrays.asList(
+                editTextSerialSearch,
+                searchOrDeleteSerial,
+                textLayoutSerialSearch
+        );
+        //
+        for (View component : editableComponents) {
+            component.setEnabled(true);
+        }
+        //
+        searchOrDeleteSerial.setEnabled(!resultSerialSearch.isEmpty());
+        confirmSerialSearch.setEnabled(!resultSerialSearch.isEmpty());
+        if (!controls_sta.contains(editTextSerialSearch)) {
+            controls_sta.add(editTextSerialSearch);
+        }
+        //
+    }
+
+    private SerialSearch resultSerialSearch = new SerialSearch();
+
+    private void initTicketTempActions() {
+
+        editTextSerialSearch.setDelegateTextBySpecialist(s -> {
+            searchOrDeleteSerial.performClick();
+        });
+        confirmSerialSearch.setOnClickListener(v -> executeConfirmSerial());
+
+        searchOrDeleteSerial.setEnabled(false);
+        searchOrDeleteSerial.setOnClickListener(v -> {
+            if (editTextSerialSearch.getText().toString().isEmpty()) return;
+
+            if (resultSerialSearch.isEmpty()) {
+                executeSearchSerial();
+            } else {
+                clearSerialSearch();
+            }
+        });
+        //
+        editTextSerialSearch.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                boolean enableSearchButtton = !s.isBlank();
+                searchOrDeleteSerial.setEnabled(enableSearchButtton);
+            }
+        });
+    }
+
+    private void executeConfirmSerial() {
+        if (resultSerialSearch.isEmpty()) return;
+        mPresenter.executeConfirmSerial(
+                mTicket.getTicket_prefix(),
+                mTicket.getTicket_code(),
+                resultSerialSearch.getProductCode(),
+                resultSerialSearch.getSerialCode()
+        );
+    }
+
+    private void executeSearchSerial() {
+        String serialId = editTextSerialSearch.getText().toString();
+        mPresenter.executeSerialSearch(serialId);
+    }
+
+
+    private DialogSerialSearchFragment bkpMachineDialog;
+
+    private void showSerialSearchDialog(
+            List<BaseSerialSearchItem> serialBkpMachineList,
+            Integer lineCount) {
+
+        DialogSerialSearchFragment dialogSerialSearchFragment = DialogSerialSearchFragment.Companion.newInstance(
+                serialBkpMachineList,
+                lineCount,
+                hmAux_Trans
+        );
+
+        bkpMachineDialog = dialogSerialSearchFragment;
+        dialogSerialSearchFragment.show(getSupportFragmentManager(), DialogSerialSearchFragment.TAG);
+    }
+
+
+    private void clearSerialSearch() {
+        resultSerialSearch.clear();
+        editTextSerialSearch.setText("");
+        editTextSerialSearch.setEnabled(true);
+        confirmSerialSearch.setEnabled(false);
+        editTextSerialSearch.setmBARCODE(true);
+        textLayoutSerialSearch.setHelperText("");
+        textLayoutSerialSearch.setHelperTextEnabled(false);
+        searchOrDeleteSerial.setIcon(
+                ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_search_black_24dp
+                )
+        );
+    }
+
+    private void setSelectedSerial(
+            BaseSerialSearchItem.SerialSearchItem serialItem
+    ) {
+        editTextSerialSearch.setText(serialItem.getSerialId());
+        editTextSerialSearch.setEnabled(false);
+        editTextSerialSearch.setmBARCODE(false);
+
+        textLayoutSerialSearch.setHelperTextEnabled(true);
+        textLayoutSerialSearch.setHelperText(serialItem.getProductDesc());
+
+        confirmSerialSearch.setEnabled(true);
+        textLayoutSerialSearch.setErrorEnabled(false);
+
+        resultSerialSearch = new SerialSearch(
+                serialItem.getSerialCode(),
+                serialItem.getSerialId(),
+                serialItem.getProductCode()
+        );
+
+        searchOrDeleteSerial.setIcon(
+                ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_delete
+                )
+        );
+    }
+
+    @Override
+    public void processSerialSearch(List<BaseSerialSearchItem> list, Integer lineCount) {
+        showSerialSearchDialog(list, lineCount);
+    }
+
     private void initRecycle() {
+        layoutSerialSearch.setVisibility(View.GONE);
+        rvTicketPipeline.setVisibility(View.VISIBLE);
+
         rvTicketPipeline.setLayoutManager(new LinearLayoutManager(context));
         rvTicketPipeline.setAdapter(mAdapter);
         rvTicketPipeline.postDelayed(
@@ -1012,7 +1208,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         try {
             for (int i = 0; i < sources.size(); i++) {
                 if (sources.get(i) instanceof StepMain) {
-                    if (((StepMain) sources.get(i)).getStepCode() == mNavStepCode) {
+                    if (sources.get(i).getStepCode() == mNavStepCode) {
                         Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
                         if (stepMainVH != null) {
                             stepMainVH.itemView.performClick();
@@ -1289,23 +1485,36 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void setTranslation() {
         btnCancelEdit.setText(hmAux_Trans.get("btn_cancel_edit"));
         btnSaveEdit.setText(hmAux_Trans.get("btn_save_edit"));
+        confirmSerialSearch.setText(hmAux_Trans.get(DialogSerialSearchFragment.BTN_CONFIRM_SERIAL_SEARCH));
+        titleSearchSerial.setText(hmAux_Trans.get(DialogSerialSearchFragment.TITLE_SERIAL_SEARCH));
+        textLayoutSerialSearch.setHint(hmAux_Trans.get(DialogSerialSearchFragment.HINT_SERIAL_SEARCH));
     }
 
-    private void updateTicketData() {
+    private void updateTicketData(boolean forceUpdateFragment) {
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
         if (mTicket != null) {
             if (mTicket.getValid_structure_step() == 1) {
                 handleFabMenuOnTicketStatusChanged();
+                if (forceUpdateFragment) {
+                    mFrgPipelineHeader = null;
+                }
                 iniHeaderFrag();
-                mPresenter.getStepsList(mTicket);
                 initFCMReceiver();
+                //
+                if (mTicket.isTmp() && !TK_Ticket.isReadOnlyStatus(mTicket.getTicket_status())) {
+                    setupSerialSearch();
+                } else {
+                    mPresenter.getStepsList(mTicket);
+                }
+                //
                 if (!isInWgEditMode()) {
                     checkSyncNeeds();
                 }
                 applyEditUI();
                 //
                 forceEditModeIfNeeds();
+                //
             } else {
                 ToolBox.alertMSG(
                         context,
@@ -1360,9 +1569,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void callToastTest() {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_warning_toast,
-                (ViewGroup) findViewById(R.id.custom_warning_toast_cl_container));
+                findViewById(R.id.custom_warning_toast_cl_container));
 
-        TextView text = (TextView) layout.findViewById(R.id.custom_warning_toast_tv_msg);
+        TextView text = layout.findViewById(R.id.custom_warning_toast_tv_msg);
         text.setText("Sincronize o ticket.");
 
         Toast toast = new Toast(getApplicationContext());
@@ -1786,6 +1995,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
             }
         });
+        //
+        initTicketTempActions();
+        //
     }
 
     private void confirmEditModeExit() {
@@ -1883,7 +2095,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         smoothScroller.setTargetPosition(position);
         //Seta smooth scroller no layoutmaager do recycle o.O
         try {
-            ((LinearLayoutManager) rvTicketPipeline.getLayoutManager()).startSmoothScroll(smoothScroller);
+            rvTicketPipeline.getLayoutManager().startSmoothScroll(smoothScroller);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1986,6 +2198,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         return isCheckinFlow;
     }
 
+    @Override
+    public void selectSerial(@NonNull BaseSerialSearchItem.SerialSearchItem serial) {
+        setSelectedSerial(serial);
+    }
+
     class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2059,20 +2276,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if (mPresenter.verifyProductForForm()) {
                 save_return = mLink;
             } else {
-                if(mPresenter.isUserOnSyncRequiredTrip()){
+                if (mPresenter.isUserOnSyncRequiredTrip()) {
                     save_return = mLink;
                     mPresenter.callTripUpdate();
-                }else {
+                } else {
                     mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
                 }
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(mPresenter.hasSerialStructureOutdate()){
+            if (mPresenter.hasSerialStructureOutdate()) {
                 wsSaveResult = mLink;
                 mPresenter.updateSerialStrucutreAfterWsSave();
-            }else {
+            } else {
                 mPresenter.processWS_SaveReturn(mLink);
                 //mPresenter.prepareSyncProcess(mTicket, false);
                 mPresenter.defineWsToCall(mTicket, true, true);
@@ -2111,6 +2328,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             progressDialog.dismiss();
             mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
             save_return = "";
+        } else if (wsProcess.equalsIgnoreCase(WsSerialSearchList.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.responseSerialSearch(mLink);
+        } else if (wsProcess.equalsIgnoreCase(WsTicketSerialTmpSet.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            updateSyncRequiredByFCM();
+            syncPipeline(true);
         } else {
             wsProcess = "";
             progressDialog.dismiss();
@@ -2157,7 +2383,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //previne o loop
         preventSyncLoop = true;
         //LUCHE - 01/09/2020
-        updateTicketData();
+        updateTicketData(false);
     }
 
     @Override
@@ -2187,7 +2413,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             inWgEditMode = false;
         } else if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             resetLastPositionClicked();
-        }else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)){
+        } else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_serial_structure_error_ttl"),
@@ -2204,7 +2430,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //previne o loop
         preventSyncLoop = true;
         //LUCHE - 01/09/2020
-        updateTicketData();
+        updateTicketData(false);
     }
 
     @Override
@@ -2214,7 +2440,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
             processSerialStructure();
-        } else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)){
+        } else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_serial_structure_error_ttl"),

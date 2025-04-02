@@ -315,6 +315,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int kanban;
     @SerializedName("kanban_stage")
     private String kanban_stage;
+    @Expose
     @SerializedName("kanban_date")
     private String kanban_date;
     @SerializedName("kanban_custom_form_type")
@@ -363,6 +364,9 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     @SerializedName("desired_date")
     private String desiredDate;
+
+    @SerializedName("is_tmp")
+    private int isTmp;
 
     public void setPK() {
 
@@ -2148,5 +2152,17 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setDesiredDate(String desiredDate) {
         this.desiredDate = desiredDate;
+    }
+
+    public boolean isTmp(){
+        return isTmp == 1;
+    }
+
+    public int getIsTmp() {
+        return isTmp;
+    }
+
+    public void setIsTmp(int isTmp) {
+        this.isTmp = isTmp;
     }
 }

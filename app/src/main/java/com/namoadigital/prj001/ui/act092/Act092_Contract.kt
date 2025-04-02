@@ -25,7 +25,7 @@ interface Act092_Contract {
         fun showPD(ttl: String?, msg: String?)
         fun disablePD()
         fun setItemAsDownloaded(position: Int, myActions: MyActions)
-        fun getContext():Context
+        fun getContext(): Context
     }
 
     interface Presenter : BasePresenter<View> {
@@ -36,6 +36,7 @@ interface Act092_Contract {
         fun syncFiles(context: Context)
         fun getUnfocusHistoricalList(context: Context)
         fun syncFilesForm(productCode: Long = 1L)
+
         //actions type
         fun processActionClick(action: MyActions, context: Context, position: Int)
         fun processNewFormClick(context: Context)

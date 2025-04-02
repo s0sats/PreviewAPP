@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act078;
 
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FAB_TO_EQUIPMENT_LBL;
 
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -144,6 +145,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                             case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
                                 callAct075();
                                 break;
+
+                            case FAB_TO_EQUIPMENT_LBL:
                             case ConstantBaseApp.FAB_TO_STEP_LBL:
                                 callAct070(false);
                                 break;
@@ -418,6 +421,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("action_comment_lbl");
         transList.add("open_serial_stopped_lbl");
         transList.add("open_desired_date_lbl");
+        transList.add(FAB_TO_EQUIPMENT_LBL);
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

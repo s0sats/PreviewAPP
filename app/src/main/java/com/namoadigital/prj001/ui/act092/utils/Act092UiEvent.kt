@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.view.dialog.SendResumeDialog.OnDialogClickListener
 
 sealed class Act092UiEvent {
 
@@ -34,7 +35,7 @@ sealed class Act092UiEvent {
             ) : DialogType()
 
             data class DEFAULT_OK(val title: String?, val message: String?) : DialogType()
-            data class CUSTOM_OK(val title: String?, val message: String?) : DialogType()
+            data class CUSTOM_OK(val title: String?, val message: String?, val action: DialogInterface.OnClickListener? = null) : DialogType()
         }
     }
 

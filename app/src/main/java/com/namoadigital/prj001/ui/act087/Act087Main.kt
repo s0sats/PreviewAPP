@@ -439,7 +439,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun reportSerialBkpMachineToFrag(
-        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<BaseSerialSearchItem>,
         onlineSearch: Boolean
     ) {
         mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList, onlineSearch)

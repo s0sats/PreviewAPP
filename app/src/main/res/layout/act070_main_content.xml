@@ -18,37 +18,111 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/act070_rv_pipeline"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:listitem="@layout/act070_step_main_cell"
-        app:layout_constraintTop_toBottomOf="@id/act070_frg_pipeline_header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/act070_cl_edit_mode"
-        app:layout_constraintVertical_bias="0"
         android:layout_marginBottom="5dp"
-        />
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/act070_cl_edit_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act070_frg_pipeline_header"
+        app:layout_constraintVertical_bias="0"
+        tools:listitem="@layout/act070_step_main_cell" />
+
+    <LinearLayout
+        android:id="@+id/layout_serial_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act070_frg_pipeline_header">
+
+        <TextView
+            android:id="@+id/act070_tv_serial_search"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Favor informar ID do equipamento definitivo:" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_mket_serial"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="16dp"
+                app:hintTextColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_serial_search"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/mket_machine_serial_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurface"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false"
+                    app:mOCRVin="false"
+                    tools:hint="Digite o serial" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/iv_serial_search"
+                style="@style/NamoaTheme3.Button.Icon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="16dp"
+                android:paddingStart="16dp"
+                app:icon="@drawable/ic_baseline_search_24"
+                app:iconGravity="textStart"
+                app:iconSize="22sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/til_mket_serial"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/namoa_outlined_button_font_states" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_serial_search"
+            style="@style/NamoaTheme3.Button"
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            app:icon="@drawable/ic_check_white_24dp"
+            tools:text="Confirmar" />
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/act070_cl_edit_mode"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/include"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
-        android:layout_marginBottom="5dp"
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/act070_btn_cancel"
             android:layout_width="0dp"
-            app:layout_constraintWidth_percent="0.47"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="@drawable/namoa_cell_12_states"
@@ -56,18 +130,19 @@
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.47"
             tools:text="Cancelar" />
 
         <Button
             android:id="@+id/act070_btn_save"
             android:layout_width="0dp"
-            app:layout_constraintWidth_percent="0.47"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:background="@drawable/namoa_cell_12_states"
             android:textColor="@color/padrao_WHITE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.47"
             tools:text="Salvar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -78,7 +153,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:elevation="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/act070_rv_pipeline"
+        app:layout_constraintBottom_toTopOf="@id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
         app:mButton_Resource="@drawable/ic_menu_hamburger"

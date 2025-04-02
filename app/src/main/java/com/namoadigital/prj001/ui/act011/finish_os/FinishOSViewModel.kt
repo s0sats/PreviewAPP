@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.extensions.suspendResults
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormBackupMachineList
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishOsData
@@ -231,7 +231,7 @@ class FinishOSViewModel @Inject constructor(
     }
 
     fun setBackupSerial(
-        backupMachine: FormOsHeaderFrgSerialBkpItem
+        backupMachine: BaseSerialSearchItem.BackupMachineSerialItem
     ) {
         viewModelScope.launch {
             _state.update {

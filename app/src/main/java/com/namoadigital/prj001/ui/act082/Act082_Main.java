@@ -48,6 +48,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
 
@@ -69,9 +70,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private boolean rb_end_date_is_checked = false;
     private RadioButton rb_time;
     private boolean rb_time_is_checked = false;
+    private MkDateTime mkdt_kanban_date_val;
     private View v_start_date_form;
     private View v_end_date_form;
     private View v_time_form;
+
 
     private TextView tv_start_date_lbl;
     private TextView tv_start_time_lbl;
@@ -93,6 +96,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private TextView tv_start_date;
     private TextView tv_end_date;
     private TextView tv_service_time;
+    private TextView tv_kanban_date;
 
     private TextView tv_elapsed_time_lbl;
     private TextView tv_elapsed_time_val;
@@ -112,8 +116,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private boolean hasInternalCommentsChanged = false;
     private Act082_Form_Data headerEditDataObj;
     private TextView tv_main_user_no_profile_lbl;
-    private TextView tv_main_user_no_profile_val;
-    private TextView tv_internal_comments_val;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,12 +152,10 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ll_edit_buttons = findViewById(R.id.act082_ll_edit_buttons);
         ss_main_user = findViewById(R.id.act082_ss_main_user);
         //
-        tv_main_user_no_profile_lbl = findViewById(R.id.act082_tv_main_user_lbl);
-        tv_main_user_no_profile_val = findViewById(R.id.act082_tv_main_user_val);
+//        tv_main_user_no_profile_lbl = findViewById(R.id.act082_tv_main_user_lbl);
         //
         tv_internal_comments_lbl = findViewById(R.id.act082_tv_internal_comments_lbl);
         mket_internal_comments = findViewById(R.id.act082_mket_internal_comments_val);
-        tv_internal_comments_val = findViewById(R.id.act082_tv_internal_comments_val);
         ll_date_and_forecast_infos = findViewById(R.id.act082_ll_date_and_forecast_infos);
         tv_date_and_forecast_infos_lbl = findViewById(R.id.act082_tv_date_and_forecast_infos_lbl);
         rg_date_and_forecast_infos = findViewById(R.id.act082_rg_date_and_forecast_infos);
@@ -164,12 +165,14 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         v_end_date_form = findViewById(R.id.act082_end_date_form);
         rb_time = findViewById(R.id.act082_rb_time);
         v_time_form = findViewById(R.id.act082_cl_service_time_form);
+        mkdt_kanban_date_val = findViewById(R.id.act082_mk_kanban_date);
         btn_cancel_header_form = findViewById(R.id.act082_btn_cancel_header_form);
         btn_save_header_form = findViewById(R.id.act082_btn_save_header_form);
         //
         tv_start_date = findViewById(R.id.act082_tv_start_date);
         tv_end_date = findViewById(R.id.act082_tv_end_date);
         tv_service_time = findViewById(R.id.act082_tv_service_time);
+        tv_kanban_date = findViewById(R.id.act082_tv_kanban_lbl);
         //
         tv_start_date_lbl = v_start_date_form.findViewById(R.id.tv_date_lbl);
         tv_start_time_lbl = v_start_date_form.findViewById(R.id.tv_time_lbl);
@@ -192,8 +195,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         edt_service_time_minutes_val = v_time_form.findViewById(R.id.act082_edt_service_time_minute_val);
         chk_shift_step_service_time = v_time_form.findViewById(R.id.act082_chk_shift_service_time_refresh_step_duration);
         //
-        tv_elapsed_time_lbl = findViewById(R.id.act082_tv_elapsed_time_lbl);
         tv_elapsed_time_val = findViewById(R.id.act082_tv_elapsed_time_val);
+        tv_elapsed_time_lbl = findViewById(R.id.act082_tv_elapsed_time_lbl);
         tv_remaining_time_lbl = findViewById(R.id.act082_tv_remaining_time_lbl);
         tv_remaining_time_val = findViewById(R.id.act082_tv_remaining_time_val);
     }
@@ -210,11 +213,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
         ss_main_user.setmShowLabel(false);
-        tv_main_user_no_profile_val.setText(mPresenter.getSSMainUserCurrentDesc(ss_main_user.getmValue()));
         //
         mket_internal_comments.setmBARCODE(false);
-        //
-        handleReadOnly(false);
         //
         if(!mTk_ticket.isReadOnly(context)) {
             if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
@@ -239,18 +239,20 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     @Override
     public void handleReadOnly(boolean forceReadOnly) {
+        setDateVisibility(View.VISIBLE);
+        setHeaderVisibility(View.VISIBLE);
+        if (!mPresenter.getDateEditionProfile()) {
+            setDateVisibility(View.GONE);
+        }
+        if (!mPresenter.getHeaderEditionProfile()) {
+            setHeaderVisibility(View.GONE);
+        }
         if (forceReadOnly
         || mTk_ticket.isReadOnly(context)) {
             setDateReadOnly();
             setHeaderReadOnly();
             ll_edit_buttons.setVisibility(View.GONE);
         } else {
-            if (!mPresenter.getDateEditionProfile()) {
-                setDateReadOnly();
-            }
-            if (!mPresenter.getHeaderEditionProfile()) {
-                setHeaderReadOnly();
-            }
             if (!mPresenter.getHeaderEditionProfile() && !mPresenter.getDateEditionProfile()) {
                 ll_edit_buttons.setVisibility(View.GONE);
             }
@@ -266,12 +268,22 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         mket_internal_comments.setEnabled(false);
         ss_main_user.setmEnabled(false);
         ss_main_user.setmCanClean(false);
-        //LUCHE - 24/06/2021 - Substituido o ss e mket pelo textView quando sem param edit_header
-        ss_main_user.setVisibility(View.GONE);
-        tv_main_user_no_profile_val.setVisibility(View.VISIBLE);
-        mket_internal_comments.setVisibility(View.GONE);
-        tv_internal_comments_val.setVisibility(View.VISIBLE);
+        mkdt_kanban_date_val.setmEnabled(false);
     }
+    private void setHeaderVisibility(int visibility) {
+        ss_main_user.setVisibility(visibility);
+//        tv_main_user_no_profile_val.setVisibility(visibility);
+        mket_internal_comments.setVisibility(visibility);
+//        setTextOrGone(tv_internal_comments_val, visibility, headerEditDataObj.getInternal_comments());
+        if(mTk_ticket.getKanban() == 1) {
+            mkdt_kanban_date_val.setVisibility(visibility);
+            tv_kanban_date.setVisibility(visibility);
+        }else{
+            mkdt_kanban_date_val.setVisibility(View.GONE);
+            tv_kanban_date.setVisibility(View.GONE);
+        }
+    }
+
     private void setDateReadOnly() {
         ColorStateList buttonTintColorList = ColorStateList.valueOf(ContextCompat.getColor(context,com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT));
         rb_start_date.setEnabled(false);
@@ -284,6 +296,15 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_time.setButtonTintList(buttonTintColorList);
     }
 
+   private void setDateVisibility(int visibility) {
+        rb_start_date.setVisibility(visibility);
+        tv_start_date.setVisibility(visibility);
+        rb_end_date.setVisibility(visibility);
+        tv_end_date.setVisibility(visibility);
+        rb_time.setVisibility(visibility);
+        tv_service_time.setVisibility(visibility);
+    }
+
     /**
      * LUCHE - 25/06/2021
      * Add controle da visibilidade do chk_shift_step_service_time na validação
@@ -291,11 +312,17 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
      */
     private void setVisibilityByProfile() {
         //
+        handleReadOnly(false);
         ll_date_and_forecast_infos.setVisibility(View.VISIBLE);
         ll_header_infos.setVisibility(View.VISIBLE);
         //
         if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
             if (mPresenter.getDateEditionProfile()) {
+                tv_elapsed_time_val.setVisibility(View.VISIBLE);
+                tv_elapsed_time_lbl.setVisibility(View.VISIBLE);
+                tv_remaining_time_lbl.setVisibility(View.VISIBLE);
+                tv_remaining_time_val.setVisibility(View.VISIBLE);
+                tv_date_and_forecast_infos_lbl.setVisibility(View.VISIBLE);
                 if (mPresenter.getStepEditTimeProfile()) {
                     chk_shift_step_start_date.setVisibility(View.VISIBLE);
                     chk_shift_step_end_date.setVisibility(View.VISIBLE);
@@ -315,11 +342,13 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private void setLabels() {
         tv_internal_comments_lbl.setText(hmAux_Trans.get("internal_comments_lbl"));
         tv_date_and_forecast_infos_lbl.setText(hmAux_Trans.get("forecast_service_date_lbl"));
+        tv_date_and_forecast_infos_lbl.setVisibility(View.GONE);
         rb_start_date.setText(hmAux_Trans.get("start_service_datetime_opt"));
         rb_end_date.setText(hmAux_Trans.get("end_service_datetime_opt"));
         rb_time.setText(hmAux_Trans.get("service_duration_time_opt"));
+        tv_kanban_date.setText(hmAux_Trans.get("kanban_date_lbl"));
         ss_main_user.setmLabel(hmAux_Trans.get("main_user_lbl"));
-        tv_main_user_no_profile_lbl.setText(hmAux_Trans.get("main_user_lbl"));
+//        tv_main_user_no_profile_lbl.setText(hmAux_Trans.get("main_user_lbl"));
         //
         tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
         tv_start_time_lbl.setText(hmAux_Trans.get("start_time_lbl"));
@@ -341,6 +370,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         mkdt_start_date_val.setmCanClean(false);
         mkdt_end_date_val.setmLabel("");
         mkdt_end_date_val.setmCanClean(false);
+        mkdt_kanban_date_val.setmLabel("");
+        mkdt_kanban_date_val.setmCanClean(false);
         //
         tv_elapsed_time_lbl.setText(hmAux_Trans.get("elapsed_time_lbl"));
         tv_remaining_time_lbl.setText(hmAux_Trans.get("remaining_time_lbl"));
@@ -382,11 +413,13 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         boolean startDateHasChanged = mkdt_start_date_val.hasChanged() && rb_start_date.isChecked();
         boolean endDateHasChanged = mkdt_end_date_val.hasChanged() && rb_end_date.isChecked();
         boolean forecastTimeHasChanged = hasForecastTimeChanged();
+        boolean kanbanDateHasChanged = mkdt_kanban_date_val.hasChanged();
         boolean mainUserHasChanged = ss_main_user.hasChangedBD();
         boolean internalCommentsHasChanged = !mket_internal_comments.getText().toString().equals(mket_internal_comments.getTag());
 
         return endDateHasChanged
                 || startDateHasChanged
+                || kanbanDateHasChanged
                 || forecastTimeHasChanged
                 || mainUserHasChanged
                 || internalCommentsHasChanged;
@@ -508,6 +541,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("start_service_datetime_opt");
         transList.add("end_service_datetime_opt");
         transList.add("service_duration_time_opt");
+        transList.add("kanban_date_opt");
         transList.add("main_user_lbl");
         transList.add("change_end_date_opt");
         transList.add("change_step_deadline_opt");
@@ -518,6 +552,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("start_time_lbl");
         transList.add("end_date_lbl");
         transList.add("end_time_lbl");
+        transList.add("kanban_date_lbl");
+        transList.add("kanban_time_lbl");
         transList.add("minutes_lbl");
         transList.add("recalculate_step_duration");
         transList.add("btn_save_lbl");
@@ -558,265 +594,256 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     private void initActions() {
 
-        btn_save_header_form.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String timeAction = "";
-                String forecast_time = null;
-                String start_date = null;
-                String forecast_date = null;
-                String internalComments = null;
-                int move_other_date = 0;
-                int move_steps = 0;
-                boolean hasForecastError = false;
-                boolean hasDateError = false;
-                //
-                String mInternalComments = mket_internal_comments.getText() == null ? "" : mket_internal_comments.getText().toString();
-                String tkInternalComments = mTk_ticket.getInternal_comments() == null ? "" : mTk_ticket.getInternal_comments();
-                if (!mInternalComments.equals(tkInternalComments)) {
-                    header_data_has_changed = true;
-                    internalComments = mInternalComments;
-                }
-                Integer mainUserValue = -1;
-                if (ss_main_user.hasChangedBD()) {
-                    header_data_has_changed = true;
-                    if (ss_main_user.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                        mainUserValue = Integer.valueOf(ss_main_user.getmValue().get(SearchableSpinner.CODE));
-                    } else {
-                        mainUserValue = 0;
-                    }
-                }
-                //
-                if (rb_start_date.isChecked()) {
-                    if (header_data_has_changed) {
-                        timeAction = ConstantBaseApp.TK_TICKET_START_DATE_AND_HEADER;
-                    } else {
-                        timeAction = ConstantBaseApp.TK_TICKET_START_DATE;
-                    }
-                    start_date = mkdt_start_date_val.getmValue();
-                    move_other_date = chk_shift_ticket_start_date.isChecked() ? 1 : 0;
-                    move_steps = chk_shift_step_start_date.isChecked() ? 1 : 0;
-                    if(move_other_date == 0){
-                        hasDateError = ToolBox_Inf.dateToMilliseconds(start_date) > ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date());
-                    }
-                } else if (rb_end_date.isChecked()) {
-                    if (header_data_has_changed) {
-                        timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER;
-                    } else {
-                        timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE;
-                    }
-                    move_other_date = chk_shift_ticket_end_date.isChecked() ? 1 : 0;
-                    move_steps = chk_shift_step_end_date.isChecked() ? 1 : 0;
-                    forecast_date = mkdt_end_date_val.getmValue();
-                    if(move_other_date == 0){
-                        hasDateError = ToolBox_Inf.dateToMilliseconds(forecast_date) < ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date());
-                    }
-                } else if (rb_time.isChecked()) {
-                    if (header_data_has_changed) {
-                        timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER;
-                    } else {
-                        timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME;
-                    }
-                    move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
-                    //
-                    String forecast_day = edt_service_time_day_val.getText().toString();
-                    String forecast_hour = edt_service_time_hour_val.getText().toString();
-                    String forecast_minutes = edt_service_time_minutes_val.getText().toString();
-
-                    if (forecast_day == null || forecast_day.isEmpty()) {
-                        forecast_day = "00";
-                        edt_service_time_hour_val.setText(forecast_day);
-                    }
-                    //
-                    if (forecast_hour == null || forecast_hour.isEmpty()) {
-                        forecast_hour = "00";
-                        edt_service_time_hour_val.setText(forecast_hour);
-                    } else {
-                        int hour = Integer.valueOf(forecast_hour);
-                        if (hour > 23) {
-                            hasForecastError = true;
-                            forecast_hour = "00";
-                        }
-                    }
-                    //
-                    if (forecast_minutes == null || forecast_minutes.isEmpty()) {
-                        forecast_minutes = "00";
-                        edt_service_time_minutes_val.setText(forecast_minutes);
-                    } else {
-                        int minutes = Integer.valueOf(forecast_minutes);
-                        if (minutes > 59) {
-                            hasForecastError = true;
-                            forecast_hour = "00";
-                        }
-                    }
-                    //
-                    forecast_time = mPresenter.getTimeFromForm(forecast_day, forecast_hour, forecast_minutes);
+        btn_save_header_form.setOnClickListener(v -> {
+            String timeAction = "";
+            String forecast_time = null;
+            String start_date = null;
+            String forecast_date = null;
+            String kanban_date = null;
+            String internalComments = null;
+            int move_other_date = 0;
+            int move_steps = 0;
+            boolean hasForecastError = false;
+            boolean hasDateError = false;
+            //
+            String mInternalComments = mket_internal_comments.getText() == null ? "" : mket_internal_comments.getText().toString();
+            String tkInternalComments = mTk_ticket.getInternal_comments() == null ? "" : mTk_ticket.getInternal_comments();
+            if (!mInternalComments.equals(tkInternalComments)) {
+                header_data_has_changed = true;
+                internalComments = mInternalComments;
+            }
+            Integer mainUserValue = -1;
+            if (ss_main_user.hasChangedBD()) {
+                header_data_has_changed = true;
+                if (ss_main_user.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                    mainUserValue = Integer.valueOf(ss_main_user.getmValue().get(SearchableSpinner.CODE));
                 } else {
-                    if (header_data_has_changed) {
-                        timeAction = ConstantBaseApp.TK_TICKET_EDIT_HEADER;
+                    mainUserValue = 0;
+                }
+            }
+            //
+            if(mkdt_kanban_date_val.hasChanged()){
+                header_data_has_changed = true;
+                kanban_date = mkdt_kanban_date_val.getmValue();
+                hasDateError = ToolBox_Inf.dateToMilliseconds(kanban_date) < ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date());
+            }
+            //
+            if (rb_start_date.isChecked()) {
+                if (header_data_has_changed) {
+                    timeAction = ConstantBaseApp.TK_TICKET_START_DATE_AND_HEADER;
+                } else {
+                    timeAction = ConstantBaseApp.TK_TICKET_START_DATE;
+                }
+                start_date = mkdt_start_date_val.getmValue();
+                move_other_date = chk_shift_ticket_start_date.isChecked() ? 1 : 0;
+                move_steps = chk_shift_step_start_date.isChecked() ? 1 : 0;
+                if(move_other_date == 0){
+                    hasDateError = ToolBox_Inf.dateToMilliseconds(start_date) > ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date());
+                }
+            } else if (rb_end_date.isChecked()) {
+                if (header_data_has_changed) {
+                    timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER;
+                } else {
+                    timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE;
+                }
+                move_other_date = chk_shift_ticket_end_date.isChecked() ? 1 : 0;
+                move_steps = chk_shift_step_end_date.isChecked() ? 1 : 0;
+                forecast_date = mkdt_end_date_val.getmValue();
+                if(move_other_date == 0){
+                    hasDateError = ToolBox_Inf.dateToMilliseconds(forecast_date) < ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date());
+                }
+            } else if (rb_time.isChecked()) {
+                if (header_data_has_changed) {
+                    timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER;
+                } else {
+                    timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME;
+                }
+                move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
+                //
+                String forecast_day = edt_service_time_day_val.getText().toString();
+                String forecast_hour = edt_service_time_hour_val.getText().toString();
+                String forecast_minutes = edt_service_time_minutes_val.getText().toString();
+
+                if (forecast_day == null || forecast_day.isEmpty()) {
+                    forecast_day = "00";
+                    edt_service_time_hour_val.setText(forecast_day);
+                }
+                //
+                if (forecast_hour == null || forecast_hour.isEmpty()) {
+                    forecast_hour = "00";
+                    edt_service_time_hour_val.setText(forecast_hour);
+                } else {
+                    int hour = Integer.valueOf(forecast_hour);
+                    if (hour > 23) {
+                        hasForecastError = true;
+                        forecast_hour = "00";
                     }
                 }
                 //
-                if (!hasForecastError) {
-                    if (!hasDateError) {
-                        if (hasFieldValueChange(forecast_time, start_date, forecast_date)) {
-                            retrieveKeyboard();
-                            restoreRadioBtnAfterSave();
-                            mPresenter.callEditHeaderService(
-                                    mTk_ticket.getTicket_prefix(),
-                                    mTk_ticket.getTicket_code(),
-                                    mTk_ticket.getScn(),
-                                    mainUserValue,
-                                    ss_main_user.getmValue().get(SearchableSpinner.DESCRIPTION),
-                                    ss_main_user.getmValue().get(SearchableSpinner.ID),
-                                    forecast_time,
-                                    start_date,
-                                    forecast_date,
-                                    timeAction,
-                                    internalComments,
-                                    move_other_date,
-                                    move_steps
-                            );
-                        } else {
-                            showMsg(
-                                    hmAux_Trans.get("alert_no_fields_changes_ttl"),
-                                    hmAux_Trans.get("alert_no_fields_changes_msg")
-                            );
-                        }
+                if (forecast_minutes == null || forecast_minutes.isEmpty()) {
+                    forecast_minutes = "00";
+                    edt_service_time_minutes_val.setText(forecast_minutes);
+                } else {
+                    int minutes = Integer.valueOf(forecast_minutes);
+                    if (minutes > 59) {
+                        hasForecastError = true;
+                        forecast_hour = "00";
+                    }
+                }
+                //
+                forecast_time = mPresenter.getTimeFromForm(forecast_day, forecast_hour, forecast_minutes);
+            } else {
+                if (header_data_has_changed) {
+                    timeAction = ConstantBaseApp.TK_TICKET_EDIT_HEADER;
+                }
+            }
+            //
+            if (!hasForecastError) {
+                if (!hasDateError) {
+                    if (hasFieldValueChange(forecast_time, start_date, forecast_date)) {
+                        retrieveKeyboard();
+                        restoreRadioBtnAfterSave();
+                        mPresenter.callEditHeaderService(
+                                mTk_ticket.getTicket_prefix(),
+                                mTk_ticket.getTicket_code(),
+                                mTk_ticket.getScn(),
+                                mainUserValue,
+                                ss_main_user.getmValue().get(SearchableSpinner.DESCRIPTION),
+                                ss_main_user.getmValue().get(SearchableSpinner.ID),
+                                forecast_time,
+                                start_date,
+                                forecast_date,
+                                kanban_date,
+                                timeAction,
+                                internalComments,
+                                move_other_date,
+                                move_steps
+                        );
                     } else {
                         showMsg(
-                                hmAux_Trans.get("alert_invalid_date_range_ttl"),
-                                hmAux_Trans.get("alert_invalid_date_range_msg")
+                                hmAux_Trans.get("alert_no_fields_changes_ttl"),
+                                hmAux_Trans.get("alert_no_fields_changes_msg")
                         );
                     }
                 } else {
                     showMsg(
-                            hmAux_Trans.get("alert_invalid_forecast_time_ttl"),
-                            hmAux_Trans.get("alert_invalid_forecast_time_msg")
+                            hmAux_Trans.get("alert_invalid_date_range_ttl"),
+                            hmAux_Trans.get("alert_invalid_date_range_msg")
                     );
                 }
+            } else {
+                showMsg(
+                        hmAux_Trans.get("alert_invalid_forecast_time_ttl"),
+                        hmAux_Trans.get("alert_invalid_forecast_time_msg")
+                );
             }
         });
         //
-        btn_cancel_header_form.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        btn_cancel_header_form.setOnClickListener(v -> onBackPressed());
         //
-        rb_start_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                retrieveKeyboard();
-                if (rb_start_date_is_checked) {
-                    rb_start_date_is_checked = false;
-                    rg_date_and_forecast_infos.clearCheck();
-                } else {
-                    btn_save_header_form.setEnabled(true);
-                    rb_start_date_is_checked = true;
-                    rb_time_is_checked = false;
-                    rb_end_date_is_checked = false;
-                }
-                //
-                if (rb_start_date_is_checked) {
-                    v_start_date_form.setVisibility(View.VISIBLE);
-                    setChkShiftDateDefault();
+        rb_start_date.setOnClickListener(v -> {
+            retrieveKeyboard();
+            if (rb_start_date_is_checked) {
+                rb_start_date_is_checked = false;
+                rg_date_and_forecast_infos.clearCheck();
+            } else {
+                btn_save_header_form.setEnabled(true);
+                rb_start_date_is_checked = true;
+                rb_time_is_checked = false;
+                rb_end_date_is_checked = false;
+            }
+            //
+            if (rb_start_date_is_checked) {
+                v_start_date_form.setVisibility(View.VISIBLE);
+                setChkShiftDateDefault();
 //                    String start_date = tv_start_date.getText().toString();
-                    mkdt_start_date_val.setmValue(headerEditDataObj.getStart_date());
-                    mkdt_start_date_val.setmValueDb(mTk_ticket.getStart_date());
+                mkdt_start_date_val.setmValue(headerEditDataObj.getStart_date());
+                mkdt_start_date_val.setmValueDb(mTk_ticket.getStart_date());
 //                    edt_start_time_val.setText(dateSplit[1]);
-                    v_end_date_form.setVisibility(View.GONE);
-                    v_time_form.setVisibility(View.GONE);
-                    tv_start_date.setVisibility(View.GONE);
-                    tv_end_date.setVisibility(View.VISIBLE);
-                    tv_service_time.setVisibility(View.VISIBLE);
-                } else {
-                    tv_start_date.setVisibility(View.VISIBLE);
-                    v_start_date_form.setVisibility(View.GONE);
-                }
+                v_end_date_form.setVisibility(View.GONE);
+                v_time_form.setVisibility(View.GONE);
+                tv_start_date.setVisibility(View.GONE);
+                setRadioButtonAndLabel(tv_end_date, rb_end_date);
+                setRadioButtonAndLabel(tv_service_time, rb_time);
+            } else {
+                tv_start_date.setVisibility(View.VISIBLE);
+                v_start_date_form.setVisibility(View.GONE);
             }
         });
         //
-        rb_end_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                retrieveKeyboard();
-                if (rb_end_date_is_checked) {
-                    rb_end_date_is_checked = false;
-                    rg_date_and_forecast_infos.clearCheck();
-                } else {
-                    btn_save_header_form.setEnabled(true);
-                    rb_start_date_is_checked = false;
-                    rb_end_date_is_checked = true;
-                    rb_time_is_checked = false;
-                }
-                //
-                if (rb_end_date_is_checked) {
+        rb_end_date.setOnClickListener(v -> {
+            retrieveKeyboard();
+            if (rb_end_date_is_checked) {
+                rb_end_date_is_checked = false;
+                rg_date_and_forecast_infos.clearCheck();
+            } else {
+                btn_save_header_form.setEnabled(true);
+                rb_start_date_is_checked = false;
+                rb_end_date_is_checked = true;
+                rb_time_is_checked = false;
+            }
+            //
+            if (rb_end_date_is_checked) {
 //                    String end_date = tv_end_date.getText().toString();
-                    mkdt_end_date_val.setmValue(headerEditDataObj.getEnd_date());
-                    mkdt_end_date_val.setmValueDb(mTk_ticket.getForecast_date());
-                    //
-                    v_end_date_form.setVisibility(View.VISIBLE);
-                    setChkShiftDateDefault();
-                    v_time_form.setVisibility(View.GONE);
-                    v_start_date_form.setVisibility(View.GONE);
-                    tv_end_date.setVisibility(View.GONE);
-                    tv_start_date.setVisibility(View.VISIBLE);
-                    tv_service_time.setVisibility(View.VISIBLE);
-                } else {
-                    tv_end_date.setVisibility(View.VISIBLE);
-                    v_end_date_form.setVisibility(View.GONE);
-                }
+                mkdt_end_date_val.setmValue(headerEditDataObj.getEnd_date());
+                mkdt_end_date_val.setmValueDb(mTk_ticket.getForecast_date());
+                //
+                v_end_date_form.setVisibility(View.VISIBLE);
+                setChkShiftDateDefault();
+                v_time_form.setVisibility(View.GONE);
+                v_start_date_form.setVisibility(View.GONE);
+                tv_end_date.setVisibility(View.GONE);
+                setRadioButtonAndLabel(tv_start_date, rb_start_date);
+                setRadioButtonAndLabel(tv_service_time, rb_time);
+            } else {
+                tv_end_date.setVisibility(View.VISIBLE);
+                v_end_date_form.setVisibility(View.GONE);
             }
         });
         //
-        rb_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                retrieveKeyboard();
-                if (rb_time_is_checked) {
-                    rb_time_is_checked = false;
-                    rg_date_and_forecast_infos.clearCheck();
-                } else {
-                    btn_save_header_form.setEnabled(true);
-                    rb_time_is_checked = true;
-                    rb_end_date_is_checked = false;
-                    rb_start_date_is_checked = false;
-                }
-                //
-                if (rb_time_is_checked) {
-                    if (headerEditDataObj.getForecast_time() != null) {
-                        //String service_time = tv_service_time.getText().toString();
-                        String service_time = headerEditDataObj.getForecast_time();
-                        String[] dayTimeSplit = service_time.split(" ");
-                        String[] timeSplit = new String[3];
+        rb_time.setOnClickListener(v -> {
+            retrieveKeyboard();
+            if (rb_time_is_checked) {
+                rb_time_is_checked = false;
+                rg_date_and_forecast_infos.clearCheck();
+            } else {
+                btn_save_header_form.setEnabled(true);
+                rb_time_is_checked = true;
+                rb_end_date_is_checked = false;
+                rb_start_date_is_checked = false;
+            }
+            //
+            if (rb_time_is_checked) {
+                if (headerEditDataObj.getForecast_time() != null) {
+                    //String service_time = tv_service_time.getText().toString();
+                    String service_time = headerEditDataObj.getForecast_time();
+                    String[] dayTimeSplit = service_time.split(" ");
+                    String[] timeSplit = new String[3];
 
-                        timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
-                        int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
-                        String[] aux = dayTimeSplit[firstIdx].split(":");
-                        timeSplit[1] = aux[0];
-                        timeSplit[2] = aux[1];
+                    timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
+                    int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
+                    String[] aux = dayTimeSplit[firstIdx].split(":");
+                    timeSplit[1] = aux[0];
+                    timeSplit[2] = aux[1];
 
-                        edt_service_time_day_val.setText(timeSplit[0]);
-                        edt_service_time_hour_val.setText(timeSplit[1]);
-                        edt_service_time_minutes_val.setText(timeSplit[2]);
-                    } else {
-                        edt_service_time_day_val.setText("");
-                        edt_service_time_hour_val.setText("");
-                        edt_service_time_minutes_val.setText("");
-                    }
-                    v_time_form.setVisibility(View.VISIBLE);
-                    setChkShiftDateDefault();
-                    v_start_date_form.setVisibility(View.GONE);
-                    v_end_date_form.setVisibility(View.GONE);
-                    tv_service_time.setVisibility(View.GONE);
-                    tv_start_date.setVisibility(View.VISIBLE);
-                    tv_end_date.setVisibility(View.VISIBLE);
+                    edt_service_time_day_val.setText(timeSplit[0]);
+                    edt_service_time_hour_val.setText(timeSplit[1]);
+                    edt_service_time_minutes_val.setText(timeSplit[2]);
                 } else {
-                    tv_service_time.setVisibility(View.VISIBLE);
-                    v_time_form.setVisibility(View.GONE);
+                    edt_service_time_day_val.setText("");
+                    edt_service_time_hour_val.setText("");
+                    edt_service_time_minutes_val.setText("");
                 }
+                v_time_form.setVisibility(View.VISIBLE);
+                setChkShiftDateDefault();
+                v_start_date_form.setVisibility(View.GONE);
+                v_end_date_form.setVisibility(View.GONE);
+                tv_service_time.setVisibility(View.GONE);
+                setRadioButtonAndLabel(tv_start_date, rb_start_date);
+                setRadioButtonAndLabel(tv_end_date, rb_end_date);
+            } else {
+                tv_service_time.setVisibility(View.VISIBLE);
+                v_time_form.setVisibility(View.GONE);
             }
         });
         //
@@ -874,6 +901,14 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 }
             }
         });
+
+        mkdt_kanban_date_val.setOnSelectedValue(date -> {
+            btn_save_header_form.setEnabled(mkdt_kanban_date_val.hasChanged());
+        });
+    }
+
+    private void setRadioButtonAndLabel(TextView tv_val, RadioButton rb_val) {
+        tv_val.setVisibility(rb_val.getVisibility());
     }
 
     /**
@@ -950,11 +985,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         if (headerEditDataObj.getInternal_comments() == null) {
             mket_internal_comments.setText("");
             mket_internal_comments.setTag("");
-            tv_internal_comments_val.setText("");
         } else {
-            mket_internal_comments.setText(headerEditDataObj.getInternal_comments());
             mket_internal_comments.setTag(mTk_ticket.getInternal_comments());
-            tv_internal_comments_val.setText(headerEditDataObj.getInternal_comments());
+            mket_internal_comments.setText(headerEditDataObj.getInternal_comments());
         }
         //
         tv_start_date.setText(ToolBox_Inf.millisecondsToString(
@@ -969,6 +1002,17 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             ));
         } else {
             tv_end_date.setText(" - ");
+        }
+        //
+        if (mTk_ticket.getKanban() == 1
+        && mTk_ticket.getKanban_date() != null) {
+            mkdt_kanban_date_val.setmValue(mTk_ticket.getKanban_date());
+            mkdt_kanban_date_val.setmValueDb(mTk_ticket.getKanban_date());
+        }
+        //
+        if (headerEditDataObj.getKanban_date() != null
+        && !headerEditDataObj.getKanban_date().isEmpty()) {
+            mkdt_kanban_date_val.setmValue(headerEditDataObj.getKanban_date());
         }
         //
         if (mTk_ticket.getForecast_time() == null) {
@@ -1005,11 +1049,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_time.setChecked(false);
         //
         v_start_date_form.setVisibility(View.GONE);
-        tv_start_date.setVisibility(View.VISIBLE);
         v_end_date_form.setVisibility(View.GONE);
-        tv_end_date.setVisibility(View.VISIBLE);
         v_time_form.setVisibility(View.GONE);
-        tv_service_time.setVisibility(View.VISIBLE);
+        //
         Long elapsedTime = mPresenter.getElapsedTime(mTk_ticket);
         if (elapsedTime < 0) {
             tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
@@ -1031,6 +1073,15 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         }
         //
         retrieveKeyboard();
+    }
+
+    private void setTextOrGone(TextView tvInternalCommentsVal, int visibility, String internalComments) {
+        tvInternalCommentsVal.setVisibility(View.GONE);
+        if (internalComments != null
+            && !internalComments.isBlank()){
+            tvInternalCommentsVal.setVisibility(visibility);
+            tvInternalCommentsVal.setText(internalComments);
+        }
     }
 
     private void applyFormDataToRadio() {
@@ -1173,6 +1224,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     rb_start_date.isChecked() && mkdt_start_date_val.getmValue() != null ? mkdt_start_date_val.getmValue() : mTk_ticket.getStart_date(),
                     rb_end_date.isChecked() && mkdt_end_date_val.getmValue() != null ? mkdt_end_date_val.getmValue() : mTk_ticket.getForecast_date(),
                     getForecastTimeParam(),
+                    mkdt_kanban_date_val.getmValue() != null ? mkdt_kanban_date_val.getmValue() : mTk_ticket.getKanban_date(),
                     chk_shift_ticket_start_date.isChecked(),
                     chk_shift_step_start_date.isChecked(),
                     chk_shift_ticket_end_date.isChecked(),

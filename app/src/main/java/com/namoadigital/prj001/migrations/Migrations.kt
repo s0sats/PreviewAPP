@@ -1038,6 +1038,29 @@ val migrationV17 = object : MigrationSQLite(17, 18) {
     }
 }
 
+val migrationV18 = object : MigrationSQLite(18, 19) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = TK_TicketDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = TK_TicketDao.IS_TMP,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.updateColumn(
+            TK_TicketDao.TABLE,
+            TK_TicketDao.SYNC_REQUIRED,
+            "1"
+        )
+    }
+
+}
+
 
 @Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(

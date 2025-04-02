@@ -21,7 +21,7 @@ interface Act087MainContract {
         fun setWsProcess(name: String)
         fun showPD(ttl: String?, msg: String?)
         fun reportSerialBkpMachineToFrag(
-            serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+            serialBkpMachineList: List<BaseSerialSearchItem>,
             onlineSearch: Boolean)
 
         fun callAct083()

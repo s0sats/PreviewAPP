@@ -476,7 +476,7 @@
         <item name="android:padding">8dp</item>
         <item name="android:layout_margin">4dp</item>
         <item name="startIconTint">@color/m3_namoa_onSurface</item>
-        <item name="iconTint">@color/m3_namoa_onSurface</item>
+        <item name="iconTint">@drawable/button_theme_onsurface</item>
         <item name="backgroundTint">@drawable/icon_button_theme</item>
         <item name="backgroundColor">@drawable/icon_button_theme</item>
         <item name="android:insetTop">4dp</item>

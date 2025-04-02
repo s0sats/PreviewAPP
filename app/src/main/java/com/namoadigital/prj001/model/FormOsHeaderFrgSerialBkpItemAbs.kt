@@ -1,3 +1,0 @@
-package com.namoadigital.prj001.model
-
-abstract class FormOsHeaderFrgSerialBkpItemAbs

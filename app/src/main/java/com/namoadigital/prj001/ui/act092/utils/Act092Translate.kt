@@ -1,6 +1,11 @@
 package com.namoadigital.prj001.ui.act092.utils
 
 object Act092Translate {
+    const val ALERT_ZONE_NOT_FOUND_TTL = "alert_zone_not_found_ttl"
+    const val ALERT_SITE_NOT_FOUND_TTL = "alert_site_not_found_ttl"
+    const val ALERT_ZONE_NOT_FOUND_MSG = "alert_zone_not_found_msg"
+    const val ALERT_SITE_NOT_FOUND_MSG = "alert_site_not_found_msg"
+
     const val CELL_WAITING_APPROVAL = "cell_waiting_approval"
     const val ALERT_SERIAL_WITHOUT_STRUCTURE_TTL = "alert_serial_without_structure_ttl"
     const val ALERT_SERIAL_WITHOUT_STRUCTURE_MSG = "alert_serial_without_structure_msg"

@@ -12,7 +12,7 @@
     <!--    Android 13-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!--    -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+    <uses-permission android:name="android.permissioact070n.INTERNET" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -1108,6 +1108,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.trip.WBRSendTripFullUpdate" />
         <receiver android:name=".receiver.next_os.WBR_ListUserReservedReceiver" />
         <receiver android:name=".receiver.next_os.WBR_SoSetReservedUserReceiver" />
+        <receiver android:name=".receiver.ticket.WBR_SerialSearchList" />
+        <receiver android:name=".receiver.ticket.WBR_TicketSerialTmpSet" />
 
         <service android:name=".service.WS_SO_Create_Room"
             android:foregroundServiceType="dataSync"/>
@@ -1181,6 +1183,10 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.next_os.WSSoSetReservedUser"
             android:foregroundServiceType="dataSync"/>
         <service android:name=".service.trip.WsGetUsersAvailable"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.ticket.WsSerialSearchList"
+            android:foregroundServiceType="dataSync"/>
+        <service android:name=".service.ticket.WsTicketSerialTmpSet"
             android:foregroundServiceType="dataSync"/>
 
 

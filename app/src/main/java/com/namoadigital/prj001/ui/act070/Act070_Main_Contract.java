@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.BaseSerialSearchItem;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
@@ -15,6 +16,7 @@ import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Act070_Main_Contract {
 
@@ -88,6 +90,8 @@ public interface Act070_Main_Contract {
         void callAct005();
 
         boolean getIsCheckinFlow();
+
+        void processSerialSearch(List<BaseSerialSearchItem> list, Integer lineCount);
     }
 
     interface I_Presenter{
@@ -152,6 +156,10 @@ public interface Act070_Main_Contract {
 
         boolean allowEditModeOn(TK_Ticket mTicket);
 
+        void executeSerialSearch(String serialId);
+
+        void responseSerialSearch(String serializedGson);
+
         void processWsTkGetWorkgroup();
 
         File getWorkgroupJsonFile();
@@ -197,5 +205,7 @@ public interface Act070_Main_Contract {
         void clearTicketDownloadSingleton();
 
         void setTicketDownloadSingleton(int mTkPrefix, int mTkCode);
+
+        void executeConfirmSerial(int ticketPrefix, int ticketCode, int productCode, int serialCode);
     }
 }

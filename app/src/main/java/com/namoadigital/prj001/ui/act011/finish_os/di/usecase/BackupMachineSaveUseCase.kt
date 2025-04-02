@@ -7,7 +7,7 @@ import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.extensions.coroutines.namoaCatch
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.extensions.suspendResults
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepository
@@ -22,14 +22,14 @@ import kotlinx.coroutines.flow.onCompletion
 class BackupMachineSaveUseCase(
     private val repository: GeCustomFormRepository,
     private val geOsRepository: GeOsRepository,
-) : UseCases<BackupMachineSaveUseCase.Param, FormOsHeaderFrgSerialBkpItem> {
+) : UseCases<BackupMachineSaveUseCase.Param, BaseSerialSearchItem.BackupMachineSerialItem> {
 
     data class Param(
         val formPk : FinishState.FormPrimaryKey,
-        val backupMachine: FormOsHeaderFrgSerialBkpItem,
+        val backupMachine: BaseSerialSearchItem.BackupMachineSerialItem,
     )
 
-    override suspend fun invoke(input: Param): Flow<IResult<FormOsHeaderFrgSerialBkpItem>> {
+    override suspend fun invoke(input: Param): Flow<IResult<BaseSerialSearchItem.BackupMachineSerialItem>> {
         return flow{
             emit(loading())
 
@@ -93,12 +93,12 @@ class BackupMachineSaveUseCase(
 
                 repository.saveFormOs(customFormData!!, geOs!!).suspendResults(
                     success = {
-                        val backupMachine = FormOsHeaderFrgSerialBkpItem(
-                            productCode =  input.backupMachine.productCode,
-                            productId =  input.backupMachine.productId,
-                            productDesc =  input.backupMachine.productDesc,
-                            serialCode =  input.backupMachine.serialCode,
-                            serialId =  input.backupMachine.serialId,
+                        val backupMachine = BaseSerialSearchItem.BackupMachineSerialItem(
+                            productCode = input.backupMachine.productCode,
+                            productId = input.backupMachine.productId,
+                            productDesc = input.backupMachine.productDesc,
+                            serialCode = input.backupMachine.serialCode,
+                            serialId = input.backupMachine.serialId,
                             siteCode = input.backupMachine.siteCode,
                             siteDesc = input.backupMachine.siteDesc,
                         )

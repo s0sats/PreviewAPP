@@ -2,7 +2,6 @@ package com.namoadigital.prj001.model.trip
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv.Companion.TYPE_MANUAL
 
 data class TripDestinationEditEnv(
     @Expose @SerializedName("tripPrefix") val tripPrefix: Int,

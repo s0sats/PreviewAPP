@@ -776,6 +776,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_FORECAST_DATE = "FORECAST_DATE";
     public static final String TK_TICKET_FORECAST_TIME_AND_HEADER = "FORECAST_TIME_AND_HEADER";
     public static final String TK_TICKET_FORECAST_TIME = "FORECAST_TIME";
+    public static final String TK_TICKET_KANBAN_DATE = "KANBAN_DATE";
     public static final String TK_TICKET_EDIT_HEADER = "EDIT_HEADER";
     //BROADCAST DE PARA
     public static final String BR_TICKET_SAVE = "BR_TICKET_SAVE";
@@ -812,6 +813,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
     public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";
     public static final String FAB_TO_STEP_LBL = "fab_to_step_lbl";
+    public static final String FAB_TO_EQUIPMENT_LBL = "fab_to_equipment_lbl";
 
     /*
      * Constantes agendamento

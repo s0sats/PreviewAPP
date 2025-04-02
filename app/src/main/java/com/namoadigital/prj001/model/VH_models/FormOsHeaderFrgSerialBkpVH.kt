@@ -4,14 +4,14 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogItemBinding
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 
 class FormOsHeaderFrgSerialBkpVH(
     private val binding: FormOsHeaderFrgBackupMachineDialogItemBinding,
-    private val onSerialClick: (serialBkp: FormOsHeaderFrgSerialBkpItem) -> Unit
+    private val onSerialClick: (serialBkp: BaseSerialSearchItem.BackupMachineSerialItem) -> Unit
 ) :  RecyclerView.ViewHolder(binding.root)
 {
-    fun onBindData(bkpSerial: FormOsHeaderFrgSerialBkpItem, loggedSiteCode: Int) {
+    fun onBindData(bkpSerial: BaseSerialSearchItem.BackupMachineSerialItem, loggedSiteCode: Int) {
         with(binding) {
             root.setOnClickListener {
                 onSerialClick(bkpSerial)

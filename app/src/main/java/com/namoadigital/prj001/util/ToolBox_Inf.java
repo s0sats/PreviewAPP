@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.util;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_CANCELLED;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_NOT_EXECUTED;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PENDING;
 import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
 import static com.namoadigital.prj001.service.SV_LocationTracker.LOCATION_BACKGROUND;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
@@ -8887,7 +8890,8 @@ public class ToolBox_Inf {
         int iconColor = context.getResources().getColor(R.color.colorPrimary);
         fabMenuItems.clear();
         //atalho para edicao de cabecalho.
-        if (ticket.getKanban() != 1) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_EDIT_HEADER)
+        || ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_EDIT_FORECAST)) {
             fabEditHeader = new FabMenuItem(context);
             fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
             fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
@@ -8900,7 +8904,7 @@ public class ToolBox_Inf {
         }
         //atalho para edicao de grupo de trabalho.
         if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
-                && !ticket.isReadOnly(context)) {
+                && !ticket.isReadOnly(context) && !ticket.isTmp()) {
             FabMenuItem fabEditWorkGroup;
             fabEditWorkGroup = new FabMenuItem(context);
             fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);
@@ -8923,15 +8927,17 @@ public class ToolBox_Inf {
         fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
         fabMenuItems.add(fabOrigin);
         //atalho para step
-        fabStep = new FabMenuItem(context);
-        fabStep.setTag(ConstantBaseApp.FAB_TO_STEP_LBL);
-        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
-        fabStep.setmLabel_Back_Color(lblBgColor);
-        fabStep.setmLabel_Text_Color(lblColor);
-        fabStep.setmButton_Back_Color(btnBgColor);
-        fabStep.setmButton_Resource_Color(iconColor);
-        fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
-        fabMenuItems.add(fabStep);
+        if(!ticket.isTmp()){
+            fabStep = new FabMenuItem(context);
+            fabStep.setTag(ConstantBaseApp.FAB_TO_STEP_LBL);
+            fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
+            fabStep.setmLabel_Back_Color(lblBgColor);
+            fabStep.setmLabel_Text_Color(lblColor);
+            fabStep.setmButton_Back_Color(btnBgColor);
+            fabStep.setmButton_Resource_Color(iconColor);
+            fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
+            fabMenuItems.add(fabStep);
+        }
         //atalaho para produto.
 //        fabProduct = new FabMenuItem(context);
 //        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
@@ -8957,6 +8963,17 @@ public class ToolBox_Inf {
             fabMenuItems.add(fabNotExecuted);
         }
         //
+        if(ticket.isTmp() && SYS_STATUS_PENDING.equalsIgnoreCase(ticket.getTicket_status())){
+            FabMenuItem fabEquipment = new FabMenuItem(context);
+            fabEquipment.setTag(ConstantBaseApp.FAB_TO_EQUIPMENT_LBL);
+            fabEquipment.setmLabel(hmAux_Trans.get(ConstantBaseApp.FAB_TO_EQUIPMENT_LBL));
+            fabEquipment.setmLabel_Back_Color(lblBgColor);
+            fabEquipment.setmLabel_Text_Color(lblColor);
+            fabEquipment.setmButton_Back_Color(btnBgColor);
+            fabEquipment.setmButton_Resource_Color(iconColor);
+            fabEquipment.setmButton_Resource(R.drawable.ic_checkbook);
+            fabMenuItems.add(fabEquipment);
+        }
         return fabMenuItems;
     }
 

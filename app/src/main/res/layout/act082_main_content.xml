@@ -40,13 +40,29 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/act082_tv_main_user_lbl"
+                    android:id="@+id/act082_tv_kanban_lbl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:text="Main User Lbl" />
+                    android:visibility="visible"
+                    tools:text="Kanban Date Label" />
+
+                <com.namoa_digital.namoa_library.ctls.MkDateTime
+                    android:id="@+id/act082_mk_kanban_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:mConfigType="DATE_HOUR" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/act082_tv_main_user_lbl"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_marginLeft="8dp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:visibility="visible"-->
+<!--                    tools:text="Main User Lbl" />-->
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/act082_ss_main_user"
@@ -56,21 +72,11 @@
                     />
 
                 <TextView
-                    android:id="@+id/act082_tv_main_user_val"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:paddingBottom="8dp"
-                    android:textColor="@color/namoa_light_blue"
-                    tools:text="Main User Text"
-                    android:visibility="gone"
-                    />
-
-                <TextView
                     android:id="@+id/act082_tv_internal_comments_lbl"
                     style="@android:style/TextAppearance.Material"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
                     android:textStyle="bold"
                     tools:text="Comentarios do Ticket" />
@@ -80,17 +86,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp" />
-
-                <TextView
-                    android:id="@+id/act082_tv_internal_comments_val"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:paddingBottom="8dp"
-                    android:textColor="@color/namoa_light_blue"
-                    tools:text="Main User Text"
-                    android:visibility="gone"
-                    />
 
             </LinearLayout>
 
@@ -187,6 +182,16 @@
                         android:layout_marginLeft="32dp"
                         android:textColor="@color/namoa_light_blue"
                         tools:text="1 10:10" />
+
+
+
+                    <!--                    <TextView-->
+<!--                        android:id="@+id/act082_tv_kanban_time"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginLeft="32dp"-->
+<!--                        android:textColor="@color/namoa_light_blue"-->
+<!--                        tools:text="1 10:10" />-->
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/act082_cl_service_time_form"
@@ -288,6 +293,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:visibility="gone"
                         android:textStyle="bold"
                         tools:text="Tempo decorrido" />
 
@@ -296,6 +302,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="32dp"
+                        android:visibility="gone"
                         android:textColor="@color/namoa_light_blue"
                         tools:text="Au AU " />
 
@@ -305,6 +312,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textStyle="bold"
+                        android:visibility="gone"
                         tools:text="Tempo restante" />
 
                     <TextView
@@ -312,6 +320,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="32dp"
+                        android:visibility="gone"
                         android:textColor="@color/namoa_light_blue"
                         tools:text="Au au" />
                 </RadioGroup>

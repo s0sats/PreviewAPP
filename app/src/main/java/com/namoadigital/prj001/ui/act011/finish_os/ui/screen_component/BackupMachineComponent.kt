@@ -68,7 +68,7 @@ import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.design.compose.m3_namoa_onSurface
 import com.namoadigital.prj001.design.compose.m3_namoa_onSurfaceVariant
 import com.namoadigital.prj001.design.compose.namoa_color_danger_red
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormBackupMachineList
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.TitleSection
@@ -90,7 +90,7 @@ fun BackupMachineSerialComponent(
     backupMachine: FinishFormField.BackupMachine?,
     isReadOnly: Boolean = false,
     backupMachineList: FinishFormBackupMachineList,
-    onSelectBackupMachine: (FormOsHeaderFrgSerialBkpItem) -> Unit,
+    onSelectBackupMachine: (BaseSerialSearchItem.BackupMachineSerialItem) -> Unit,
     onBarcodeMkEditText: OnBarcodeMkEditText,
     onBackupMachineClear: () -> Unit,
     onBackupMachineSearch: (String?, Boolean) -> Unit,
@@ -338,7 +338,7 @@ fun BackupMachineSerialComponent(
 fun BackupMachineListDialog(
     backupMachineList: FinishFormBackupMachineList,
     translateMap: TranslateMap,
-    onItemSelect: (value: FormOsHeaderFrgSerialBkpItem) -> Unit,
+    onItemSelect: (value: BaseSerialSearchItem.BackupMachineSerialItem) -> Unit,
     onDialogDismiss: () -> Unit
 ) {
     Dialog(
@@ -452,7 +452,7 @@ fun BackupMachineListDialog(
 
 @Composable
 fun BackupMachineItem(
-    value: FormOsHeaderFrgSerialBkpItem,
+    value: BaseSerialSearchItem.BackupMachineSerialItem,
     onClick: () -> Unit
 ) {
     Card(
