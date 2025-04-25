@@ -1061,6 +1061,45 @@ val migrationV18 = object : MigrationSQLite(18, 19) {
 
 }
 
+val migrationV19 = object : MigrationSQLite(19, 20) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.TICKET_PREFIX,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.TICKET_CODE,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GeOsDeviceItemDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.TICKET_PREFIX,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.TICKET_CODE,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+            )
+        )
+        //
+        db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE [${MD_Product_SerialDao.HAS_ITEM_CHECK}]  = 1;""".trimIndent())
+    }
+}
+
 
 @Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(

@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -50,6 +51,8 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val ITEM_CHECK_STATUS = "item_check_status"
         const val TARGET_DATE = "target_date"
         const val PARTITIONED_EXECUTION = "partitioned_execution"
+        const val TICKET_PREFIX = "ticket_prefix"
+        const val TICKET_CODE = "ticket_code"
     }
 
     private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item>
@@ -495,7 +498,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
                         target_date = getStringOrNull(getColumnIndex(TARGET_DATE)),
-                        partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION))
+                        partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION)),
+                        ticket_prefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
+                        ticket_code = getIntOrNull(getColumnIndex(TICKET_CODE)),
                     )
                 }
             }
@@ -561,6 +566,8 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     }
                     put(TARGET_DATE, mdProductSerialTpDeviceItem.target_date)
                     put(PARTITIONED_EXECUTION, mdProductSerialTpDeviceItem.partitioned_execution)
+                    put(TICKET_PREFIX, mdProductSerialTpDeviceItem.ticket_prefix)
+                    put(TICKET_CODE, mdProductSerialTpDeviceItem.ticket_code)
                 }
             }
             //

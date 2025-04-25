@@ -98,7 +98,9 @@ class GeOsDeviceItem(
     @Expose
     @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf(),
-    @SerializedName("partitioned_execution") var partitioned_execution: Int
+    @SerializedName("partitioned_execution") var partitioned_execution: Int,
+    @SerializedName("ticket_prefix") var ticket_prefix: Int?,
+    @SerializedName("ticket_code") var ticket_code: Int?,
 ):Serializable {
     fun getGeOsDeviceItemCodeAndSeq(): String{
         return "${item_check_code}.${item_check_seq}"

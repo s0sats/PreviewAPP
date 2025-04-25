@@ -259,7 +259,9 @@ class Act086MainPresenter(
                 has_expired_cycle = 0,
                 hide_days_in_alert = 0,
                 materialList = mutableListOf(),
-                partitioned_execution = 0
+                partitioned_execution = 0,
+                ticket_prefix = null,
+                ticket_code = null
             )
         }
         //

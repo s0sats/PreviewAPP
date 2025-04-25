@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.dao
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -20,7 +19,6 @@ import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.lang.Boolean.getBoolean
 
 class GeOsDeviceItemDao(
     context: Context,
@@ -70,6 +68,8 @@ class GeOsDeviceItemDao(
         const val HAS_EXPIRED_CYCLE = "has_expired_cycle"
         const val HIDE_DAYS_IN_ALERT = "hide_days_in_alert"
         const val PARTITIONED_EXECUTION = "partitioned_execution"
+        const val TICKET_PREFIX = "ticket_prefix"
+        const val TICKET_CODE = "ticket_code"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -533,7 +533,9 @@ class GeOsDeviceItemDao(
                         status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER)),
                         has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE)),
                         hide_days_in_alert = getInt(getColumnIndex(HIDE_DAYS_IN_ALERT)),
-                        partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION))
+                        partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION)),
+                        ticket_prefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
+                        ticket_code = getIntOrNull(getColumnIndex(TICKET_CODE)),
                     )
                 }
             }
@@ -628,6 +630,10 @@ class GeOsDeviceItemDao(
                     put(HIDE_DAYS_IN_ALERT, it.hide_days_in_alert)
                     //
                     put(PARTITIONED_EXECUTION, it.partitioned_execution)
+                    //
+                    put(TICKET_PREFIX, it.ticket_prefix)
+                    //
+                    put(TICKET_CODE, it.ticket_code)
                 }
             }
             return contentValues

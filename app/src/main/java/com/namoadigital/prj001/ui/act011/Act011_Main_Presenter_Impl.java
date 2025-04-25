@@ -862,26 +862,29 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
             List<InspectionCell> inspections = acessoryFormView.getInspections();
             List<GeOsDeviceItem> deviceItem = getDeviceItem(device);
+
             for (GeOsDeviceItem item : deviceItem) {
-                inspections.add(
-                        new InspectionCell(item.getManual_desc() == null ? item.getItem_check_desc() : item.getManual_desc(),
-                                getDayCount(geOs.getDate_start(), item),
-                                getPhotoCount(item),
-                                getMaterialCount(item.getMaterialList()),
-                                item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
-                                item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
-                                item.getRequire_justify_problem() == 1,
-                                item.getItem_check_status(),
-                                item.getCritical_item() == 1,
-                                item.getStructure() == 0,
-                                item.getStatus_answer(),
-                                item.getExec_type(),
-                                item.getGeOsDeviceItemCodeAndSeq(),
-                                hmAux_Trans,
-                                item.getChange_adjust(),
-                                item.getPartitioned_execution(),
-                                !isInProcessing(customFormLocal))
-                );
+                if(isDeviceItemAllowed(item, customFormLocal.getTicket_prefix(), customFormLocal.getTicket_code())) {
+                    inspections.add(
+                            new InspectionCell(item.getManual_desc() == null ? item.getItem_check_desc() : item.getManual_desc(),
+                                    getDayCount(geOs.getDate_start(), item),
+                                    getPhotoCount(item),
+                                    getMaterialCount(item.getMaterialList()),
+                                    item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
+                                    item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
+                                    item.getRequire_justify_problem() == 1,
+                                    item.getItem_check_status(),
+                                    item.getCritical_item() == 1,
+                                    item.getStructure() == 0,
+                                    item.getStatus_answer(),
+                                    item.getExec_type(),
+                                    item.getGeOsDeviceItemCodeAndSeq(),
+                                    hmAux_Trans,
+                                    item.getChange_adjust(),
+                                    item.getPartitioned_execution(),
+                                    !isInProcessing(customFormLocal))
+                    );
+                }
             }
             //
             if (!inspections.isEmpty() || device.getShow_empty() == 1) {
@@ -890,6 +893,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //
         }
         return acessoryFormViews;
+    }
+
+    private boolean isDeviceItemAllowed(GeOsDeviceItem item, Integer ticketPrefix, Integer ticketCode) {
+        return  (item.getTicket_prefix() == null && item.getTicket_code() == null)
+            || (item.getTicket_prefix() != null && item.getTicket_code() != null
+                && item.getTicket_prefix().equals(ticketPrefix)
+                && item.getTicket_code().equals(ticketCode));
     }
 
     /**
