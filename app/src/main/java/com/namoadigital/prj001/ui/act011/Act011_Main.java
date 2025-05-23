@@ -6,6 +6,8 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.AUTO_SYNC_FORM;
+import static com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.LABEL_ERROR_GET_LIST_VERIFICATION_GROUP;
+import static com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.TITLE_ERROR_GET_LIST_VERIFICATION_GROUP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_CHECKBOX_STATUS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
@@ -118,7 +120,6 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -129,6 +130,7 @@ import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -162,6 +164,7 @@ import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act086.Act086Main;
 import com.namoadigital.prj001.ui.act087.FormOsHeaderFrg;
+import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment;
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -216,7 +219,7 @@ public class Act011_Main extends Base_Activity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private ViewPager pager;
+    private FormViewPager pager;
 
     private FragmentManager fm;
 
@@ -321,7 +324,6 @@ public class Act011_Main extends Base_Activity
             Toast.makeText(context, hmAux_Trans.get("form_non_compliance_photo_required_toast"), Toast.LENGTH_LONG).show();
         }
     };
-
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -596,6 +598,7 @@ public class Act011_Main extends Base_Activity
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         transList.add("finish_os_tab_name");
         transList.add("act011_title_os");
+        transList.addAll(VerificationGroupFragment.Companion.loadTranslation());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1533,7 +1536,7 @@ public class Act011_Main extends Base_Activity
                 this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX, -1);
                 this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX, -1);
                 this.device_item_list_filter = deviceBundle.getString(DEVICE_ITEM_LIST_FILTER);
-                this.device_item_list_checkbox_status = deviceBundle.getBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, true);
+                this.device_item_list_checkbox_status = deviceBundle.getBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, false);
                 bundle.remove(DEVICE_BUNDLE);
             }
 
@@ -1761,9 +1764,15 @@ public class Act011_Main extends Base_Activity
         int fullTabQty = pages;
         //
         boolean isFormOsDone = formLocal.getIs_so() == 1 && formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE);
+        boolean addVerificationGroup = mPresenter.addGeOsVgFragment(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                Integer.parseInt(product_code),
+                serial_id,
+                formLocal
+        );
         if (formLocal.getIs_so() == 1) {
             //Qtd total de tabs 1(header) + pages(customFF) + acessoryFormViews.size(Devices)
-            fullTabQty = pages + acessoryFormViews.size() + (isFormOsDone ? 1 : 0);
+            fullTabQty = pages + acessoryFormViews.size() + (isFormOsDone ? 1 : 0) + (addVerificationGroup ? 1 : 0);
             addOsHeaderFrag(geOs, formData.getCustom_form_status(), tabs, fullTabQty, mdScheduleExec);
         }
         //Loop de criação das tabs do form utilizando o novo fragment.
@@ -1791,17 +1800,26 @@ public class Act011_Main extends Base_Activity
         if (formLocal.getIs_so() == 1) {
             int acessoryIndex = pages + 1;
             this.acessoryFormViews = acessoryFormViews;
+            if(addVerificationGroup) {
+                addVerificationGroupsFragment(
+                        geOs,
+                        tabs,
+                        acessoryIndex,
+                        fullTabQty
+                );
+                acessoryIndex += 1;
+            }
             for (AcessoryFormView acessoryFormView : acessoryFormViews) {
                 int item_index = -1;
                 if ((acessoryIndex) == device_item_tab_index) {
                     item_index = device_item_list_index;
                     acessoryFormView.setLastPositionSelected(device_item_list_index);
                     acessoryFormView.setFilterVal(device_item_list_filter);
-                    acessoryFormView.setNonForecastFilter(device_item_list_checkbox_status);
+                    acessoryFormView.setForecastFilter(device_item_list_checkbox_status);
                 } else {
                     acessoryFormView.setLastPositionSelected(-1);
                     acessoryFormView.setFilterVal("");
-                    acessoryFormView.setNonForecastFilter(true);
+                    acessoryFormView.setForecastFilter(false);
                 }
                 acessoryFormView.setTabIndex(acessoryIndex);
                 Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
@@ -2031,6 +2049,60 @@ public class Act011_Main extends Base_Activity
         //
         tabs.add(formOsHeaderFrg.getTabObj(includeField));
         screens.add(formOsHeaderFrg);
+    }
+
+    private void addVerificationGroupsFragment(
+            GeOs geOs,
+            ArrayList<Act011FormTab> tabs,
+            int tabIndex,
+            int tabQty
+    ) {
+        MD_Product_Serial serialInfo = getSerialInfo();
+        VerificationGroupFragment fragment = VerificationGroupFragment.Companion.newInstance(
+                hmAux_Trans,
+                tabIndex,
+                tabQty,
+                geOs,
+                formLocal.getCustom_form_status(),
+                serialInfo.getProduct_code(),
+                serialInfo.getSerial_code(),
+                isFormContinuous()
+        );
+        fragment.setOnProgressDialog(() -> {
+            pager.setSwipeEnabled(false);
+            boolean resultFailed = true;
+            try {
+                updateListInspectionCells();
+                onRefreshTabCounter();
+                resultFailed = false;
+            }catch (Exception e){
+                ToolBox.registerException(getClass().getName(), e);
+            } finally {
+                pager.setSwipeEnabled(true);
+            }
+            return resultFailed;
+        });
+
+        fragment.setOnErrorGetVerificationGroup(() -> {
+            pager.setSwipeEnabled(false);
+            ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get(TITLE_ERROR_GET_LIST_VERIFICATION_GROUP),
+                    hmAux_Trans.get(LABEL_ERROR_GET_LIST_VERIFICATION_GROUP),
+                    (dialogInterface, i) -> mPresenter.onBackPressedClicked(),
+                    0
+            );
+            return null;
+        });
+        tabs.add(fragment.getTabObj(includeField));
+        screens.add(fragment);
+
+    }
+
+    private boolean isFormContinuous() {
+        TK_Ticket_Form tkTicketFormContinuous = getTkTicketFormContinuous();
+        return tkTicketFormContinuous!= null
+                && tkTicketFormContinuous.getCustom_form_data_partition() != null;
     }
 
     @Override
@@ -2569,7 +2641,7 @@ public class Act011_Main extends Base_Activity
         if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
                 && itemDB.get(HMAux.TEXTO_01).length() > 0) {
             videoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
-        }else{
+        } else {
             videoFF.initializeFormValue();
         }
         videoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -2807,7 +2879,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX, acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX, position);
         deviceBundle.putString(DEVICE_ITEM_LIST_FILTER, searchFilterValue);
-        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, acessoryFormView.getNonForecastFilter());
+        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, acessoryFormView.getForecastFilter());
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION, isNewItem);
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formData.getCustom_form_status());
         deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
@@ -2828,6 +2900,12 @@ public class Act011_Main extends Base_Activity
     @Override
     public void onRefreshTabCounter(int tabIndex) {
         act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false), tabIndex);
+    }
+
+    public void onRefreshTabCounter(){
+        for(Act011BaseFrg screen : screens){
+            act011FfOption.updateTabList(screen.getTabObj(false), screen.getTabIndex());
+        }
     }
 
     @Override
@@ -4781,6 +4859,20 @@ public class Act011_Main extends Base_Activity
         } else if (wsSoProcess.equalsIgnoreCase(WsGetTripFull.class.getSimpleName())) {
             setWsSoProcess("");
             afterSaveFlow();
+        }
+    }
+
+    private void updateListInspectionCells() throws Exception {
+        for(Act011BaseFrg screen : screens){
+            if(screen instanceof Act011FrgInspection){
+                Act011FrgInspection frgInspection = (Act011FrgInspection) screen;
+                AcessoryFormView acessoryFormView = frgInspection.acessoryFormView;
+                mPresenter.updateAcessoryFormViews(geOs, formLocal, acessoryFormView);
+                acessoryFormView.setFilterVal("");
+                acessoryFormView.setForecastFilter(false);
+                frgInspection.refreshInspection(acessoryFormView);
+                pager.getAdapter().notifyDataSetChanged();
+            }
         }
     }
 

@@ -9,12 +9,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import java.io.IOException
+import kotlin.reflect.KClass
 
 fun <T> Flow<IResult<T>>.namoaCatch(
     local: String,
 ) = apply {
     this.catch { e ->
         ToolBox_Inf.registerException(local, IOException(e.message))
+        emit(loading(false))
+        emit(failed(e))
+    }
+}
+
+fun <T> Flow<IResult<T>>.namoaCatch(
+    clazz: KClass<*>,
+) = apply {
+    this.catch { e ->
+        ToolBox_Inf.registerException(clazz.simpleName, IOException(e.message))
         emit(loading(false))
         emit(failed(e))
     }

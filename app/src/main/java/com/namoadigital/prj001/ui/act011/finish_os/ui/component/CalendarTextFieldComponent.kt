@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.namoadigital.prj001.design.compose.ApplicationTheme
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.extensions.date.convertDateToFullTimeStampGMT
 import com.namoadigital.prj001.extensions.date.convertToDate
 import com.namoadigital.prj001.util.ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
@@ -44,8 +44,8 @@ import java.util.Calendar
 data class DateTimeSelected(
     val date: String,
     val hour: String
-){
-    val fullTimeStampGMT: String ="$date $hour".convertDateToFullTimeStampGMT(
+) {
+    val fullTimeStampGMT: String = "$date $hour".convertDateToFullTimeStampGMT(
         inputFormat = "yyyy-MM-dd HH:mm",
     )
 }
@@ -69,7 +69,7 @@ fun DateTimePicker(
 
     var dateText by remember {
         mutableStateOf(
-            if(initialDate.isEmpty()) dateHint
+            if (initialDate.isEmpty()) dateHint
             else initialDate.convertDateToFullTimeStampGMT(
                 inputFormat = FULL_TIMESTAMP_TZ_FORMAT_GMT,
                 outputFormat = ToolBox_Inf.nlsDateFormat(context)
@@ -79,7 +79,7 @@ fun DateTimePicker(
 
     var timeText by remember {
         mutableStateOf(
-            if(initialDate.isEmpty()) timeHint
+            if (initialDate.isEmpty()) timeHint
             else initialDate.convertDateToFullTimeStampGMT(
                 inputFormat = FULL_TIMESTAMP_TZ_FORMAT_GMT,
                 outputFormat = "HH:mm"
@@ -88,17 +88,20 @@ fun DateTimePicker(
     }
 
     var dateFormatted by remember {
-        mutableStateOf(if(initialDate.isEmpty()) "" else dateText.convertDateToFullTimeStampGMT(
-            inputFormat = ToolBox_Inf.nlsDateFormat(context),
-            outputFormat = "yyyy-MM-dd"
-        ))
+        mutableStateOf(
+            if (initialDate.isEmpty()) "" else dateText.convertDateToFullTimeStampGMT(
+                inputFormat = ToolBox_Inf.nlsDateFormat(context),
+                outputFormat = "yyyy-MM-dd"
+            )
+        )
     }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     val calendar = remember {
-        if(initialDate.isEmpty()) Calendar.getInstance()
-        else Calendar.getInstance().apply { time = initialDate.convertToDate()!! } }
+        if (initialDate.isEmpty()) Calendar.getInstance()
+        else Calendar.getInstance().apply { time = initialDate.convertToDate()!! }
+    }
 
     LaunchedEffect(dateFormatted, timeText) {
         if (timeText != timeHint) {
@@ -167,7 +170,7 @@ fun DateTimePicker(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(ApplicationTheme.spacing.small)
+                .padding(NamoaTheme.spacing.small)
                 .animateContentSize()
                 .wrapContentHeight()
         ) {
@@ -175,8 +178,11 @@ fun DateTimePicker(
             val (dateRef, timeRef) = createRefs()
             val focusManager = LocalFocusManager.current
 
-            fun Modifier.addClickableInDate() = if(isDateEnabled) this.clickable { showDatePicker = true } else this
-            fun Modifier.addClickableInTime() = if(isTimeEnabled) this.clickable { showTimePicker = true } else this
+            fun Modifier.addClickableInDate() =
+                if (isDateEnabled) this.clickable { showDatePicker = true } else this
+
+            fun Modifier.addClickableInTime() =
+                if (isTimeEnabled) this.clickable { showTimePicker = true } else this
 
             CalendarTextField(
                 text = dateText,
@@ -230,9 +236,9 @@ fun DateTimePicker(
         }
 
 
-        if(isError){
+        if (isError) {
             TextFieldError(
-                modifier = Modifier.padding(start = ApplicationTheme.spacing.small),
+                modifier = Modifier.padding(start = NamoaTheme.spacing.small),
                 text = errorText
             )
         }
@@ -253,24 +259,24 @@ private fun CalendarTextField(
     OutlinedTextField(
         value = text,
         readOnly = true,
-        textStyle = ApplicationTheme.typography.bodyMedium,
+        textStyle = NamoaTheme.typography.bodyMedium,
         singleLine = true,
         enabled = isEnabled,
-        modifier = modifier.padding(horizontal = ApplicationTheme.spacing.small),
+        modifier = modifier.padding(horizontal = NamoaTheme.spacing.small),
         leadingIcon = {
-            if(isEnabled){
+            if (isEnabled) {
                 IconButton(onClick = onClick) {
                     iconTextField(icon, isError, true)
                 }
-            }else{
+            } else {
                 iconTextField(icon, isError, false)
             }
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = ApplicationTheme.colors.surface,
-            unfocusedContainerColor = ApplicationTheme.colors.surface,
-            disabledContainerColor = ApplicationTheme.colors.surface,
-            errorContainerColor = ApplicationTheme.colors.surface,
+            focusedContainerColor = NamoaTheme.colors.surface,
+            unfocusedContainerColor = NamoaTheme.colors.surface,
+            disabledContainerColor = NamoaTheme.colors.surface,
+            errorContainerColor = NamoaTheme.colors.surface,
         ),
         isError = isError,
         onValueChange = {}
@@ -286,8 +292,8 @@ private fun iconTextField(
     Icon(
         imageVector = icon,
         contentDescription = null,
-        tint = if (isError && isEnabled) ApplicationTheme.colors.error
-        else if (isEnabled) ApplicationTheme.colors.onSurface
+        tint = if (isError && isEnabled) NamoaTheme.colors.error
+        else if (isEnabled) NamoaTheme.colors.onSurface
         else Color.Gray
     )
 }
@@ -303,17 +309,17 @@ fun TextFieldError(
             .fillMaxWidth()
             .animateContentSize(),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Icon(
             imageVector = Icons.Outlined.ErrorOutline,
             contentDescription = "",
-            tint = ApplicationTheme.colors.error
+            tint = NamoaTheme.colors.error
         )
         Text(
-            modifier = Modifier.padding(start = ApplicationTheme.spacing.small),
+            modifier = Modifier.padding(start = NamoaTheme.spacing.small),
             text = text,
-            color = ApplicationTheme.colors.error,
-            style = ApplicationTheme.typography.bodyMedium
+            color = NamoaTheme.colors.error,
+            style = NamoaTheme.typography.bodyMedium
         )
     }
 }

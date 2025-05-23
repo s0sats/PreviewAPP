@@ -8,14 +8,52 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase
+import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase.Input
+import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsSaveSerialStructureUseCase
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
+import com.namoadigital.prj001.dao.GeOsDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MdOrderTypeDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.extensions.watchStatus
+import com.namoadigital.prj001.model.BaseSerialSearchItem
+import com.namoadigital.prj001.model.GE_Custom_Form
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.TK_Ticket_Form
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Rec
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Record
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
 import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.sql.Act087Sql_001
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
+import com.namoadigital.prj001.sql.MD_Product_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.MdOrderTypeSql_001
+import com.namoadigital.prj001.sql.MdOrderTypeSql_002
+import com.namoadigital.prj001.sql.MeMeasureTpSql_001
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.ui.act087.model.LastMeasureDataConsider
@@ -24,6 +62,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ScheduleFormFatory
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
 
@@ -55,18 +96,19 @@ class Act087MainPresenter(
     private var ticketSeqTmp: Int?,
     private var stepCode: Int?,
     private var mCustomFormDataPartition: Int?,
-
-): Act087MainContract.I_Presenter {
+    val geOsCreateFormOsStructureUseCase: GeOsCreateFormOsStructureUseCase,
+    val geOsSaveSerialStructureUseCase: GeOsSaveSerialStructureUseCase,
+) : Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
         loadTranslation()
     }
 
-    private val serialObj : MD_Product_Serial by lazy{
+    private val serialObj: MD_Product_Serial by lazy {
         getSerialObj(productCode, serialId)
     }
 
-    private val mScheduleObj : MD_Schedule_Exec? by lazy{
+    private val mScheduleObj: MD_Schedule_Exec? by lazy {
         scheduleDao.getByString(
             MD_Schedule_Exec_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -77,9 +119,10 @@ class Act087MainPresenter(
         )
     }
 
-    private val _mCustomForm : GE_Custom_Form? by lazy{
-        getForm(customFormCode,customFormType,customFormVersion)
+    private val _mCustomForm: GE_Custom_Form? by lazy {
+        getForm(customFormCode, customFormType, customFormVersion)
     }
+
     //Retorna o form sem ser null. Como só chega aqui se ele for existir, evita tratativa de safe call
     private val mCustomForm get() = _mCustomForm!!
 
@@ -137,16 +180,16 @@ class Act087MainPresenter(
     }
 
     override fun validateBundleParams(): Boolean {
-        if(customFormType > -1 && customFormCode > -1 && customFormVersion > -1 && productCode > -1 && serialId.isNotEmpty()){
+        if (customFormType > -1 && customFormCode > -1 && customFormVersion > -1 && productCode > -1 && serialId.isNotEmpty()) {
             return true
         }
         return false
     }
 
     override fun isSchedule(): Boolean {
-        return  schedulePrefix?:-1 > 0
-                && scheduleCode?:-1 > 0
-                && scheduleExec?:-1 > 0
+        return schedulePrefix ?: -1 > 0
+                && scheduleCode ?: -1 > 0
+                && scheduleExec ?: -1 > 0
     }
 
     override fun getScheduleExecObj(): MD_Schedule_Exec? {
@@ -168,7 +211,7 @@ class Act087MainPresenter(
 
     override fun getSerialInfo() = serialObj
 
-    private fun getSerialObj(productCode: Int, serialId: String) : MD_Product_Serial{
+    private fun getSerialObj(productCode: Int, serialId: String): MD_Product_Serial {
         return serialDao.getByString(
             MD_Product_Serial_Sql_002(
                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -193,7 +236,7 @@ class Act087MainPresenter(
         return null
     }
 
-    override fun getProductInfo(productCode: Int) : MD_Product? = productDao.getByString(
+    override fun getProductInfo(productCode: Int): MD_Product? = productDao.getByString(
         MD_Product_Sql_001(
             ToolBox_Con.getPreference_Customer_Code(context),
             productCode.toLong()
@@ -201,12 +244,12 @@ class Act087MainPresenter(
     )
 
     override fun getOsHeaderObj(): GeOs {
-        var measureTp : MeMeasureTp? = null
+        var measureTp: MeMeasureTp? = null
         //
         getSerialInfo()
         //
         serialObj.measure_tp_code?.let {
-            measureTp = getMeasureTp(serialObj.customer_code,serialObj.measure_tp_code)
+            measureTp = getMeasureTp(serialObj.customer_code, serialObj.measure_tp_code)
         }
         val tkTicketForm = getTkTicketForm()
         //
@@ -219,11 +262,11 @@ class Act087MainPresenter(
             custom_form_code = mCustomForm.custom_form_code,
             custom_form_version = mCustomForm.custom_form_version,
             custom_form_data = 0,
-            order_type_code = orderType?.orderTypeCode?:-1,
-            order_type_id = orderType?.orderTypeId?:"",
-            order_type_desc = orderType?.orderTypeDesc?:"",
-            process_type = orderType?.processType?:"",
-            display_option = orderType?.displayOption?:"",
+            order_type_code = orderType?.orderTypeCode ?: -1,
+            order_type_id = orderType?.orderTypeId ?: "",
+            order_type_desc = orderType?.orderTypeDesc ?: "",
+            process_type = orderType?.processType ?: "",
+            display_option = orderType?.displayOption ?: "",
             item_check_group_code = orderType?.itemCheckGroupCode,
             backup_product_code = null,
             backup_product_id = null,
@@ -247,11 +290,14 @@ class Act087MainPresenter(
             so_order_type_code_default = mCustomForm.so_order_type_code_default,
             so_allow_change_order_type = mCustomForm.so_allow_change_order_type,
             device_tp_code_main = serialObj.device_tp_code_main,
-            so_allow_backup =  mCustomForm.so_allow_backup,
-            )
+            so_allow_backup = mCustomForm.so_allow_backup,
+        )
     }
 
-    private fun getLastDataConsider(measureTp: MeMeasureTp?, tkTicketForm: TK_Ticket_Form?): LastMeasureDataConsider {
+    private fun getLastDataConsider(
+        measureTp: MeMeasureTp?,
+        tkTicketForm: TK_Ticket_Form?
+    ): LastMeasureDataConsider {
         return LastMeasureDataConsider(
             last_measure_value = getLastMeasureValueConsider(measureTp, tkTicketForm),
             measure_cycle_value = getMeasureCycleValue(tkTicketForm),
@@ -269,7 +315,7 @@ class Act087MainPresenter(
             && tkTicketForm.custom_form_data_partition == 1
         ) {
             tkTicketForm.value_sufix
-        }else{
+        } else {
             measureTp?.valueSufix
         }
     }
@@ -281,7 +327,7 @@ class Act087MainPresenter(
             && tkTicketForm.custom_form_data_partition == 1
         ) {
             tkTicketForm.measure_cycle_value
-        }else{
+        } else {
             serialObj.last_cycle_value
         }
     }
@@ -293,7 +339,7 @@ class Act087MainPresenter(
             && tkTicketForm.custom_form_data_partition != null
         ) {
             tkTicketForm.start_date
-        }else{
+        } else {
             serialObj.last_measure_date
         }
     }
@@ -305,12 +351,15 @@ class Act087MainPresenter(
             && tkTicketForm.custom_form_data_partition == 1
         ) {
             tkTicketForm.measure_cycle_value
-        }else{
+        } else {
             serialObj.last_cycle_value
         }
     }
 
-    private fun getLastMeasureValueConsider(measureTp: MeMeasureTp?, tkTicketForm: TK_Ticket_Form?): Float? {
+    private fun getLastMeasureValueConsider(
+        measureTp: MeMeasureTp?,
+        tkTicketForm: TK_Ticket_Form?
+    ): Float? {
         if (tkTicketForm != null
             && tkTicketForm.custom_form_data_partition == 1
         ) {
@@ -326,7 +375,7 @@ class Act087MainPresenter(
                 val decimal = measureTp?.let { measureTp ->
                     measureTp.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
                 }
-                 it.roundByRestrictionMeasure(decimal).toFloat()
+                it.roundByRestrictionMeasure(decimal).toFloat()
             }
         }
     }
@@ -344,9 +393,12 @@ class Act087MainPresenter(
                 tkTicketForm.display_option,
                 tkTicketForm.item_check_group_code
             )
-        }else{
+        } else {
             mCustomForm.so_order_type_code_default?.let {
-                return getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
+                return getOrderType(
+                    mCustomForm.customer_code,
+                    mCustomForm.so_order_type_code_default
+                )
             }
         }
         return null
@@ -364,17 +416,21 @@ class Act087MainPresenter(
 
     private fun getOrderType(customerCode: Long, soOrderTypeCodeDefault: Int): MdOrderType? {
         return orderTypeDao.getByString(
-                MdOrderTypeSql_001(
-                    customerCode,
-                    soOrderTypeCodeDefault
-                ).toSqlQuery()
+            MdOrderTypeSql_001(
+                customerCode,
+                soOrderTypeCodeDefault
+            ).toSqlQuery()
         )
     }
 
     /**
      * Fun que retorna o form ou null
      */
-    private fun getForm(customFormCode: Int, customFormType: Int, customFormVersion: Int): GE_Custom_Form? {
+    private fun getForm(
+        customFormCode: Int,
+        customFormType: Int,
+        customFormVersion: Int
+    ): GE_Custom_Form? {
         return formDao.getByString(
             GE_Custom_Form_Sql_001_TT(
                 ToolBox_Con.getPreference_Customer_Code(context).toString(),
@@ -393,11 +449,11 @@ class Act087MainPresenter(
      */
     override fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType> {
         val orderTypeQuery =
-            if(orderTypeCode == -1){
+            if (orderTypeCode == -1) {
                 MdOrderTypeSql_002(
                     ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
-            } else{
+            } else {
                 MdOrderTypeSql_001(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     orderTypeCode
@@ -414,7 +470,7 @@ class Act087MainPresenter(
      * @return Medicao encontrada ou null.
      */
     override fun getMeasure(measureCode: Int): MeMeasureTp? {
-        return getMeasureTp(ToolBox_Con.getPreference_Customer_Code(context),measureCode)
+        return getMeasureTp(ToolBox_Con.getPreference_Customer_Code(context), measureCode)
     }
 
     /**
@@ -425,7 +481,7 @@ class Act087MainPresenter(
      * @param bkpSerialId Id do serial digitado
      */
     override fun executeWsBkpMachine(bkpSerialId: String) {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Product_Serial_Backup::class.java.name)
             //
             mView.showPD(
@@ -450,7 +506,7 @@ class Act087MainPresenter(
             }
             //
             context.sendBroadcast(mIntent)
-        }else{
+        } else {
             searchBkpMachineInDb(bkpSerialId)
         }
     }
@@ -464,32 +520,33 @@ class Act087MainPresenter(
      */
     private fun searchBkpMachineInDb(bkpSerialId: String) {
         //
-        val bkpSerialItemList: List<BaseSerialSearchItem.BackupMachineSerialItem>? = serialDao.query(
-            Act087Sql_001(
-                serialObj.customer_code,
-                serialObj.product_code,
-                serialObj.serial_id,
-                ToolBox_Inf.getNoAccentStringForGlobSql(bkpSerialId),
-                ToolBox_Con.getPreference_Site_Code(context).toInt()
-            ).toSqlQuery()
-        )?.map { bkpOffline ->
-            BaseSerialSearchItem.BackupMachineSerialItem(
-                bkpOffline.product_code.toInt(),
-                bkpOffline.product_id,
-                bkpOffline.product_desc,
-                bkpOffline.serial_code.toInt(),
-                bkpOffline.serial_id,
-                bkpOffline.site_code,
-                bkpOffline.site_desc
-            )
-        }
+        val bkpSerialItemList: List<BaseSerialSearchItem.BackupMachineSerialItem>? =
+            serialDao.query(
+                Act087Sql_001(
+                    serialObj.customer_code,
+                    serialObj.product_code,
+                    serialObj.serial_id,
+                    ToolBox_Inf.getNoAccentStringForGlobSql(bkpSerialId),
+                    ToolBox_Con.getPreference_Site_Code(context).toInt()
+                ).toSqlQuery()
+            )?.map { bkpOffline ->
+                BaseSerialSearchItem.BackupMachineSerialItem(
+                    bkpOffline.product_code.toInt(),
+                    bkpOffline.product_id,
+                    bkpOffline.product_desc,
+                    bkpOffline.serial_code.toInt(),
+                    bkpOffline.serial_id,
+                    bkpOffline.site_code,
+                    bkpOffline.site_desc
+                )
+            }
         //
-        if(bkpSerialItemList.isNullOrEmpty()){
+        if (bkpSerialItemList.isNullOrEmpty()) {
             mView.showAlert(
                 hmAuxTrans["alert_bkp_serial_error_ttl"],
                 hmAuxTrans["alert_no_bkp_serial_found_offline_msg"],
             )
-        } else{
+        } else {
             mView.reportSerialBkpMachineToFrag(
                 serialBkpMachineList = bkpSerialItemList,
                 onlineSearch = false
@@ -503,29 +560,34 @@ class Act087MainPresenter(
      * @param mLink Json com dados recebidos pelo WS
      */
     override fun processWsBkpMachineResult(mLink: String?) {
-        if (mLink != null && mLink.isNotEmpty()){
-            try{
+        if (mLink != null && mLink.isNotEmpty()) {
+            try {
                 val rec = GsonBuilder().serializeNulls().create().fromJson(
                     mLink,
                     T_MD_Product_Serial_Backup_Rec::class.java
                 )
                 //
-                if(rec.records != null && rec.records.isNotEmpty()){
-                    processSerialBkpMachine(rec.records,page = rec.record_page?:-1, foundQty= rec.record_count?:-1,true)
-                }else{
+                if (rec.records != null && rec.records.isNotEmpty()) {
+                    processSerialBkpMachine(
+                        rec.records,
+                        page = rec.record_page ?: -1,
+                        foundQty = rec.record_count ?: -1,
+                        true
+                    )
+                } else {
                     mView.showAlert(
                         hmAuxTrans["alert_bkp_serial_error_ttl"],
                         hmAuxTrans["alert_no_bkp_serial_found_msg"],
                     )
                 }
-            }catch (e: Exception){
-                ToolBox_Inf.registerException(javaClass.name,e)
+            } catch (e: Exception) {
+                ToolBox_Inf.registerException(javaClass.name, e)
                 mView.showAlert(
                     hmAuxTrans["alert_bkp_serial_error_ttl"],
                     hmAuxTrans["alert_error_on_open_bkp_list_msg"],
                 )
             }
-        }else{
+        } else {
             mView.showAlert(
                 hmAuxTrans["alert_bkp_serial_error_ttl"],
                 hmAuxTrans["alert_error_no_data_return_msg"],
@@ -563,7 +625,7 @@ class Act087MainPresenter(
             )
         }.toMutableList()
         //
-        if(foundQty > records.size ){
+        if (foundQty > records.size) {
             bkpSerialItemList.add(
                 BaseSerialSearchItem.SerialSearchExceededItem(
                     hmAuxTrans["alert_qty_records_exceeded_msg"]!!,
@@ -590,36 +652,99 @@ class Act087MainPresenter(
         formOsHeader.custom_form_data = getNextFormData(formOsHeader)
         val tkTicketForm = getTkTicketForm()
         val isContinuousForm = tkTicketForm?.let {
-            it.custom_form_data_partition != null && it.custom_form_data_partition >0
-        }?: false
-        val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj, isContinuousForm)
-        if(!daoObjReturn.hasError()){
-            if(!isSchedule()){
-                mView.callAct011(
-                    getAct011Bundle(
-                        formOsHeader
-                    )
+            it.custom_form_data_partition != null && it.custom_form_data_partition > 0
+        } ?: false
+//        val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj, isContinuousForm)
+        //
+        CoroutineScope(Dispatchers.IO).launch {
+            geOsCreateFormOsStructureUseCase(
+                Input(
+                    formOsHeader,
+                    serialObj,
+                    isContinuousForm,
+                    tkTicketForm?.ticket_prefix,
+                    tkTicketForm?.ticket_code
                 )
-            }else{
-                if(mScheduleObj != null){
-                    if (tryCreateScheduleCustomFormLocal(formOsHeader.custom_form_data) != null) {
-                        mView.callAct011(
-                            getAct011Bundle(
-                                formOsHeader
+            ).collect {
+                it.watchStatus(
+                    success = { output ->
+
+                        val result = geOsSaveSerialStructureUseCase.invoke(
+                            GeOsSaveSerialStructureUseCase.Input(
+                                formOsHeader,
+                                serialObj,
+                                output.deviceItems,
+                                output.geosVgs
                             )
                         )
-                    } else {
-                        removeGeOsAndReportScheduleError(formOsHeader)
+
+                        //
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (result) {
+                                checkNavigationSave(formOsHeader)
+                            } else {
+                                mView.showAlert(
+                                    ttl = hmAuxTrans["alert_error_on_create_os_form_ttl"],
+                                    msg = hmAuxTrans["alert_error_on_create_os_form_msg"]
+                                )
+                            }
+                        }
+                    },
+                    error = { message, _ ->
+                        CoroutineScope(Dispatchers.Main).launch {
+                            mView.showAlert(
+                                ttl = hmAuxTrans["alert_error_on_create_os_form_ttl"],
+                                msg = hmAuxTrans["alert_error_on_create_os_form_msg"]
+                            )
+                        }
                     }
-                }else{
+                )
+            }
+        }
+        //
+//        if(!daoObjReturn.hasError()){
+//            if(!isSchedule()){
+//                mView.callAct011(
+//                    getAct011Bundle(
+//                        formOsHeader
+//                    )
+//                )
+//            }else{
+//                if(mScheduleObj != null){
+//                    if (tryCreateScheduleCustomFormLocal(formOsHeader.custom_form_data) != null) {
+//                        mView.callAct011(
+//                            getAct011Bundle(
+//                                formOsHeader
+//                            )
+//                        )
+//                    } else {
+//                        removeGeOsAndReportScheduleError(formOsHeader)
+//                    }
+//                }else{
+//                    removeGeOsAndReportScheduleError(formOsHeader)
+//                }
+//            }
+//        }else{
+//            mView.showAlert(
+//                ttl =hmAuxTrans["alert_error_on_create_os_form_ttl"],
+//                msg= hmAuxTrans["alert_error_on_create_os_form_msg"]
+//            )
+//        }
+    }
+
+    override fun checkNavigationSave(formOsHeader: GeOs) {
+        if (!isSchedule()) {
+            mView.callAct011(getAct011Bundle(formOsHeader))
+        } else {
+            if (mScheduleObj != null) {
+                if (tryCreateScheduleCustomFormLocal(formOsHeader.custom_form_data) != null) {
+                    mView.callAct011(getAct011Bundle(formOsHeader))
+                } else {
                     removeGeOsAndReportScheduleError(formOsHeader)
                 }
+            } else {
+                removeGeOsAndReportScheduleError(formOsHeader)
             }
-        }else{
-            mView.showAlert(
-                ttl =hmAuxTrans["alert_error_on_create_os_form_ttl"],
-                msg= hmAuxTrans["alert_error_on_create_os_form_msg"]
-            )
         }
     }
 
@@ -672,15 +797,15 @@ class Act087MainPresenter(
         //
 
         return ScheduleFormFatory().buildInitialScheduleFormLocal(
-                context = context,
-                scheduleExec = mScheduleObj!!,
-                custom_formDao = custom_formDao,
-                custom_form_fieldDao = custom_form_fieldDao,
-                custom_form_field_LocalDao = custom_form_field_LocalDao,
-                custom_form_blob_localDao = custom_form_blob_localDao,
-                formLocalDao = custom_form_LocalDao,
-                formData = customFormData.toLong()
-            )
+            context = context,
+            scheduleExec = mScheduleObj!!,
+            custom_formDao = custom_formDao,
+            custom_form_fieldDao = custom_form_fieldDao,
+            custom_form_field_LocalDao = custom_form_field_LocalDao,
+            custom_form_blob_localDao = custom_form_blob_localDao,
+            formLocalDao = custom_form_LocalDao,
+            formData = customFormData.toLong()
+        )
     }
 
     /**
@@ -694,15 +819,28 @@ class Act087MainPresenter(
             putString(MD_ProductDao.PRODUCT_DESC, serialObj.product_desc)
             putString(MD_ProductDao.PRODUCT_ID, serialObj.product_id)
             putString(MD_Product_SerialDao.SERIAL_ID, serialObj.serial_id)
-            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formOsHeader.custom_form_type.toString())
-            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString())
-            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString())
-            putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
-            putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+            putString(
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                formOsHeader.custom_form_type.toString()
+            )
+            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, formOsHeader.custom_form_code.toString())
+            putString(
+                GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                formOsHeader.custom_form_version.toString()
+            )
+            putString(
+                GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                formOsHeader.custom_form_data.toString()
+            )
+            putString(
+                GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                formOsHeader.custom_form_data.toString()
+            )
             val tkTicketForm = getTkTicketForm()
-            tkTicketForm?.let{
-                if(it.custom_form_data_partition != null
-                    && it.custom_form_version_partition != null) {
+            tkTicketForm?.let {
+                if (it.custom_form_data_partition != null
+                    && it.custom_form_version_partition != null
+                ) {
                     putInt(
                         GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION,
                         it.custom_form_data_partition
@@ -717,12 +855,13 @@ class Act087MainPresenter(
 
             //Após finalizar a criação da O.S, além de navegar para a act011, o usr deve ser direcionado
             //para a primeira aba depois do cabeçalho. O bundle abaixo tem os parametros para essa navegação.
-            putBundle(ConstantBaseApp.DEVICE_BUNDLE,
-                    Bundle().apply {
-                        putInt(ConstantBaseApp.DEVICE_ITEM_TAB_INDEX,1)
-                        putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX,-1)
-                        putString(ConstantBaseApp.DEVICE_ITEM_LIST_FILTER,"")
-                    }
+            putBundle(
+                ConstantBaseApp.DEVICE_BUNDLE,
+                Bundle().apply {
+                    putInt(ConstantBaseApp.DEVICE_ITEM_TAB_INDEX, 1)
+                    putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX, -1)
+                    putString(ConstantBaseApp.DEVICE_ITEM_LIST_FILTER, "")
+                }
 
             )
             //putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formOsHeader.custom_form_type.toString())
@@ -740,11 +879,11 @@ class Act087MainPresenter(
     private fun getNextFormData(geOs: GeOs): Int {
         val nextDataAux = formDao.getByStringHM(
             GE_Custom_Form_Local_Sql_002(
-                        geOs.customer_code.toString(),
-                        geOs.custom_form_type.toString(),
-                        geOs.custom_form_code.toString(),
-                        geOs.custom_form_version.toString()
-                    ).toSqlQuery().lowercase(Locale.ENGLISH)
+                geOs.customer_code.toString(),
+                geOs.custom_form_type.toString(),
+                geOs.custom_form_code.toString(),
+                geOs.custom_form_version.toString()
+            ).toSqlQuery().lowercase(Locale.ENGLISH)
         )
         //
         return nextDataAux[GE_Custom_Form_Local_Sql_002.ID]!!.toInt()
@@ -757,8 +896,8 @@ class Act087MainPresenter(
      *
      */
     override fun onBackPressedClicked(anyDataChanged: Boolean) {
-        when(anyDataChanged){
-            true ->{
+        when (anyDataChanged) {
+            true -> {
                 mView.showAlert(
                     hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                     hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
@@ -768,9 +907,10 @@ class Act087MainPresenter(
                     1
                 )
             }
-            else ->{
+
+            else -> {
                 checkBackFLow()
-                }
+            }
         }
 
     }
@@ -817,7 +957,7 @@ class Act087MainPresenter(
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         )
-        if(ticketPrefix != null
+        if (ticketPrefix != null
             && ticketCode != null
             && ticketSeqTmp != null
             && stepCode != null
@@ -831,24 +971,24 @@ class Act087MainPresenter(
                     stepCode!!
                 ).toSqlQuery()
             )
-        }else{
+        } else {
             return null
         }
     }
 
     override fun getInitialSerialState(): InitialSerialState? {
-        ticketPrefix?.let {prefix->
+        ticketPrefix?.let { prefix ->
             ticketCode?.let { code ->
                 val ticket = ticketDao.getTicket(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     prefix,
                     code,
                 )
-                ticket?.let{
+                ticket?.let {
                     val resposibleStop =
-                        if(ticket.isSerialStopped != null && ticket.isSerialStopped == 1){
+                        if (ticket.isSerialStopped != null && ticket.isSerialStopped == 1) {
                             ResponsibleStop.STOPPED
-                        } else{
+                        } else {
                             ResponsibleStop.NO_STOPPED
                         }
 

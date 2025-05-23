@@ -21,7 +21,7 @@ import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
-import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MdOrderType;

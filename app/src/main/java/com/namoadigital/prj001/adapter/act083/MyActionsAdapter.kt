@@ -21,6 +21,7 @@ import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.databinding.MySerialSiteItemBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
+import com.namoadigital.prj001.extensions.serial.showMeasureSuffixAndDate
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
@@ -29,7 +30,6 @@ import com.namoadigital.prj001.model.SerialSiteInventory.Companion
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
@@ -147,6 +147,7 @@ class MyActionsAdapter constructor(
                 productDesc.applyVisibilityIfTextExists(item.productDesc)
 
                 serialSiteItemTvBrandModelColor.visibility = View.GONE
+
                 listOfNotNull(
                     item.brandDesc,
                     item.modelDesc,
@@ -159,58 +160,54 @@ class MyActionsAdapter constructor(
                 //
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
                 //
-                if (!item.measureDate.isNullOrEmpty()) {
-                    val measureDate = ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.measureDate),
-                        ToolBox_Inf.nlsDateFormat(context)
-                    )
-                    serialSiteItemTvLastMeasureVal.showMeasureSuffixAndDate(
-                        item.measureValue,
-                        item.valueSufix,
-                        measureDate
-                    )
-                    serialSiteItemTvLastMeasureLbl.text = hmAuxTrans["serial_site_measure_lbl"]
-                    serialSiteItemTvLastMeasureLbl.visibility = View.VISIBLE
-                } else {
+                if (item.measureDate.isNullOrEmpty()
+                    && item.suggestedDate.isNullOrEmpty()) {
                     serialSiteItemTvLastMeasureVal.visibility = View.GONE
                     serialSiteItemTvLastMeasureLbl.visibility = View.GONE
-                }
+                    serialSiteItemTvSuggestVal.visibility = View.GONE
+                    serialSiteItemTvSuggestLbl.visibility = View.GONE
+                    serialSiteItemTvSuggestDesc.visibility = View.GONE
+                }else {
+                    if (!item.measureDate.isNullOrEmpty()) {
+                        serialSiteItemTvLastMeasureVal.showMeasureSuffixAndDate(
+                            context,
+                            item.measureValue,
+                            item.valueSufix,
+                            item.measureDate!!
+                        )
+                        serialSiteItemTvLastMeasureLbl.text = hmAuxTrans["serial_site_measure_lbl"]
+                        serialSiteItemTvLastMeasureLbl.visibility = View.VISIBLE
+                    } else {
+                        serialSiteItemTvLastMeasureVal.visibility = View.GONE
+                        serialSiteItemTvLastMeasureLbl.visibility = View.GONE
+                    }
 
-                if (!item.preventiveCycle.isNullOrEmpty()) {
-                    val lastCycle = ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.preventiveDate),
-                        ToolBox_Inf.nlsDateFormat(context)
-                    )
-                    serialSiteItemTvLastCycleVal.showMeasureSuffixAndDate(
-                        item.preventiveCycle,
-                        item.valueSufix,
-                        lastCycle
-                    )
-                    serialSiteItemTvLastCycleLbl.text =
-                        hmAuxTrans["serial_site_preventive_cycle_lbl"]
-                    serialSiteItemTvLastCycleLbl.visibility = View.VISIBLE
-                } else {
-                    serialSiteItemTvLastCycleVal.visibility = View.GONE
-                    serialSiteItemTvLastCycleLbl.visibility = View.GONE
-                }
 
-                if (!item.suggestedDate.isNullOrEmpty()) {
-                    val nextCycle = ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.suggestedDate),
-                        ToolBox_Inf.nlsDateFormat(context)
-                    )
-                    serialSiteItemTvNextCycleVal.showMeasureSuffixAndDate(
-                        item.suggestedCycle,
-                        item.valueSufix,
-                        nextCycle
-                    )
-                    serialSiteItemTvNextCycleLbl.text = hmAuxTrans["serial_site_next_cycle_lbl"]
-                    serialSiteItemTvNextCycleLbl.visibility = View.VISIBLE
-                } else {
-                    serialSiteItemTvNextCycleVal.visibility = View.INVISIBLE
-                    serialSiteItemTvNextCycleLbl.visibility = View.INVISIBLE
-                }
+                    if (!item.suggestedDate.isNullOrEmpty()) {
+                        serialSiteItemTvSuggestVal.showMeasureSuffixAndDate(
+                            context,
+                            item.suggestedCycle,
+                            item.valueSufix,
+                            item.suggestedDate!!
+                        )
+                        serialSiteItemTvSuggestLbl.text = hmAuxTrans["serial_site_next_cycle_lbl"]
+                        serialSiteItemTvSuggestLbl.visibility = View.VISIBLE
+                        serialSiteItemTvSuggestDesc.text = item.suggested_desc
+                        serialSiteItemTvSuggestDesc.visibility = View.VISIBLE
+                        var suggestTextColor = if (item.suggested_alert == 1) {
+                            context.resources.getColor(R.color.namoa_os_form_problem_red)
+                        } else {
+                            context.resources.getColor(R.color.m3_namoa_onSurface)
+                        }
 
+                        serialSiteItemTvSuggestVal.setTextColor(suggestTextColor)
+                        serialSiteItemTvSuggestDesc.setTextColor(suggestTextColor)
+                    } else {
+                        serialSiteItemTvSuggestVal.visibility = View.INVISIBLE
+                        serialSiteItemTvSuggestLbl.visibility = View.INVISIBLE
+                        serialSiteItemTvSuggestDesc.visibility = View.GONE
+                    }
+                }
 
                 serialSiteItemLlItemsStatus.visibility =
                     if (item.hasItemCheck == 1) View.VISIBLE else View.GONE
@@ -218,6 +215,7 @@ class MyActionsAdapter constructor(
                 tvTagVal.checkVisible("${item.cntTkt ?: 0}")
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
+                tvItemForecastVal.checkVisible("${item.totExp ?: 0}")
 
                 if(!isReadOnly) {
                     serialSiteItemCard.apply {
@@ -270,22 +268,10 @@ class MyActionsAdapter constructor(
             }
         }
 
-        fun TextView.showMeasureSuffixAndDate(text: String?, suffix: String?, date: String?) {
-            listOf(
-                text ?: "",
-                if (text.isNullOrEmpty()) "" else suffix ?: "",
-                if (text.isNullOrEmpty()) date ?: "" else "($date)"
-            ).filter { it.isNotEmpty() }.let {
-                if (it.isEmpty()) this.visibility = View.GONE
-                else {
-                    this.visibility = View.VISIBLE
-                    this.text = it.joinToString(" ")
-                }
-            }
-        }
+
 
         fun String?.formatString() =
-            this?.let { if (this.length!! > 8) "${this.take(8)}..." else this } ?: ""
+            this?.let { this } ?: ""
     }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) :

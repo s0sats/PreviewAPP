@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -30,6 +31,7 @@ class MdItemCheckDao (
         const val ITEM_CHECK_ID   = "item_check_id"
         const val ITEM_CHECK_DESC = "item_check_desc"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
+        const val ITEM_CHECK_DESC_ALT_VG = "item_check_desc_alt_vg"
     }
 
     private val toMdItemCheckMapper: Mapper<Cursor,MdItemCheck>
@@ -262,7 +264,8 @@ class MdItemCheckDao (
                         itemCheckCode = getInt(getColumnIndex(ITEM_CHECK_CODE)),
                         itemCheckId = getString(getColumnIndex(ITEM_CHECK_ID)),
                         itemCheckDesc = getString(getColumnIndex(ITEM_CHECK_ID)),
-                        itemCheckGroupCode = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE))
+                        itemCheckGroupCode = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
+                        itemCheckDescAltVg = getStringOrNull(getColumnIndex(ITEM_CHECK_DESC_ALT_VG))
                     )
                 }
             }
@@ -294,6 +297,7 @@ class MdItemCheckDao (
                     }
                     //
                     put(ITEM_CHECK_GROUP_CODE, item.itemCheckGroupCode)
+                    put(ITEM_CHECK_DESC_ALT_VG, item.itemCheckDescAltVg)
                 }
             }
             //

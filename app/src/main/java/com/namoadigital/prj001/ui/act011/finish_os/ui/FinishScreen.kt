@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act011.finish_os.ui
 
 import android.content.Context
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -46,10 +45,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act011.finish_os.FinishOSViewModel
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop.NO_STOPPED
@@ -194,12 +193,12 @@ fun Modifier.contentModifier(
         .verticalScroll(verticalScrollState)
         .verticalScrollBar(ratio = 2f, state = verticalScrollState)
         .padding(innerPadding)
-        .padding(horizontal = ApplicationTheme.spacing.medium)
+        .padding(horizontal = NamoaTheme.spacing.medium)
 } else {
     this
         .fillMaxSize()
         .animateContentSize()
-        .padding(horizontal = ApplicationTheme.spacing.medium)
+        .padding(horizontal = NamoaTheme.spacing.medium)
 }
 
 @Composable
@@ -236,8 +235,8 @@ private fun ContentScreen(
         ) { isLoading ->
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.padding(top = ApplicationTheme.spacing.extraMassive),
-                    color = ApplicationTheme.colors.primary
+                    modifier = Modifier.padding(top = NamoaTheme.spacing.extraMassive),
+                    color = NamoaTheme.colors.primary
                 )
             } else {
                 FinishScreen(
@@ -264,8 +263,8 @@ fun ShowBallon(
 ) {
     Surface(
         modifier = modifier.animateContentSize(),
-        shape = RoundedCornerShape(ApplicationTheme.spacing.small),
-        color = ApplicationTheme.colors.error.copy(
+        shape = RoundedCornerShape(NamoaTheme.spacing.small),
+        color = NamoaTheme.colors.error.copy(
             alpha = 0.34f
         )
     ) {
@@ -273,9 +272,9 @@ fun ShowBallon(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = ApplicationTheme.spacing.small
+                    vertical = NamoaTheme.spacing.small
                 ),
-            style = ApplicationTheme.typography.bodyMedium,
+            style = NamoaTheme.typography.bodyMedium,
             text = text,
             textAlign = TextAlign.Center
         )
@@ -331,7 +330,7 @@ fun FinishScreen(
     ) {
         if (uiState.data?.showBalloonVerify == true && !isReadOnly) {
             ShowBallon(
-                modifier = Modifier.padding(ApplicationTheme.spacing.medium),
+                modifier = Modifier.padding(NamoaTheme.spacing.medium),
                 text = uiState.translateMap.translate(DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL)
             )
         }
@@ -351,7 +350,7 @@ fun FinishScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(ApplicationTheme.spacing.medium))
+        Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
 
         if (uiState.data.showBkupMachine) {
             BackupMachineSerialComponent(
@@ -392,7 +391,7 @@ fun FinishScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(ApplicationTheme.spacing.medium))
+            Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
         }
 
         InfoOSComponent(
@@ -410,7 +409,7 @@ fun FinishScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(ApplicationTheme.spacing.large))
+        Spacer(modifier = Modifier.height(NamoaTheme.spacing.large))
 
         AfterFinishOSComponent(
             modifier = Modifier
@@ -428,7 +427,7 @@ fun FinishScreen(
             onScheduleFinish = { finishValid = finishValid.copy(hasNewService = it) }
         )
 
-        Spacer(modifier = Modifier.height(ApplicationTheme.spacing.large))
+        Spacer(modifier = Modifier.height(NamoaTheme.spacing.large))
 
         if (!isReadOnly) {
             val context = LocalContext.current
@@ -469,7 +468,7 @@ fun FinishScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(ApplicationTheme.spacing.large))
+            Spacer(modifier = Modifier.height(NamoaTheme.spacing.large))
         }
     }
 }
@@ -499,7 +498,7 @@ fun ButtonFinishComponent(
             OutlinedButton(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .padding(end = ApplicationTheme.spacing.extraSmall)
+                    .padding(end = NamoaTheme.spacing.extraSmall)
                     .constrainAs(cancel) {
                         start.linkTo(parent.start)
                         end.linkTo(save.start)
@@ -507,7 +506,7 @@ fun ButtonFinishComponent(
                         bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
                     },
-                shape = RoundedCornerShape(ApplicationTheme.spacing.mediumLarge),
+                shape = RoundedCornerShape(NamoaTheme.spacing.mediumLarge),
                 onClick = onCancel
             ) {
                 Text(
@@ -518,7 +517,7 @@ fun ButtonFinishComponent(
 
             Button(
                 modifier = Modifier
-                    .padding(start = ApplicationTheme.spacing.extraSmall)
+                    .padding(start = NamoaTheme.spacing.extraSmall)
                     .fillMaxWidth()
                     .constrainAs(save) {
                         start.linkTo(cancel.end)
@@ -527,7 +526,7 @@ fun ButtonFinishComponent(
                         bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
                     },
-                shape = RoundedCornerShape(ApplicationTheme.spacing.mediumLarge),
+                shape = RoundedCornerShape(NamoaTheme.spacing.mediumLarge),
                 onClick = onDone,
                 enabled = isEnabled
             ) {

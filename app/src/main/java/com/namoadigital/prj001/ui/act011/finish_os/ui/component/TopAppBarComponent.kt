@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act011.finish_os.ui.component
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -11,7 +10,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.namoadigital.prj001.design.compose.ApplicationTheme
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,18 +26,18 @@ fun FinishAppBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "",
-                    tint = ApplicationTheme.colors.surface
+                    tint = NamoaTheme.colors.surface
                 )
             }
         },
         title = {
             Text(
                 text = title,
-                color = ApplicationTheme.colors.surface
+                color = NamoaTheme.colors.surface
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = ApplicationTheme.colors.primary
+            containerColor = NamoaTheme.colors.primary
         ),
     )
 }

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.sql
 
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.database.Specification
-import com.namoadigital.prj001.model.GeOsDeviceItem
 
 class GeOsDeviceItem_Sql_006 (
     private val customerCode: String,

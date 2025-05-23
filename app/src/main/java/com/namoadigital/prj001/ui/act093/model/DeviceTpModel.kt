@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.ui.act093.model
 
-import com.namoadigital.prj001.model.GeOsDeviceItem
-
 data class DeviceTpModel(
     val customer_code: Int = 0,
     val product_code: Int = 0,

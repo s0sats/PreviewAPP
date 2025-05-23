@@ -44,6 +44,12 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val CHANGE_ADJUST = "change_adjust"
         const val ORDER_SEQ = "order_seq"
         const val STRUCTURE = "structure"
+        const val ALREADY_OK_HIDE = "already_ok_hide"
+        const val REQUIRE_PHOTO_FIXED = "require_photo_fixed"
+        const val REQUIRE_PHOTO_ALERT = "require_photo_alert"
+        const val REQUIRE_PHOTO_ALREADY_OK = "require_photo_already_ok"
+        const val REQUIRE_PHOTO_NOT_VERIFIED = "require_photo_not_verified"
+        const val VG_CODE = "vg_code"
         const val MANUAL_DESC = "manual_desc"
         const val NEXT_CYCLE_MEASURE = "next_cycle_measure"
         const val NEXT_CYCLE_MEASURE_DATE = "next_cycle_measure_date"
@@ -53,6 +59,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val PARTITIONED_EXECUTION = "partitioned_execution"
         const val TICKET_PREFIX = "ticket_prefix"
         const val TICKET_CODE = "ticket_code"
+        const val VG_ACTION = "vg_action"
     }
 
     private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item>
@@ -488,6 +495,12 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
+                        already_ok_hide = getInt(getColumnIndex(ALREADY_OK_HIDE)),
+                        require_photo_fixed = getInt(getColumnIndex(REQUIRE_PHOTO_FIXED)),
+                        require_photo_alert = getInt(getColumnIndex(REQUIRE_PHOTO_ALERT)),
+                        require_photo_already_ok = getInt(getColumnIndex(REQUIRE_PHOTO_ALREADY_OK)),
+                        require_photo_not_verified = getInt(getColumnIndex(REQUIRE_PHOTO_NOT_VERIFIED)),
+                        vg_code = getIntOrNull(getColumnIndex(VG_CODE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getDoubleOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
                         next_cycle_measure_date = getStringOrNull(
@@ -501,6 +514,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION)),
                         ticket_prefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
                         ticket_code = getIntOrNull(getColumnIndex(TICKET_CODE)),
+                        vg_action = getInt(getColumnIndex(VG_ACTION)),
                     )
                 }
             }
@@ -554,6 +568,26 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     if(mdProductSerialTpDeviceItem.structure > -1){
                         put(STRUCTURE,mdProductSerialTpDeviceItem.structure)
                     }
+
+                    if(mdProductSerialTpDeviceItem.already_ok_hide > -1){
+                        put(ALREADY_OK_HIDE,mdProductSerialTpDeviceItem.already_ok_hide)
+                    }
+                    if(mdProductSerialTpDeviceItem.require_photo_fixed > -1){
+                        put(REQUIRE_PHOTO_FIXED,mdProductSerialTpDeviceItem.require_photo_fixed)
+                    }
+                    if(mdProductSerialTpDeviceItem.require_photo_alert > -1){
+                        put(REQUIRE_PHOTO_ALERT,mdProductSerialTpDeviceItem.require_photo_alert)
+                    }
+                    if(mdProductSerialTpDeviceItem.require_photo_already_ok > -1){
+                        put(REQUIRE_PHOTO_ALREADY_OK,mdProductSerialTpDeviceItem.require_photo_already_ok)
+                    }
+                    if(mdProductSerialTpDeviceItem.require_photo_not_verified > -1){
+                        put(REQUIRE_PHOTO_NOT_VERIFIED,mdProductSerialTpDeviceItem.require_photo_not_verified)
+                    }
+
+                    put(VG_CODE,mdProductSerialTpDeviceItem.vg_code)
+
+
                     put(MANUAL_DESC,mdProductSerialTpDeviceItem.manual_desc)
 
                     if(mdProductSerialTpDeviceItem.next_cycle_measure != null){
@@ -568,6 +602,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     put(PARTITIONED_EXECUTION, mdProductSerialTpDeviceItem.partitioned_execution)
                     put(TICKET_PREFIX, mdProductSerialTpDeviceItem.ticket_prefix)
                     put(TICKET_CODE, mdProductSerialTpDeviceItem.ticket_code)
+                    if(mdProductSerialTpDeviceItem.vg_action > -1){
+                        put(VG_ACTION,mdProductSerialTpDeviceItem.vg_action)
+                    }
                 }
             }
             //

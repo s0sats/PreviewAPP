@@ -4,7 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.namoadigital.prj001.design.compose.ApplicationTheme
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 
 
 @Composable
@@ -15,9 +15,9 @@ fun TitleSection(
     Text(
         modifier = modifier,
         text = text,
-        style = ApplicationTheme.typography.titleLarge.copy(
+        style = NamoaTheme.typography.titleLarge.copy(
             fontWeight = FontWeight.Bold
         ),
-        color = ApplicationTheme.colors.onSurface
+        color = NamoaTheme.colors.onSurface
     )
 }

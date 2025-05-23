@@ -10,8 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_manual_desc"
@@ -52,6 +51,8 @@
                     android:id="@+id/act086_verification_frg_mket_manual_desc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
                     android:maxLength="100"
                     android:textColor="@color/m3_namoa_onSurface"
                     app:mBARCODE="false"
@@ -83,8 +84,8 @@
                 android:paddingStart="8dp"
                 android:text="Ação realizada"
                 style="@style/NamoaFormOsRadioButton"
-                tools:drawableTint="@color/namoa_os_form_done_action_blue"
-                />
+                tools:drawableTint="@color/namoa_os_form_done_action_blue" />
+
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_already_done"
                 android:layout_width="match_parent"
@@ -166,7 +167,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_comment"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_supplementary_data_ttl"
-            tools:hint="Inserir comentario">
+            app:helperTextTextColor="@color/namoa_color_highlight_required_item"
+            tools:hint="Inserir comentario"
+            >
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act086_verification_frg_mket_comment"
@@ -315,6 +318,23 @@
                 android:textSize="@dimen/font_size_font_16"
                 />
 
+             <TextView
+                android:id="@+id/act086_verification_frg_tv_photo_required_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                tools:text="Obrigatorio"
+                android:visibility="gone"
+                android:textColor="@color/namoa_color_highlight_required_item"
+                app:layout_constraintStart_toStartOf="@+id/act086_verification_frg_tv_photo_ttl"
+                app:layout_constraintEnd_toEndOf="@+id/act086_verification_frg_tv_photo_ttl"
+                app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_tv_photo_ttl"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:enabled="false"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                />
+
 
             <ImageView
                 android:id="@+id/act086_verification_frg_iv_photo"
@@ -354,8 +374,7 @@
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_photo"
             app:spanCount="2"
             tools:itemCount="4"
-            tools:listitem="@layout/act086_photo_item"
-            />
+            tools:listitem="@layout/act086_photo_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_delete_infos"
@@ -408,7 +427,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_delete_infos"
-            app:layout_constraintWidth_percent="0.5"/>
+            app:layout_constraintWidth_percent="0.5" />
 
         <TextView
             android:id="@+id/act086_verification_frg_tv_require_fields"

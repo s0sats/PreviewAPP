@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 
 interface Act087MainContract {
@@ -40,6 +43,7 @@ interface Act087MainContract {
         fun getProductInfo(productCode: Int): MD_Product?
         fun getMeasure(measureCode: Int): MeMeasureTp?
         fun createOsHeader(formOsHeader: GeOs)
+        fun checkNavigationSave(formOsHeader: GeOs)
         fun executeWsBkpMachine(bkpSerialId: String)
         fun processWsBkpMachineResult(mLink: String?)
         fun onBackPressedClicked(anyDataChanged: Boolean)

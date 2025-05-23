@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.util;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_CANCELLED;
-import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_NOT_EXECUTED;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PENDING;
 import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
 import static com.namoadigital.prj001.service.SV_LocationTracker.LOCATION_BACKGROUND;
@@ -147,6 +145,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.DoubleHelperKt;
 import com.namoadigital.prj001.extensions.EvUserCustomerKt;
 import com.namoadigital.prj001.extensions.ExceptionHelperKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
@@ -173,6 +172,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MdTag;
+import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
@@ -9699,6 +9699,19 @@ public class ToolBox_Inf {
         }
         //
         return convertedValue;
+    }
+
+    public static double getMeasureValueRounded(Double lastMeasure, MeMeasureTp meMeasureTp) {
+
+        int restrictionDecimal = ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT;
+        //
+        if (meMeasureTp != null
+                && meMeasureTp.getRestrictionDecimal() != null) {
+            restrictionDecimal = meMeasureTp.getRestrictionDecimal();
+        }
+        //
+        return DoubleHelperKt.roundByRestrictionMeasure(lastMeasure, restrictionDecimal);
+
     }
 
     /**

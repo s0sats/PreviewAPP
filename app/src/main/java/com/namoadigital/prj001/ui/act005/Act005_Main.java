@@ -278,6 +278,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private AppUpdateManager appUpdateManager;
     private Fragment fragmentNav;
     private GpsStateReceiver gpsStateReceiver;
+    private int structurePendencyAmount=0;
 
     private void routineCleaning() {
         CheckRoutineCleaningUseCase routineCleaningUseCase = new CheckRoutineCleaningUseCase(
@@ -2217,21 +2218,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             mPresenter.executeApSave(); // 3
         } else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
-            progressDialog.dismiss();
-            setWsSoProcess("");
-            setWsProcess("");
-            //
-            if (mPresenter.hasSoSyncRequiredCloudRule()) {
-                mPresenter.executeWSSoSync();
-            } else if (mPresenter.hasTicketSyncRequired()) {
-                mPresenter.executeWSTicketDownload();
-            } else if (mPresenter.hasTripSyncRequired()) {
-                mPresenter.executeTripDownload();
+            if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
             } else {
-                if (masterDataSyncFlow) {
-                    mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                progressDialog.dismiss();
+                setWsSoProcess("");
+                setWsProcess("");
+                if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                    mPresenter.executeWSSoSync();
+                } else if (mPresenter.hasTicketSyncRequired()) {
+                    mPresenter.executeWSTicketDownload();
+                } else if (mPresenter.hasTripSyncRequired()) {
+                    mPresenter.executeTripDownload();
                 } else {
-                    refreshUiData();
+                    if (masterDataSyncFlow) {
+                        mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                    } else {
+                        refreshUiData();
+                    }
                 }
             }
 
@@ -2613,7 +2617,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 },
                 () -> {
                     if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
-                        mPresenter.executeSerialStructureUpdate();
+                        mPresenter.executeSerialStructureUpdate(true);
                     } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                         mPresenter.executeWSSoSync();
                     } else if (mPresenter.hasTicketSyncRequired()) {
@@ -2927,7 +2931,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
                 //
                 if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
-                    mPresenter.executeSerialStructureUpdate();
+                    mPresenter.executeSerialStructureUpdate(true);
                 } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                     mPresenter.executeWSSoSync();
                 } else if (mPresenter.hasTicketSyncRequired()) {
@@ -3315,7 +3319,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 executeSync();
                             } else {
                                 if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                                    mPresenter.executeSerialStructureUpdate();
+                                    mPresenter.executeSerialStructureUpdate(true);
                                 } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                                     mPresenter.executeWSSoSync();
                                 } else if (mPresenter.hasTicketSyncRequired()) {
@@ -3381,7 +3385,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
         boolean hasTripSyncRequired = mPresenter.hasTripSyncRequired();
-
+        structurePendencyAmount = mPresenter.serialStructureSyncRequiredTotal();
         return (hasTripSyncRequired ||
                 hasTicketSyncRequiredCloudRule ||
                 hasSoSyncRequiredCloudRule ||
@@ -3490,7 +3494,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
                                 if (hasSerialStructureSyncRequiredCloudRule) {
-                                    mPresenter.executeSerialStructureUpdate();
+                                    mPresenter.executeSerialStructureUpdate(true);
                                 } else if (hasSoSyncRequiredCloudRule) {
                                     mPresenter.executeWSSoSync();
                                 } else if (hasTicketSyncRequired) {
@@ -3543,7 +3547,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         hasSerialStructureSyncRequiredCloudRule
                 )) {
             if (hasSerialStructureSyncRequiredCloudRule) {
-                mPresenter.executeSerialStructureUpdate();
+                mPresenter.executeSerialStructureUpdate(true);
             } else if (hasSoSyncRequiredCloudRule) {
                 mPresenter.executeWSSoSync();
             } else if (hasTicketSyncRequired) {

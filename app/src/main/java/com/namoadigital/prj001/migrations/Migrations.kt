@@ -2,6 +2,7 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.namoadigital.prj001.core.database.CollationType
 import com.namoadigital.prj001.core.database.ColumnType
 import com.namoadigital.prj001.core.database.DatabaseTable
 import com.namoadigital.prj001.core.database.addMissingColumns
@@ -21,6 +22,8 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.MdItemCheckDao
+import com.namoadigital.prj001.dao.MdOrderTypeDao
 import com.namoadigital.prj001.dao.MeMeasureTpDao
 import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
@@ -40,7 +43,15 @@ import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_CREATE_SCRIP
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
-import com.namoadigital.prj001.database.scripts.multi.masterdata.CREATE_REGION_TABLE
+import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScript
+import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.VGProductSerialScript
+import com.namoadigital.prj001.database.scripts.multi.masterdata.MD_REGION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.masterdata.mdVerificationGroupDatabaseTable
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_FORCED
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2) {
@@ -771,7 +782,7 @@ val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
 val MigrationV12 = object : MigrationSQLite(12, 13) {
     override fun migrate(db: SQLiteDatabase) {
         //Table Region
-        db.execSQL(CREATE_REGION_TABLE)
+        db.execSQL(MD_REGION_CREATE_SCRIPT)
 
         listOf(
             MD_SiteDao.COUNTRY_CODE,
@@ -1099,6 +1110,226 @@ val migrationV19 = object : MigrationSQLite(19, 20) {
         db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE [${MD_Product_SerialDao.HAS_ITEM_CHECK}]  = 1;""".trimIndent())
     }
 }
+
+val migrationV20 = object : MigrationSQLite(20, 21) {
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        db.execSQL(VGProductSerialScript)
+        //
+        db.execSQL(GEOsVgScript)
+        //
+        db.addMissingColumns(
+            tableName = MdOrderTypeDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = MdOrderTypeDao.FORCE_EXE_EXPIRED_VG,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.execSQL(mdVerificationGroupDatabaseTable)
+        //
+        db.addMissingColumns(
+            tableName = MdItemCheckDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = MdItemCheckDao.ITEM_CHECK_DESC_ALT_VG,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GeOsDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = GeOsDao.FORCE_EXE_EXPIRED_VG,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.ALREADY_OK_HIDE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_FIXED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_ALERT,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_ALREADY_OK,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_NOT_VERIFIED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.VG_CODE,
+                    type = ColumnType.INT,
+                    isNullable = true
+                ),
+                DatabaseTable.Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.VG_ACTION,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+            )
+        )
+        //
+        migrateGeOsDeviceItemTable(db)
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${GeOsDeviceItemDao.TABLE} 
+            SET ${GeOsDeviceItemDao.COLOR_ITEM}  = '${GeOsDeviceItemStatusColor.RED}',
+                ${GeOsDeviceItemDao.IS_VISIBLE}  = 1
+            WHERE ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} =  '${ITEM_CHECK_STATUS_MANUAL_ALERT}'
+        """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${GeOsDeviceItemDao.TABLE} 
+            SET ${GeOsDeviceItemDao.COLOR_ITEM}  = '${GeOsDeviceItemStatusColor.YELLOW}',
+                ${GeOsDeviceItemDao.IS_VISIBLE}  = 1
+            WHERE ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} not in  ('${ITEM_CHECK_STATUS_MANUAL_ALERT}','${ITEM_CHECK_STATUS_NORMAL}','${ITEM_CHECK_STATUS_FORCED}','${ITEM_CHECK_STATUS_MANUAL}') 
+              AND ${GeOsDeviceItemDao.CRITICAL_ITEM} = 1  
+        """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${GeOsDeviceItemDao.TABLE} 
+            SET ${GeOsDeviceItemDao.COLOR_ITEM}  = '${GeOsDeviceItemStatusColor.BLUE}',
+                ${GeOsDeviceItemDao.IS_VISIBLE}  = 1
+            WHERE ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} not in  ('${ITEM_CHECK_STATUS_MANUAL_ALERT}','${ITEM_CHECK_STATUS_NORMAL}','${ITEM_CHECK_STATUS_MANUAL}') 
+              AND (${GeOsDeviceItemDao.CRITICAL_ITEM} = 0 
+                    OR ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} = "${ITEM_CHECK_STATUS_FORCED}"
+                  )              
+            
+        """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${GeOsDeviceItemDao.TABLE} 
+            SET ${GeOsDeviceItemDao.IS_VISIBLE}  = 1
+            WHERE ${GeOsDeviceItemDao.PARTITIONED_EXECUTION} = 1   
+                OR ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} =  '${ITEM_CHECK_STATUS_MANUAL}'
+        """.trimIndent()
+        )
+        //
+        db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE [${MD_Product_SerialDao.HAS_ITEM_CHECK}]  = 1;""".trimIndent())
+    }
+
+    private fun migrateGeOsDeviceItemTable(db:SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = GeOsDeviceItemDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.ITEM_CHECK_DESC_ALT_VG,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.ALREADY_OK_HIDE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.REQUIRE_PHOTO_FIXED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.REQUIRE_PHOTO_ALERT,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.REQUIRE_PHOTO_ALREADY_OK,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.REQUIRE_PHOTO_NOT_VERIFIED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.VG_CODE,
+                    type = ColumnType.INT,
+                    isNullable = true
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.VG_ACTION,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.IS_VISIBLE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.COLOR_ITEM,
+                    type = ColumnType.TEXT,
+                    isNullable = false,
+                    collation = CollationType.NOCASE,
+                    defaultValue = GeOsDeviceItemStatusColor.GRAY.toString(),
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.STATUS_MODIFICATION_TYPE,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                ),
+                DatabaseTable.Column(
+                    name = GeOsDeviceItemDao.AUTOMATIC_SELECTION_STATE,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                ),
+            )
+        )
+    }
+}
+
 
 
 @Deprecated(message = "Use a função com objeto Column")

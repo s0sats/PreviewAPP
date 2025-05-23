@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.ui.act087
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
 import com.namoadigital.prj001.model.MeMeasureTp

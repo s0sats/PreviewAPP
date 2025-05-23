@@ -68,6 +68,7 @@ import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
 import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
 import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
 import com.namoadigital.prj001.dao.md.MDRegionDao;
+import com.namoadigital.prj001.dao.md.MDVerificationGroupDao;
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.dao.trip.FSTripEventDao;
@@ -93,6 +94,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Product;
 import com.namoadigital.prj001.model.GE_Custom_Form_Site;
 import com.namoadigital.prj001.model.GE_Custom_Form_Type;
 import com.namoadigital.prj001.model.IO_Move_Reason;
+import com.namoadigital.prj001.model.MDVerificationGroup;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_All_Product_Group;
 import com.namoadigital.prj001.model.MD_All_Product_Group_Product;
@@ -145,6 +147,7 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
+import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg;
 import com.namoadigital.prj001.model.region.MDRegion;
 import com.namoadigital.prj001.model.trip.FSEventType;
 import com.namoadigital.prj001.model.trip.FSTrip;
@@ -709,7 +712,7 @@ public class WS_Sync extends BaseWsIntentService {
             FSEventTypeDao fsEventTypeDao = new FSEventTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             FsTripPositionDao fsTripPositionDao = new FsTripPositionDao(getApplicationContext());
             MDRegionDao mdRegionDao = new MDRegionDao(getApplicationContext());
-
+            MDVerificationGroupDao mdVerificationGroupdao = new MDVerificationGroupDao(getApplicationContext());
 
             //
             //Apaga dados das tabelas
@@ -750,7 +753,7 @@ public class WS_Sync extends BaseWsIntentService {
 
             fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
             mdRegionDao.remove(RegionScriptKt.REMOVE_TABLE);
-
+            mdVerificationGroupdao.deleteAll();
             //
             // Processamento Operation
             //
@@ -963,6 +966,19 @@ public class WS_Sync extends BaseWsIntentService {
 
                 productGroupDao.addUpdate(productGroups, false);
             }
+
+            File[] md_verification_group = ToolBox_Inf.getListOfFiles_v2("md_verification_group-");
+            for (File _file : md_verification_group) {
+                ArrayList<MDVerificationGroup> mdVerificationGroup = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MDVerificationGroup>>() {
+                        }.getType()
+                );
+                mdVerificationGroupdao.addUpdate(mdVerificationGroup, false);
+            }
+
             //Libera pro GB
             files_product_group = null;
             //
@@ -1009,11 +1025,13 @@ public class WS_Sync extends BaseWsIntentService {
             File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
             File[] files_serial_tp_device_item_material = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_material-");
             File[] files_serial_tp_device_item_hist_mat = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist_mat-");
+            File[] md_product_serial_vg = ToolBox_Inf.getListOfFiles_v2("md_product_serial_vg-");
             ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials = new ArrayList<>();
             ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials = new ArrayList<>();
+            ArrayList<MDProductSerialVg> mdProductSerialVG = new ArrayList<>();
             /**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
              */
@@ -1086,6 +1104,18 @@ public class WS_Sync extends BaseWsIntentService {
 
             }
 
+            for (File _file : md_product_serial_vg) {
+                mdProductSerialVG.addAll(
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MDProductSerialVg>>() {
+                                }.getType()
+                        )
+                );
+            }
+
             for (File _file : files_serial) {
                 ArrayList<MD_Product_Serial> serialList = gson.fromJson(
                         ToolBox.jsonFromOracle(
@@ -1109,9 +1139,11 @@ public class WS_Sync extends BaseWsIntentService {
                         serialTpDeviceItems,
                         serialTpDeviceItemHists,
                         serialTpDeviceItemMaterials,
-                        serialTpDeviceItemHistMaterials
+                        serialTpDeviceItemHistMaterials,
+                        mdProductSerialVG
                 );
             }
+
             //Libera pro GB
             files_serial = null;
             files_serial_tp_device = null;
@@ -1119,6 +1151,7 @@ public class WS_Sync extends BaseWsIntentService {
             files_serial_tp_device_item_hist = null;
             files_serial_tp_device_item_material = null;
             files_serial_tp_device_item_hist_mat = null;
+            md_product_serial_vg = null;
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,

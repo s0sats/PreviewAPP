@@ -16,8 +16,8 @@ import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
 import com.namoadigital.prj001.databinding.Act090MainBinding
 import com.namoadigital.prj001.databinding.Act090MainContentBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant

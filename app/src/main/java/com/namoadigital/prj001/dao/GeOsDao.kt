@@ -11,7 +11,12 @@ import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
@@ -42,6 +47,7 @@ class GeOsDao(
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
+        const val FORCE_EXE_EXPIRED_VG = "force_exe_expired_vg"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
         const val BACKUP_PRODUCT_ID = "backup_product_id"
         const val BACKUP_PRODUCT_DESC = "backup_product_desc"
@@ -326,6 +332,7 @@ class GeOsDao(
                         process_type = getString(getColumnIndex(PROCESS_TYPE)),
                         display_option = getString(getColumnIndex(DISPLAY_OPTION)),
                         item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
+                        force_exe_expired_vg = getInt(getColumnIndex(FORCE_EXE_EXPIRED_VG)),
                         backup_product_code = getIntOrNull(getColumnIndex(BACKUP_PRODUCT_CODE)),
                         backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
                         backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
@@ -417,6 +424,7 @@ class GeOsDao(
                     put(DISPLAY_OPTION, it.display_option)
                     //
                     put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
+                    put(FORCE_EXE_EXPIRED_VG, it.force_exe_expired_vg)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)
@@ -555,6 +563,7 @@ class GeOsDao(
                 mdSerial.serial_code.toInt()
             ).toSqlQuery()
         )
+        //
         try {
             //Chama fun que fará a primeira e segunda varredura.
             checkScan(geOs, geOsDeviceItens, isContinuousForm)
@@ -589,6 +598,7 @@ class GeOsDao(
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
+
             db.setTransactionSuccessful()
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -618,6 +628,132 @@ class GeOsDao(
         return daoObjReturn
     }
 
+    fun saveGeOsSctructure(
+        geOs: GeOs,
+        mdSerial: MD_Product_Serial,
+        geOsDeviceItens: List<GeOsDeviceItem>,
+        geOsVgs: List<GeOsVg>,
+    ): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        var curAction = DaoObjReturn.INSERT_OR_UPDATE
+        //
+        val geOsDeviceDao = GeOsDeviceDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemDao = GeOsDeviceItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsDeviceItemMaterialDao = GeOsDeviceMaterialDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val geOsVgDao = GeOsVgDao(context)
+        //
+        val geOsDevices = geOsDeviceDao.query(
+            GeOsDeviceCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+
+        val geOsDeviceItemHist = geOsDeviceItemHistDao.query(
+            GeOsDeviceItemHistCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+        //
+        val geOsDeviceMaterial = geOsDeviceItemMaterialDao.query(
+            GeOsDeviceItemMaterialCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+        //
+
+        openDB()
+        try {
+            db.beginTransaction()
+            daoObjReturn = addUpdate(geOs)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceDao.addUpdate(geOsDevices, false, db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceItemDao.addUpdate(geOsDeviceItens as MutableList<GeOsDeviceItem>?, false, db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist, false, db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterial, false, db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsVgDao.addUpdate(geOsVgs as MutableList<GeOsVg>?, false, db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            db.endTransaction()
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        closeDB()
+        return daoObjReturn
+
+    }
+
     @Throws(java.lang.Exception::class)
     private fun checkScan(
         geOs: GeOs,
@@ -643,14 +779,9 @@ class GeOsDao(
         //Testa qual valor deve ser usado, measure_value ou measure_cycle_value(measure cycle só existe
         //se for preventiva). Modificar no futuro?! replicar o measure_value no measure_cycle_value
         // quando não for PREVENTIVE ?!
-        val measureConsider: Float =
-            if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!!.compareTo(-1f) > 0) {
-                geOs.measure_cycle_value!!
-            } else {
-                0f
-            }
+        val measureConsider: Float = getMeasureConsider(geOs)
         //Seta data inseriada pelo usr com 23:59:59.
-        var dateStartLastMinute: String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
+        var dateStartLastMinute: String? = getDateConsider(geOs)
         //
         geOsDeviceItens.forEach { item ->
             item.hide_days_in_alert = 0
@@ -787,6 +918,16 @@ class GeOsDao(
         }
     }
 
+    private fun getDateConsider(geOs: GeOs): String? =
+        ToolBox_Inf.getDateLastMinute(geOs.date_start)
+
+    private fun getMeasureConsider(geOs: GeOs) =
+        if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!!.compareTo(-1f) > 0) {
+            geOs.measure_cycle_value!!
+        } else {
+            0f
+        }
+
     /**
      * Fun que utiliza a propriedade DISPLAY_OPTION da MdOrderType selecionada para aplicar a visibilidade
      * no itens
@@ -875,6 +1016,7 @@ class GeOsDao(
             addUpdateRet += db.delete(GeOsDeviceItemDao.TABLE, wherePkClause, null)
             addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE, wherePkClause, null)
             addUpdateRet += db.delete(GeOsDeviceItemHistDao.TABLE, wherePkClause, null)
+            addUpdateRet += db.delete(GeOsVgDao.TABLE_NAME, wherePkClause, null)
             //
             db.setTransactionSuccessful()
         } catch (e: SQLiteException) {

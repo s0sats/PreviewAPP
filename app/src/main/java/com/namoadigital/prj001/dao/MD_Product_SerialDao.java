@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.md.MDProductSerialVGDao;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
+import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
@@ -143,7 +145,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
-            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE,HORIMETER, HORIMETER_DATE, HORIMETER_SUPPLIER_UID, HORIMETER_SUPPLIER_DESC, MEASURE_BLOCK_INPUT_TIME,
+            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE, HORIMETER, HORIMETER_DATE, HORIMETER_SUPPLIER_UID, HORIMETER_SUPPLIER_DESC, MEASURE_BLOCK_INPUT_TIME,
             MEASURE_ALERT_INPUT_TIME, UNAVAILABILITY_REASON_OPTION
     };
 
@@ -687,7 +689,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param serialTpDeviceItemHistMaterials
      * @return
      */
-    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
+    public boolean processSerialSync(
+            Iterable<MD_Product_Serial> md_product_serials,
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices,
+            ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems,
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists,
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials,
+            ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials,
+            ArrayList<MDProductSerialVg> mdProductSerialVgs
+    ) {
         boolean processReturn = false;
 
         Log.d("SerialTransaction", "processSerialSync - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -713,14 +723,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                     //
                     this.addUpdate(md_product_serial, db);
                     //LUCHE - 10/11/2021 - Tratativa para seriais com estrutura
-                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, md_product_serial, dbSerial, serialTpDeviceItemHistMaterials);
+                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, md_product_serial, dbSerial, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
                 } else {
                     md_product_serial.setSync_process(1);
                     //
                     this.addUpdateTmp(md_product_serial, db);
                     //Se é um novo serial e tem estrutura, insere.
                     if (md_product_serial.getHas_item_check() == 1) {
-                        tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials);
+                        tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
                     }
                 }
 
@@ -759,15 +769,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param md_product_serial
      * @param dbSerial
      * @param serialTpDeviceItemHistMaterials
+     * @param mdProductSerialVgs
      */
-    private void handleLocalSerialStructureChanges(ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, MD_Product_Serial md_product_serial, MD_Product_Serial dbSerial, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
+    private void handleLocalSerialStructureChanges(ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, MD_Product_Serial md_product_serial, MD_Product_Serial dbSerial, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials, ArrayList<MDProductSerialVg> mdProductSerialVgs) {
         //Verifica se serial vindo do servidor possui estrutura
         if (md_product_serial.getHas_item_check() == 1) {
             //Se serial do servidor tem estrutura, verifica se a estrutura local não existe ou tem scn_item_check diferente. Nesses casos, insere aestrutura recebida,
             if (md_product_serial.getScn_item_check() != null
                     && (dbSerial.getHas_item_check() == 0 || dbSerial.getScn_item_check() == null || !dbSerial.getScn_item_check().equals(md_product_serial.getScn_item_check()))) {
                 removeFullStructure(md_product_serial);
-                tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials);
+                tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
             }
         } else {
             //Se serial vindo do servidor não possi estrutura, verifica se o local tem.
@@ -789,7 +800,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param serialTpDeviceItemMaterials
      * @param serialTpDeviceItemHistMaterials
      */
-    private void tryAddUpdateStructure(MD_Product_Serial md_product_serial, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
+    private void tryAddUpdateStructure(
+            MD_Product_Serial md_product_serial,
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices,
+            ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems,
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists,
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials,
+            ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials,
+            ArrayList<MDProductSerialVg> mdProductSerialVgs
+    ) {
         getSerialTpDeviceDao().addUpdate(
                 MD_Product_Serial_Tp_Device.getSerialDeviceTpFromList(
                         md_product_serial,
@@ -835,6 +854,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 db
         );
 
+        getMdProductSerialVGDao().addUpdate(
+                MDProductSerialVg.getSerialVGFromList(
+                        md_product_serial,
+                        mdProductSerialVgs
+                ),
+                false,
+                db
+        );
+
     }
 
     private MD_Product_Serial_Tp_DeviceDao getSerialTpDeviceDao() {
@@ -867,6 +895,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     private MdProductSerialTpDeviceItemHistMatDao getSerialTpDeviceItemHistMaterialDao() {
         return new MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build();
+    }
+
+    private MDProductSerialVGDao getMdProductSerialVGDao() {
+        return MDProductSerialVGDao.Companion.instance(context);
     }
 
     public boolean processSerialConsiliation() {
@@ -1249,11 +1281,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             long productCode,
             String serialId
     ) {
-         return query(new MD_Product_Serial_Sql_016(
-                 customerCode,
-                 productCode,
-                 serialId
-         ).toSqlQuery());
+        return query(new MD_Product_Serial_Sql_016(
+                customerCode,
+                productCode,
+                serialId
+        ).toSqlQuery());
     }
 
 
@@ -1710,7 +1742,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(HORIMETER_SUPPLIER_DESC, md_product_serial.getHorimeter_supplier_desc());
             contentValues.put(MEASURE_BLOCK_INPUT_TIME, md_product_serial.getMeasure_block_input_time());
             contentValues.put(MEASURE_ALERT_INPUT_TIME, md_product_serial.getMeasure_alert_input_time());
-            if(md_product_serial.getUnavailability_reason_option() > -1) {
+            if (md_product_serial.getUnavailability_reason_option() > -1) {
                 contentValues.put(UNAVAILABILITY_REASON_OPTION, md_product_serial.getUnavailability_reason_option());
             }
 

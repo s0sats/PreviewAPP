@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.database;
 
+import static com.namoadigital.prj001.database.scripts.multi.GeOsDeviceItemScriptKt.GE_OS_DEVICE_ITEM_CREATE_TABLE;
+import static com.namoadigital.prj001.database.scripts.multi.masterdata.MDProductSerialTpDeviceItemScriptKt.MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_CREATE_SCRIPT;
+import static com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.ProductScriptKt.PRODUCT_CREATE_SCRIPT;
+import static com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.ProductSerialScriptKt.PRODUCT_SERIAL_CREATE_SCRIPT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 
@@ -16,10 +20,13 @@ import com.namoadigital.prj001.database.scripts.multi.SmSoScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormFieldsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormLocalFieldsKt;
-import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductScriptKt;
-import com.namoadigital.prj001.database.scripts.multi.masterdata.ProductSerialScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.MDItemCheckScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.OrderTypeScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.VerificationGroupKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.MDProductSerialVGScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.ticket.TkCreateScriptsKt;
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.Constant;
@@ -71,13 +78,13 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [ge_custom_form_sites]([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [site_code] int not null, constraint pk_ge_custom_form_sites primary key([customer_code], [custom_form_type], [custom_form_code], [custom_form_version], [site_code]));");
             script.append("create table if not exists [ge_files]([file_code] text not null DEFAULT '' COLLATE NOCASE, [file_path] text not null DEFAULT '' COLLATE NOCASE,[file_path_new] text collate nocase, [file_status] text not null DEFAULT '' COLLATE NOCASE, [file_date] text not null DEFAULT '' COLLATE NOCASE, primary key(file_code));");
 
-            script.append(ProductScriptKt.CREATE_PRODUCT_SCRIPT);
+            script.append(PRODUCT_CREATE_SCRIPT);
             script.append("create table if not exists [md_product_groups]( [customer_code] int not null,  [group_code] int not null, [recursive_code] int not null, [recursive_code_father] int, [group_id] text not null DEFAULT '' COLLATE NOCASE,  [group_desc] text not null DEFAULT '' COLLATE NOCASE, [spare_part] int not null default 0,  constraint pk_md_product_groups primary key(customer_code, group_code));");
             script.append("create table if not exists [md_product_group_products]( [customer_code] int not null,  [group_code] int not null, [product_code] int not null,  constraint pk_md_product_group_products primary key(customer_code, group_code,product_code));");
-            script.append(ProductSerialScriptKt.CREATE_PRODUCT_SERIAL_TABLE);
+            script.append(PRODUCT_SERIAL_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_trackings]([customer_code] int not null,[product_code] int not null,[serial_code] int not null,[serial_tmp] int not null,[tracking] text not null COLLATE NOCASE,constraint [pk_md_product_serial_trackings] primary key([customer_code],[product_code],[serial_tmp],[tracking]));");
             script.append("create table if not exists [md_operations] ([customer_code] int not null, [operation_code] int not null, [operation_id] text not null DEFAULT '' COLLATE NOCASE, [operation_desc] text not null DEFAULT '' COLLATE NOCASE, [alias_service_oper] int not null, [alias_service_com] int not null, constraint pk_md_operations primary key(customer_code, operation_code));");
-            script.append(SiteScriptKt.CREATE_SITE_TABLE);
+            script.append(SiteScriptKt.MD_SITE_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [md_site_zones]([customer_code] int not null,[site_code] int not null,[zone_code] int not null,[zone_id] text not null collate nocase,[zone_desc] text not null collate nocase,[blocked] int not null  default 0,[process_seq] int,constraint [pk_md_site_zones] primary key([customer_code],[site_code],[zone_code]));");
             script.append("CREATE TABLE IF NOT EXISTS [md_site_zone_locals]([customer_code] int not null,[site_code] int not null,[zone_code] int not null,[local_code] int not null,[local_id] text not null collate nocase,[capacity] int not null,constraint [pk_md_site_zone_locals] primary key([customer_code],[site_code],[zone_code],[local_code]));");
             script.append("create table if not exists [sync_checklist]([customer_code] int not null, [product_code] int not null, [last_update] text not null , CONSTRAINT [pk_sync_checklist] primary key([customer_code], [product_code]));");
@@ -159,16 +166,16 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             //Projeto OS no N-Form.
             script.append("CREATE TABLE IF NOT EXISTS [me_measure_tp] ([customer_code] int not null, [measure_tp_code] int not null,[measure_tp_id] text not null collate nocase,[measure_tp_desc] text not null collate nocase,[value_sufix] text collate nocase, [restriction_type] text collate nocase, [restriction_min] real,[restriction_max] real, [restriction_decimal] int,[value_cycle_size] real,[cycle_tolerance] int, [without_measure] int not null DEFAULT 0,  constraint [pk_me_measure_tp] primary key(customer_code,measure_tp_code));");
             script.append("CREATE TABLE IF NOT EXISTS [md_device_tp] ([customer_code] int not null, [device_tp_code] int not null,[device_tp_id] text not null collate nocase,[device_tp_desc] text not null collate nocase,  constraint [pk_md_device_tp] primary key(customer_code,device_tp_code));");
-            script.append("CREATE TABLE IF NOT EXISTS [md_item_check] ([customer_code] int not null, [item_check_code] int not null,[item_check_id] text not null collate nocase,[item_check_desc] text not null collate nocase, [item_check_group_code] int,  constraint [pk_md_item_check] primary key(customer_code,item_check_code));");
-            script.append("CREATE TABLE IF NOT EXISTS [md_order_type] ([customer_code] int not null, [order_type_code] int not null,[order_type_id] text not null collate nocase,[order_type_desc] text not null collate nocase,[process_type] text not null collate nocase,[display_option] text not null collate nocase, [item_check_group_code] int,  constraint [pk_md_order_type] primary key(customer_code,order_type_code));");
+            script.append(MDItemCheckScriptKt.ITEM_CHECK_CREATE_SCRIPT);
+            script.append(OrderTypeScriptKt.ORDER_TYPE_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device] ([customer_code] int not null,[product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [order_seq] int not null, [tracking_number] text collate nocase, [show_empty] int not null, constraint [pk_md_product_serial_tp_device] primary key(customer_code,product_code,serial_code,device_tp_code));");
-            script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null,[item_check_code] int not null, [item_check_seq] int not null, [apply_material] text not null collate nocase, [verification_instruction] text collate nocase, [require_justify_problem] int not null default 0, [critical_item] int not null default 0, [change_adjust] int not null default 0, [order_seq] int not null, [structure] int not null, [manual_desc] text collate nocase, [next_cycle_measure] real, [next_cycle_measure_date] text collate nocase, [next_cycle_limit_date] text collate nocase, [item_check_status] text not null collate nocase, [target_date]  text collate nocase, [partitioned_execution] int not null default 0,[ticket_prefix] int, [ticket_code] int, constraint [pk_md_product_serial_tp_device_item] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq));");
+            script.append(MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item_hist]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [seq] int not null, [exec_type] text not null collate nocase, [exec_value] real not null, [exec_date] text not null collate nocase, [exec_comment] text collate nocase, [exec_material] int not null, [change_adjust] int not null default 0, [exec_photo1] text collate nocase, [exec_photo2] text collate nocase, [exec_photo3] text collate nocase, [exec_photo4] text collate nocase, constraint [pk_md_product_serial_tp_device_item_hist] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,seq));");
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item_material]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [material_code] int not null, [qty] real not null, [origin] text, constraint [pk_md_product_serial_tp_device_item_material] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,material_code));");
             //Projeto OS no N-Form. TAbelas de Resposta
             script.append(GeOsScriptKt.GE_OS_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device] ([customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [device_tp_id] text not null default '' collate nocase, [device_tp_desc] text not null default '' collate nocase, [order_seq] int not null, [tracking_number] text collate nocase,  [show_empty] int not null, constraint [pk_ge_os_device] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code));");
-            script.append("CREATE TABLE IF NOT EXISTS [ge_os_device_item]( [customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [item_check_id] text not null collate nocase, [item_check_desc] text not null collate nocase,[item_check_group_code] int, [apply_material] text not null collate nocase, [verification_instruction] text collate nocase, [require_justify_problem] int not null default 0, [critical_item] int not null default 0, [change_adjust] int not null default 0, [order_seq] int not null, [structure] int not null, [manual_desc] text collate nocase, [next_cycle_measure] real, [next_cycle_measure_date] text collate nocase, [next_cycle_limit_date] text collate nocase,  [value_sufix] text collate nocase, [restriction_decimal] int, [item_check_status] text not null collate nocase, [target_date] text collate nocase, [exec_type] text collate nocase, [exec_date] text collate nocase, [exec_comment] text collate nocase, [exec_photo1] text collate nocase, [exec_photo2] text collate nocase, [exec_photo3] text collate nocase, [exec_photo4] text collate nocase, [status_answer] text collate nocase, [has_expired_cycle] int not null, [hide_days_in_alert] int not null default 0, [partitioned_execution] int not null default 0, [ticket_prefix] int, [ticket_code] int, constraint [pk_ge_os_device_item] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code,item_check_code,item_check_seq));");
+            script.append(GE_OS_DEVICE_ITEM_CREATE_TABLE);
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device_item_material]( [customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [material_code] int not null, [material_id] text not null collate nocase, [material_desc] text not null collate nocase, [material_qty] real not null, [material_unit] text collate nocase, [creation_ms] int not null, [material_planned] int not null default 0, [material_planned_used] int not null default 0, [material_planned_qty] real, [origin] text , constraint [pk_ge_os_device_item_material] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,material_code));");
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device_item_hist]( [customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [seq] int not null, [exec_type] text not null collate nocase, [exec_value] real not null, [exec_date] text not null collate nocase, [exec_comment] text collate nocase, [exec_material] int not null, [change_adjust] int not null default 0, constraint [pk_ge_os_device_item_hist] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,seq));");
             //
@@ -214,7 +221,10 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append(FSCreateScriptKt.FS_TRIP_POSITION_CREATE_SCRIPT);
             script.append(FSCreateScriptKt.FS_TRIP_DESTINATION_CREATE_SCRIPT);
             script.append(FSCreateScriptKt.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT);
-            script.append(RegionScriptKt.CREATE_REGION_TABLE);
+            script.append(RegionScriptKt.MD_REGION_CREATE_SCRIPT);
+            script.append(VerificationGroupKt.getMdVerificationGroupDatabaseTable());
+            script.append(MDProductSerialVGScriptKt.getVGProductSerialScript());
+            script.append(GEOsVgScriptKt.getGEOsVgScript());
             //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
@@ -279,6 +289,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV18().migrate(db);
                 case 19:
                     MigrationsKt.getMigrationV19().migrate(db);
+                case 20:
+                    MigrationsKt.getMigrationV20().migrate(db);
                     break;
             }
 

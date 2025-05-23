@@ -32,6 +32,8 @@ public interface Act005_Main_Presenter {
 
     boolean hasTicketSyncRequired();
 
+    int serialStructureSyncRequiredTotal();
+
     void getMenuItensV2(HMAux hmAux_Trans);
 
     void executeSyncProcess(int jump_validation_UR);
@@ -158,7 +160,9 @@ public interface Act005_Main_Presenter {
 
     void deleteSerialSiteInventoryFile();
 
-    void executeSerialStructureUpdate();
+    void executeSerialStructureUpdate(boolean showPD);
+
+    void executeSerialStructureUpdate(boolean showPD, Integer total);
 
     boolean hasSerialStructureSyncRequiredCloudRule();
 

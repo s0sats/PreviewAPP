@@ -2,6 +2,9 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem;
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.FormVgs;
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg;
 
 import java.util.List;
 
@@ -24,6 +27,8 @@ public class TSave_Env extends Main_Header_Env {
     //LISTA DE ITEM DA O.S
     @Expose
     @SerializedName("form_items") private List<GeOsDeviceItem> form_items;
+    @Expose
+    @SerializedName("form_vgs") private List<FormVgs> formVgs;
 
 
     public String getSite_code() {
@@ -72,5 +77,13 @@ public class TSave_Env extends Main_Header_Env {
 
     public void setForm_items(List<GeOsDeviceItem> form_items) {
         this.form_items = form_items;
+    }
+
+    public List<FormVgs> getFormVgs() {
+        return formVgs;
+    }
+
+    public void setFormVgs(List<FormVgs> formVgs) {
+        this.formVgs = formVgs;
     }
 }

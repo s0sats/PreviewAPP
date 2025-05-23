@@ -16,9 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.extensions.date.convertDateToFullTimeStampGMT
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
@@ -161,12 +161,12 @@ fun InfoOSComponent(
         modifier = modifier,
     ) {
         TitleSection(text = translateMap.translate(DIALOG_FINALIZE_FORM_SO_INFO_LBL))
-        Column(modifier = Modifier.padding(start = ApplicationTheme.spacing.small)) {
+        Column(modifier = Modifier.padding(start = NamoaTheme.spacing.small)) {
             Text(
-                modifier = Modifier.padding(start = ApplicationTheme.spacing.small),
+                modifier = Modifier.padding(start = NamoaTheme.spacing.small),
                 text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_START_DATE_LBL),
-                style = ApplicationTheme.typography.bodyLarge,
-                color = ApplicationTheme.colors.onSurface
+                style = NamoaTheme.typography.bodyLarge,
+                color = NamoaTheme.colors.onSurface
             )
             DateTimePicker(
                 modifier = Modifier.fillMaxWidth(),
@@ -183,13 +183,13 @@ fun InfoOSComponent(
                 }
             )
 
-            Spacer(modifier = Modifier.height(ApplicationTheme.spacing.medium))
+            Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
 
             Text(
-                modifier = Modifier.padding(start = ApplicationTheme.spacing.small),
+                modifier = Modifier.padding(start = NamoaTheme.spacing.small),
                 text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_END_DATE_LBL),
-                style = ApplicationTheme.typography.bodyLarge,
-                color = ApplicationTheme.colors.onSurface
+                style = NamoaTheme.typography.bodyLarge,
+                color = NamoaTheme.colors.onSurface
             )
             DateTimePicker(
                 modifier = Modifier.fillMaxWidth(),
@@ -206,27 +206,27 @@ fun InfoOSComponent(
                 }
             )
 
-            Spacer(modifier = Modifier.height(ApplicationTheme.spacing.extraSmall))
+            Spacer(modifier = Modifier.height(NamoaTheme.spacing.extraSmall))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = ApplicationTheme.spacing.mediumSmall),
+                    .padding(top = NamoaTheme.spacing.mediumSmall),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier.padding(start = ApplicationTheme.spacing.small),
+                    modifier = Modifier.padding(start = NamoaTheme.spacing.small),
                     text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_ELAPSED_TIME_LBL),
-                    style = ApplicationTheme.typography.bodyLarge,
-                    color = ApplicationTheme.colors.onSurface
+                    style = NamoaTheme.typography.bodyLarge,
+                    color = NamoaTheme.colors.onSurface
                 )
 
                 Text(
-                    modifier = Modifier.padding(end = ApplicationTheme.spacing.small),
+                    modifier = Modifier.padding(end = NamoaTheme.spacing.small),
                     text = timeExecution,
-                    style = ApplicationTheme.typography.bodyLarge,
-                    color = ApplicationTheme.colors.onSurface
+                    style = NamoaTheme.typography.bodyLarge,
+                    color = NamoaTheme.colors.onSurface
                 )
             }
         }

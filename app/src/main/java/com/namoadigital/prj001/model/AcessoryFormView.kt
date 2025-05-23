@@ -9,9 +9,9 @@ class AcessoryFormView(
     val isReadOnly: Boolean,
     var lastPositionSelected: Int = 0,
     val devicePkPrefix: String,
-    val inspections: MutableList<InspectionCell> = mutableListOf()
+    var inspections: MutableList<InspectionCell> = mutableListOf()
 ): Serializable {
     var filterVal: String = ""
-    var nonForecastFilter: Boolean = false
+    var forecastFilter: Boolean = false
     var tabIndex: Int = 0
 }

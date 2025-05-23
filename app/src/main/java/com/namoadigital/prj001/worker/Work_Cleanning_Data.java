@@ -24,7 +24,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.extensions.date.DateHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
-import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TK_Ticket;

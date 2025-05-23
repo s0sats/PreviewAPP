@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_fo
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import kotlinx.coroutines.flow.Flow
 
 interface GeCustomFormRepository {
@@ -37,6 +37,13 @@ interface GeCustomFormRepository {
         formVersionCode: Int,
         formData: Long
     ): Flow<IResult<GE_Custom_Form_Data?>>
+
+    fun getCustomFormData(
+        formTypeCode: Int,
+        formCode: Int,
+        formVersionCode: Int,
+        formData: Long
+    ): GE_Custom_Form_Data?
 
     suspend fun saveFormOs(customFormData: GE_Custom_Form_Data, geOs: GeOs) : Flow<IResult<Unit>>
 }

@@ -9,16 +9,19 @@ import androidx.annotation.Nullable;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
-import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem;
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg;
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState;
 
 import java.util.ArrayList;
@@ -180,4 +183,7 @@ public interface Act011_Main_Presenter {
 
     InitialSerialState getInitialSeialState(GE_Custom_Form_Data form_data, MD_Product_Serial serial);
 
+    AcessoryFormView updateAcessoryFormViews(GeOs geOs, GE_Custom_Form_Local formLocal, AcessoryFormView acessoryFormView) throws Exception;
+
+    boolean addGeOsVgFragment(long customerCode, int productCode, String serialId, GE_Custom_Form_Local formLocal);
 }

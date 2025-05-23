@@ -7,6 +7,7 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 data class InfoSerialUseCase(
     val getInfoSerial: GetInfoSerialUseCase,
     val getDeviceList: GetListDeviceUseCase,
+    val getVerificationGroupLastValue: GetVerificationGroupLastValue,
 ) {
 
     companion object {
@@ -19,7 +20,8 @@ data class InfoSerialUseCase(
 
                 return InfoSerialUseCase(
                     getInfoSerial = GetInfoSerialUseCase(repository, context),
-                    getDeviceList = GetListDeviceUseCase(repository)
+                    getDeviceList = GetListDeviceUseCase(repository),
+                    getVerificationGroupLastValue = GetVerificationGroupLastValue(repository, context)
                 )
             }
         }

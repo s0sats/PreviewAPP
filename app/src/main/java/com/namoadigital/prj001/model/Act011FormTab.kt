@@ -7,12 +7,22 @@ class Act011FormTab (
     val name: String,
     val tracking: String?,
     val fieldCount: Int,
-    val problemReportedCount: Int?,
-    val forecastCount: Int?,
-    val criticalForecastCount: Int?,
-    val nonForecastCount: Int?,
-    val status: Act011FormTabStatus
-): Serializable
+    val problemReportedCount: Act011FormCounter?,
+    val forecastCount: Act011FormCounter?,
+    val criticalForecastCount: Act011FormCounter?,
+    val nonForecastCount: Act011FormCounter?,
+    val status: Act011FormTabStatus,
+    val countInteract: Int? = null,
+): Serializable {
+    data class Act011FormCounter(
+        val done: Int,
+        val total: Int
+    ) : Serializable {
+
+        fun formattedCounter() = "$done / $total"
+
+    }
+}
 
 
 enum class Act011FormTabStatus{

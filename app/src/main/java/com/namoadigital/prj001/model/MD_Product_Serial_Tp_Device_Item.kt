@@ -12,6 +12,12 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("change_adjust") val change_adjust: Int,
     @SerializedName("order_seq") val order_seq: Int,
     @SerializedName("structure") val structure: Int,
+    @SerializedName("already_ok_hide") val already_ok_hide: Int,
+    @SerializedName("require_photo_fixed") val require_photo_fixed: Int,
+    @SerializedName("require_photo_alert") val require_photo_alert: Int,
+    @SerializedName("require_photo_already_ok") val require_photo_already_ok: Int,
+    @SerializedName("require_photo_not_verified") val require_photo_not_verified: Int,
+    @SerializedName("vg_code") val vg_code: Int?,
     @SerializedName("manual_desc") val manual_desc: String?,
     @SerializedName("next_cycle_measure") val next_cycle_measure: Double?,
     @SerializedName("next_cycle_measure_date") val next_cycle_measure_date: String?,
@@ -21,6 +27,7 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("partitioned_execution") val partitioned_execution: Int,
     @SerializedName("ticket_prefix") val ticket_prefix: Int?,
     @SerializedName("ticket_code") val ticket_code: Int?,
+    @SerializedName("vg_action") val vg_action: Int,
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1
@@ -61,6 +68,12 @@ class MD_Product_Serial_Tp_Device_Item(
         change_adjust: Int,
         order_seq: Int,
         structure: Int,
+        already_ok_hide: Int,
+        require_photo_fixed: Int,
+        require_photo_alert: Int,
+        require_photo_already_ok: Int,
+        require_photo_not_verified: Int,
+        vg_code: Int?,
         manual_desc: String?,
         next_cycle_measure: Double?,
         next_cycle_measure_date: String?,
@@ -70,6 +83,7 @@ class MD_Product_Serial_Tp_Device_Item(
         partitioned_execution: Int,
         ticket_prefix: Int?,
         ticket_code: Int?,
+        vg_action: Int,
     ) : this(
         item_check_code,
         item_check_seq,
@@ -80,6 +94,12 @@ class MD_Product_Serial_Tp_Device_Item(
         change_adjust,
         order_seq,
         structure,
+        already_ok_hide,
+        require_photo_fixed,
+        require_photo_alert,
+        require_photo_already_ok,
+        require_photo_not_verified,
+        vg_code,
         manual_desc,
         next_cycle_measure,
         next_cycle_measure_date,
@@ -89,6 +109,7 @@ class MD_Product_Serial_Tp_Device_Item(
         partitioned_execution,
         ticket_prefix,
         ticket_code,
+        vg_action
     ) {
         this.customer_code = customer_code
         this.product_code = product_code

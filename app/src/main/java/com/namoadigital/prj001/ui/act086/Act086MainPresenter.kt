@@ -7,10 +7,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GeOsDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.GeOsVgDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
+import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -193,6 +201,23 @@ class Act086MainPresenter(
     }
 
 
+//    override fun getVgDesc(deviceItem: GeOsDeviceItem): String {
+//        val geosVgDao = GeOsVgDao(context)
+//        val geOsVg = geosVgDao.getByString(
+//            GeOsVg_Sql_001(
+//                deviceItem.customer_code,
+//                deviceItem.custom_form_type,
+//                deviceItem.custom_form_code,
+//                deviceItem.custom_form_version,
+//                deviceItem.custom_form_data,
+//                deviceItem.product_code,
+//                deviceItem.serial_code,
+//                deviceItem.vg_code!!,
+//            ).toSqlQuery()
+//        )
+//        return geOsVg?.vgDesc  ?: ""
+//    }
+
     /**
      * Fun que gera o obj GeOsDeviceItem para novos itens
      * Busca no banco o proximo item_check_seq e depois controi o obj
@@ -232,6 +257,7 @@ class Act086MainPresenter(
                 item_check_seq = nextItemCheckSeq,
                 item_check_id = "0",
                 item_check_desc = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
+                item_check_desc_alt_vg = null,
                 item_check_group_code = null,
                 apply_material = GeOsDeviceItem.APPLY_MATERIAL_OPTIONAL,
                 verification_instruction = null,
@@ -240,6 +266,12 @@ class Act086MainPresenter(
                 change_adjust = 0,
                 order_seq = nextItemCheckSeq,
                 structure = 0,
+                already_ok_hide = 0,
+                require_photo_fixed = 0,
+                require_photo_alert = 0,
+                require_photo_already_ok = 0,
+                require_photo_not_verified = 0,
+                vg_code = null,
                 manual_desc = null,
                 next_cycle_measure = null,
                 next_cycle_measure_date = null,
@@ -261,7 +293,12 @@ class Act086MainPresenter(
                 materialList = mutableListOf(),
                 partitioned_execution = 0,
                 ticket_prefix = null,
-                ticket_code = null
+                ticket_code = null,
+                vg_action = 0,
+                is_visible = 0,
+                color_item = GeOsDeviceItemStatusColor.GRAY,
+                status_modification_type = null,
+                automatic_selection_state = null,
             )
         }
         //
@@ -492,5 +529,23 @@ class Act086MainPresenter(
             it.isVisible
         }
         return currentFrag
+    }
+
+    override fun getVerificationGroup(
+        context: Context,
+        model: GeOsDeviceItem
+    ): GeOsVg? {
+        val geOsVgDao = GeOsVgDao(
+            context,
+        )
+        return model.vg_code?.let{
+            geOsVgDao.getByVgCode(
+                model.customer_code,
+                model.product_code,
+                model.serial_code,
+                it
+            )
+        }
+
     }
 }

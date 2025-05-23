@@ -13,12 +13,13 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.AcessoryFormView
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ADJUST
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ADJUST
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import java.util.Objects
 import kotlin.math.abs
 
@@ -43,7 +44,9 @@ class Act011InspectionFormAdapter(
     init {
         inspectionsFiltered.clear()
         inspections = acessoryFormView.inspections
-        inspectionsFiltered.addAll(acessoryFormView.inspections)
+        inspectionsFiltered.addAll(acessoryFormView.inspections.filter {
+            it.isVisible || it.isDone
+        })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -99,11 +102,11 @@ class Act011InspectionFormAdapter(
         this.filterApplied = filterApplied
         inspectionsFiltered.clear()
         if (this.filterApplied) {
-            inspectionsFiltered.addAll(inspections.filter {
-                it.status != InspectionCell.NORMAL || it.isDone || it.partitionedExecution == 1
-            })
-        } else {
             inspectionsFiltered.addAll(inspections)
+        } else {
+            inspectionsFiltered.addAll(inspections.filter {
+                it.isVisible || it.isDone
+            })
         }
         //
         notifyDataSetChanged()
@@ -120,7 +123,7 @@ class Act011InspectionFormAdapter(
         return mFilter as InspectionFormFilter
     }
 
-    fun refreshList(position: Int, onAlreadyOkActionItem: InspectionCell) {
+    fun refreshItemList(position: Int, onAlreadyOkActionItem: InspectionCell) {
         //LUCHE - 04/11/2021 - Altera highlightedItemPosition para o item passado e notifica mudança
         //no anterior caso exista.
         val oldHighlight = highlightedItemPosition
@@ -130,6 +133,11 @@ class Act011InspectionFormAdapter(
         }
         inspectionsFiltered[position] = onAlreadyOkActionItem
         notifyItemChanged(position)
+    }
+
+    //TODO [VG_REFRESH] atribuir
+    fun refreshList(acessoryFormView: AcessoryFormView) {
+        this.inspections = acessoryFormView.inspections
     }
 
     /**
@@ -151,9 +159,9 @@ class Act011InspectionFormAdapter(
             textFilter = charFilter
             if (charFilter.isNullOrEmpty()) {
                 if (filterApplied) {
-                    temp.addAll(inspectionsFiltered)
-                } else {
                     temp.addAll(inspections)
+                } else {
+                    temp.addAll(inspectionsFiltered)
                 }
             } else {
                 temp.addAll(
@@ -209,17 +217,15 @@ class Act011InspectionFormAdapter(
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.btnInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                    when(inspection.status){
-                        InspectionCell.CRITICAL_FORECAST,
-                        InspectionCell.MANUAL_ALERT -> {
-                            binding.tvAutoAlreadyOk.visibility = View.GONE
-                        }
-
-                        else -> {
-                            binding.tvAutoAlreadyOk.visibility = View.VISIBLE
-                        }
+                    binding.tvAutoAlreadyOk.visibility = View.VISIBLE
+                    //
+                    if (inspection.status == InspectionCell.MANUAL_ALERT
+                        || inspection.hideAlreadyOKBtn
+                        || read_only
+                    ) {
+                        binding.tvAutoAlreadyOk.visibility = View.GONE
                     }
-
+                    //
                     if (partitionedExecution == 1 && !read_only) {
                         binding.ivPartitionExecution.visibility = View.VISIBLE
                     } else {
@@ -371,7 +377,15 @@ class Act011InspectionFormAdapter(
                     }
                 }
                 //
-                if (photoCount > 0) {
+                if(isRequiredPhoto){
+                    binding.ivPhoto.applyTintColor(R.color.namoa_color_highlight_required_item)
+                    binding.tvPhotoCount.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.namoa_color_highlight_required_item
+                        )
+                    )
+                }else{
                     binding.ivPhoto.applyTintColor(R.color.namoa_color_cone_item)
                     binding.tvPhotoCount.setTextColor(
                         ContextCompat.getColor(
@@ -379,22 +393,13 @@ class Act011InspectionFormAdapter(
                             R.color.namoa_color_cone_item
                         )
                     )
-                } else {
-                    binding.ivPhoto.applyTintColor(R.color.namoa_color_gray_9)
-                    binding.tvPhotoCount.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.namoa_color_gray_9
-                        )
-                    )
                 }
+                //
                 binding.tvPhotoCount.text = photoCount.toString()
                 //
                 if (read_only) {
-                    binding.tvAutoAlreadyOk.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                 }
-
                 binding.tvAutoAlreadyOk.isEnabled = partitionedExecution != 1
             }
         }

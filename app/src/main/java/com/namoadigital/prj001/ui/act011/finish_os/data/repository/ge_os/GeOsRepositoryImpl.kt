@@ -10,9 +10,9 @@ import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.extensions.coroutines.dispatchersIO
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import com.namoadigital.prj001.extensions.getCustomerCode
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.GeOsDevice
-import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDevice
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

@@ -14,7 +14,7 @@ import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -114,15 +114,35 @@ class GeCustomFormRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getCustomFormData(
+        formTypeCode: Int,
+        formCode: Int,
+        formVersionCode: Int,
+        formData: Long
+        ): GE_Custom_Form_Data? {
+        return dataDao.getFormDataById(
+            context.getCustomerCode(),
+            formTypeCode,
+            formCode,
+            formVersionCode,
+            formData,
+        )
+    }
+
 
     override suspend fun saveFormOs(
         customFormData: GE_Custom_Form_Data,
         geOs: GeOs
     ): Flow<IResult<Unit>> {
         return flow {
-            DatabaseTransactionManager(context).executeTransaction { db ->
-                dataDao.addUpdate(customFormData, db)
-                geOsDao.addUpdate(geOs, db)
+            DatabaseTransactionManager(context).executeTransactionDaoObjReturn { db ->
+                var daoObjReturn = dataDao.addUpdateWithReturnAndSharedDbInstance(customFormData, db)
+
+                if(!daoObjReturn.hasError()){
+                    daoObjReturn = geOsDao.addUpdate(geOs, db)
+                }
+
+                daoObjReturn
             }.results(
                 success = {
                     emit(success(Unit))

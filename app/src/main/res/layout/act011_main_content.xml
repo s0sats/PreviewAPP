@@ -18,7 +18,7 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <androidx.viewpager.widget.ViewPager
+        <com.namoadigital.prj001.ui.act011.FormViewPager
             android:id="@+id/act011_pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"

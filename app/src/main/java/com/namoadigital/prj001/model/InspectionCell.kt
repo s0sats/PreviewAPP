@@ -3,6 +3,8 @@ package com.namoadigital.prj001.model
 import androidx.annotation.ColorInt
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.util.ConstantBaseApp
 import java.io.Serializable
 
@@ -10,11 +12,15 @@ data class InspectionCell(
     val description: String,
     val dayCount: Int?,
     val photoCount: Int = 0,
+    val isRequiredPhoto: Boolean = false,
     val materialCount: Int = 0,
     val materialRequired: Boolean,
     var hasComment: Boolean = false,
     val commentRequired: Boolean,
     var status: String,
+    val hideAlreadyOKBtn: Boolean = false,
+    var isVisible: Boolean =false,
+    val statusColor: GeOsDeviceItemStatusColor,
     val isCritical: Boolean,
     val isNewItem: Boolean = false,
     var answerStatus: String?,
@@ -23,6 +29,7 @@ data class InspectionCell(
     val hmAuxTrans: HMAux,
     val change_adjust: Int,
     val partitionedExecution: Int,
+    val requirePhotoAlreadyOk: Boolean = false,
     val read_only: Boolean = false
 ): Serializable {
     var isDone: Boolean = false
@@ -30,10 +37,13 @@ data class InspectionCell(
     var tagColor: Int = 0
     var statusTransalted: String = ""
     var execTypeTranslated: String = ""
+
     init{
         initViewVars()
     }
 
+
+    fun isPartitioned() = partitionedExecution == 1
     /**
      * Fun que baseado nos dados do construtor, define vars de "visualização"
      */
@@ -47,31 +57,25 @@ data class InspectionCell(
             statusTransalted = hmAuxTrans["inspection_status_answered_item_lbl"]!!
         } else {
             this.status = status
-            when (status) {
-                NORMAL -> {
+            when (statusColor) {
+                GeOsDeviceItemStatusColor.GRAY -> {
                     tagColor = R.color.namoa_color_gray_7
                     statusTransalted = hmAuxTrans["inspection_status_non_forecast_item_lbl"]!!
                 }
-                MANUAL_ALERT -> {
+                GeOsDeviceItemStatusColor.RED -> {
                     tagColor = R.color.namoa_os_form_problem_red
                     statusTransalted = hmAuxTrans["inspection_status_manual_alert_item_lbl"]!!
                 }
-                STATUS_FORCED -> {
+                GeOsDeviceItemStatusColor.BLUE -> {
                     this.status = FORECAST
                     tagColor = R.color.namoa_color_pipeline_origin_icon
                     statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
                 }
-                else -> {
-                    if (isCritical && status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED) {
-                        this.status = CRITICAL_FORECAST
-                        tagColor = R.color.namoa_os_form_critical_forecast_yellow
-                        statusTransalted =
-                            hmAuxTrans["inspection_status_critical_forecast_item_lbl"]!!
-                    } else {
-                        this.status = FORECAST
-                        tagColor = R.color.namoa_color_pipeline_origin_icon
-                        statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
-                    }
+                GeOsDeviceItemStatusColor.YELLOW -> {
+                    this.status = CRITICAL_FORECAST
+                    tagColor = R.color.namoa_os_form_critical_forecast_yellow
+                    statusTransalted =
+                        hmAuxTrans["inspection_status_critical_forecast_item_lbl"]!!
                 }
             }
         }
@@ -112,6 +116,7 @@ data class InspectionCell(
                 "$statusTransalted|"
                     .replace("null|","")
     }
+
     companion object{
         const val ANSWERED = "ANSWERED"
         const val NORMAL = "NORMAL"

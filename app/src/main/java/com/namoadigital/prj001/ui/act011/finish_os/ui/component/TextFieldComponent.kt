@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.namoadigital.prj001.design.compose.ApplicationTheme
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 
 @Composable
 fun TextFieldIconButton(
@@ -41,21 +41,21 @@ fun TextFieldIconButton(
 ) {
 
     Row(
-        modifier = modifier.padding(start = ApplicationTheme.spacing.medium),
+        modifier = modifier.padding(start = NamoaTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TextField(
-            modifier = Modifier.fillMaxWidth(if(!isReadOnly) 1f else 0.8f),
+            modifier = Modifier.fillMaxWidth(if (!isReadOnly) 1f else 0.8f),
             value = value,
             onValueChange = onValueChange,
             label = { label?.let { Text(text = label) } },
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = ApplicationTheme.colors.surface,
-                unfocusedContainerColor = ApplicationTheme.colors.surface,
-                disabledContainerColor = ApplicationTheme.colors.surface,
-                errorContainerColor = ApplicationTheme.colors.surface,
-                focusedLabelColor = ApplicationTheme.colors.primary
+                focusedContainerColor = NamoaTheme.colors.surface,
+                unfocusedContainerColor = NamoaTheme.colors.surface,
+                disabledContainerColor = NamoaTheme.colors.surface,
+                errorContainerColor = NamoaTheme.colors.surface,
+                focusedLabelColor = NamoaTheme.colors.primary
             ),
             singleLine = true,
             readOnly = isReadOnly,
@@ -73,15 +73,15 @@ fun TextFieldIconButton(
         )
 
         if (!isReadOnly) {
-            Spacer(modifier = Modifier.width(ApplicationTheme.spacing.mediumLarge))
+            Spacer(modifier = Modifier.width(NamoaTheme.spacing.mediumLarge))
 
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
                     .clip(CircleShape)
                     .border(
-                        width = ApplicationTheme.spacing.extraSmall,
-                        color = ApplicationTheme.colors.primary,
+                        width = NamoaTheme.spacing.extraSmall,
+                        color = NamoaTheme.colors.primary,
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center,
@@ -93,7 +93,7 @@ fun TextFieldIconButton(
                     Icon(
                         imageVector = imageVector,
                         contentDescription = null,
-                        tint = if (isEnabled) ApplicationTheme.colors.surface else Color.Gray
+                        tint = if (isEnabled) NamoaTheme.colors.surface else Color.Gray
                     )
                 }
             }

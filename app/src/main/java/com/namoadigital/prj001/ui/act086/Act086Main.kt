@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.form_os.domain.usecase.GetDeviceItemDescUseCase
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
@@ -23,9 +24,11 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
+import com.namoadigital.prj001.extensions.serial.formatLastValue
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
@@ -78,8 +81,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         )
     }
 
+    private val deviceItemVg : GeOsVg? by lazy {
+        mPresenter.getVerificationGroup(context, deviceItem)
+    }
+
+
     private val historicFrg: Act086HistoricFrg by lazy{
         val hmAuxTransHistoricFrg =  mPresenter.loadHistoricFrgTranslation()
+
         Act086HistoricFrg.newInstance(
             hmAuxTransHistoricFrg,
             deviceItem.item_check_status,
@@ -87,6 +96,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             deviceItem.next_cycle_measure_date,
             deviceItem.next_cycle_limit_date,
             deviceItem.value_sufix,
+            deviceItemVg?.vgDesc,
+            deviceItemVg?.formatLastValue(context, deviceItem.restriction_decimal, deviceItem.value_sufix),
             deviceItem.verification_instruction,
             deviceItem.restriction_decimal,
             dateStartUntilLastMinute,
@@ -217,8 +228,13 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             }else{
                 notificationPartial.root.visibility = View.GONE
             }
-
+            //
             act086TvDeviceDesc.text = deviceDesc
+            deviceItemVg?.let{
+                act086TvVgDesc.visibility = View.VISIBLE
+                act086TvVgDesc.text = it.vgDesc
+            }
+            //
             act086TvTrackingNum.apply {
                 text = trackingNumber
                 visibility = if(trackingNumber.isNullOrEmpty()){
@@ -249,11 +265,15 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun getItemCheckDesc() : String?{
-        return if(deviceItem.structure == 3){
-            deviceItem.manual_desc
-        }else{
-            deviceItem.item_check_desc
-        }
+        return GetDeviceItemDescUseCase().invoke(
+            GetDeviceItemDescUseCase.Input(
+                    deviceItem.manual_desc,
+                    deviceItem.status_modification_type,
+                    deviceItem.item_check_desc,
+                    deviceItem.item_check_desc_alt_vg,
+                    deviceItem.isNO_CYCLE
+            )
+        )
     }
 
     private fun setAlertDateInfo() {

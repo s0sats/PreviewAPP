@@ -8,6 +8,7 @@ import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -35,21 +36,30 @@ import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.databinding.FormOsFixedAdjustFrgAlertDialogBinding
-import com.namoadigital.prj001.extensions.*
 import com.namoadigital.prj001.extensions.SpannableStringStyle.applyColor
 import com.namoadigital.prj001.extensions.SpannableStringStyle.customText
 import com.namoadigital.prj001.extensions.SpannableStringStyle.fontSize
 import com.namoadigital.prj001.extensions.SpannableStringStyle.spanStyleWith
+import com.namoadigital.prj001.extensions.applyTintColor
+import com.namoadigital.prj001.extensions.hideKeyboard
+import com.namoadigital.prj001.extensions.showAlertWithYesOrNot
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
-import com.namoadigital.prj001.util.*
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -390,7 +400,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     isManualDescInEdit = isEnabled
                     setText(geOsDeviceItem.manual_desc)
                     tag = geOsDeviceItem.manual_desc
+
                 }
+
+
 
                 tilAct086VerificationFrgMketManualDesc.hint = hmAux_Trans["manual_desc_hint"]
 
@@ -437,13 +450,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     rdoAdjustHasProblem = View.VISIBLE
                     rdoAdjustNotVerified = View.GONE
                 } else {
-                    if (geOsDeviceItem.isCritical && geOsDeviceItem.item_check_status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED) {
+                    if(!geOsDeviceItem.isNO_CYCLE
+                        && geOsDeviceItem.isCycleExpired
+                        && (geOsDeviceItem.isCritical
+                                || geOsDeviceItem.already_ok_hide == 1)){
                         rdoAdjustAlreadyOk = View.GONE
                     }
                 }
             }
         }
-
         //
         with(binding) {
             act086VerificationFrgRdoAnswerFixed.visibility = rdoAdjustDone
@@ -488,6 +503,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgTvDeleteLbl.text = getDeleteLbl()
             act086VerificationFrgTvReviewMaterialLbl.text =
                 hmAux_Trans["review_material_planned_lbl"]
+            act086VerificationFrgMketManualDesc.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    onConfirmManualDesc()
+                    true
+                }else{
+                    false
+                }
+            }
         }
     }
 
@@ -580,7 +603,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun applyRequiredFieldsLblVisibility() {
         with(binding) {
             act086VerificationFrgTvRequireFields.apply {
-                visibility = if (isCommentRequired() || isMaterialRequired()) {
+                visibility = if (hasFieldsRequired()) {
                     View.VISIBLE
                 } else {
                     View.GONE
@@ -588,6 +611,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
         }
     }
+
+    private fun hasFieldsRequired(): Boolean =
+        isCommentRequired() || isMaterialRequired() ||  isPhotoRequired()
 
     private fun applyRequiredLayoutIntoComment() {
         val answerId = binding.act086VerificationFrgRgAnswers.checkedRadioButtonId
@@ -607,8 +633,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding) {
             act086VerificationFrgIvComment.applyTintColor(commentColor)
             act086VerificationFrgMketComment.apply {
-                setTextColor(ContextCompat.getColor(context, commentColor))
                 setHintTextColor(ContextCompat.getColor(context, commentColor))
+            }
+
+            act086VerificationFrgTilComment.helperText = if(isCommentRequired()){
+                hmAux_Trans["required_comments_lbl"]
+            }else{
+                null
             }
         }
     }
@@ -666,6 +697,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             && geOsDeviceItem.apply_material.equals(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED, true)
             && materialFragList.isEmpty()
             )
+    private fun isPhotoRequired() =
+            ((binding.act086VerificationFrgRdoAnswerFixed.isChecked && geOsDeviceItem.require_photo_fixed == 1)
+                    || (binding.act086VerificationFrgRdoAnswerAlert.isChecked && geOsDeviceItem.require_photo_alert == 1)
+                    || (binding.act086VerificationFrgRdoAnswerAlreadyDone.isChecked && geOsDeviceItem.require_photo_already_ok == 1)
+                    || (binding.act086VerificationFrgRdoAnswerNotVerified.isChecked && geOsDeviceItem.require_photo_not_verified == 1))
+                    && photoList.isEmpty()
 
     private fun applyRequiredLayoutIntoPhoto() {
         with(binding) {
@@ -676,17 +713,30 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             } else {
                 R.color.namoa_pipeline_header_icon
             }
+            act086VerificationFrgTvPhotoRequiredLbl.visibility = View.GONE
             act086VerificationFrgClPhoto.isClickable = photoEnabled
             act086VerificationFrgClPhoto.isEnabled = photoEnabled
             act086VerificationFrgClPhoto.forEach {
                 when (it) {
                     is ImageView -> {
-                        it.applyTintColor(photoColor)
+                        if(it.id == R.id.act086_verification_frg_iv_photo
+                            && isPhotoRequired()){
+                            it.applyTintColor(R.color.namoa_color_highlight_required_item)
+                        }else {
+                            it.applyTintColor(photoColor)
+                        }
                         it.isEnabled = photoEnabled
                     }
 
                     is TextView -> {
-                        it.setTextColor(ContextCompat.getColor(it.context, photoColor))
+                        if(it.id == R.id.act086_verification_frg_tv_photo_required_lbl
+                            && isPhotoRequired()){
+                            act086VerificationFrgTvPhotoRequiredLbl.text = hmAux_Trans["required_photo_lbl"]
+                            act086VerificationFrgTvPhotoRequiredLbl.setTextColor(ContextCompat.getColor(act086VerificationFrgTvPhotoRequiredLbl.context, R.color.namoa_color_highlight_required_item))
+                            act086VerificationFrgTvPhotoRequiredLbl.visibility = View.VISIBLE
+                        }else {
+                            it.setTextColor(ContextCompat.getColor(it.context, photoColor))
+                        }
                         it.isEnabled = photoEnabled
                     }
 
@@ -1068,46 +1118,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         *  o item, o valor antigo é assumido, ja que ele não foi validado.
         * */
         binding.act086VerificationFrgIvManualHandler.setOnClickListener {
-            with(binding) {
-                if (isManualDescInEdit) {
-                    if (validateManualDescFilled()) {
-                        isManualDescInEdit = false
-                        act086VerificationFrgIvManualHandler.setImageDrawable(
-                            getIvManualDescIcon(
-                                isManualDescInEdit
-                            )
-                        )
-                        act086VerificationFrgMketManualDesc.apply {
-                            isEnabled = isManualDescInEdit
-                            tag = this.text.toString()
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.namoa_font_color_black222
-                                )
-                            )
-                        }
-                        toogleRadioGroupEnabled(true)
-                        //Se ja tem resposta, então libera dados complementares, pois é uma nova edição
-                        //da descrição.
-                        if (geOsDeviceItem.status_answer != null) {
-                            toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
-                        }
-                    }
-                } else {
-                    isManualDescInEdit = true
-                    toogleRadioGroupEnabled(!isManualDescInEdit)
-                    toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
-                    act086VerificationFrgIvManualHandler.setImageDrawable(
-                        getIvManualDescIcon(
-                            isManualDescInEdit
-                        )
-                    )
-                    act086VerificationFrgMketManualDesc.apply {
-                        isEnabled = isManualDescInEdit
-                    }
-                }
-            }
+            onConfirmManualDesc()
         }
         //
         binding.act086VerificationFrgClReviewMaterial.setOnClickListener {
@@ -1115,8 +1126,55 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
+    private fun onConfirmManualDesc() {
+        with(binding) {
+            if (isManualDescInEdit) {
+                if (validateManualDescFilled()) {
+                    isManualDescInEdit = false
+                    act086VerificationFrgIvManualHandler.setImageDrawable(
+                        getIvManualDescIcon(
+                            isManualDescInEdit
+                        )
+                    )
+                    act086VerificationFrgMketManualDesc.apply {
+                        isEnabled = isManualDescInEdit
+                        tag = this.text.toString()
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.namoa_font_color_black222
+                            )
+                        )
+                    }
+                    toogleRadioGroupEnabled(true)
+                    //Se ja tem resposta, então libera dados complementares, pois é uma nova edição
+                    //da descrição.
+                    if (geOsDeviceItem.status_answer != null) {
+                        toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
+                    } else {
+
+                    }
+                } else {
+
+                }
+            } else {
+                isManualDescInEdit = true
+                toogleRadioGroupEnabled(!isManualDescInEdit)
+                toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
+                act086VerificationFrgIvManualHandler.setImageDrawable(
+                    getIvManualDescIcon(
+                        isManualDescInEdit
+                    )
+                )
+                act086VerificationFrgMketManualDesc.apply {
+                    isEnabled = isManualDescInEdit
+                }
+            }
+        }
+    }
+
     private fun validateManualDescFilled(): Boolean {
-        return binding.act086VerificationFrgMketManualDesc.text.toString().isNotEmpty()
+        return binding.act086VerificationFrgMketManualDesc.text.toString().isNotBlank()
     }
 
     private fun clearMaterialList() {
@@ -1265,6 +1323,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         if (isCommentRequired() && binding.act086VerificationFrgMketComment.text.isNullOrEmpty()) {
             return ConstantBaseApp.SYS_STATUS_PROCESS
         }
+        //
+        if (isPhotoRequired() && photoAdapter.sourceList.isEmpty()) {
+            return ConstantBaseApp.SYS_STATUS_PROCESS
+        }
+        //
         return ConstantBaseApp.SYS_STATUS_DONE
     }
 
@@ -1537,6 +1600,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
 
         }
+        applyRequiredLayoutIntoPhoto()
+        applyRequiredFieldsLblVisibility()
     }
 
     override fun callProductAct(listOfProduct: ArrayList<Int>) {
@@ -1655,7 +1720,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_current_measure_lbl",
                 "alert_next_cycle_measure_lbl",
                 "alert_start_date_lbl",
-                "alert_limit_date_lbl"
+                "alert_limit_date_lbl",
+                "required_photo_lbl",
+                "required_comments_lbl",
             )
         }
     }

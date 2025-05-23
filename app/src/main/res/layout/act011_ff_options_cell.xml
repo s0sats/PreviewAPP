@@ -5,15 +5,14 @@
     android:id="@+id/cl_tab_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="8dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_form_tab_order"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="20dp"
         android:text="1."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,83 +25,144 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="4dp"
         android:layout_weight="1"
         android:textSize="14sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/tv_problem_reported_count_val"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_form_tab_fields_count"
         app:layout_constraintStart_toEndOf="@+id/tv_form_tab_order"
         app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order"
-        tools:text="Temperaturas"/>
+        tools:text="Temperaturas" />
 
     <TextView
         android:id="@+id/tv_form_tab_fields_count"
+        style="@style/TextAppearance.Material3.BodySmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
         android:text="0"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_form_tab_order"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_form_tab_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order"
-        app:layout_constraintVertical_bias="0"
-        />
+        app:layout_constraintTop_toTopOf="@+id/tv_form_tab_name"/>
+
 
     <TextView
         android:id="@+id/tv_form_tab_tracking"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
         android:text="TextView"
         android:textColor="@color/namoa_color_gray_8"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_problem_reported_count_val"
+        app:layout_constraintEnd_toEndOf="@+id/tv_form_tab_name"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_form_tab_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_name" />
 
-    <TextView
-        android:id="@+id/tv_forecast_count_val"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_non_forecast_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawable="@drawable/form_tab_circle_count"
-        android:paddingHorizontal="4dp"
-        android:text="9"
-        android:textColor="@color/padrao_WHITE"
-        android:textSize="11sp"
-        android:maxLength="2"
-        android:background="@drawable/form_tab_circle_count"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/darker_gray"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_tracking">
+
+        <TextView
+            android:id="@+id/tv_non_forecast_count_val"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="9 / 10"
+            android:textAlignment="center"
+            android:textColor="@color/padrao_WHITE"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_forecast_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/namoa_color_pipeline_origin_icon"
-        app:layout_constraintEnd_toEndOf="@+id/tv_form_tab_fields_count"
-        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_fields_count" />
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/card_non_forecast_count"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_tracking">
 
-    <TextView
-        android:id="@+id/tv_critical_forecast_count_val"
+        <TextView
+            android:id="@+id/tv_forecast_count_val"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="9 / 10"
+            android:textAlignment="center"
+            android:textColor="@color/padrao_WHITE"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_critical_forecast_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="4dp"
-        android:text="9"
-        android:maxLength="2"
-        android:textSize="11sp"
-        android:textColor="@color/padrao_WHITE"
-        android:background="@drawable/form_tab_circle_count"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/namoa_os_form_critical_forecast_yellow"
-        app:layout_constraintEnd_toStartOf="@+id/tv_forecast_count_val"
-        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_fields_count" />
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/card_forecast_count"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_tracking">
 
-    <TextView
-        android:id="@+id/tv_problem_reported_count_val"
+        <TextView
+            android:id="@+id/tv_critical_forecast_count_val"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="9 / 10"
+            android:textAlignment="center"
+            android:textColor="@color/padrao_WHITE"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_problem_reported_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="4dp"
-        android:text="9"
-        android:maxLength="2"
-        android:textSize="11sp"
-        android:textColor="@color/padrao_WHITE"
-        android:background="@drawable/form_tab_circle_count"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/namoa_os_form_problem_red"
-        app:layout_constraintEnd_toStartOf="@+id/tv_critical_forecast_count_val"
-        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_fields_count" />
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/card_critical_forecast_count"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_tab_tracking">
+
+        <TextView
+            android:id="@+id/tv_problem_reported_count_val"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="1 / 10"
+            android:textAlignment="center"
+            android:textColor="@color/padrao_WHITE"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
 
 
 

@@ -11,12 +11,13 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.databinding.FragmentSerialInfoBinding
 import com.namoadigital.prj001.extensions.formatForDisplay
+import com.namoadigital.prj001.extensions.serial.showMeasureSuffixAndDate
+import com.namoadigital.prj001.extensions.toStringConsiderDecimal
 import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093State
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 
 /**
@@ -75,43 +76,24 @@ class SerialInfoFrg : BaseFragment() {
                     titleCycle.visibility = View.GONE
                 }
 
-                if (it.last_measure_value != null) {
+                if (it.last_measure_date != null) {
                     titleMeasure.text = hmAux_Trans["last_measure_lbl"]
                     titleMeasure.visibility = View.VISIBLE
                 } else {
                     titleMeasure.visibility = View.GONE
                 }
-                val measureFormatted = if (it.last_measure_value != null) {
-                    if (!it.last_measure_date.isNullOrEmpty()) {
-                        "${
-                            ToolBox_Inf.convertDoubleToBigDecimalString(
-                                it.last_measure_value!!,
-                                true
-                            )
-                        } ${it.value_suffix.formatForDisplay()} (${it.last_measure_date})"
-                    } else {
-                        "${ToolBox_Inf.convertDoubleToBigDecimalString(
-                                it.last_measure_value!!,
-                                true
-                            )} ${it.value_suffix.formatForDisplay()}"
-                    }
-                } else {
-                    null
-                }
 
-                if (measureFormatted.isNullOrEmpty()) {
+                if (!it.last_measure_date.isNullOrEmpty()) {
+                    //
+                    val formattedValue = it.last_measure_value?.toStringConsiderDecimal()?.let{value ->
+                        "($value ${it.value_suffix.formatForDisplay()})"
+                    }?: ""
+                    measureValue.text = "${it.last_measure_date} $formattedValue"
+
+                    linearLayout6.visibility = View.VISIBLE
+                } else {
                     measureValue.visibility = View.GONE
-                } else {
-                    measureValue.apply {
-                        text = measureFormatted
-                        visibility = View.VISIBLE
-                    }
-                }
-
-                linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
+                    linearLayout6.visibility = View.GONE
                 }
 
                 linearLayout5.visibility =
@@ -126,16 +108,16 @@ class SerialInfoFrg : BaseFragment() {
 
                 val cycleFormatted = if (it.last_cycle_value != null) {
                     if (!it.last_cycle_date.isNullOrEmpty()) {
-                        "${
+                        "${it.last_cycle_date}  (${
                             ToolBox_Inf.convertDoubleToBigDecimalString(
-                                it.last_cycle_value!!.toDouble(),
+                                it.last_cycle_value.toDouble(),
                                 true
                             )
-                        } ${it.value_suffix.formatForDisplay()}  (${it.last_cycle_date})"
+                        } ${it.value_suffix.formatForDisplay()} )"
                     } else {
                         "${
                             ToolBox_Inf.convertDoubleToBigDecimalString(
-                                it.last_cycle_value!!.toDouble(),
+                                it.last_cycle_value.toDouble(),
                                 true
                             )
                         } ${it.value_suffix.formatForDisplay()}"

@@ -2,7 +2,7 @@ package com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os
 
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.UseCases
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os.GeOsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

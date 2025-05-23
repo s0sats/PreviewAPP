@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.annotations.SerializedName
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class MD_Product_Serial_Tp_Device_Item_Hist(

@@ -8,7 +8,7 @@ import com.namoadigital.prj001.extensions.coroutines.namoaCatch
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.extensions.suspendResults
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepository
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os.GeOsRepository
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FormSaveOs

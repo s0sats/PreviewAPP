@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
+import com.namoa_digital.namoa_library.compose.theme.NamoaApplicationTheme
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.DialogFinishFormOsBinding
-import com.namoadigital.prj001.design.compose.NamoaTheme
 import com.namoadigital.prj001.extensions.getIntArguments
 import com.namoadigital.prj001.extensions.getLongArguments
 import com.namoadigital.prj001.ui.act011.finish_os.ui.FinishOSScreen
@@ -49,7 +49,7 @@ class DialogFinishOSFragment constructor(
         binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                NamoaTheme(false) {
+                NamoaApplicationTheme {
                     FinishOSScreen(
                         translateMapLib = hmAuxLib,
                         arguments = FinishScreenArguments(

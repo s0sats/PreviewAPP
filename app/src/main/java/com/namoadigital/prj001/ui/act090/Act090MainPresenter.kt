@@ -8,9 +8,9 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
-import com.namoadigital.prj001.model.toUiMaterialItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.masterdata.ge_os.toUiMaterialItem
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_003
 import com.namoadigital.prj001.util.ConstantBaseApp

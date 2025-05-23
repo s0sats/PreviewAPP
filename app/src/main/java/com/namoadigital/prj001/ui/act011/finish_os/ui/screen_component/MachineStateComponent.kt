@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.DateTimePicker
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.RadioGroup
@@ -76,17 +76,17 @@ fun MachineInitialComponent(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = ApplicationTheme.spacing.small),
+                    .padding(start = NamoaTheme.spacing.small),
                 text = translateMap.translate(INITIAL_SERIAL_STATE_STOPPED_TTL),
-                style = ApplicationTheme.typography.bodyLarge,
-                color = ApplicationTheme.colors.onSurface,
+                style = NamoaTheme.typography.bodyLarge,
+                color = NamoaTheme.colors.onSurface,
                 overflow = TextOverflow.Ellipsis
 
             )
             OptionWithoutSwitch(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = ApplicationTheme.spacing.mediumSmall),
+                    .padding(start = NamoaTheme.spacing.mediumSmall),
                 initialDate = initialDate,
                 responsibleStop = responsibleStop,
                 translateMap = translateMap,
@@ -167,7 +167,7 @@ fun OptionDateComponent(
 
 
     DateTimePicker(
-        modifier = modifier.padding(bottom = ApplicationTheme.spacing.mediumSmall),
+        modifier = modifier.padding(bottom = NamoaTheme.spacing.mediumSmall),
         initialDate = initialDate,
         dateHint = translateLib.translate(MKDATETIME_DATE_TTL),
         timeHint = translateLib.translate(MKDATETIME_HOUR_TTL),
@@ -252,15 +252,15 @@ fun OptionWithSwitch(
         content = {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = ApplicationTheme.spacing.mediumLarge)
+                    .padding(horizontal = NamoaTheme.spacing.mediumLarge)
                     .animateContentSize()
                     .fillMaxWidth()
             ) {
 
                 Text(
                     text = translateMap.translate(INITIAL_SERIAL_STATE_DATE_LBL),
-                    style = ApplicationTheme.typography.bodyMedium,
-                    color = ApplicationTheme.colors.onSurface
+                    style = NamoaTheme.typography.bodyMedium,
+                    color = NamoaTheme.colors.onSurface
                 )
 
                 OptionDateComponent(
@@ -276,8 +276,8 @@ fun OptionWithSwitch(
                 if (showOptionsWhenMachineStopped) {
                     Text(
                         text = "${translateMap.translate(INITIAL_SERIAL_STATE_RESPONSIBLE_LBL)}:",
-                        style = ApplicationTheme.typography.bodyMedium,
-                        color = ApplicationTheme.colors.onSurface,
+                        style = NamoaTheme.typography.bodyMedium,
+                        color = NamoaTheme.colors.onSurface,
                     )
 
                     RadioGroup(
@@ -370,7 +370,7 @@ private fun OptionWithoutSwitch(
 
     RadioGroup(
         isEnabled = !isReadOnly,
-        modifier = modifier.padding(top = ApplicationTheme.spacing.medium),
+        modifier = modifier.padding(top = NamoaTheme.spacing.medium),
         radioGroupOptions = RadioGroupOptions(
             list = listOf(
                 RadioGroupItem(
@@ -400,22 +400,22 @@ private fun OptionWithoutSwitch(
                             if (showOptionsWhenMachineStopped) {
                                 Text(
                                     modifier = Modifier.padding(
-                                        top = ApplicationTheme.spacing.medium,
-                                        start = ApplicationTheme.spacing.large
+                                        top = NamoaTheme.spacing.medium,
+                                        start = NamoaTheme.spacing.large
                                     ),
                                     text = "${
                                         translateMap.translate(
                                             INITIAL_SERIAL_STATE_RESPONSIBLE_LBL
                                         )
                                     }:",
-                                    style = ApplicationTheme.typography.bodyMedium,
-                                    color = ApplicationTheme.colors.onSurface,
+                                    style = NamoaTheme.typography.bodyMedium,
+                                    color = NamoaTheme.colors.onSurface,
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 RadioGroup(
                                     isEnabled = !isReadOnly,
                                     modifier = Modifier
-                                        .padding(start = ApplicationTheme.spacing.mediumLarge)
+                                        .padding(start = NamoaTheme.spacing.mediumLarge)
                                         .fillMaxWidth(),
                                     radioGroupOptions = RadioGroupOptions(
                                         list = listOf(

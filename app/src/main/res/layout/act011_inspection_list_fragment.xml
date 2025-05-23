@@ -77,16 +77,16 @@
             android:id="@+id/chk_non_forecast_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/m3_namoa_onSurface"
             android:textSize="16sp"
             android:buttonTint="@drawable/checked_theme_color"
+            android:textColor="@color/checkbox_text_color"
             app:layout_constraintEnd_toStartOf="@+id/tv_non_forecast_count"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edt_inspection_filter_layout"
             app:layout_constraintWidth_max="wrap"
-            tools:checked="true"
+            tools:enabled="false"
             tools:text="Ocultar itens não previtos-trad" />
 
         <TextView
@@ -95,11 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/form_tab_circle_count"
-            android:backgroundTint="@color/namoa_color_gray_6"
             android:gravity="center"
             android:paddingHorizontal="5dp"
-            android:textColor="@color/namoa_color_gray_9"
+            android:textColor="@color/checkbox_text_color"
             app:layout_constraintBottom_toBottomOf="@+id/chk_non_forecast_item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -108,33 +106,36 @@
             tools:text="1" />
 
 
-        <TextView
-            android:id="@+id/tv_placeholder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="30dp"
-            android:textAlignment="center"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
-            tools:text="TESTESTEST" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_inspections"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="30dp"
-            android:nestedScrollingEnabled="true"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/cl_add_new_item_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
-            app:layout_constraintVertical_bias="0.0"
-            tools:itemCount="2"
-            tools:listitem="@layout/act011_inspection_question_form_cell" />
+
+            <TextView
+                android:id="@+id/tv_placeholder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="30dp"
+                android:visibility="gone"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
+                tools:text="TESTESTEST" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_inspections"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="30dp"
+                android:nestedScrollingEnabled="true"
+                app:layout_constraintBottom_toTopOf="@+id/cl_add_new_item_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
+                app:layout_constraintVertical_bias="0.0"
+                tools:itemCount="2"
+                tools:listitem="@layout/act011_inspection_question_form_cell" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cl_add_new_item_btn"

@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
+import com.namoadigital.prj001.dao.GeOsVgDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -24,7 +25,8 @@ import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
-import com.namoadigital.prj001.model.GeOsDeviceItem;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem;
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.FormVgs;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -65,11 +67,13 @@ public class WS_Save extends BaseWsIntentService {
     private MD_SiteDao siteDao;
     private GeOsDeviceItemDao deviceItemDao;
     private GeOsDao geOsDao;
+    private GeOsVgDao geOsVgDao;
     //
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
     private List<GE_Custom_Form_Data_Field> form_data_fields;
     private List<GeOsDeviceItem> form_items;
+    private List<FormVgs> formVgsList;
     //
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -146,10 +150,13 @@ public class WS_Save extends BaseWsIntentService {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
             );
+
+            geOsVgDao = new GeOsVgDao(getApplicationContext());
             //
             form_datas = new ArrayList<>() ;
             form_data_fields = new ArrayList<>();
             form_items = new ArrayList<>();
+            formVgsList = new ArrayList<>();
             //
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
@@ -218,6 +225,7 @@ public class WS_Save extends BaseWsIntentService {
         env.setForm_datas(form_datas);
         env.setForm_data_fields(form_data_fields);
         env.setForm_items(form_items);
+        env.setFormVgs(formVgsList);
         env.setToken(token);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
@@ -302,30 +310,9 @@ public class WS_Save extends BaseWsIntentService {
         if(form_datas.size() > 0){
             form_data_fields.clear();
             form_items.clear();
+            formVgsList.clear();
             for ( GE_Custom_Form_Data form_data : form_datas ) {
-                form_data_fields.addAll(
-                        formDataFieldDao.query(
-                                new GE_Custom_Form_Data_Field_Sql_003(
-                                        form_data.getCustomer_code(),
-                                        form_data.getCustom_form_type(),
-                                        form_data.getCustom_form_code(),
-                                        form_data.getCustom_form_version(),
-                                        form_data.getCustom_form_data()
-                                ).toSqlQuery()
-                        )
-                );
-
-                form_items.addAll(
-                        deviceItemDao.query(
-                                new Sql_WS_Save_Device_Item_002(
-                                        form_data.getCustomer_code(),
-                                        form_data.getCustom_form_type(),
-                                        form_data.getCustom_form_code(),
-                                        form_data.getCustom_form_version(),
-                                        form_data.getCustom_form_data()
-                                ).toSqlQuery()
-                        )
-                );
+                processListToServer(form_data);
             }
             //Atualiza token para o que esta pendente de envio
             token = form_datas.get(0).getToken();
@@ -346,39 +333,54 @@ public class WS_Save extends BaseWsIntentService {
         if(form_datas.size() > 0){
             form_data_fields.clear();
             form_items.clear();
+            formVgsList.clear();
             //Atualiza valor do token em todos os cabeçalhos
             for ( GE_Custom_Form_Data form_data : form_datas ) {
 
                 form_data.setToken(token);
 
-                form_data_fields.addAll(
-                        formDataFieldDao.query(
-                                new GE_Custom_Form_Data_Field_Sql_003(
-                                        form_data.getCustomer_code(),
-                                        form_data.getCustom_form_type(),
-                                        form_data.getCustom_form_code(),
-                                        form_data.getCustom_form_version(),
-                                        form_data.getCustom_form_data()
-                                ).toSqlQuery()
-                        )
-                );
-
-                //LUCHE - 08/10/2021 ADD ITEMS DA O.S
-                form_items.addAll(
-                        deviceItemDao.query(
-                            new Sql_WS_Save_Device_Item_002(
-                                    form_data.getCustomer_code(),
-                                    form_data.getCustom_form_type(),
-                                    form_data.getCustom_form_code(),
-                                    form_data.getCustom_form_version(),
-                                    form_data.getCustom_form_data()
-                            ).toSqlQuery()
-                        )
-                );
+                processListToServer(form_data);
             }
         }
         //
         return form_datas.size();
+    }
+
+    private void processListToServer(GE_Custom_Form_Data form_data) {
+        form_data_fields.addAll(
+                formDataFieldDao.query(
+                        new GE_Custom_Form_Data_Field_Sql_003(
+                                form_data.getCustomer_code(),
+                                form_data.getCustom_form_type(),
+                                form_data.getCustom_form_code(),
+                                form_data.getCustom_form_version(),
+                                form_data.getCustom_form_data()
+                        ).toSqlQuery()
+                )
+        );
+
+        //LUCHE - 08/10/2021 ADD ITEMS DA O.S
+        form_items.addAll(
+                deviceItemDao.query(
+                    new Sql_WS_Save_Device_Item_002(
+                            form_data.getCustomer_code(),
+                            form_data.getCustom_form_type(),
+                            form_data.getCustom_form_code(),
+                            form_data.getCustom_form_version(),
+                            form_data.getCustom_form_data()
+                    ).toSqlQuery()
+                )
+        );
+
+        formVgsList.addAll(
+                geOsVgDao.getGeOsByFormCode(
+                        form_data.getCustomer_code(),
+                        form_data.getCustom_form_type(),
+                        form_data.getCustom_form_code(),
+                        form_data.getCustom_form_version(),
+                        form_data.getCustom_form_data()
+                )
+        );
     }
 
     private boolean checkSaveReturn(Gson gson, String save, String error_msg, ArrayList<TSave_Rec.Error_Process> error_process, int jumpValidation, int jumpOD) throws Exception{

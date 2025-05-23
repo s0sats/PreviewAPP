@@ -9,8 +9,8 @@ import com.namoadigital.prj001.extensions.date.isDateBefore
 import com.namoadigital.prj001.extensions.date.isDateBeforeOrEquals
 import com.namoadigital.prj001.extensions.date.isDateEquals
 import com.namoadigital.prj001.extensions.suspendResults
-import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetGeOsByIdUseCase
@@ -74,9 +74,12 @@ class ValidateFinishOSUseCase constructor(
         }
     }
 
-    private fun FinishValidation.validateBackupMachine(map: MutableMap<Component, ComponentError>, backupMachine: FinishValidation.BackupMachine?) {
-        backupMachine?.let{
-            if(it.hasBackupMachine && it.serialId == null && it.productCode == null){
+    private fun FinishValidation.validateBackupMachine(
+        map: MutableMap<Component, ComponentError>,
+        backupMachine: FinishValidation.BackupMachine?
+    ) {
+        backupMachine?.let {
+            if (it.hasBackupMachine && it.serialId == null && it.productCode == null) {
                 map[Component.BackupMachine] = Component.BackupMachine.BackupMachineEmpty
             }
         }

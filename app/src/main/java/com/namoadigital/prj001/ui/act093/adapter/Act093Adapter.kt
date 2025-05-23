@@ -8,8 +8,8 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act020HeaderListBinding
 import com.namoadigital.prj001.databinding.Act093AdapterItemBinding
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 
 class Act093Adapter constructor(

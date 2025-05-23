@@ -4,6 +4,8 @@ import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.dao.MdItemCheckDao
 import com.namoadigital.prj001.database.Specification
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusModificationType
+
 
 /**
  * LUCHE - 30/09/2021
@@ -47,6 +49,7 @@ class GeOsDeviceItemCreation_Sql_001(
                         $customFormData  ${GeOsDeviceItemDao.CUSTOM_FORM_DATA} ,
                         i.${MdItemCheckDao.ITEM_CHECK_ID},
                         i.${MdItemCheckDao.ITEM_CHECK_DESC},
+                        i.${MdItemCheckDao.ITEM_CHECK_DESC_ALT_VG},
                         i.${MdItemCheckDao.ITEM_CHECK_GROUP_CODE},
                         $sufix ${GeOsDeviceItemDao.VALUE_SUFIX},                                 
                         $restrictionDecimal ${GeOsDeviceItemDao.RESTRICTION_DECIMAL},                                 
@@ -60,7 +63,9 @@ class GeOsDeviceItemCreation_Sql_001(
                         null ${GeOsDeviceItemDao.STATUS_ANSWER},
                         0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE},
                         0 ${GeOsDeviceItemDao.HIDE_DAYS_IN_ALERT},
-                        ${GeOsDeviceItemDao.PARTITIONED_EXECUTION}
+                        ${GeOsDeviceItemDao.PARTITIONED_EXECUTION},
+                        1 ${GeOsDeviceItemDao.IS_VISIBLE},
+                        '${GeOsDeviceItemStatusModificationType.ITEM.status}' ${GeOsDeviceItemDao.STATUS_MODIFICATION_TYPE}
                     FROM
                         ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} si,
                         ${MdItemCheckDao.TABLE} i

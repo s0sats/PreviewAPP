@@ -12,13 +12,19 @@ import com.namoadigital.prj001.ui.act011.Act011FfOption
 
 class Act011FfOptionsAdapter(
     val tabs: List<Act011FormTab>,
-    var tabSelected:Int,
+    var tabSelected: Int,
     val isFormSO: Boolean,
     val mListener: Act011FfOption.ICustom_Form_FF_Options_ll
 ) : RecyclerView.Adapter<Act011FfOptionsAdapter.MyFormTabVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyFormTabVH {
-        return MyFormTabVH(Act011FfOptionsCellBinding.inflate(LayoutInflater.from(parent.context), parent, false), mListener)
+        return MyFormTabVH(
+            Act011FfOptionsCellBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ), mListener
+        )
     }
 
     override fun onBindViewHolder(holder: MyFormTabVH, position: Int) {
@@ -32,26 +38,29 @@ class Act011FfOptionsAdapter(
     }
 
 
-    inner class MyFormTabVH(val binding: Act011FfOptionsCellBinding, val mListener: Act011FfOption.ICustom_Form_FF_Options_ll) : RecyclerView.ViewHolder(binding.root){
-        fun onBinding(item: Act011FormTab, position: Int){
+    inner class MyFormTabVH(
+        val binding: Act011FfOptionsCellBinding,
+        val mListener: Act011FfOption.ICustom_Form_FF_Options_ll
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun onBinding(item: Act011FormTab, position: Int) {
             with(binding) {
-                if(isFormSO
-                    && position == 0){
+                if (item.fieldCount == -1) {
                     tvFormTabFieldsCount.visibility = View.INVISIBLE
-                }else{
+                } else {
                     tvFormTabFieldsCount.visibility = View.VISIBLE
                 }
                 clTabItem.apply {
                     setOnClickListener {
                         mListener.onTabSelected(item.page)
                     }
-                    when(item.status)
-                    {
-                        Act011FormTabStatus.OK ->{
-                            setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green4))
+                    when (item.status) {
+                        Act011FormTabStatus.OK -> {
+                            setBackgroundColor(
+                                context.getResources().getColor(R.color.namoa_color_light_green4)
+                            )
                         }
                         //
-                        Act011FormTabStatus.ERROR ->{
+                        Act011FormTabStatus.ERROR -> {
                             setBackgroundColor(
                                 context.getResources().getColor(R.color.namoa_os_form_tab_pending)
                             )
@@ -62,7 +71,7 @@ class Act011FfOptionsAdapter(
                             setBackgroundColor(0x00000000)
                         }
                     }
-                    if(item.page == tabSelected){
+                    if (item.page == tabSelected) {
                         setBackgroundColor(
                             context.getResources().getColor(R.color.namoa_myactions_blue_bg)
                         )
@@ -71,32 +80,36 @@ class Act011FfOptionsAdapter(
 
                 tvFormTabName.text = item.name
                 tvFormTabOrder.text = getTabOrder(item)
-                tvFormTabFieldsCount.text = item.fieldCount.toString()
-                tvFormTabTracking.visibility = View.INVISIBLE
+                tvFormTabFieldsCount.text =
+                    if (item.countInteract != null) "${item.countInteract}/${item.fieldCount}" else item.fieldCount.toString()
+                tvFormTabTracking.visibility = View.GONE
                 item.tracking?.let {
                     tvFormTabTracking.visibility = View.VISIBLE
                     tvFormTabTracking.text = it
                 }
 
-                tvForecastCountVal.visibility = View.INVISIBLE
-                if(item.forecastCount != null
-                    && item.forecastCount > 0)  {
-                    tvForecastCountVal.visibility = View.VISIBLE
-                    tvForecastCountVal.text = item.forecastCount .toString()
+                cardForecastCount.visibility = View.GONE
+                if (item.forecastCount != null) {
+                    cardForecastCount.visibility = View.VISIBLE
+                    tvForecastCountVal.text = item.forecastCount.formattedCounter()
                 }
 
-                tvCriticalForecastCountVal.visibility = View.INVISIBLE
-                if(item.criticalForecastCount != null
-                    && item.criticalForecastCount > 0)  {
-                    tvCriticalForecastCountVal.visibility = View.VISIBLE
-                    tvCriticalForecastCountVal.text = item.criticalForecastCount.toString()
+                cardCriticalForecastCount.visibility = View.GONE
+                if (item.criticalForecastCount != null) {
+                    cardCriticalForecastCount.visibility = View.VISIBLE
+                    tvCriticalForecastCountVal.text = item.criticalForecastCount.formattedCounter()
                 }
 
-                tvProblemReportedCountVal.visibility = View.INVISIBLE
-                if(item.problemReportedCount != null
-                    && item.problemReportedCount > 0)  {
-                    tvProblemReportedCountVal.visibility = View.VISIBLE
-                    tvProblemReportedCountVal.text = item.problemReportedCount.toString()
+                cardProblemReportedCount.visibility = View.GONE
+                if (item.problemReportedCount != null) {
+                    cardProblemReportedCount.visibility = View.VISIBLE
+                    tvProblemReportedCountVal.text = item.problemReportedCount.formattedCounter()
+                }
+
+                cardNonForecastCount.visibility = View.GONE
+                if (item.nonForecastCount != null) {
+                    cardNonForecastCount.visibility = View.VISIBLE
+                    tvNonForecastCountVal.text = item.nonForecastCount.formattedCounter()
                 }
             }
         }
@@ -106,7 +119,7 @@ class Act011FfOptionsAdapter(
          * Nesses casos, o indice exibido é page + 1
          */
         private fun getTabOrder(item: Act011FormTab) =
-            "${ if(!isFormSO) item.page else item.page + 1 }."
+            "${if (!isFormSO) item.page else item.page + 1}."
     }
 
 }

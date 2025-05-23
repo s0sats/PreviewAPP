@@ -2,7 +2,7 @@ package com.namoadigital.prj001.database.scripts.multi.masterdata
 
 import com.namoadigital.prj001.dao.MD_SiteDao
 
-const val CREATE_SITE_TABLE = """
+const val MD_SITE_CREATE_SCRIPT = """
         create table if not exists [${MD_SiteDao.TABLE}] 
         (
             [customer_code] int not null,

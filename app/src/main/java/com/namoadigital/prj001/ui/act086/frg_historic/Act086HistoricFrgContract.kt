@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.ui.act086.frg_historic
 
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemHist
 import java.util.ArrayList
 
 interface Act086HistoricFrgContract {

@@ -42,10 +42,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.ticket.TkSerialSearchRequest.Companion.DEFAULT_PAGE_SIZE
 import com.namoadigital.prj001.ui.act070.model.ListSerialSearchItemsArguments
@@ -137,7 +137,7 @@ private fun HeaderSection(
             containerColor = Color.White
         ),
         shape = RoundedCornerShape(0.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = ApplicationTheme.spacing.medium)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = NamoaTheme.spacing.medium)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -145,7 +145,7 @@ private fun HeaderSection(
             TopBarApp(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = ApplicationTheme.spacing.medium),
+                    .padding(horizontal = NamoaTheme.spacing.medium),
                 title = title,
                 onClose = onClose
             )
@@ -174,8 +174,8 @@ private fun OutlinedFilterSerial(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = ApplicationTheme.spacing.mediumSmall)
-            .padding(horizontal = ApplicationTheme.spacing.medium),
+            .padding(vertical = NamoaTheme.spacing.mediumSmall)
+            .padding(horizontal = NamoaTheme.spacing.medium),
         value = searchText,
         onValueChange = onSearchTextChange,
         label = { Text(hint) },
@@ -192,13 +192,13 @@ private fun TopBarApp(
     onClose: () -> Unit
 ) {
     ConstraintLayout(
-        modifier = modifier.padding(top = ApplicationTheme.spacing.medium)
+        modifier = modifier.padding(top = NamoaTheme.spacing.medium)
     ) {
         val (text, icon) = createRefs()
 
         Text(
             text = title,
-            style = ApplicationTheme.typography.titleLarge,
+            style = NamoaTheme.typography.titleLarge,
             modifier = Modifier
                 .constrainAs(text) {
                     start.linkTo(parent.start)
@@ -227,15 +227,15 @@ private fun DividerSection(text: String) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = ApplicationTheme.spacing.medium),
+            .padding(vertical = NamoaTheme.spacing.medium),
         text = text,
         textAlign = TextAlign.Center,
-        style = ApplicationTheme.typography.bodyMedium.copy(
+        style = NamoaTheme.typography.bodyMedium.copy(
             fontWeight = FontWeight.Bold
         ),
-        color = ApplicationTheme.colors.outline
+        color = NamoaTheme.colors.outline
     )
-    HorizontalDivider(thickness = 1.dp, color = ApplicationTheme.colors.outline)
+    HorizontalDivider(thickness = 1.dp, color = NamoaTheme.colors.outline)
 }
 
 @Composable
@@ -245,25 +245,25 @@ private fun ColumnScope.SerialList(
     onSelectItem: (BaseSerialSearchItem.SerialSearchItem) -> Unit
 ) {
 
-    if(list.isEmpty()){
+    if (list.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-        ){
+        ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = ApplicationTheme.typography.bodyMedium,
-                color = ApplicationTheme.colors.outline,
+                style = NamoaTheme.typography.bodyMedium,
+                color = NamoaTheme.colors.outline,
                 text = translateMap.translate(DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH)
             )
         }
-    }else{
+    } else {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ApplicationTheme.spacing.medium)
-                .background(color = ApplicationTheme.colors.outlineVariant.copy(alpha = 0.09f))
+                .padding(horizontal = NamoaTheme.spacing.medium)
+                .background(color = NamoaTheme.colors.outlineVariant.copy(alpha = 0.09f))
                 .weight(1f)
         ) {
             items(
@@ -275,7 +275,9 @@ private fun ColumnScope.SerialList(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
                         labelSite = translateMap.translate(DIALOG_LABEL_CARD_SITE_SERIAL_SEARCH),
-                        labelTicketOpen = translateMap.translate(DIALOG_LABEL_CARD_TICKET_OPEN_SERIAL_SEARCH),
+                        labelTicketOpen = translateMap.translate(
+                            DIALOG_LABEL_CARD_TICKET_OPEN_SERIAL_SEARCH
+                        ),
                     ) { onSelectItem(it) }
 
                     is BaseSerialSearchItem.SerialSearchExceededItem -> ExceedRecordsWidget(
@@ -303,31 +305,31 @@ private fun SerialItem(
     onClick: (BaseSerialSearchItem.SerialSearchItem) -> Unit
 ) {
     Row(
-        modifier = modifier.padding(vertical = ApplicationTheme.spacing.extraSmall)
+        modifier = modifier.padding(vertical = NamoaTheme.spacing.extraSmall)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = ApplicationTheme.spacing.extraSmall),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = NamoaTheme.spacing.extraSmall),
             onClick = { onClick(item) }
         ) {
             Column(
-                modifier = Modifier.padding(ApplicationTheme.spacing.small)
+                modifier = Modifier.padding(NamoaTheme.spacing.small)
             ) {
                 Text(
-                    modifier = Modifier.padding(horizontal = ApplicationTheme.spacing.medium),
+                    modifier = Modifier.padding(horizontal = NamoaTheme.spacing.medium),
                     text = item.serialId,
-                    style = ApplicationTheme.typography.bodyLarge.copy(
-                        color = ApplicationTheme.colors.onSurface,
+                    style = NamoaTheme.typography.bodyLarge.copy(
+                        color = NamoaTheme.colors.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                 )
 
                 Text(
-                    modifier = Modifier.padding(horizontal = ApplicationTheme.spacing.medium),
+                    modifier = Modifier.padding(horizontal = NamoaTheme.spacing.medium),
                     text = item.productDesc,
-                    style = ApplicationTheme.typography.labelLarge.copy(
-                        color = ApplicationTheme.colors.onSurface,
+                    style = NamoaTheme.typography.labelLarge.copy(
+                        color = NamoaTheme.colors.onSurface,
                     )
                 )
 
@@ -348,16 +350,16 @@ private fun TicketIcons() {
     val ticketsToShow = 3
     Box(
         modifier = Modifier
-            .height(ApplicationTheme.spacing.large)
+            .height(NamoaTheme.spacing.large)
     ) {
         repeat(ticketsToShow) { i ->
             Icon(
                 painter = painterResource(R.drawable.ticket_icon),
                 contentDescription = null,
-                tint = ApplicationTheme.colors.primary.copy(alpha = 1f - (i * 0.3f)),
+                tint = NamoaTheme.colors.primary.copy(alpha = 1f - (i * 0.3f)),
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(ApplicationTheme.spacing.mediumLarge)
+                    .size(NamoaTheme.spacing.mediumLarge)
                     .offset(x = (i * -6).dp)
             )
         }
@@ -370,31 +372,31 @@ private fun BuildLabeledText(label: String, value: String?, ticketOpenQty: Int =
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ApplicationTheme.spacing.medium)
+                .padding(horizontal = NamoaTheme.spacing.medium)
         ) {
             Text(
                 modifier = Modifier
-                    .padding(end = ApplicationTheme.spacing.small),
+                    .padding(end = NamoaTheme.spacing.small),
                 text = "$label: ",
-                style = ApplicationTheme.typography.bodyMedium.copy(
-                    color = ApplicationTheme.colors.outline,
+                style = NamoaTheme.typography.bodyMedium.copy(
+                    color = NamoaTheme.colors.outline,
                     fontWeight = FontWeight.Bold
                 )
             )
             TicketIcons()
             Text(
-                style = ApplicationTheme.typography.bodyMedium,
+                style = NamoaTheme.typography.bodyMedium,
                 text = value!!
             )
         }
 
     } else {
         Text(
-            modifier = Modifier.padding(horizontal = ApplicationTheme.spacing.medium),
+            modifier = Modifier.padding(horizontal = NamoaTheme.spacing.medium),
             text = buildAnnotatedString {
                 withStyle(
-                    style = ApplicationTheme.typography.bodyMedium.copy(
-                        color = ApplicationTheme.colors.outline,
+                    style = NamoaTheme.typography.bodyMedium.copy(
+                        color = NamoaTheme.colors.outline,
                         fontWeight = FontWeight.Bold
                     ).toSpanStyle(),
                 ) {
@@ -402,8 +404,8 @@ private fun BuildLabeledText(label: String, value: String?, ticketOpenQty: Int =
                 }
 
                 withStyle(
-                    style = ApplicationTheme.typography.bodyMedium.copy(
-                        color = ApplicationTheme.colors.onSurface
+                    style = NamoaTheme.typography.bodyMedium.copy(
+                        color = NamoaTheme.colors.onSurface
                     ).toSpanStyle(),
                 ) {
                     append(value ?: "")
@@ -426,8 +428,8 @@ fun ExceedRecordsWidget(
 ) {
     Box(
         modifier = modifier
-            .padding(horizontal = ApplicationTheme.spacing.medium)
-            .padding(vertical = ApplicationTheme.spacing.small)
+            .padding(horizontal = NamoaTheme.spacing.medium)
+            .padding(vertical = NamoaTheme.spacing.small)
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -452,7 +454,7 @@ fun ExceedRecordsWidget(
             Text(
                 text = "$labelCounterFound: $foundQty",
                 color = colorResource(R.color.namoa_color_gray_9),
-                style = ApplicationTheme.typography.bodyMedium,
+                style = NamoaTheme.typography.bodyMedium,
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -467,7 +469,7 @@ fun ExceedRecordsWidget(
             Text(
                 text = "$labelCounterLimit: $sizeLimit",
                 color = colorResource(R.color.namoa_color_gray_9),
-                style = ApplicationTheme.typography.bodyMedium,
+                style = NamoaTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .constrainAs(tvPageVal) {

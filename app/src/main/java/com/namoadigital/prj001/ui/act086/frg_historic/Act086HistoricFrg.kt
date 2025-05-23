@@ -16,10 +16,11 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086HistoricAdapter
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.GeOsVgDao
 import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemHist
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -49,6 +50,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private var nextCycleMeasure: Float? = null
     private var nextCycleMeasureDate: String? = null
     private var nextCycleLimitDate: String? = null
+    private var lastExecutionDesc: String? = null
+    private var lastExecutionVal: String? = null
     private var measureValueSufix: String? = null
     private var verificationInstruction: String? = null
     private var restrictionDecimal: Int? = null
@@ -71,6 +74,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             nextCycleMeasure = it.getFloat(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE)
             nextCycleMeasureDate = it.getString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE)
             nextCycleLimitDate =  it.getString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE)
+            lastExecutionDesc =  it.getString(GeOsVgDao.VG_DESC)
+            lastExecutionVal =  it.getString(VG_LAST_VALUE)
             measureValueSufix = it.getString(GeOsDeviceItemDao.VALUE_SUFIX)
             verificationInstruction = it.getString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION)
             if(it.containsKey(GeOsDeviceItemDao.RESTRICTION_DECIMAL)) {
@@ -102,6 +107,22 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         /*setLastFixedInfo()*/
         setHistoricInfo()
         setImageInfo()
+        setVgLastExec()
+    }
+
+    private fun setVgLastExec() {
+
+        with(binding){
+            if(!lastExecutionVal.isNullOrBlank()
+                && lastExecutionDesc != null){
+                act086HistoricFrgClLastVgExec.visibility = View.VISIBLE
+
+                act086HistoricFrgLastVgVal.text = lastExecutionVal?:""
+                act086HistoricFrgLastVgDesc.text = lastExecutionDesc?:""
+            }else{
+                act086HistoricFrgClLastVgExec.visibility = View.GONE
+            }
+        }
     }
 
     private fun setImageInfo() {
@@ -122,6 +143,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             act086HistoricFrgTvLastMeasureLbl.text = hmAux_Trans["last_measure_lbl"]
             act086HistoricFrgTvMaterialLbl.text = hmAux_Trans["material_applied_lbl"]*/
             act086HistoricFrgTvAlertHistoricTtl.text = hmAux_Trans["alert_historic_ttl"]
+            act086HistoricFrgLastVgLbl.text = hmAux_Trans["last_vg_measure_lbl"]
         }
     }
 
@@ -216,10 +238,10 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     private fun getFormattedMeasureInfo(): String {
-        return "${mPresenter.getFormattedLastMeasureInfo(nextCycleMeasure!!,measureValueSufix,restrictionDecimal)} (${ToolBox_Inf.millisecondsToString(
-                                                        ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
-                                                        ToolBox_Inf.nlsDateFormat(context)
-                                                    )})"
+        return "${ToolBox_Inf.millisecondsToString(
+            ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
+            ToolBox_Inf.nlsDateFormat(context)
+        )} (${mPresenter.getFormattedLastMeasureInfo(nextCycleMeasure!!,measureValueSufix,restrictionDecimal)})"
     }
 
     private fun getFormattedLimitDate(nextCycleLimitDate: String): String {
@@ -337,6 +359,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             next_cycle_measure_date: String? = null,
             next_cycle_limit_date: String? = null,
             measure_value_sufix: String? = null,
+            vg_desc: String? = null,
+            vg_last_value: String? = null,
             verification_instruction: String? = null,
             restriction_decimal: Int? = null,
             dateStartUntilLastMinute: String,
@@ -351,6 +375,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                     }
                     putString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE,next_cycle_measure_date)
                     putString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE,next_cycle_limit_date)
+                    putString(GeOsVgDao.VG_DESC, vg_desc)
+                    putString(VG_LAST_VALUE, vg_last_value)
                     putString(GeOsDeviceItemDao.VALUE_SUFIX,measure_value_sufix)
                     putString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION,verification_instruction)
                     restriction_decimal?.let{
@@ -378,8 +404,10 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "fixed_lbl",
                 "adjust_lbl",
                 "with_problem_lbl",
+                "last_vg_measure_lbl",
 
         )
+        const val VG_LAST_VALUE = "VG_LAST_VALUE"
     }
 }
 

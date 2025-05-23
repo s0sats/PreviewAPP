@@ -60,14 +60,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.R.color
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
-import com.namoadigital.prj001.design.compose.m3_namoa_onSurface
-import com.namoadigital.prj001.design.compose.m3_namoa_onSurfaceVariant
-import com.namoadigital.prj001.design.compose.namoa_color_danger_red
 import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormBackupMachineList
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
@@ -129,15 +126,18 @@ fun BackupMachineSerialComponent(
 
         rowColor = if (!isReadOnly
             && backupMachineSwitchState
-            && (backupMachine == null || !(backupMachine.isValid))) {
+            && (backupMachine == null || !(backupMachine.isValid))
+        ) {
             requiredColor
         } else {
             Color.Transparent
         }
 
-        onSerial(backupMachine?.copy(
-            hasBackupMachine = backupMachineSwitchState
-        ))
+        onSerial(
+            backupMachine?.copy(
+                hasBackupMachine = backupMachineSwitchState
+            )
+        )
     }
 //    if (backupSerial != null) {
     Column(modifier = modifier) {
@@ -145,7 +145,7 @@ fun BackupMachineSerialComponent(
 
         Box(
             modifier = Modifier
-                .padding(top = ApplicationTheme.spacing.extraExtraSmall)
+                .padding(top = NamoaTheme.spacing.extraExtraSmall)
                 .border(width = 1.dp, color = rowColor, shape = RoundedCornerShape(8.dp))
         ) {
 
@@ -159,14 +159,16 @@ fun BackupMachineSerialComponent(
                     //
                     serialIdSearchField = ""
 
-                    onSerial(backupMachine?.copy(
-                        hasBackupMachine = check,
-                        productCode = null,
-                        productId = null,
-                        productDesc = null,
-                        serialCode = null,
-                        serialId = null,
-                    ))
+                    onSerial(
+                        backupMachine?.copy(
+                            hasBackupMachine = check,
+                            productCode = null,
+                            productId = null,
+                            productDesc = null,
+                            serialCode = null,
+                            serialId = null,
+                        )
+                    )
                     if (!check) {
                         onBackupMachineClear()
                     }
@@ -176,8 +178,8 @@ fun BackupMachineSerialComponent(
                     modifier = Modifier
                         .padding(
                             start = 16.dp,
-                            end = ApplicationTheme.spacing.mediumSmall,
-                            bottom = ApplicationTheme.spacing.none
+                            end = NamoaTheme.spacing.mediumSmall,
+                            bottom = NamoaTheme.spacing.none
                         )
                 ) {
                     Column(
@@ -186,10 +188,14 @@ fun BackupMachineSerialComponent(
                             .align(Alignment.Top)
                     ) {
                         AndroidView(
-                            modifier = modifier.padding(bottom = ApplicationTheme.spacing.extraExtraSmall),
+                            modifier = modifier.padding(bottom = NamoaTheme.spacing.extraExtraSmall),
                             factory = { context ->
                                 //
-                                val textInputLayout = TextInputLayout(context, null, R.style.NamoaTheme3_TextInputLayout_Outlined).apply {
+                                val textInputLayout = TextInputLayout(
+                                    context,
+                                    null,
+                                    R.style.NamoaTheme3_TextInputLayout_Outlined
+                                ).apply {
                                     layoutParams = LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.MATCH_PARENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -206,7 +212,12 @@ fun BackupMachineSerialComponent(
                                         6f,
                                         context.resources.displayMetrics
                                     )
-                                    setBoxCornerRadii(cornerRadiusPx, cornerRadiusPx, cornerRadiusPx, cornerRadiusPx)
+                                    setBoxCornerRadii(
+                                        cornerRadiusPx,
+                                        cornerRadiusPx,
+                                        cornerRadiusPx,
+                                        cornerRadiusPx
+                                    )
                                 }
                                 //
                                 val mkEditTextNM = MKEditTextNM(context)
@@ -222,7 +233,14 @@ fun BackupMachineSerialComponent(
                                         (16 * density).toInt()
                                     )
                                     background = null
-                                    setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_onSurface)))
+                                    setTextColor(
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                context,
+                                                R.color.m3_namoa_onSurface
+                                            )
+                                        )
+                                    )
 
 
                                     backupMachine?.let {
@@ -246,8 +264,9 @@ fun BackupMachineSerialComponent(
                                 //
                                 val view = textInputLayout.editText as MKEditTextNM
                                 //
-                                if ( backupMachine?.isValid == true
-                                    && backupMachineSwitchState) {
+                                if (backupMachine?.isValid == true
+                                    && backupMachineSwitchState
+                                ) {
                                     view.setText(backupMachine.serialId)
                                     textInputLayout.helperText = backupMachine.productDesc
                                 } else {
@@ -269,11 +288,11 @@ fun BackupMachineSerialComponent(
                         )
                     }
                     //
-                    Spacer(modifier = Modifier.width(ApplicationTheme.spacing.mediumLarge))
+                    Spacer(modifier = Modifier.width(NamoaTheme.spacing.mediumLarge))
                     //
                     Column {
 
-                        Spacer(modifier = Modifier.height(ApplicationTheme.spacing.mediumSmall))
+                        Spacer(modifier = Modifier.height(NamoaTheme.spacing.mediumSmall))
 
                         IconButton(
                             modifier = Modifier
@@ -286,14 +305,17 @@ fun BackupMachineSerialComponent(
                                     onBackupMachineSearch(serialIdSearchField, false)
                                 } else {
                                     serialIdSearchField = ""
-                                    onSerial(backupMachine?.copy(
-                                        hasBackupMachine = backupMachine.hasBackupMachine?: false,
-                                        productCode = null,
-                                        productId = null,
-                                        productDesc = null,
-                                        serialCode = null,
-                                        serialId = null,
-                                    ))
+                                    onSerial(
+                                        backupMachine?.copy(
+                                            hasBackupMachine = backupMachine.hasBackupMachine
+                                                ?: false,
+                                            productCode = null,
+                                            productId = null,
+                                            productDesc = null,
+                                            serialCode = null,
+                                            serialId = null,
+                                        )
+                                    )
                                     onBackupMachineClear()
                                 }
                             },
@@ -357,8 +379,8 @@ fun BackupMachineListDialog(
                 .padding(
                     start = 8.dp,
                     end = 8.dp,
-                    bottom =16.dp,
-                    ),
+                    bottom = 16.dp,
+                ),
             color = Color.White
         ) {
             Column(
@@ -398,7 +420,7 @@ fun BackupMachineListDialog(
                 ) { isLoading ->
                     if (isLoading) {
                         CircularProgressIndicator(
-                            color = ApplicationTheme.colors.primary
+                            color = NamoaTheme.colors.primary
                         )
                     } else {
                         Column(
@@ -411,7 +433,7 @@ fun BackupMachineListDialog(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                )  {
+                                ) {
                                     items(backupMachineList.backupList!!.size) { index ->
                                         BackupMachineItem(
                                             backupMachineList.backupList!![index]
@@ -423,7 +445,9 @@ fun BackupMachineListDialog(
                             } else {
                                 Text(
                                     modifier = Modifier.padding(vertical = 8.dp),
-                                    text = translateMap.translate(DIALOG_SELECT_BACKUP_MACHINE_EMPTY_LBL),
+                                    text = translateMap.translate(
+                                        DIALOG_SELECT_BACKUP_MACHINE_EMPTY_LBL
+                                    ),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color.Black
                                 )
@@ -432,10 +456,10 @@ fun BackupMachineListDialog(
                                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                                 horizontalArrangement = Arrangement.End,
                             ) {
-                                TextButton(onClick = { onDialogDismiss() },) {
+                                TextButton(onClick = { onDialogDismiss() }) {
                                     Text(
                                         text = translateMap.translate("sys_alert_btn_cancel"),
-                                        style = ApplicationTheme.typography.bodySmall.copy(
+                                        style = NamoaTheme.typography.bodySmall.copy(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.primary,
@@ -471,11 +495,11 @@ fun BackupMachineItem(
             Text(
                 text = value.serialId,
                 style = MaterialTheme.typography.bodyLarge,
-                color = m3_namoa_onSurface
+                color = NamoaTheme.colors.onSurface
             )
             Text(
                 text = value.productDesc,
-                color = m3_namoa_onSurface,
+                color = NamoaTheme.colors.onSurface,
                 style = MaterialTheme.typography.bodySmall
             )
             value.siteDesc?.let {
@@ -484,9 +508,9 @@ fun BackupMachineItem(
                             LocalContext.current
                         )
                     ) {
-                        m3_namoa_onSurfaceVariant
+                        NamoaTheme.colors.onSurfaceVariant
                     } else {
-                        namoa_color_danger_red
+                        NamoaTheme.colors.error
                     }
 
                 Text(

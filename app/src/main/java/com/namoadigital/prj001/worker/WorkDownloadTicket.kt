@@ -145,7 +145,8 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
         val gson = GsonBuilder().serializeNulls().create()
         val resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_DOWNLOAD,
-            gson.toJson(env)
+            gson.toJson(env),
+            ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL
         )
         //
         val rec = gson.fromJson(

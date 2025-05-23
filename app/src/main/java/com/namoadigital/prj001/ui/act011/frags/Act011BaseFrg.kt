@@ -28,7 +28,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     private val mInfraListener get() = _mInfraListener!!
 //
     protected lateinit var hmAuxTrans: HMAux
-    protected var tabIndex: Int = 0
+    var tabIndex: Int = 0
     protected var tabLastIndex: Int = 0
     protected lateinit var formStatus: String
     protected var scheduleDesc: String? = null
@@ -65,6 +65,12 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      * Retorna a qtd de itens na tab
      */
     abstract override fun getTabCount(): Int
+
+    /**
+     * Retorna a quantidade de itens interagidos
+     */
+    open fun getTabInteractionCount(): Int? = null
+
 
     /**
      * Retorna a objTab baseado nos dados do frg
@@ -289,7 +295,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     /**
      * Define se status causa readonly
      */
-    private fun readOnlyStatus() = (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
+    protected fun readOnlyStatus() = (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
             || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true))
 
     //region Set interface

@@ -23,6 +23,9 @@ interface Contract {
         fun getDeviceItem(context: Context, item: DeviceTpModel): MD_Product_Serial_Tp_Device_Item?
         fun getDeviceItemDaysInAlert(context: Context, item: DeviceTpModel): Long
         fun loadHistoricFrgTranslation(): HMAux
+        fun getVerificationGroupDesc(context: Context, customerCode:Long, vgCode:Int):String?
+        fun getVerificationGroupLastValue(context: Context, model: MD_Product_Serial_Tp_Device_Item):String?
     }
+
 
 }

@@ -354,7 +354,7 @@
                                 android:layout_height="match_parent"
                                 android:orientation="vertical"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@+id/cycleLayout"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent">
 
@@ -373,34 +373,6 @@
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/m3_namoa_onBackground" />
                             </LinearLayout>
-
-
-                            <LinearLayout
-                                android:id="@+id/cycleLayout"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.5"
-                                app:layout_constraintStart_toEndOf="@+id/measure_layout">
-
-                                <TextView
-                                    android:id="@+id/titleCycle"
-                                    style="@style/TextAppearance.Material3.BodySmall"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/m3_namoa_onBackground"
-                                    tools:text="lastCycle" />
-
-                                <TextView
-                                    android:id="@+id/cycleValue"
-                                    style="@style/TextAppearance.Material3.BodyLarge"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/m3_namoa_onBackground" />
-                            </LinearLayout>
-
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout

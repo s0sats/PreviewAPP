@@ -7,5 +7,6 @@ class MdItemCheck(
     @SerializedName("item_check_code") val itemCheckCode: Int,
     @SerializedName("item_check_id") val itemCheckId: String,
     @SerializedName("item_check_desc") val itemCheckDesc: String,
-    @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?
+    @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?,
+    @SerializedName("item_check_desc_alt_vg") val itemCheckDescAltVg: String?,
 )

@@ -2,23 +2,16 @@ package com.namoadigital.prj001.ui.act086.bottomsheet
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat.getColor
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act086BottomSheetBinding
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.ui.act086.bottomsheet.model.BottomState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlin.reflect.KMutableProperty0
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 
 class Act086_BottomSheet constructor(
     private val buttonSelected: String,

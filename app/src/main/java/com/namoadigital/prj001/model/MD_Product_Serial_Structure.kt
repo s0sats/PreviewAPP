@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import com.google.gson.annotations.SerializedName
+import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg
 
 class MD_Product_Serial_Structure(
     @SerializedName("customer_code") val customer_code: Long,
@@ -20,6 +21,7 @@ class MD_Product_Serial_Structure(
     @SerializedName("measure_block_input_time") val  measure_block_input_time:Long?,
     @SerializedName("measure_alert_input_time") val  measure_alert_input_time:Long?,
     @SerializedName("unavailability_reason_option") val  unavailability_reason_option:Int,
+    @SerializedName("vg") val verificationGroup: MutableList<MDProductSerialVg>?,
     @SerializedName("device_tp") val device_tp: MutableList<MD_Product_Serial_Tp_Device> = mutableListOf()
 ){
     fun setPk(md_product_serial: MD_Product_Serial) {

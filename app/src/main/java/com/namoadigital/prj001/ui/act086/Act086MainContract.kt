@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.ui.act086
 
+import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 
 interface Act086MainContract {
 
@@ -39,6 +40,7 @@ interface Act086MainContract {
         ): String
         fun validBundleParams(isNewVerification: Boolean): Boolean
         fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
+
         fun onBackPressedClicked(
             fragmentManager: FragmentManager,
             deviceItem: GeOsDeviceItem
@@ -53,5 +55,6 @@ interface Act086MainContract {
         fun putListItemIndexOnLastPositionFromBundle()
         fun getDateStartUntilLastMinute() : String
         fun loadHistoricFrgTranslation() : HMAux
+        fun getVerificationGroup(context: Context, model: GeOsDeviceItem): GeOsVg?
     }
 }

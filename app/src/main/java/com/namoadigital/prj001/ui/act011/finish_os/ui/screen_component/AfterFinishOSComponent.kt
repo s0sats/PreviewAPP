@@ -14,10 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.translate
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
@@ -95,7 +95,7 @@ fun AfterFinishOSComponent(
 
         ScheduleFinishSwitch(
             modifier = Modifier
-                .padding(top = ApplicationTheme.spacing.mediumSmall)
+                .padding(top = NamoaTheme.spacing.mediumSmall)
                 .fillMaxWidth(),
             translateMap = translateMap,
             translateLib = translateLib,
@@ -159,7 +159,7 @@ fun MachineFinalSwitch(
     ) {
         if (showResponsibleOptions) {
             RadioGroup(
-                modifier = modifier.padding(start = ApplicationTheme.spacing.medium),
+                modifier = modifier.padding(start = NamoaTheme.spacing.medium),
                 isEnabled = !isReadOnly,
                 radioGroupOptions = RadioGroupOptions(
                     list = listOf(
@@ -242,7 +242,7 @@ fun ScheduleFinishSwitch(
         }
     ) {
         RadioGroup(
-            modifier = modifier.padding(start = ApplicationTheme.spacing.medium),
+            modifier = modifier.padding(start = NamoaTheme.spacing.medium),
             isEnabled = !isReadOnly,
             radioGroupOptions = RadioGroupOptions(listOf(
                 RadioGroupItem(

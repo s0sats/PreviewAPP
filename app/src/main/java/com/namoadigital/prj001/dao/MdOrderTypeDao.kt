@@ -19,22 +19,24 @@ class MdOrderTypeDao(
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
-    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI ),
+    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
+),
     DaoWithReturn<MdOrderType> {
 
-    companion object{
+    companion object {
         const val TABLE = "md_order_type"
-        const val CUSTOMER_CODE ="customer_code"
+        const val CUSTOMER_CODE = "customer_code"
         const val ORDER_TYPE_CODE = "order_type_code"
         const val ORDER_TYPE_ID = "order_type_id"
         const val ORDER_TYPE_DESC = "order_type_desc"
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
+        const val FORCE_EXE_EXPIRED_VG = "force_exe_expired_vg"
     }
 
-    private val toMdOrderTypeMapper: Mapper<Cursor,MdOrderType>
-    private val toContentValuesMapper: Mapper<MdOrderType,ContentValues>
+    private val toMdOrderTypeMapper: Mapper<Cursor, MdOrderType>
+    private val toContentValuesMapper: Mapper<MdOrderType, ContentValues>
 
     init {
         this.toMdOrderTypeMapper = CursorToMdOrderTypeMapper()
@@ -42,10 +44,11 @@ class MdOrderTypeDao(
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(mdOrderType: MdOrderType?): StringBuilder{
-        mdOrderType?.let{
+    private fun getWherePkClause(mdOrderType: MdOrderType?): StringBuilder {
+        mdOrderType?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${mdOrderType.customerCode}'  
                         AND ${ORDER_TYPE_CODE} = '${mdOrderType.orderTypeCode}'                           
                         """.trimIndent()
@@ -67,7 +70,9 @@ class MdOrderTypeDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(mdOrderType)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdOrderType), sbWhere.toString(), null).toLong()
+            addUpdateRet =
+                db.update(TABLE, toContentValuesMapper.map(mdOrderType), sbWhere.toString(), null)
+                    .toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
@@ -121,7 +126,12 @@ class MdOrderTypeDao(
             mdOrderTypes?.forEach { mdOrderType ->
                 val sbWhere: StringBuilder = getWherePkClause(mdOrderType)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdOrderType), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(
+                    TABLE,
+                    toContentValuesMapper.map(mdOrderType),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
@@ -216,7 +226,7 @@ class MdOrderTypeDao(
         } finally {
         }
         closeDB()
-        return  mdOrderType
+        return mdOrderType
     }
 
     override fun query(sQuery: String?): MutableList<MdOrderType> {
@@ -257,7 +267,7 @@ class MdOrderTypeDao(
     private class CursorToMdOrderTypeMapper : Mapper<Cursor, MdOrderType> {
         override fun map(cursor: Cursor?): MdOrderType? {
             cursor?.let {
-                with(cursor){
+                with(cursor) {
                     return MdOrderType(
                         customerCode = getLong(getColumnIndex(CUSTOMER_CODE)),
                         orderTypeCode = getInt(getColumnIndex(ORDER_TYPE_CODE)),
@@ -265,7 +275,8 @@ class MdOrderTypeDao(
                         orderTypeDesc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         processType = getString(getColumnIndex(PROCESS_TYPE)),
                         displayOption = getString(getColumnIndex(DISPLAY_OPTION)),
-                        itemCheckGroupCode = getIntOrNull(getColumnIndex(MdItemCheckDao.ITEM_CHECK_GROUP_CODE))
+                        itemCheckGroupCode = getIntOrNull(getColumnIndex(MdItemCheckDao.ITEM_CHECK_GROUP_CODE)),
+                        force_exe_expired_vg = getInt(getColumnIndex(FORCE_EXE_EXPIRED_VG))
                     )
                 }
             }
@@ -278,27 +289,28 @@ class MdOrderTypeDao(
             val contentValues = ContentValues()
             //
             mdOrderType?.let {
-                with(contentValues){
-                    if(mdOrderType.customerCode > -1){
-                        put(CUSTOMER_CODE,mdOrderType.customerCode)
+                with(contentValues) {
+                    if (mdOrderType.customerCode > -1) {
+                        put(CUSTOMER_CODE, mdOrderType.customerCode)
                     }
-                    if(mdOrderType.orderTypeCode > -1){
-                        put(ORDER_TYPE_CODE,mdOrderType.orderTypeCode)
+                    if (mdOrderType.orderTypeCode > -1) {
+                        put(ORDER_TYPE_CODE, mdOrderType.orderTypeCode)
                     }
-                    if(mdOrderType.orderTypeId != null){
-                        put(ORDER_TYPE_ID,mdOrderType.orderTypeId)
+                    if (mdOrderType.orderTypeId != null) {
+                        put(ORDER_TYPE_ID, mdOrderType.orderTypeId)
                     }
-                    if(mdOrderType.orderTypeDesc != null){
-                        put(ORDER_TYPE_DESC,mdOrderType.orderTypeDesc)
+                    if (mdOrderType.orderTypeDesc != null) {
+                        put(ORDER_TYPE_DESC, mdOrderType.orderTypeDesc)
                     }
-                     if(mdOrderType.orderTypeDesc != null){
-                        put(PROCESS_TYPE,mdOrderType.processType)
+                    if (mdOrderType.orderTypeDesc != null) {
+                        put(PROCESS_TYPE, mdOrderType.processType)
                     }
-                    if(mdOrderType.displayOption != null){
-                        put(DISPLAY_OPTION,mdOrderType.displayOption)
+                    if (mdOrderType.displayOption != null) {
+                        put(DISPLAY_OPTION, mdOrderType.displayOption)
                     }
                     //
                     put(ITEM_CHECK_GROUP_CODE, mdOrderType.itemCheckGroupCode)
+                    put(FORCE_EXE_EXPIRED_VG, mdOrderType.force_exe_expired_vg)
                 }
             }
             //

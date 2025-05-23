@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.dao
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -12,8 +13,11 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemAutomaticSelectionState
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusModificationType
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_002
 import com.namoadigital.prj001.util.Constant
@@ -41,6 +45,7 @@ class GeOsDeviceItemDao(
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val ITEM_CHECK_ID = "item_check_id"
         const val ITEM_CHECK_DESC = "item_check_desc"
+        const val ITEM_CHECK_DESC_ALT_VG = "item_check_desc_alt_vg"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
         const val APPLY_MATERIAL = "apply_material"
         const val VERIFICATION_INSTRUCTION = "verification_instruction"
@@ -49,6 +54,12 @@ class GeOsDeviceItemDao(
         const val CHANGE_ADJUST = "change_adjust"
         const val ORDER_SEQ = "order_seq"
         const val STRUCTURE = "structure"
+        const val ALREADY_OK_HIDE = "already_ok_hide"
+        const val REQUIRE_PHOTO_FIXED = "require_photo_fixed"
+        const val REQUIRE_PHOTO_ALERT = "require_photo_alert"
+        const val REQUIRE_PHOTO_ALREADY_OK = "require_photo_already_ok"
+        const val REQUIRE_PHOTO_NOT_VERIFIED = "require_photo_not_verified"
+        const val VG_CODE = "vg_code"
         const val MANUAL_DESC = "manual_desc"
         const val NEXT_CYCLE_MEASURE = "next_cycle_measure"
         const val NEXT_CYCLE_MEASURE_DATE = "next_cycle_measure_date"
@@ -70,6 +81,11 @@ class GeOsDeviceItemDao(
         const val PARTITIONED_EXECUTION = "partitioned_execution"
         const val TICKET_PREFIX = "ticket_prefix"
         const val TICKET_CODE = "ticket_code"
+        const val VG_ACTION = "vg_action"
+        const val IS_VISIBLE = "is_visible"
+        const val COLOR_ITEM = "color_item"
+        const val STATUS_MODIFICATION_TYPE = "status_modification_type"
+        const val AUTOMATIC_SELECTION_STATE = "automatic_selection_state"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -456,6 +472,25 @@ class GeOsDeviceItemDao(
 
     }
 
+    fun getListDeviceItemByVgCode(
+        customFormType: Int,
+        customFormCode: Int,
+        customFormVersion: Int,
+        customFormData: Long,
+        vgCode: Int,
+    ): List<GeOsDeviceItem> {
+        return query(
+            """
+                SELECT * FROM $TABLE
+                WHERE $VG_CODE = $vgCode
+                AND $CUSTOM_FORM_TYPE = $customFormType
+                AND $CUSTOM_FORM_CODE = $customFormCode
+                AND $CUSTOM_FORM_VERSION = $customFormVersion
+                AND $CUSTOM_FORM_DATA = $customFormData
+            """.trimIndent()
+        )
+    }
+
     fun getListDeviceItemById(
         customerCode: Long,
         formType: Int,
@@ -482,7 +517,31 @@ class GeOsDeviceItemDao(
 
     }
 
+    fun getListDeviceItemByForm(
+        customerCode: Long,
+        formType: Int,
+        formCode: Int,
+        formVersion: Int,
+        formData: Long,
+        productCode: Long,
+        serialCode: Long,
+    ): List<GeOsDeviceItem> {
+        return query(
+            sQuery = """
+                            SELECT * FROM $TABLE
+                            WHERE ${CUSTOMER_CODE} = $customerCode
+                            AND $CUSTOM_FORM_TYPE = $formType
+                            AND $CUSTOM_FORM_CODE = $formCode
+                            AND $CUSTOM_FORM_VERSION = $formVersion
+                            AND $CUSTOM_FORM_DATA = $formData
+                            AND $PRODUCT_CODE = $productCode
+                            AND $SERIAL_CODE = $serialCode
+                        """.trimIndent()
+        )
+    }
+
     class CursorToGeOsDeviceItemMapper : Mapper<Cursor, GeOsDeviceItem> {
+        @SuppressLint("Range")
         override fun map(cursor: Cursor?): GeOsDeviceItem? {
             cursor?.let {
                 with(cursor) {
@@ -499,6 +558,7 @@ class GeOsDeviceItemDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
                         item_check_id = getString(getColumnIndex(ITEM_CHECK_ID)),
                         item_check_desc = getString(getColumnIndex(ITEM_CHECK_DESC)),
+                        item_check_desc_alt_vg = getString(getColumnIndex(ITEM_CHECK_DESC_ALT_VG)),
                         item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)),
                         verification_instruction = getStringOrNull(
@@ -511,6 +571,16 @@ class GeOsDeviceItemDao(
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
+                        already_ok_hide = getInt(getColumnIndex(ALREADY_OK_HIDE)),
+                        require_photo_fixed = getInt(getColumnIndex(REQUIRE_PHOTO_FIXED)),
+                        require_photo_alert = getInt(getColumnIndex(REQUIRE_PHOTO_ALERT)),
+                        require_photo_already_ok = getInt(getColumnIndex(REQUIRE_PHOTO_ALREADY_OK)),
+                        require_photo_not_verified = getInt(
+                            getColumnIndex(
+                                REQUIRE_PHOTO_NOT_VERIFIED
+                            )
+                        ),
+                        vg_code = getIntOrNull(getColumnIndex(VG_CODE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getFloatOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
                         next_cycle_measure_date = getStringOrNull(
@@ -536,6 +606,19 @@ class GeOsDeviceItemDao(
                         partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION)),
                         ticket_prefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
                         ticket_code = getIntOrNull(getColumnIndex(TICKET_CODE)),
+                        vg_action = getInt(getColumnIndex(VG_ACTION)),
+                        is_visible = getInt(getColumnIndex(IS_VISIBLE)),
+                        color_item = GeOsDeviceItemStatusColor.getStatusColor(
+                            getStringOrNull(
+                                getColumnIndex(COLOR_ITEM)
+                            )
+                        ),
+                        status_modification_type = GeOsDeviceItemStatusModificationType.getModificationType(
+                            getStringOrNull(getColumnIndex(STATUS_MODIFICATION_TYPE))
+                        ),
+                        automatic_selection_state = GeOsDeviceItemAutomaticSelectionState.getAutomaticSelection(
+                            getStringOrNull(getColumnIndex(AUTOMATIC_SELECTION_STATE))
+                        ),
                     )
                 }
             }
@@ -577,6 +660,8 @@ class GeOsDeviceItemDao(
                     //
                     put(ITEM_CHECK_DESC, it.item_check_desc)
                     //
+                    put(ITEM_CHECK_DESC_ALT_VG, it.item_check_desc_alt_vg)
+                    //
                     put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
                     //
                     put(APPLY_MATERIAL, it.apply_material)
@@ -592,6 +677,24 @@ class GeOsDeviceItemDao(
                     put(ORDER_SEQ, it.order_seq)
                     //
                     put(STRUCTURE, it.structure)
+                    //
+                    if (it.already_ok_hide > -1) {
+                        put(ALREADY_OK_HIDE, it.already_ok_hide)
+                    }
+                    if (it.require_photo_fixed > -1) {
+                        put(REQUIRE_PHOTO_FIXED, it.require_photo_fixed)
+                    }
+                    if (it.require_photo_alert > -1) {
+                        put(REQUIRE_PHOTO_ALERT, it.require_photo_alert)
+                    }
+                    if (it.require_photo_already_ok > -1) {
+                        put(REQUIRE_PHOTO_ALREADY_OK, it.require_photo_already_ok)
+                    }
+                    if (it.require_photo_not_verified > -1) {
+                        put(REQUIRE_PHOTO_NOT_VERIFIED, it.require_photo_not_verified)
+                    }
+
+                    put(VG_CODE, it.vg_code)
                     //
                     put(MANUAL_DESC, it.manual_desc)
                     //
@@ -634,6 +737,20 @@ class GeOsDeviceItemDao(
                     put(TICKET_PREFIX, it.ticket_prefix)
                     //
                     put(TICKET_CODE, it.ticket_code)
+                    if (it.vg_action > -1) {
+                        put(VG_ACTION, it.vg_action)
+                    }
+                    //
+                    if (it.is_visible > -1) {
+                        put(IS_VISIBLE, it.is_visible)
+                    }
+                    //
+                    put(COLOR_ITEM, it.color_item.toString())
+                    //
+                    put(STATUS_MODIFICATION_TYPE, it.status_modification_type.toString())
+                    //
+                    put(AUTOMATIC_SELECTION_STATE, it.automatic_selection_state.toString())
+                    //
                 }
             }
             return contentValues

@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
-import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;

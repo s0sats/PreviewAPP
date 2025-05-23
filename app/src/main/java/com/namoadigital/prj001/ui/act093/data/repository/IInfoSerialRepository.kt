@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act093.data.repository
 import android.content.Context
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.core.IResult
-import com.namoadigital.prj001.core.IResult.Companion.error
 import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
@@ -12,9 +11,11 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
 import com.namoadigital.prj001.dao.MdDeviceTpDao
 import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.md.MDProductSerialVGDao
 import com.namoadigital.prj001.extensions.coroutines.namoaCatch
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MdDeviceTp
+import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001
 import com.namoadigital.prj001.ui.act092.data.local.preferences.FilterParamPreferences
@@ -35,6 +36,7 @@ class IInfoSerialRepository constructor(
     private val serialDao: MD_Product_SerialDao,
     private val measureTpDao: MeMeasureTpDao,
     private val serialTpDeviceDao: MD_Product_Serial_Tp_DeviceDao,
+    private val mdProductSerialVGDao: MDProductSerialVGDao,
     private val deviceTpDao: MdDeviceTpDao,
     private val sharedActionSerial: FilterParamPreferences
 ) : InfoSerialRepository {
@@ -64,6 +66,21 @@ class IInfoSerialRepository constructor(
     }
 
     override suspend fun geMeasureRestrictionDecimal(
+        customerCode: Long,
+        measureTpCode: Int
+    ): Int {
+        val meMeasureTp = measureTpDao.getByString(
+            MeMeasureTpSql_001(
+                customerCode,
+                measureTpCode
+            ).toSqlQuery()
+        )
+        return meMeasureTp?.let{
+            it.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+        }?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+    }
+
+    fun geMeasureRestrictionDecimalSync(
         customerCode: Long,
         measureTpCode: Int
     ): Int {
@@ -134,6 +151,30 @@ class IInfoSerialRepository constructor(
 
     }
 
+    override fun getPrefSerialRestrictionDecimal(): Int {
+        return serialDao.getByString(
+            MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                prefs.productCode?.toLong() ?: -1,
+                prefs.serialId
+            ).toSqlQuery()
+        )?.let {
+            geMeasureRestrictionDecimalSync(
+                it.customer_code,
+                it.measure_tp_code
+            )
+        } ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+    }
+
+    override fun getMDProductSerialVg(vgCode:Int): MDProductSerialVg? {
+        return mdProductSerialVGDao.getByVgCode(
+            ToolBox_Con.getPreference_Customer_Code(context),
+            prefs.productCode?.toLong() ?: -1,
+            prefs.serialCode?.toLong() ?: -1,
+            vgCode
+        )
+    }
+
     companion object {
 
         class InfoSerialRepositoryFactory(private val context: Context) :
@@ -155,6 +196,9 @@ class IInfoSerialRepository constructor(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                    ),
+                    MDProductSerialVGDao(
+                        context,
                     ),
                     MdDeviceTpDao(
                         context,

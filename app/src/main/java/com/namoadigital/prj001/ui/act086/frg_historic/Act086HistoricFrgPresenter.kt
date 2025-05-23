@@ -2,11 +2,11 @@ package com.namoadigital.prj001.ui.act086.frg_historic
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
 import com.namoadigital.prj001.model.Act086HistoricModel
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemHist
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.ArrayList
 
 class Act086HistoricFrgPresenter(
     private val context: Context,
@@ -42,7 +42,7 @@ class Act086HistoricFrgPresenter(
         restrictionDecimal: Int?
     ): String {
         return "${ToolBox_Inf.convertFloatToBigDecimalString(
-            lastFixed,true
+            lastFixed.roundByRestrictionMeasure(restrictionDecimal),true
         )}${if(measureValueSufix != null) " ".plus(measureValueSufix) else ""}"
     }
 }

@@ -57,11 +57,11 @@ class GetInfoSerialUseCase constructor(
                             iconColor = serialModel?.classColor,
                             value_suffix = value_suffix,
                             hasMeasureTp = serial.measure_tp_code != null,
-                            last_measure_date = ToolBox_Inf.millisecondsToString(
+                            last_measure_date = if(serial.last_measure_date.isNullOrEmpty()) null else ToolBox_Inf.millisecondsToString(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
                                 ToolBox_Inf.nlsDateFormat(context)
                             ),
-                            last_cycle_date = ToolBox_Inf.millisecondsToString(
+                            last_cycle_date = if(serial.last_cycle_date.isNullOrEmpty()) null else ToolBox_Inf.millisecondsToString(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_cycle_date),
                                 ToolBox_Inf.nlsDateFormat(context)
                             ),

@@ -38,7 +38,7 @@ import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.model.BaseSerialSearchItem
-import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
 import com.namoadigital.prj001.model.MeMeasureTp
@@ -1130,6 +1130,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             order_type_code = orderType.orderTypeCode
             order_type_id = orderType.orderTypeId
             order_type_desc = orderType.orderTypeDesc
+            force_exe_expired_vg = orderType.force_exe_expired_vg
             process_type = orderType.processType
             display_option = orderType.displayOption
             item_check_group_code = orderType.itemCheckGroupCode
@@ -1647,7 +1648,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             page = tabIndex,
             name = mTabName,
             tracking = null,
-            mTabItemCount,
+            fieldCount = -1,
             problemReportedCount = null,
             forecastCount = null,
             criticalForecastCount = null,

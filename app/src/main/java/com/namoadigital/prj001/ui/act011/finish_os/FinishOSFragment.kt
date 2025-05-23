@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import com.namoa_digital.namoa_library.compose.theme.NamoaApplicationTheme
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.FragmentFinishOsBinding
-import com.namoadigital.prj001.design.compose.NamoaTheme
 import com.namoadigital.prj001.extensions.getBooleanArguments
 import com.namoadigital.prj001.extensions.getIntArguments
 import com.namoadigital.prj001.extensions.getLongArguments
@@ -65,7 +65,7 @@ class FinishOSFragment constructor(
             this.setViewTreeLifecycleOwner(this@FinishOSFragment)
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                NamoaTheme(false) {
+                NamoaApplicationTheme {
                     FinishOSScreen(
                         translateMapLib = hmAuxLib,
                         arguments = FinishScreenArguments(

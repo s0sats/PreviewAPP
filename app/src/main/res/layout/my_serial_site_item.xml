@@ -66,10 +66,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:textColor="@color/m3_namoa_onSurfaceVariant"
+            android:lines="1"
+            android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_desc"
-            tools:text="TextView" />
+            tools:text="" />
 
         <TextView
             android:id="@+id/serial_site_item_tv_trackings"
@@ -84,20 +86,20 @@
             tools:text="TextView" />
 
         <TextView
-            android:id="@+id/serial_site_item_tv_last_measure_lbl"
+            android:id="@+id/serial_site_item_tv_suggest_lbl"
             style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/m3_namoa_onSurface"
-            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_measure_val"
+            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_suggest_val"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings"
             tools:text="TextView" />
 
         <TextView
-            android:id="@+id/serial_site_item_tv_last_measure_val"
+            android:id="@+id/serial_site_item_tv_suggest_val"
             style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -106,7 +108,20 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_suggest_lbl"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_suggest_desc"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_suggest_val"
             tools:text="TextView" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -125,16 +140,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_val"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_suggest_desc"
             app:layout_constraintVertical_bias="0.0">
 
             <ImageView
                 android:id="@+id/iv_tag"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/ic_tag_black_24dp"
                 app:layout_constraintEnd_toStartOf="@+id/tv_tag_val"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -145,85 +159,90 @@
 
             <TextView
                 android:id="@+id/tv_tag_val"
+                style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
+                android:paddingTop="4dp"
+                android:textStyle="bold"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
-                app:layout_constraintEnd_toStartOf="@+id/iv_item_alert"
+                app:layout_constraintEnd_toStartOf="@+id/tv_item_alert_val"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/iv_tag"
-                app:layout_constraintTop_toTopOf="@id/iv_tag"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="wrap"
                 tools:text="99" />
 
-            <ImageView
-                android:id="@+id/iv_item_alert"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/circle_item"
-                app:layout_constraintEnd_toStartOf="@+id/tv_item_alert_val"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tv_tag_val"
-                app:layout_constraintTop_toTopOf="@id/iv_tag"
-                app:tint="@color/namoa_os_form_problem_red" />
 
             <TextView
                 android:id="@+id/tv_item_alert_val"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                app:layout_constraintEnd_toStartOf="@+id/iv_item_critical"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/iv_item_alert"
-                app:layout_constraintTop_toTopOf="@id/iv_item_alert"
-                app:layout_constraintWidth_default="wrap"
-                tools:text="99" />
-
-
-            <ImageView
-                android:id="@+id/iv_item_critical"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginStart="8dp"
-                android:src="@drawable/circle_item"
+                android:textColor="@color/padrao_WHITE"
+                android:background="@drawable/alert_text_badge"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/tv_item_critical_val"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tv_item_alert_val"
-                app:layout_constraintTop_toTopOf="@id/iv_item_alert"
-                app:tint="@color/namoa_os_form_critical_forecast_yellow" />
+                app:layout_constraintStart_toEndOf="@+id/tv_tag_val"
+                app:layout_constraintTop_toTopOf="@id/tv_item_critical_val"
+                app:layout_constraintWidth_default="wrap"
+                style="@style/TextAppearance.Material3.BodySmall"
+
+                tools:text="99" />
 
             <TextView
                 android:id="@+id/tv_item_critical_val"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/padrao_WHITE"
+                android:background="@drawable/critical_text_badge"
+                android:gravity="center"
+                android:textStyle="bold"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintEnd_toStartOf="@+id/tv_item_forecast_val"
+                app:layout_constraintStart_toEndOf="@+id/tv_item_alert_val"
+                app:layout_constraintTop_toTopOf="@id/tv_item_forecast_val"
+                app:layout_constraintWidth_default="wrap"
+                style="@style/TextAppearance.Material3.BodySmall"
+                tools:text="99" />
+
+            <TextView
+                android:id="@+id/tv_item_forecast_val"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/padrao_WHITE"
+                android:background="@drawable/circle_item"
+                android:gravity="center"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/iv_item_critical"
-                app:layout_constraintTop_toTopOf="@id/iv_item_critical"
+                app:layout_constraintStart_toEndOf="@+id/tv_item_critical_val"
+                app:layout_constraintTop_toTopOf="@id/tv_item_critical_val"
                 app:layout_constraintWidth_default="wrap"
+                style="@style/TextAppearance.Material3.BodySmall"
                 tools:text="99" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/serial_site_item_tv_last_cycle_lbl"
+            android:id="@+id/serial_site_item_tv_last_measure_lbl"
             style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/m3_namoa_onSurface"
-            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_cycle_val"
+            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_measure_val"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toTopOf="@+id/serial_site_item_tv_last_measure_lbl"
+            app:layout_constraintTop_toTopOf="@+id/serial_site_item_tv_suggest_lbl"
             tools:text="TextView" />
 
         <TextView
-            android:id="@+id/serial_site_item_tv_last_cycle_val"
+            android:id="@+id/serial_site_item_tv_last_measure_val"
             style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -231,34 +250,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_lbl"
-            tools:text="TextView" />
-
-        <TextView
-            android:id="@+id/serial_site_item_tv_next_cycle_lbl"
-            style="@style/TextAppearance.Material3.BodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textColor="@color/m3_namoa_onSurface"
-            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_next_cycle_val"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_val"
-            tools:text="TextView" />
-
-        <TextView
-            android:id="@+id/serial_site_item_tv_next_cycle_val"
-            style="@style/TextAppearance.Material3.BodyLarge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/m3_namoa_onSurface"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_next_cycle_lbl"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_lbl"
             tools:text="TextView" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -271,7 +263,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_next_cycle_val">
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_ll_items_status">
 
 
             <com.google.android.material.button.MaterialButton

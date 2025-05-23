@@ -140,7 +140,7 @@ public class Constant extends ConstantBaseApp {
         WS_GOOGLE = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_gcm_set.ws";
         WS_SYNC = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_sync.ws";
         WS_SESSION = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_get_session.ws";
-        WS_SAVE = HTTPS + WS_HOST + "//ws/prj001/server_save_checklist.ws";
+        WS_SAVE = HTTPS + WS_HOST + "/ws/prj001/server_save_checklist.ws";
         WS_SERIAL = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_serial.ws";
         WS_SERIAL_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_product_serial.ws";
         WS_SERIAL_TRACKING_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_serial_tracking.ws";
@@ -215,7 +215,7 @@ public class Constant extends ConstantBaseApp {
         WS_SERIAL_LOG = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_serial_log.ws";
         WS_GENERATE_FORM_PDF = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_checklist_url.ws";
         WS_WORKGROUP_MEMBER_LIST = HTTPS + WS_HOST + PREFIX_PRJ001 + "/wg/server_workgroup_member_list.ws";
-        WS_WORKGROUP_MEMBER_EDIT = HTTPS + WS_HOST + "//ws/prj001/wg/server_workgroup_member_set.ws";
+        WS_WORKGROUP_MEMBER_EDIT = HTTPS + WS_HOST + "/ws/prj001/wg/server_workgroup_member_set.ws";
         WS_SCHEDULE_NOT_EXECUTED = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_not_executed_schedule.ws";
         WS_SERIAL_SITE_INV = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_site_serial_inv.ws";
         WS_DESTINATION_AVAILABLE = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_available_destinations.ws";

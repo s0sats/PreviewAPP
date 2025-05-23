@@ -6,19 +6,31 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.view.WindowManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsSaveSerialStructureUseCase
+import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase
+import com.namoadigital.prj001.core.trip.domain.model.FormStatus
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.setFrag
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.BaseSerialSearchItem
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.TK_Ticket_Form
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
@@ -33,7 +45,10 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.WarningFormPending
 import com.namoadigital.prj001.view.dialog.WarningFormPending.Interact
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
     Act011BaseFrgInteraction,
@@ -43,6 +58,12 @@ class Act087Main : Base_Activity_Frag(),
     private lateinit var binding: Act087MainContentBinding
     private lateinit var formOsHeaderFrg: FormOsHeaderFrg
     private var wsProcess: String = ""
+
+    @Inject
+    lateinit var geOsCreateFormOsStructureUseCase: GeOsCreateFormOsStructureUseCase
+
+    @Inject
+    lateinit var geOsSaveSerialStructureUseCase: GeOsSaveSerialStructureUseCase
 
     private val mPresenter: Act087MainContract.I_Presenter by lazy {
         Act087MainPresenter(
@@ -104,7 +125,9 @@ class Act087Main : Base_Activity_Frag(),
             ticketCode,
             ticketSeqTmp,
             stepCode,
-            mCustomFormDataPartition
+            mCustomFormDataPartition,
+            geOsCreateFormOsStructureUseCase,
+            geOsSaveSerialStructureUseCase,
         )
     }
 
@@ -137,6 +160,7 @@ class Act087Main : Base_Activity_Frag(),
         setContentView(mainBinding.root)
         setSupportActionBar(mainBinding.toolbar)
         //
+
         iniSetup()
         recoverIntentsInfo()
         iniTrans()
@@ -435,7 +459,7 @@ class Act087Main : Base_Activity_Frag(),
             }
         )
         //
-        finish()
+            finish()
     }
 
     override fun reportSerialBkpMachineToFrag(
@@ -507,9 +531,9 @@ class Act087Main : Base_Activity_Frag(),
         //Tratativa necessaria pois, caso de erro antes de formOsHeaderFrg ser inicializado,
         //a interface mFormHeaderFragListener tb não será inicializada e causará crash.
         //Nesse caso, o param anyDataChanged é setado como falso, exitando a chama do dialog de confirmação.
-        val anyDataChanged = if (!::formOsHeaderFrg.isInitialized) {
+        val anyDataChanged = if(!::formOsHeaderFrg.isInitialized){
             false
-        } else {
+        }else{
             mFormHeaderFragListener.isAnyDataChanged()
         }
         mPresenter.onBackPressedClicked(anyDataChanged)
@@ -575,6 +599,11 @@ class Act087Main : Base_Activity_Frag(),
             //
             mBundle.putAll(act083Bundle)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun callAct005() {

@@ -3,9 +3,9 @@ package com.namoadigital.prj001.ui.act086.frg_verification
 import android.content.DialogInterface
 import android.content.Intent
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
 
 interface Act086VerificationFrgContract {
     interface I_View{

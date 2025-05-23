@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os
 
 import com.namoadigital.prj001.core.IResult
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.GeOsDevice
-import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDevice
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import kotlinx.coroutines.flow.Flow
 
 interface GeOsRepository {

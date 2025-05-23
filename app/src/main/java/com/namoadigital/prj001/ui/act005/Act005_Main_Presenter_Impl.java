@@ -6,7 +6,6 @@ import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_DOWNLOAD;
-import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
@@ -746,16 +745,24 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void executeSerialStructureUpdate() {
-        mView.setWsSoProcess(SYNC_SERIAL_STRUCTURE);
-        mView.setWsProcess(SYNC_SERIAL_STRUCTURE);
-        mView.showPD();
+    public void executeSerialStructureUpdate(boolean showPD) {
+        executeSerialStructureUpdate(showPD, -1);
+    }
+
+    @Override
+    public void executeSerialStructureUpdate(boolean showPD, Integer total) {
+        if (showPD) {
+            mView.setWsSoProcess(SYNC_SERIAL_STRUCTURE);
+            mView.setWsProcess(SYNC_SERIAL_STRUCTURE);
+            mView.showPD();
+        }
         Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
         Bundle bundle = new Bundle();
         bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
         bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
         bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+        bundle.putInt("AMOUNT_TOTAL", total);
         //
         mIntent.putExtras(bundle);
         //
@@ -772,6 +779,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         );
         //
         return serial.size() > 0;
+    }
+
+    @Override
+    public int serialStructureSyncRequiredTotal() {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        List<MD_Product_Serial> serial = serialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size();
     }
 
 

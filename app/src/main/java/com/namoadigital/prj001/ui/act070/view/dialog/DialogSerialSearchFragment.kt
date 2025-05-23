@@ -13,10 +13,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.namoa_digital.namoa_library.compose.theme.NamoaApplicationTheme
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.SerialSearchListDialogBinding
-import com.namoadigital.prj001.design.compose.NamoaTheme
 import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.BaseSerialSearchItem.SerialSearchExceededItem
 import com.namoadigital.prj001.model.ticket.TkSerialSearchRequest.Companion.DEFAULT_PAGE_SIZE
@@ -50,7 +50,7 @@ class DialogSerialSearchFragment : DialogFragment() {
     }
 
     override fun onAttach(context: Context) {
-        if(context is OnActionListSerialSearchItems){
+        if (context is OnActionListSerialSearchItems) {
             onActionListSerialSearchItems = context
         }
         super.onAttach(context)
@@ -63,7 +63,7 @@ class DialogSerialSearchFragment : DialogFragment() {
             setViewTreeLifecycleOwner(this@DialogSerialSearchFragment)
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                NamoaTheme(false) {
+                NamoaApplicationTheme {
                     SerialListLayout(
                         modifier = Modifier.fillMaxSize(),
                         arguments = serialSearchValue,
@@ -92,7 +92,6 @@ class DialogSerialSearchFragment : DialogFragment() {
         )
 
         val lineCount = arguments?.getInt(LINE_COUNT) ?: -1
-
 
         if (list.size == DEFAULT_PAGE_SIZE) {
             list.add(
@@ -177,7 +176,7 @@ class DialogSerialSearchFragment : DialogFragment() {
             val bundle = Bundle().apply {
                 val gson = Gson()
                 putString(ListSerialSearchItemsArguments.ARGUMENTS.LIST, gson.toJson(list))
-                putInt(LINE_COUNT, lineCount?:-1)
+                putInt(LINE_COUNT, lineCount ?: -1)
                 putString(
                     ListSerialSearchItemsArguments.ARGUMENTS.TRANSLATE_MAP,
                     gson.toJson(filterHMAux)

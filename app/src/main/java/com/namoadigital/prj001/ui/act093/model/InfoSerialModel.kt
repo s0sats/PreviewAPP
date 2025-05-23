@@ -29,18 +29,8 @@ data class InfoSerialModel(
         const val SEPARATOR = " | "
 
 
-        fun Double?.formatMeasureValue(value_suffix: String?): String? = when {
-            this != null -> {
-                if (!value_suffix.isNullOrEmpty()) {
-                    "$this $value_suffix"
-                } else {
-                    "$this"
-                }
-            }
-            else -> null
-        }
 
-        fun String?.formatMeasureValue(value_suffix: String?): String? = when {
+        fun String?.formatMeasureValueSuffix(value_suffix: String?): String? = when {
             this != null -> {
                 if (!value_suffix.isNullOrEmpty()) {
                     "$this $value_suffix"

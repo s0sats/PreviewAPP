@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Desabilitado -->
+    <item android:state_enabled="false" android:color="@color/m3_namoa_onSurfaceVariantDisable" />
+    <!-- Todos os outros estados -->
+    <item android:color="@color/m3_namoa_onSurfaceVariant" />
+</selector>

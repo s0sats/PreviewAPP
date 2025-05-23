@@ -10,6 +10,7 @@ import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
+import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
 import com.namoadigital.prj001.model.TranslateResource
@@ -17,6 +18,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_001
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
+import com.namoadigital.prj001.ui.act093.usecases.GetVerificationGroupLastValue
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
 import com.namoadigital.prj001.ui.act093.util.Act093Event
@@ -31,7 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -220,6 +221,30 @@ class Act093Presenter constructor(
             ToolBox_Con.getPreference_Translate_Code(translateResource.context),
             Act086HistoricFrg.getFragTranslationsVars()
         )
+    }
+
+    override fun getVerificationGroupDesc(context: Context, customerCode:Long, vgCode:Int):String? {
+        val mdVerificationGroupDao = MDVerificationGroupDao(
+            context,
+        )
+        return mdVerificationGroupDao.getVgDesc(
+            customerCode, vgCode
+        )
+
+    }
+
+    override fun getVerificationGroupLastValue(
+        context: Context,
+        model: MD_Product_Serial_Tp_Device_Item
+    ):String? {
+        return model.vg_code?.let {
+            infoUseCase.getVerificationGroupLastValue(
+                GetVerificationGroupLastValue.Input(
+                    model.vg_code,
+                    _state.value.serialInfo.value_suffix
+                )
+            )
+        }
     }
 
 

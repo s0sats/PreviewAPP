@@ -53,6 +53,7 @@ import com.namoadigital.prj001.extensions.DoubleHelperKt;
 import com.namoadigital.prj001.extensions.FloatHelperKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
+import com.namoadigital.prj001.extensions.serial.MeasureFormatKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -75,7 +76,6 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
-import com.namoadigital.prj001.ui.act093.model.InfoSerialModel;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -115,11 +115,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_allow_new_val;
     private LinearLayout measure_layout;
     private ConstraintLayout measureUI_layout;
-    private LinearLayout cycle_layout;
     private TextView tv_last_measure_ttl;
     private TextView tv_last_measure_lbl;
-    private TextView tv_last_cycle_ttl;
-    private TextView tv_last_cycle_lbl;
     private ImageView iconSerialColor;
     private LinearLayout ll_require_serial;
     private LinearLayout ll_serial_full_desc;
@@ -835,17 +832,11 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         measure_layout = view.findViewById(R.id.measure_layout);
         measureUI_layout = view.findViewById(R.id.measureUI);
-        cycle_layout = view.findViewById(R.id.cycleLayout);
         //
         tv_last_measure_ttl = view.findViewById(R.id.titleMeasure);
         tv_last_measure_ttl.setTag("last_measure_ttl");
         //
         tv_last_measure_lbl = view.findViewById(R.id.measureValue);
-        //
-        tv_last_cycle_ttl = view.findViewById(R.id.titleCycle);
-        tv_last_cycle_ttl.setTag("last_cycle_ttl");
-        //
-        tv_last_cycle_lbl = view.findViewById(R.id.cycleValue);
         //
         ll_io_info = view.findViewById(R.id.frg_serial_edit_ll_io_info);
         //
@@ -904,7 +895,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         views.add(tv_outbound_lbl);
         views.add(brand_model_color_ttl);
         views.add(tv_last_measure_ttl);
-        views.add(tv_last_cycle_ttl);
 
         //Adiciona Componentes com dados do serial ao arrayList de validação
         serialProperties.add(ss_site);
@@ -1194,51 +1184,31 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         checkIfSerialIsValid(mdProductSerial.getSerial_id());
 
-        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString(getMeasureValueRounded(mdProductSerial.getLast_measure_value()), true) : null;
+        MeMeasureTp meMeasureTp = measureTpDao.getByString(new MeMeasureTpSql_001(
+                mdProductSerial.getCustomer_code(),
+                mdProductSerial.getMeasure_tp_code() != null ? mdProductSerial.getMeasure_tp_code() : -1
+        ).toSqlQuery());
+
+        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString(ToolBox_Inf.getMeasureValueRounded(mdProductSerial.getLast_measure_value(), meMeasureTp), true) : null;
         String last_measure_date = mdProductSerial.getLast_measure_date() != null && !mdProductSerial.getLast_measure_date().isEmpty() ? mdProductSerial.getLast_measure_date() : null;
 
         String measureFormatted;
 
-        if (last_measure != null) {
-            if (last_measure_date != null && !last_measure_date.isEmpty()) {
-                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, displayMeasureValueSuffix(measureValueSuffix)) + " (" + ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(last_measure_date),
-                        ToolBox_Inf.nlsDateFormat(context)
-                ) + ")";
-            } else {
-                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, displayMeasureValueSuffix(measureValueSuffix));
-            }
+        if (last_measure_date != null && !last_measure_date.isEmpty()) {
             measure_layout.setVisibility(View.VISIBLE);
-            tv_last_measure_lbl.setText(measureFormatted);
-            tv_last_measure_lbl.setVisibility(View.VISIBLE);
+            //
+            MeasureFormatKt.showMeasureSuffixAndDate(
+                    tv_last_measure_lbl,
+                    context,
+                    last_measure,
+                    displayMeasureValueSuffix(measureValueSuffix),
+                    last_measure_date
+            );
         } else {
             measure_layout.setVisibility(View.GONE);
-            cycle_layout.setVisibility(View.GONE);
         }
         //
-
-        String last_cycle_date = mdProductSerial.getLast_cycle_date() != null && !mdProductSerial.getLast_cycle_date().isEmpty() ? mdProductSerial.getLast_cycle_date() : null;
-
-        String cycleFormatted;
-
-        if (mdProductSerial.getLast_cycle_value() != null) {
-            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_cycle_value(), true);
-            if (last_cycle_date != null && !last_cycle_date.isEmpty()) {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, displayMeasureValueSuffix(measureValueSuffix)) + " (" + ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(last_cycle_date),
-                        ToolBox_Inf.nlsDateFormat(context)
-                ) + ")";
-            } else {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, displayMeasureValueSuffix(measureValueSuffix));
-            }
-            cycle_layout.setVisibility(View.VISIBLE);
-            tv_last_cycle_lbl.setText(cycleFormatted);
-            tv_last_cycle_lbl.setVisibility(View.VISIBLE);
-        } else {
-            cycle_layout.setVisibility(View.GONE);
-        }
         measureUI_layout.setVisibility(measure_layout.getVisibility());
-
         //
         //Processa lista de trackings
         //

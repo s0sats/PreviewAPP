@@ -24,3 +24,13 @@ fun roundOffDecimal(number: Double, pattern:String = "#.###"): Double {
         0.0
     }
 }
+
+fun Double?.toStringConsiderDecimal():String?{
+    return this?.let{
+        if (this % 1.0 == 0.0) {
+            this.toInt().toString()
+        } else {
+            this.toString()
+        }
+    }
+}

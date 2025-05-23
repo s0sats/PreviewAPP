@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.service;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_TICKET_DOWNLOAD;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -157,9 +158,14 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
         //LUCHE - 30/06/2021 - Seta o novo atributo.
         env.setLogin(isLoginSync);
         //
+        Integer timeoutValue = null;
+        if(ticketsToSync.size() > 1){
+            timeoutValue = TIMEOUT_FOR_SYNC_FULL;
+        }
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_DOWNLOAD,
-            gson.toJson(env)
+            gson.toJson(env),
+            timeoutValue
         );
         //
         ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);

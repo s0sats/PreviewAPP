@@ -16,8 +16,9 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.extensions.isCurrentTrip
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
-import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.extensions.toStringConsiderDecimal
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
@@ -370,15 +371,25 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
         val hmAuxTransHistoricFrg =  presenter.loadHistoricFrgTranslation()
         val itemHist = presenter.getDeviceItemHist(context, item, hmAuxTransHistoricFrg)
         val deviceItem = presenter.getDeviceItem(context, item)
+        val vgDesc = if (deviceItem != null && deviceItem.vg_code != null) {
+                presenter.getVerificationGroupDesc(context, deviceItem.customer_code, deviceItem.vg_code)
+            } else {
+                null
+            }
+        val vgLastValue = deviceItem?.let{
+            presenter.getVerificationGroupLastValue(context, it)
+        }
         binding.topAppBar.title = hmAuxTransHistoricFrg["frg_historic_item_check_title"]
         val historicFrg =
             Act086HistoricFrg.newInstance(
                 hmAuxTransHistoricFrg,
                 deviceItem!!.item_check_status,
-                deviceItem.next_cycle_measure?.toFloat(),
+                deviceItem.next_cycle_measure?.toStringConsiderDecimal()?.toFloat(),
                 deviceItem.next_cycle_measure_date,
                 deviceItem.next_cycle_limit_date,
                 presenter.state.value.serialInfo.value_suffix,
+                vgDesc,
+                vgLastValue,
                 deviceItem.verification_instruction,
                 null,
                 "",

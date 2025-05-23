@@ -10,7 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.GeOsDevice
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDevice
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con

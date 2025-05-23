@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import com.namoadigital.prj001.design.compose.ApplicationTheme
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 
 
 typealias RadioGroupContent = @Composable (RadioGroupItem<*>) -> Unit
@@ -68,10 +68,10 @@ fun RadioGroup(
                 modifier = Modifier
                     .clip(
                         RoundedCornerShape(
-                            topStart = ApplicationTheme.spacing.small,
-                            topEnd = ApplicationTheme.spacing.small,
-                            bottomStart = ApplicationTheme.spacing.small,
-                            bottomEnd = ApplicationTheme.spacing.small,
+                            topStart = NamoaTheme.spacing.small,
+                            topEnd = NamoaTheme.spacing.small,
+                            bottomStart = NamoaTheme.spacing.small,
+                            bottomEnd = NamoaTheme.spacing.small,
                         )
                     )
                     .fillMaxWidth(),
@@ -93,7 +93,7 @@ fun RadioGroup(
                                 stiffness = Spring.StiffnessLow
                             )
                         )
-                        .padding(start = ApplicationTheme.spacing.mediumSmall)
+                        .padding(start = NamoaTheme.spacing.mediumSmall)
                 ) {
                     item.content.forEach { content ->
                         content(radioGroupSelected!!)
@@ -121,11 +121,11 @@ fun RadioGroupTextButton(
         modifier = modifier
             .addClickable()
             .padding(
-                top = if (hasMoreThanTwoLines) ApplicationTheme.spacing.small
-                else ApplicationTheme.spacing.none,
-                bottom = if (hasMoreThanTwoLines) ApplicationTheme.spacing.small
-                else ApplicationTheme.spacing.none,
-                end = ApplicationTheme.spacing.small
+                top = if (hasMoreThanTwoLines) NamoaTheme.spacing.small
+                else NamoaTheme.spacing.none,
+                bottom = if (hasMoreThanTwoLines) NamoaTheme.spacing.small
+                else NamoaTheme.spacing.none,
+                end = NamoaTheme.spacing.small
             )
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -142,8 +142,8 @@ fun RadioGroupTextButton(
             onTextLayout = { textLayout ->
                 hasMoreThanTwoLines = textLayout.lineCount > 1
             },
-            style = ApplicationTheme.typography.bodyLarge,
-            color = if (isEnabled) ApplicationTheme.colors.onSurface else Color.Gray
+            style = NamoaTheme.typography.bodyLarge,
+            color = if (isEnabled) NamoaTheme.colors.onSurface else Color.Gray
         )
     }
 }

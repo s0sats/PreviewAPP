@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,8 +39,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.design.compose.ApplicationTheme
 
 
 @Composable
@@ -65,10 +64,10 @@ fun TitleSwitch(
                 .fillMaxWidth()
                 .clip(
                     RoundedCornerShape(
-                        topStart = ApplicationTheme.spacing.small,
-                        topEnd = ApplicationTheme.spacing.small,
-                        bottomStart = ApplicationTheme.spacing.small,
-                        bottomEnd = ApplicationTheme.spacing.small,
+                        topStart = NamoaTheme.spacing.small,
+                        topEnd = NamoaTheme.spacing.small,
+                        bottomStart = NamoaTheme.spacing.small,
+                        bottomEnd = NamoaTheme.spacing.small,
                     )
                 )
                 .clickable(enabled = isEnabled) {
@@ -81,8 +80,8 @@ fun TitleSwitch(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        vertical = ApplicationTheme.spacing.small,
-                        horizontal = ApplicationTheme.spacing.extraSmall
+                        vertical = NamoaTheme.spacing.small,
+                        horizontal = NamoaTheme.spacing.extraSmall
                     )
             ) {
                 val (titleRef, switchRef) = createRefs()
@@ -90,8 +89,8 @@ fun TitleSwitch(
                 Text(
                     modifier = Modifier
                         .padding(
-                            start = ApplicationTheme.spacing.medium,
-                            end = ApplicationTheme.spacing.medium
+                            start = NamoaTheme.spacing.medium,
+                            end = NamoaTheme.spacing.medium
                         )
                         .constrainAs(titleRef) {
                             start.linkTo(parent.start)
@@ -109,8 +108,8 @@ fun TitleSwitch(
                             }
                         }
                     },
-                    style = ApplicationTheme.typography.bodyLarge,
-                    color = ApplicationTheme.colors.onSurface,
+                    style = NamoaTheme.typography.bodyLarge,
+                    color = NamoaTheme.colors.onSurface,
                     overflow = TextOverflow.Ellipsis
                 )
 
@@ -125,8 +124,8 @@ fun TitleSwitch(
                     isEnabled = isEnabled,
                     isChecked = switchState,
                     onCheckedChange = {
-                        switchState = it
-                        onSwitchChecked(it)
+                        switchState = !switchState
+                        onSwitchChecked(switchState)
                     }
                 )
             }
@@ -144,42 +143,41 @@ fun ApplicationSwitch(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = false,
     isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: () -> Unit
 ) {
-    var localChecked by remember { mutableStateOf(isChecked) }
     val thumbPosition by animateDpAsState(
-        targetValue = if (localChecked) 10.dp else (-10).dp,
+        targetValue = if (isChecked) 10.dp else (-10).dp,
         label = "",
         animationSpec = tween(durationMillis = 300)
     )
 
     val colorState by animateColorAsState(
         targetValue = (
-                if (localChecked) {
-                    ApplicationTheme.colors.primary.copy(alpha = if (isEnabled) 1f else 0.35f)
+                if (isChecked) {
+                    NamoaTheme.colors.primary.copy(alpha = if (isEnabled) 1f else 0.35f)
                 } else {
                     Color.Gray.copy(alpha = if (isEnabled) 1f else 0.35f)
                 }
-                ),
+        ),
         label = "",
         animationSpec = tween(durationMillis = 300)
     )
 
-    LaunchedEffect(isChecked) {
-        localChecked = isChecked
-    }
-
     Column(
         modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures {
-                    if (isEnabled) {
-                        localChecked = !localChecked
-                        onCheckedChange(localChecked)
-                    }
+            .clickable {
+                if (isEnabled) {
+                    onCheckedChange()
                 }
             }
-            .padding(ApplicationTheme.spacing.small)
+            /*.pointerInput(Unit) {
+                detectTapGestures {
+                    if (isEnabled) {
+                        onCheckedChange()
+                    }
+                }
+            }*/
+            .padding(NamoaTheme.spacing.small)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -193,15 +191,18 @@ fun ApplicationSwitch(
                     .background(
                         color = colorState.copy(alpha = if (isEnabled) 0.4f else 0.1f),
                         shape = RoundedCornerShape(15.dp)
-                    )
-                    .pointerInput(Unit) {
-                        detectTapGestures {
-                            if (isEnabled) {
-                                localChecked = !localChecked
-                                onCheckedChange(localChecked)
-                            }
+                    ).clickable {
+                        if (isEnabled) {
+                            onCheckedChange()
                         }
                     }
+                    /*.pointerInput(Unit) {
+                        detectTapGestures {
+                            if (isEnabled) {
+                                onCheckedChange()
+                            }
+                        }
+                    }*/
             )
             Box(
                 modifier = Modifier
@@ -211,7 +212,7 @@ fun ApplicationSwitch(
                     .background(color = colorState, shape = RoundedCornerShape(12.dp))
 
             ) {
-                if (localChecked) {
+                if (isChecked) {
                     Icon(
                         imageVector = Icons.Filled.Check,
                         contentDescription = null,
