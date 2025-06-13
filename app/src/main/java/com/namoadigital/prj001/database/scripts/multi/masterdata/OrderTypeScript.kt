@@ -9,7 +9,7 @@ const val ORDER_TYPE_CREATE_SCRIPT = """
         [process_type] text not null collate nocase,
         [display_option] text not null collate nocase,
         [item_check_group_code] int, 
-        [force_exe_expired_vg] int not null default 0,
+        [process_vg] text collate nocase,
          
         constraint [pk_md_order_type] 
             primary key (

@@ -43,6 +43,7 @@ data class MyActions(
     val not_exec_comments: String?,
     val waiting_approve: Boolean? = null,
     val hasNotExecuted: Int? = null,
+    val ticketEdiID: String? = null
 ) : MyActionsBase() {
 
 
@@ -91,7 +92,8 @@ data class MyActions(
                 "$siteDesc|" +
                 "$classId|" +
                 "$zoneDesc|" +
-                "$serviceOrderCode"
+                "$serviceOrderCode|" +
+                "$ticketEdiID"
                     .replace("null|", "")
                     .replace("null", "")
     }

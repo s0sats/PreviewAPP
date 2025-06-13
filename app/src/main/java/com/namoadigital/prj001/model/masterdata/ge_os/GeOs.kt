@@ -16,7 +16,7 @@ class GeOs(
     @SerializedName("process_type") var process_type: String, // MdOrderType
     @SerializedName("display_option") var display_option: String, // MdOrderType
     @SerializedName("item_check_group_code") var item_check_group_code: Int?, // MdOrderType
-    @SerializedName("force_exe_expired_vg") var force_exe_expired_vg: Int = 0, // MdOrderType
+    @SerializedName("process_vg") var process_vg: String?, // MdOrderType
     @SerializedName("backup_product_code") var backup_product_code: Int?,
     @SerializedName("backup_product_id") var backup_product_id: String?,
     @SerializedName("backup_product_desc") var backup_product_desc: String?,
@@ -49,7 +49,11 @@ class GeOs(
     var allowFormInThePast: Int? = 0,
 ) : Serializable {
 
-    val hasForcedExpiredVg = force_exe_expired_vg == 1
+//    val hasForcedExpiredVg = force_exe_expired_vg == 1
+
+    fun getProcessVg(): ProcessVg? {
+        return ProcessVg.fromString(process_vg)
+    }
 
     /**
      *  BARRIONUEVO - 11-=08-2022

@@ -751,7 +751,8 @@ public class MD_Schedule_Exec {
                     null,
                     null,
                     null,
-                    hasJustifyGroup
+                    hasJustifyGroup,
+                    null
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
@@ -807,6 +808,7 @@ public class MD_Schedule_Exec {
                     null,
                     null,
                     true,
+                    null,
                     null,
                     null,
                     null,

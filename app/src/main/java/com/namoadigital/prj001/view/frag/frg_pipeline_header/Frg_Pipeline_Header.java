@@ -88,6 +88,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private String origin_end_user;
     //
     private TextView tv_ticket_id;
+    private TextView tv_ticket_edi_id;
     private TextView tv_status;
     private TextView tv_prod_desc;
     private TextView tv_ticket_date;
@@ -291,6 +292,7 @@ public class Frg_Pipeline_Header extends Fragment {
         frg_pipeline_header_ticket = pipeline_header_view.findViewById(R.id.frg_pipeline_header_ticket);
         cv_btn_sync = pipeline_header_view.findViewById(R.id.cv_btn_sync);
         tv_ticket_id = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_id);
+        tv_ticket_edi_id = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_edi_id);
         tv_status = pipeline_header_view.findViewById(R.id.frg_ticket_tv_status);
         iv_offline = pipeline_header_view.findViewById(R.id.frg_ticket_iv_offline);
         tv_prod_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_prod_desc);
@@ -486,6 +488,7 @@ public class Frg_Pipeline_Header extends Fragment {
 
     private void initializeLayoutVisibility() {
         tv_ticket_id.setVisibility(View.VISIBLE);
+        setVisibilityEdiID();
         //LUCHE - 09/12/2021 - Foi definido que a data não deve mais ser exibida.
         tv_ticket_date.setVisibility(View.GONE);
         tv_site_desc.setVisibility(View.VISIBLE);
@@ -508,10 +511,23 @@ public class Frg_Pipeline_Header extends Fragment {
         iv_toggle_icon.setVisibility(View.GONE);
     }
 
+
+    public void setVisibilityEdiID(){
+        String ediID = mTicket.getTicket_edi_id();
+        if(ediID == null || ediID.isEmpty()) {
+            tv_ticket_edi_id.setVisibility(View.GONE);
+            return;
+        }
+
+        tv_ticket_edi_id.setText(ediID);
+        tv_ticket_edi_id.setVisibility(View.VISIBLE);
+    }
+
     private void setTvContent() {
         tv_ticket_id.setText(ticket_id_param);
         tv_ticket_date.setText(ticket_date_param);
         tv_site_desc.setText(site_desc_param);
+        setVisibilityEdiID();
         setClientAndContractInfo();
         tv_serial.setText(serial_id_param);
         if(internal_comments_param != null && !internal_comments_param.isEmpty()){

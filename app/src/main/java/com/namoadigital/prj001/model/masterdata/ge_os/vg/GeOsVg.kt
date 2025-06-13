@@ -19,7 +19,7 @@ data class GeOsVg(
     @SerializedName("last_execution_measure") val lastExecutionMeasure: Float? = null,
     @SerializedName("last_execution_date") val lastExecutionDate: String? = null,
     @SerializedName("vg_status") var vgStatus: String = "",
-    @SerializedName("target_date") val targetDate: String? = null,
+    @SerializedName("target_date") var targetDate: String? = null,
     @SerializedName("manual_date") val manualDate: String? = null,
     @SerializedName("value_sufix") val valueSuffix: String? = null,
     @SerializedName("restriction_decimal") val restriction_decimal: String? = null,

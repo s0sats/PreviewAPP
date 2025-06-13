@@ -306,6 +306,7 @@ class MyActionsAdapter constructor(
                 }
             }
 
+            setVisibilityEdiID(myAction)
             //
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvClassStatus.visibility = View.GONE
@@ -394,6 +395,16 @@ class MyActionsAdapter constructor(
             }
 
             binding.bottomButtonsLayout.visibility = if(isReadOnly) View.GONE else View.VISIBLE
+        }
+
+        private fun setVisibilityEdiID(myAction: MyActions) {
+            if(myAction.ticketEdiID.isNullOrEmpty()){
+                binding.myActionsItemTvEdiId.visibility = View.GONE
+                return
+            }
+
+            binding.myActionsItemTvEdiId.visibility = View.VISIBLE
+            binding.myActionsItemTvEdiId.text = myAction.ticketEdiID
         }
 
         private fun configDoneDate(myAction: MyActions) {

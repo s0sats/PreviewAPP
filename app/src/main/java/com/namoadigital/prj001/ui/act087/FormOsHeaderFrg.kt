@@ -449,7 +449,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     "",
                     "",
                     "",
-                    null
+                    null,
+                    process_vg = null
                 )
             )
         }
@@ -469,7 +470,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         ticketForm!!.order_type_desc,
                         ticketForm!!.process_type,
                         ticketForm!!.display_option,
-                        ticketForm!!.item_check_group_code
+                        ticketForm!!.item_check_group_code,
+                        process_vg = ticketForm!!.process_vg
                     )
                 )
             } else {
@@ -486,7 +488,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     formOsHeader.order_type_desc,
                     formOsHeader.process_type,
                     formOsHeader.display_option,
-                    formOsHeader.item_check_group_code
+                    formOsHeader.item_check_group_code,
+                    process_vg = formOsHeader.process_vg,
                 )
             )
         }
@@ -1130,9 +1133,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             order_type_code = orderType.orderTypeCode
             order_type_id = orderType.orderTypeId
             order_type_desc = orderType.orderTypeDesc
-            force_exe_expired_vg = orderType.force_exe_expired_vg
             process_type = orderType.processType
             display_option = orderType.displayOption
+            process_vg = orderType.process_vg
             item_check_group_code = orderType.itemCheckGroupCode
             selectedBkpMachineProduct?.let { product ->
                 backup_product_code = product.product_code.toInt()

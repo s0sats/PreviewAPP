@@ -171,6 +171,7 @@ class Act092_Adapter constructor(
                     }
                 }
                 //
+                updateTicketEdiID(item)
                 myActionSelectSerial.setOnClickListener {
                     myActionClickListener(item, adapterPosition)
                 }
@@ -270,6 +271,18 @@ class Act092_Adapter constructor(
                 }
 
                 applyBackgroundStrokeColor(item)
+            }
+        }
+
+        private fun MyActionsItemBinding.updateTicketEdiID(item: MyActions) {
+            binding.myActionsItemTvEdiId.apply {
+                if(item.ticketEdiID.isNullOrEmpty()){
+                    visibility = View.GONE
+                    return@apply
+                }
+
+                visibility = View.VISIBLE
+                text = item.ticketEdiID
             }
         }
 

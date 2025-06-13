@@ -33,6 +33,7 @@ class TkTicketCacheDao(
         const val SCN = "scn"
         const val USER_LEVEL_MIN = "user_level_min"
         const val TICKET_ID = "ticket_id"
+        const val TICKET_EDI_ID = "ticket_edi_id"
         const val TAG_OPERATIONAL_CODE = "tag_operational_code"
         const val TAG_OPERATIONAL_ID = "tag_operational_id"
         const val TAG_OPERATIONAL_DESC = "tag_operational_desc"
@@ -374,6 +375,7 @@ class TkTicketCacheDao(
                         put(USER_LEVEL_MIN,ticketCache.user_level_min)
                     }
                     put(TICKET_ID,ticketCache.ticket_id)
+                    put(TICKET_EDI_ID,ticketCache.ticket_edi_id)
                     if(ticketCache.tag_operational_code > -1){
                         put(TAG_OPERATIONAL_CODE,ticketCache.tag_operational_code)
                     }
@@ -454,6 +456,7 @@ class TkTicketCacheDao(
                             scn = getInt(getColumnIndex(SCN)),
                             user_level_min = getInt(getColumnIndex(USER_LEVEL_MIN)),
                             ticket_id = getString(getColumnIndex(TICKET_ID)),
+                            ticket_edi_id = getStringOrNull(getColumnIndex(TICKET_EDI_ID)),
                             tag_operational_code = getInt(getColumnIndex(TAG_OPERATIONAL_CODE)),
                             tag_operational_id = getString(getColumnIndex(TAG_OPERATIONAL_ID)),
                             tag_operational_desc = getString(getColumnIndex(TAG_OPERATIONAL_DESC)),

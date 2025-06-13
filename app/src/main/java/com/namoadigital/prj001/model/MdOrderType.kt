@@ -10,7 +10,7 @@ class MdOrderType(
     @SerializedName("process_type") val processType: String,
     @SerializedName("display_option") val displayOption: String,
     @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?,
-    @SerializedName("force_exe_expired_vg") val force_exe_expired_vg: Int = 0,
+    @SerializedName("process_vg") val process_vg: String?,
 ){
    companion object {
         //Valor para process_type

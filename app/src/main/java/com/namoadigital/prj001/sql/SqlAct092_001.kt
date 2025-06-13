@@ -33,6 +33,7 @@ class SqlAct092_001 (
                      c.scn,
                      c.user_level_min,
                      c.ticket_id,
+                     c.ticket_edi_id,
                      c.tag_operational_code,
                      c.tag_operational_id,
                      c.tag_operational_desc,

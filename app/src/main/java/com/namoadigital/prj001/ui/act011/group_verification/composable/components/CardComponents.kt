@@ -32,6 +32,7 @@ import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFra
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.ITEM_USER_VERIFICATION_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroup
+import com.namoadigital.prj001.util.ConstantBaseApp.MAX_DATE_VALUE
 
 @Composable
 fun VerificationGroupCard(
@@ -66,8 +67,9 @@ fun VerificationGroupCard(
                 }
 
                 group.predictedDate != null -> {
+                    val value = if(MAX_DATE_VALUE == group.predictedDate) "-" else context.formatDate(FormatDateType.OnlyDate(group.predictedDate))
                     Text(
-                        text = "${translateMap.translate(GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL)} ${context.formatDate(FormatDateType.OnlyDate(group.predictedDate))}",
+                        text = "${translateMap.translate(GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL)} $value",
                         style = NamoaTheme.typography.labelMedium
                     )
                 }

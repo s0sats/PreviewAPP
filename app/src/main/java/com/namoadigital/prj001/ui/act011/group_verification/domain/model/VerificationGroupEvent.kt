@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011.group_verification.domain.model
 
+import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
+
 sealed class VerificationGroupEvent {
     data class onGroupSwitchChange(
         val isContinousForm: Boolean,
@@ -7,7 +9,7 @@ sealed class VerificationGroupEvent {
         val isChecked: Boolean
     ) : VerificationGroupEvent()
     data class OnHandleListVerificationGroup(
-        val hasForcedExpiredVg: Boolean = false,
+        val hasProcessVg: ProcessVg? = null,
         val formPKs: VerificationGroupState.FormPK,
         val isReadOnly: Boolean
     ) : VerificationGroupEvent()

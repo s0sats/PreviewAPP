@@ -47,7 +47,7 @@ class GeOsDao(
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
-        const val FORCE_EXE_EXPIRED_VG = "force_exe_expired_vg"
+        const val PROCESS_VG = "process_vg"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
         const val BACKUP_PRODUCT_ID = "backup_product_id"
         const val BACKUP_PRODUCT_DESC = "backup_product_desc"
@@ -332,7 +332,7 @@ class GeOsDao(
                         process_type = getString(getColumnIndex(PROCESS_TYPE)),
                         display_option = getString(getColumnIndex(DISPLAY_OPTION)),
                         item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
-                        force_exe_expired_vg = getInt(getColumnIndex(FORCE_EXE_EXPIRED_VG)),
+                        process_vg = getStringOrNull(getColumnIndex(PROCESS_VG)),
                         backup_product_code = getIntOrNull(getColumnIndex(BACKUP_PRODUCT_CODE)),
                         backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
                         backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
@@ -424,7 +424,8 @@ class GeOsDao(
                     put(DISPLAY_OPTION, it.display_option)
                     //
                     put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
-                    put(FORCE_EXE_EXPIRED_VG, it.force_exe_expired_vg)
+
+                    put(PROCESS_VG, it.process_vg)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)

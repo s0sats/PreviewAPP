@@ -999,6 +999,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MY_ACTIONS_ORIGIN_FLOW_CALENDAR = "ORIGIN_CALENDAR";
 
     public static final String SHOW_PRODUCT_IN_ACT006 = "SHOW_PRODUCT_IN_ACT006";
+    public static final String MAX_DATE_VALUE = "2999-01-01 00:00:00 +00:00";
     /*
      * Const FORM_OS
      */

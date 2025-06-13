@@ -53,6 +53,7 @@ public class TK_Ticket_Form implements Serializable {
     @SerializedName("order_type_desc") private String order_type_desc;
     @SerializedName("process_type") private String process_type;
     @SerializedName("display_option") private String display_option;
+    @SerializedName("process_vg") private String process_vg;
     @SerializedName("item_check_group_code") private Integer item_check_group_code;
     @SerializedName("measure_tp_code") private Integer measure_tp_code;
     @SerializedName("measure_tp_desc") private String measure_tp_desc;
@@ -367,6 +368,14 @@ public class TK_Ticket_Form implements Serializable {
 
     public void setDisplay_option(String display_option) {
         this.display_option = display_option;
+    }
+
+    public String getProcess_vg() {
+        return process_vg;
+    }
+
+    public void setProcess_vg(String process_vg) {
+        this.process_vg = process_vg;
     }
 
     public Integer getItem_check_group_code() {

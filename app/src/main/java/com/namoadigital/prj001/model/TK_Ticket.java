@@ -43,6 +43,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int user_level_min;
     @SerializedName("ticket_id")
     private String ticket_id;
+    @SerializedName("ticket_edi_id")
+    private String ticket_edi_id;
     @SerializedName("type_code")
     private int type_code;
     @SerializedName("type_id")
@@ -450,6 +452,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setTicket_id(String ticket_id) {
         this.ticket_id = ticket_id;
+    }
+
+    public String getTicket_edi_id() {
+        return ticket_edi_id;
+    }
+
+    public void setTicket_edi_id(String ticket_edi_id) {
+        this.ticket_edi_id = ticket_edi_id;
     }
 
     public int getType_code() {
@@ -2068,7 +2078,8 @@ public class TK_Ticket implements Cloneable, Serializable {
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC),
                 hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS),
                 null,
-                null
+                null,
+                hmAux.get(TK_TicketDao.TICKET_EDI_ID)
         );
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE) ? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011.group_verification
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.namoadigital.prj001.extensions.watchStatus
+import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.ERROR_SAVE_SWITCH_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.LOADING_UPDATE_INSPECTION_LIST_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.TOAST_ERROR_UPDATE_INSPECTION_LIST
@@ -37,7 +38,7 @@ class VerificationGroupViewModel @Inject constructor(
             is VerificationGroupEvent.OnHandleListVerificationGroup -> {
                 handleListVerificationGroup(
                     event.formPKs,
-                    event.hasForcedExpiredVg,
+                    event.hasProcessVg,
                     event.isReadOnly
                 )
             }
@@ -138,7 +139,7 @@ class VerificationGroupViewModel @Inject constructor(
 
     private fun handleListVerificationGroup(
         formPks: VerificationGroupState.FormPK = _state.value.formPK,
-        hasForcedExpiredVg: Boolean = _state.value.hasForcedExpiredVg,
+        hasProcessVg: ProcessVg? = _state.value.hasProcessVg,
         isReadOnly: Boolean = _state.value.isReadOnly
     ) {
         viewModelScope.launch {
@@ -146,7 +147,7 @@ class VerificationGroupViewModel @Inject constructor(
                 Input(
                     formPks,
                     isReadOnly,
-                    hasForcedExpiredVg
+                    hasProcessVg
                 )
             ).collect { result ->
                 result.watchStatus(
@@ -157,7 +158,7 @@ class VerificationGroupViewModel @Inject constructor(
                                 stateLoading = it.disableLoading,
                                 error = null,
                                 formPK = formPks,
-                                hasForcedExpiredVg = hasForcedExpiredVg
+                                hasProcessVg = hasProcessVg
                             )
                         }
                     },

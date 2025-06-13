@@ -39,8 +39,6 @@ import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupVie
 import com.namoadigital.prj001.ui.act011.group_verification.composable.components.VerificationGroupCard
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroupEvent
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroupState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun VerificationGroupScreen(
@@ -73,7 +71,7 @@ fun VerificationGroupScreen(
         onResume = {
             viewModel.onEvent(
                 VerificationGroupEvent.OnHandleListVerificationGroup(
-                    hasForcedExpiredVg = geOs.hasForcedExpiredVg,
+                    hasProcessVg = geOs.getProcessVg(),
                     formPKs = VerificationGroupState.FormPK(
                         customerCode = geOs.customer_code,
                         customFormType = geOs.custom_form_type,

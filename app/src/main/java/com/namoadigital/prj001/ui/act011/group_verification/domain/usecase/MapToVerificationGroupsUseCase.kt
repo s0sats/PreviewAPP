@@ -8,6 +8,7 @@ import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepository
 import com.namoadigital.prj001.ui.act011.group_verification.composable.components.badge.model.NamoaBadges
@@ -29,11 +30,11 @@ class MapToVerificationGroupsUseCase @Inject constructor(
     data class Input(
         val formPks: VerificationGroupState.FormPK,
         val isHistoric: Boolean,
-        val hasForcedExpiredVg: Boolean
+        val hasProcessVg: ProcessVg?
     )
 
     override suspend fun invoke(input: Input): Flow<IResult<List<VerificationGroup>>> {
-        val (formPks, isReadOnly, hasForcedExpiredVg) = input
+        val (formPks, isReadOnly, hasProcessVg) = input
         return flow {
             emit(loading())
             runCatching {
@@ -66,7 +67,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                 mapToVerificationGroups(
                     vgs = vgs,
                     items = deviceItems,
-                    hasForcedExpiredVg = hasForcedExpiredVg,
+                    hasProcessVg = hasProcessVg,
                     isReadOnly = isReadOnly,
                     ticketPrefix = form?.ticket_prefix,
                     ticketCode = form?.ticket_code,
@@ -91,7 +92,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
     fun mapToVerificationGroups(
         items: List<GeOsDeviceItem>,
         vgs: List<GeOsVg>,
-        hasForcedExpiredVg: Boolean,
+        hasProcessVg: ProcessVg?,
         isReadOnly: Boolean,
         ticketPrefix: Int?,
         ticketCode: Int?,
@@ -135,7 +136,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                     user = if (inPartitionExecution && !sameTicket) partitionedUser else null,
                     alerts = alerts,
                     selected = vg.isActive(),
-                    canToggle = checkCanToggleSwitch(inPartitionExecution, hasForcedExpiredVg, isReadOnly)
+                    canToggle = checkCanToggleSwitch(inPartitionExecution, hasProcessVg, isReadOnly)
                 )
             }
         }.toMutableList()
@@ -169,12 +170,13 @@ class MapToVerificationGroupsUseCase @Inject constructor(
 
     private fun GeOsVg.checkCanToggleSwitch(
         inPartitionExecution: Boolean,
-        hasForcedExpiredVg: Boolean,
+        processVg: ProcessVg?,
         isReadOnly: Boolean
     ): Boolean = when {
-        inPartitionExecution -> false
-        hasForcedExpiredVg && isExpired() -> false
         isReadOnly -> false
+        processVg == ProcessVg.BLOCK_EXECUTION -> false
+        inPartitionExecution -> false
+        (processVg == ProcessVg.FORCE_EXECUTION_EXPIRED) && isExpired() -> false
         else -> true
     }
 }

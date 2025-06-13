@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -32,7 +33,7 @@ class MdOrderTypeDao(
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
-        const val FORCE_EXE_EXPIRED_VG = "force_exe_expired_vg"
+        const val PROCESS_VG = "process_vg"
     }
 
     private val toMdOrderTypeMapper: Mapper<Cursor, MdOrderType>
@@ -276,7 +277,7 @@ class MdOrderTypeDao(
                         processType = getString(getColumnIndex(PROCESS_TYPE)),
                         displayOption = getString(getColumnIndex(DISPLAY_OPTION)),
                         itemCheckGroupCode = getIntOrNull(getColumnIndex(MdItemCheckDao.ITEM_CHECK_GROUP_CODE)),
-                        force_exe_expired_vg = getInt(getColumnIndex(FORCE_EXE_EXPIRED_VG))
+                        process_vg = getStringOrNull(getColumnIndex(PROCESS_VG)),
                     )
                 }
             }
@@ -310,7 +311,7 @@ class MdOrderTypeDao(
                     }
                     //
                     put(ITEM_CHECK_GROUP_CODE, mdOrderType.itemCheckGroupCode)
-                    put(FORCE_EXE_EXPIRED_VG, mdOrderType.force_exe_expired_vg)
+                    put(PROCESS_VG, mdOrderType.process_vg)
                 }
             }
             //

@@ -268,6 +268,7 @@ class Act087MainPresenter(
             process_type = orderType?.processType ?: "",
             display_option = orderType?.displayOption ?: "",
             item_check_group_code = orderType?.itemCheckGroupCode,
+            process_vg = orderType?.process_vg,
             backup_product_code = null,
             backup_product_id = null,
             backup_product_desc = null,
@@ -391,7 +392,8 @@ class Act087MainPresenter(
                 tkTicketForm.order_type_desc,
                 tkTicketForm.process_type,
                 tkTicketForm.display_option,
-                tkTicketForm.item_check_group_code
+                tkTicketForm.item_check_group_code,
+                process_vg = tkTicketForm.process_vg,
             )
         } else {
             mCustomForm.so_order_type_code_default?.let {

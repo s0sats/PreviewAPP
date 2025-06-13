@@ -69,7 +69,7 @@ class GeOsOrderTypeScanUseCaseTest {
         process_type = "asdasdsad",
         display_option = "NORMAL",
         item_check_group_code = null,
-        force_exe_expired_vg = 0,
+        process_vg = null,
         backup_product_code = null,
         backup_product_id = null,
         backup_product_desc = null,

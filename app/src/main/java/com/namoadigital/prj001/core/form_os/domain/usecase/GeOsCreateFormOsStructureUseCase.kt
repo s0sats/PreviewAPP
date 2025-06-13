@@ -5,6 +5,7 @@ import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.VgStatus
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,6 @@ class GeOsCreateFormOsStructureUseCase  @Inject constructor(
     data class Output(
         val geosVgs: List<GeOsVg>,
         val deviceItems: List<GeOsDeviceItem>,
-        val hasForcedExeExpiredVg: Boolean
     )
 
     override suspend fun invoke(input: Input): Flow<IResult<Output>> {
@@ -54,6 +54,7 @@ class GeOsCreateFormOsStructureUseCase  @Inject constructor(
                     dateConsider = input.formOsHeader.getDateConsider(),
                     ticketPrefix = input.ticketPrefix,
                     ticketCode = input.ticketCode,
+                    isBlockExecution = ProcessVg.isBlockExecution(input.formOsHeader.process_vg)
                 )
             )
 
@@ -91,7 +92,6 @@ class GeOsCreateFormOsStructureUseCase  @Inject constructor(
                     Output(
                         geosVgs,
                         deviceItems,
-                        input.formOsHeader.hasForcedExpiredVg
                     )
                 )
             )

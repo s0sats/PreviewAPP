@@ -4,6 +4,7 @@ import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.VgStatus
+import com.namoadigital.prj001.util.ConstantBaseApp.MAX_DATE_VALUE
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class GeOsScanVerificationGroupUseCase(
@@ -23,7 +24,7 @@ class GeOsScanVerificationGroupUseCase(
         val dateConsider: String?,
         val ticketPrefix : Int?,
         val ticketCode : Int?,
-
+        val isBlockExecution: Boolean
     )
 
     override fun invoke(input: Input): List<GeOsVg> {
@@ -40,6 +41,7 @@ class GeOsScanVerificationGroupUseCase(
             dateConsider,
             ticketPrefix,
             ticketCode,
+            isBlockExecution
         ) = input
 
         val list = repository.createGeOsVg(
@@ -108,9 +110,14 @@ class GeOsScanVerificationGroupUseCase(
             }
 
 
-            item.isActive = isVerificationGroupActive(vgStatus, item, ticketPrefix, ticketCode)
+            item.isActive = isVerificationGroupActive(vgStatus, item, ticketPrefix, ticketCode, isBlockExecution)
             item.hasExpired = isGroupExpired(vgStatus)
             item.vgStatus = vgStatus.status
+            //
+            if(!item.isExpired() && ToolBox_Inf.getDateDiferenceInMilliseconds(item.targetDate, dateConsider) < 0){
+                item.targetDate = MAX_DATE_VALUE
+            }
+            //
         }
 
         return list
@@ -120,13 +127,16 @@ class GeOsScanVerificationGroupUseCase(
         vgStatus: VgStatus,
         item: GeOsVg,
         ticketPrefix : Int?,
-        ticketCode : Int?
+        ticketCode : Int?,
+        isBlockExecution: Boolean
     ): Int{
-        return if (isGroupExpired(vgStatus) == 1 || isOtherPartitionActived(item, ticketPrefix, ticketCode)){
-            1
-        }else{
-            0
+
+        return when {
+            isBlockExecution -> 0
+            isGroupExpired(vgStatus) == 1 || isOtherPartitionActived(item, ticketPrefix, ticketCode) -> 1
+            else -> 0
         }
+
     }
 
 

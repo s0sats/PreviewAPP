@@ -67,10 +67,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="13sp"
+                style="@style/TextAppearance.Material3.LabelLarge"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2019.999" />
+
+            <TextView
+                android:id="@+id/frg_ticket_tv_ticket_edi_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="start"
+                style="@style/TextAppearance.Material3.LabelLarge"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/frg_ticket_tv_status"
+                app:layout_constraintStart_toEndOf="@id/frg_ticket_tv_ticket_id"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="2019.999" />
 

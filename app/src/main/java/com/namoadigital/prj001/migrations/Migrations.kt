@@ -1122,7 +1122,7 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
             tableName = MdOrderTypeDao.TABLE,
             columnsToAdd = listOf(
                 DatabaseTable.Column(
-                    name = MdOrderTypeDao.FORCE_EXE_EXPIRED_VG,
+                    name = "force_exe_expired_vg",
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
@@ -1148,7 +1148,7 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
             tableName = GeOsDao.TABLE,
             columnsToAdd = listOf(
                 DatabaseTable.Column(
-                    name = GeOsDao.FORCE_EXE_EXPIRED_VG,
+                    name = "force_exe_expired_vg",
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
@@ -1329,6 +1329,246 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         )
     }
 }
+
+val migrationV21 = object : MigrationSQLite(21, 22) {
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        migrateMdOrderType(db)
+        //
+        migrateGeOs(db)
+        //
+        db.addMissingColumns(
+            tableName = TK_Ticket_FormDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = TK_Ticket_FormDao.PROCESS_VG,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = TK_TicketDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = TK_TicketDao.TICKET_EDI_ID,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = TkTicketCacheDao.TABLE,
+            columnsToAdd = listOf(
+                DatabaseTable.Column(
+                    name = TkTicketCacheDao.TICKET_EDI_ID,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE,
+                )
+            )
+        )
+    }
+    private fun migrateGeOs(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+                    CREATE TABLE IF NOT EXISTS [ge_os_tmp](
+                        [customer_code]int not null, 
+                        [custom_form_type]int not null, 
+                        [custom_form_code]int not null, 
+                        [custom_form_version]int not null, 
+                        [custom_form_data]int not null, 
+                        [order_type_code] int not null collate nocase, 
+                        [order_type_id] text not null collate nocase,
+                        [order_type_desc] text not null collate nocase, 
+                        [process_type] text not null collate nocase,
+                        [display_option] text not null collate nocase,
+                        [item_check_group_code] int,
+                        [process_vg] text collate nocase,
+                        [backup_product_code] int, 
+                        [backup_product_id] text collate nocase, 
+                        [backup_product_desc] text collate nocase, 
+                        [backup_serial_code] int, 
+                        [backup_serial_id] text collate nocase,
+                        [measure_tp_code] int , 
+                        [measure_tp_id] text collate nocase, 
+                        [measure_tp_desc] text collate nocase,
+                        [measure_value] real ,
+                        [measure_cycle_value] real, 
+                        [value_sufix] text collate nocase, 
+                        [restriction_decimal] int, 
+                        [value_cycle_size] real, 
+                        [cycle_tolerance] int, 
+                        [date_start] text, 
+                        [date_end] text , 
+                        [last_measure_value] real,
+                        [last_measure_date] text collate nocase, 
+                        [last_cycle_value] real, 
+                        [so_edit_start_end] int not null DEFAULT 0, 
+                        [so_order_type_code_default] int, 
+                        [so_allow_change_order_type] int not null DEFAULT 0,
+                        [so_allow_backup]  int not null DEFAULT 0, 
+                        [device_tp_code_main] int, 
+                        [initial_is_serial_stopped] int,
+                        [initial_stopped_date] text collate nocase,
+                        [initial_unavailability_reason] text collate nocase,
+                        [final_is_serial_stopped] int,                                   
+                        [final_unavailability_reason] text collate nocase,
+                        [allow_form_in_the_past] int not null DEFAULT 0,
+                        constraint[pk_ge_os] primary key([customer_code], [custom_form_type], [custom_form_code], [custom_form_version], [custom_form_data]));
+                """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+                      INSERT INTO ge_os_tmp (
+                        customer_code,
+                        custom_form_type,
+                        custom_form_code,
+                        custom_form_version,
+                        custom_form_data,
+                        order_type_code,
+                        order_type_id,
+                        order_type_desc,
+                        process_type,
+                        display_option,
+                        item_check_group_code,
+                        process_vg,
+                        backup_product_code,
+                        backup_product_id,
+                        backup_product_desc,
+                        backup_serial_code,
+                        backup_serial_id,
+                        measure_tp_code,
+                        measure_tp_id,
+                        measure_tp_desc,
+                        measure_value,
+                        measure_cycle_value,
+                        value_sufix,
+                        restriction_decimal,
+                        value_cycle_size,
+                        cycle_tolerance,
+                        date_start,
+                        date_end,
+                        last_measure_value,
+                        last_measure_date,
+                        last_cycle_value,
+                        so_edit_start_end,
+                        so_order_type_code_default,
+                        so_allow_change_order_type,
+                        so_allow_backup,
+                        device_tp_code_main,
+                        initial_is_serial_stopped,
+                        initial_stopped_date,
+                        initial_unavailability_reason,
+                        final_is_serial_stopped,
+                        final_unavailability_reason,
+                        allow_form_in_the_past
+                        )
+                      select customer_code,
+                        custom_form_type,
+                        custom_form_code,
+                        custom_form_version,
+                        custom_form_data,
+                        order_type_code,
+                        order_type_id,
+                        order_type_desc,
+                        process_type,
+                        display_option,
+                        item_check_group_code,
+                        case when force_exe_expired_vg = 1 then 'FORCE_EXECUTION_EXPIRED' else null end process_vg,
+                        backup_product_code,
+                        backup_product_id,
+                        backup_product_desc,
+                        backup_serial_code,
+                        backup_serial_id,
+                        measure_tp_code,
+                        measure_tp_id,
+                        measure_tp_desc,
+                        measure_value,
+                        measure_cycle_value,
+                        value_sufix,
+                        restriction_decimal,
+                        value_cycle_size,
+                        cycle_tolerance,
+                        date_start,
+                        date_end,
+                        last_measure_value,
+                        last_measure_date,
+                        last_cycle_value,
+                        so_edit_start_end,
+                        so_order_type_code_default,
+                        so_allow_change_order_type,
+                        so_allow_backup,
+                        device_tp_code_main,
+                        initial_is_serial_stopped,
+                        initial_stopped_date,
+                        initial_unavailability_reason,
+                        final_is_serial_stopped,
+                        final_unavailability_reason,
+                        allow_form_in_the_past
+                        from ge_os     
+                """.trimIndent()
+        )
+
+        db.execSQL("DROP TABLE ge_os")
+        db.execSQL("ALTER TABLE ge_os_tmp RENAME TO ge_os")
+    }
+
+    private fun migrateMdOrderType(db: SQLiteDatabase) {
+        db.execSQL(
+            """ 
+                      CREATE TABLE IF NOT EXISTS [md_order_type_tmp] (
+                        [customer_code] int not null,
+                        [order_type_code] int not null,
+                        [order_type_id] text not null collate nocase,
+                        [order_type_desc] text not null collate nocase,
+                        [process_type] text not null collate nocase,
+                        [display_option] text not null collate nocase,
+                        [item_check_group_code] int, 
+                        [process_vg] text collate nocase,
+                     
+                        constraint [pk_md_order_type] 
+                            primary key (
+                                customer_code,
+                                order_type_code
+                            )
+                        );
+                """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+                      INSERT INTO md_order_type_tmp (
+                        customer_code,
+                        order_type_code,
+                        order_type_id,
+                        order_type_desc,
+                        process_type,
+                        display_option,
+                        item_check_group_code, 
+                        process_vg)
+                      select customer_code,
+                             order_type_code,
+                             order_type_id,
+                             order_type_desc,
+                             process_type,
+                             display_option,
+                             item_check_group_code,
+                             case when force_exe_expired_vg = 1 then 'FORCE_EXECUTION_EXPIRED' else null end process_vg
+                      from md_order_type
+                """.trimIndent()
+        )
+
+        db.execSQL("DROP TABLE md_order_type")
+        db.execSQL("ALTER TABLE md_order_type_tmp RENAME TO md_order_type")
+    }
+}
+
 
 
 

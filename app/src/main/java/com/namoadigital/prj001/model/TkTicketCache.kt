@@ -16,6 +16,7 @@ class TkTicketCache(
         @SerializedName("scn") var scn: Int,
         @SerializedName("user_level_min") var user_level_min: Int,
         @SerializedName("ticket_id") var ticket_id: String,
+        @SerializedName("ticket_edi_id") var ticket_edi_id: String?,
         @SerializedName("tag_operational_code") var tag_operational_code: Int,
         @SerializedName("tag_operational_id") var tag_operational_id: String,
         @SerializedName("tag_operational_desc") var tag_operational_desc: String,
@@ -126,6 +127,7 @@ class TkTicketCache(
             null,
             null,
             null,
+            ticketEdiID = ticket_edi_id
         )
         myActions.productCode = open_product_code
         return myActions
