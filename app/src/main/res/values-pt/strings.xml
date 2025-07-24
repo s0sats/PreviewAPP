@@ -119,6 +119,8 @@
     <string name="act002_ws_ticket_download_ttl">Download de Tickets</string>
     <string name="act002_ws_ticket_download_msg">Baixando Tickets desatualizados.</string>
     <string name="act002_upload_trip_error_msg">Erro na consulta de dados da Viagem. Tente novamente.</string>
+    <string name="act002_ws_structure_sync_ttl">Estrutura de Seriais.</string>
+    <string name="act002_ws_structure_sync_msg">Atualizando estrutura de seriais.</string>
     <string name="license_site_dialog_ttl">Seleção: Site licenciado</string>
     <string name="license_site_dialog_filter_hint">Escolha o Site da sua licença</string>
     <string name="license_site_dialog_close">Cancelar</string>

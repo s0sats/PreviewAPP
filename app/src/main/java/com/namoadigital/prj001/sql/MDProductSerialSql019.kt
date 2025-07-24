@@ -15,7 +15,7 @@ class MDProductSerialSql019 (
                         WHERE p.customer_code = $customerCode
                           AND p.has_item_check = 1
                           AND p.scn_item_check = 0
-                          LIMIT 10
+                          LIMIT 500
             """.trimIndent()
     }
 }

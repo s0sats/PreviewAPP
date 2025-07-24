@@ -25,14 +25,14 @@ import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem;
-import com.namoadigital.prj001.model.masterdata.ge_os.vg.FormVgs;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem;
+import com.namoadigital.prj001.model.masterdata.ge_os.vg.FormVgs;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_003;
@@ -101,59 +101,59 @@ public class WS_Save extends BaseWsIntentService {
             );
 
             formDataFieldDao = new GE_Custom_Form_Data_FieldDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            formLocalDao =
+                    new GE_Custom_Form_LocalDao(
                             getApplicationContext(),
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                             Constant.DB_VERSION_CUSTOM
                     );
             //
-            formLocalDao =
-                new GE_Custom_Form_LocalDao(
+            scheduleExecDao = new MD_Schedule_ExecDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                     Constant.DB_VERSION_CUSTOM
-                );
-            //
-            scheduleExecDao = new MD_Schedule_ExecDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
             );
             //
             serialDao = new MD_Product_SerialDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
             tripDao = new FSTripDao(getApplicationContext());
             //
             ticketStepDao = new TK_Ticket_StepDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
             siteDao = new MD_SiteDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
-            geOsDao= new GeOsDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+            geOsDao = new GeOsDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             //
             deviceItemDao = new GeOsDeviceItemDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
 
             geOsVgDao = new GeOsVgDao(getApplicationContext());
             //
-            form_datas = new ArrayList<>() ;
+            form_datas = new ArrayList<>();
             form_data_fields = new ArrayList<>();
             form_items = new ArrayList<>();
             formVgsList = new ArrayList<>();
@@ -166,9 +166,9 @@ public class WS_Save extends BaseWsIntentService {
 
         } catch (Exception e) {
 
-            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
+            sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
 
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
@@ -190,21 +190,21 @@ public class WS_Save extends BaseWsIntentService {
         //Voltamos o esquema para excludeFieldsWithoutExposeAnnotation , para evitar campo duplicado no json.
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
 
-        if(processPendingToken(1) == 0){
+        if (processPendingToken(1) == 0) {
             processNewToken(0);
-            boolean result = formDataDao.addUpdateListWithReturn(form_datas,false);
-            if(!result){
+            boolean result = formDataDao.addUpdateListWithReturn(form_datas, false);
+            if (!result) {
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_update_token_form_error"), "", "0");
                 return;
             }
-            mResend =false;
-        }else{
-            mResend =true;
+            mResend = false;
+        } else {
+            mResend = true;
         }
         //Verifica se existem dados a serem enviado
         //Se não existir, cancela a chamada do WS
-        if(form_datas.size() == 0){
-            if (mSEND.isEmpty()){
+        if (form_datas.size() == 0) {
+            if (mSEND.isEmpty()) {
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_finalized_forms_found"), "", "0");
                 return;
             } else {
@@ -215,7 +215,7 @@ public class WS_Save extends BaseWsIntentService {
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_forms"), "", "0");
         //
-        TSave_Env env =  new TSave_Env();
+        TSave_Env env = new TSave_Env();
         //
         env.setApp_code(Constant.PRJ001_CODE);
         env.setApp_version(Constant.PRJ001_VERSION);
@@ -248,7 +248,7 @@ public class WS_Save extends BaseWsIntentService {
                 rec.getLink_url(),
                 jumpValidation,
                 jumpOD
-                )
+        )
                 ||
                 !ToolBox_Inf.processoOthersError(
                         getApplicationContext(),
@@ -300,18 +300,18 @@ public class WS_Save extends BaseWsIntentService {
 
     private int processPendingToken(int pending) {
         form_datas =
-                    formDataDao.query(
-                            new GE_Custom_Form_Data_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                    pending
-                            ).toSqlQuery()
-                    );
+                formDataDao.query(
+                        new GE_Custom_Form_Data_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                                pending
+                        ).toSqlQuery()
+                );
 
-        if(form_datas.size() > 0){
+        if (form_datas.size() > 0) {
             form_data_fields.clear();
             form_items.clear();
             formVgsList.clear();
-            for ( GE_Custom_Form_Data form_data : form_datas ) {
+            for (GE_Custom_Form_Data form_data : form_datas) {
                 processListToServer(form_data);
             }
             //Atualiza token para o que esta pendente de envio
@@ -330,12 +330,12 @@ public class WS_Save extends BaseWsIntentService {
                         ).toSqlQuery()
                 );
         token = ToolBox_Inf.getToken(getApplicationContext());
-        if(form_datas.size() > 0){
+        if (form_datas.size() > 0) {
             form_data_fields.clear();
             form_items.clear();
             formVgsList.clear();
             //Atualiza valor do token em todos os cabeçalhos
-            for ( GE_Custom_Form_Data form_data : form_datas ) {
+            for (GE_Custom_Form_Data form_data : form_datas) {
 
                 form_data.setToken(token);
 
@@ -362,13 +362,13 @@ public class WS_Save extends BaseWsIntentService {
         //LUCHE - 08/10/2021 ADD ITEMS DA O.S
         form_items.addAll(
                 deviceItemDao.query(
-                    new Sql_WS_Save_Device_Item_002(
-                            form_data.getCustomer_code(),
-                            form_data.getCustom_form_type(),
-                            form_data.getCustom_form_code(),
-                            form_data.getCustom_form_version(),
-                            form_data.getCustom_form_data()
-                    ).toSqlQuery()
+                        new Sql_WS_Save_Device_Item_002(
+                                form_data.getCustomer_code(),
+                                form_data.getCustom_form_type(),
+                                form_data.getCustom_form_code(),
+                                form_data.getCustom_form_version(),
+                                form_data.getCustom_form_data()
+                        ).toSqlQuery()
                 )
         );
 
@@ -383,9 +383,9 @@ public class WS_Save extends BaseWsIntentService {
         );
     }
 
-    private boolean checkSaveReturn(Gson gson, String save, String error_msg, ArrayList<TSave_Rec.Error_Process> error_process, int jumpValidation, int jumpOD) throws Exception{
+    private boolean checkSaveReturn(Gson gson, String save, String error_msg, ArrayList<TSave_Rec.Error_Process> error_process, int jumpValidation, int jumpOD) throws Exception {
         HMAux hmAuxRet = new HMAux();
-        switch (save){
+        switch (save) {
             case "OK":
             case "OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
@@ -396,7 +396,7 @@ public class WS_Save extends BaseWsIntentService {
                 boolean isScheduleForm = false;
                 boolean isTicketForm = false;
                 //Se enviado com sucesso, atualiza Status para DONE
-                for (GE_Custom_Form_Data form_data : form_datas){
+                for (GE_Custom_Form_Data form_data : form_datas) {
                     //Se status DONE
                     form_data.setCustom_form_status(Constant.SYS_STATUS_DONE);
                     //Vars do novo agendamento
@@ -406,14 +406,14 @@ public class WS_Save extends BaseWsIntentService {
                     //LUCHE - 20/02/2020
                     //Tratativa pós novo agendamento que registra no banco e exibe o erro
                     //Resgata item com erro se houver.
-                    if(isScheduleForm || isTicketForm) {
+                    if (isScheduleForm || isTicketForm) {
                         errorProcess = checkErrorProcess(
-                            error_process,
-                            form_data.getCustomer_code(),
-                            form_data.getCustom_form_type(),
-                            form_data.getCustom_form_code(),
-                            form_data.getCustom_form_version(),
-                            form_data.getCustom_form_data()
+                                error_process,
+                                form_data.getCustomer_code(),
+                                form_data.getCustom_form_type(),
+                                form_data.getCustom_form_code(),
+                                form_data.getCustom_form_version(),
+                                form_data.getCustom_form_data()
                         );
                         //Seta msg de erro no form_datase houver
                         form_data.setError_msg(errorProcess != null ? errorProcess.getError() : null);
@@ -421,90 +421,91 @@ public class WS_Save extends BaseWsIntentService {
                     //
                     try {
                         GE_Custom_Form_Local formLocal = processFormLocalSaveReturn(
-                            form_data.getCustomer_code(),
-                            form_data.getCustom_form_type(),
-                            form_data.getCustom_form_code(),
-                            form_data.getCustom_form_version(),
-                            form_data.getCustom_form_data()
+                                form_data.getCustomer_code(),
+                                form_data.getCustom_form_type(),
+                                form_data.getCustom_form_code(),
+                                form_data.getCustom_form_version(),
+                                form_data.getCustom_form_data()
                         );
                         //Preenche dados no obj de erro.
-                        if(errorProcess != null){
+                        if (errorProcess != null) {
                             errorProcess.setCustom_form_desc(formLocal.getCustom_form_desc());
                             form_data.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                             formLocal.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                         }
                         //
                         formLocals.add(formLocal);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         //TODO VERIFICAR SE DEVEMOS TRATAR AQUI O CASO DO FORM_DATA SEM FORM LOCAL
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
-                    if(isScheduleForm) {
+                    if (isScheduleForm) {
                         //
                         MD_Schedule_Exec scheduleExec = processScheduleExecSaveReturn(
-                            form_data.getCustomer_code(),
-                            form_data.getSchedule_prefix(),
-                            form_data.getSchedule_code(),
-                            form_data.getSchedule_exec()
+                                form_data.getCustomer_code(),
+                                form_data.getSchedule_prefix(),
+                                form_data.getSchedule_code(),
+                                form_data.getSchedule_exec()
                         );
-                        //Reseta informações de FCM
-                        scheduleExec.setFcm_new_status(null);
-                        scheduleExec.setFcm_user_nick(null);
-                        //Seta msg de erro no agendamento, se houver
-                        if(errorProcess != null && errorProcess.getError() != null ){
-                            //Seta erro
-                            scheduleExec.setSchedule_erro_msg(errorProcess.getError());
-                            scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_IGNORED);
-                        }
-                        scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                        //Add na lista
-                        formSchedules.add(scheduleExec);
-                        //Preenche dados no obj de erro.
-                        if (errorProcess != null) {
-                            errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_SCHEDULE);
-                            errorProcess.setSchedule_pk(
-                                ToolBox_Inf.formatSchedulePk(
-                                    scheduleExec.getSchedule_prefix(),
-                                    scheduleExec.getSchedule_code(),
-                                    scheduleExec.getSchedule_exec()
-                                )
-                            );
-                            //
-                            errorProcess.setSchedule_desc(scheduleExec.getSchedule_desc());
+
+                        if(scheduleExec == null){
+                            if(errorProcess != null && errorProcess.getError() == null){
+                                errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_SCHEDULE);
+                            }
+                        }else{
+                            if(errorProcess != null && errorProcess.getError() != null){
+                                scheduleExec.setSchedule_erro_msg(errorProcess.getError());
+                                scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_IGNORED);
+
+                                errorProcess.setSchedule_pk(
+                                        ToolBox_Inf.formatSchedulePk(
+                                                scheduleExec.getSchedule_prefix(),
+                                                scheduleExec.getSchedule_code(),
+                                                scheduleExec.getSchedule_exec()
+                                        )
+                                );
+                                //
+                                errorProcess.setSchedule_desc(scheduleExec.getSchedule_desc());
+                            }
+                            //Add na lista
+                            formSchedules.add(scheduleExec);
                         }
                     }
+
                     //TODO Continuar daqui, salvar os dados no ctrl;
-                    if(isTicketForm) {
+                    if (isTicketForm) {
                         //
                         TK_Ticket_Step ticketStep = processTicketStepSaveReturn(
-                            form_data.getCustomer_code(),
-                            form_data.getTicket_prefix(),
-                            form_data.getTicket_code(),
-                            form_data.getTicket_seq(),
-                            form_data.getTicket_seq_tmp(),
-                            form_data.getStep_code()
+                                form_data.getCustomer_code(),
+                                form_data.getTicket_prefix(),
+                                form_data.getTicket_code(),
+                                form_data.getTicket_seq(),
+                                form_data.getTicket_seq_tmp(),
+                                form_data.getStep_code()
                         );
                         if (errorProcess != null) {
                             errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_TICKET);
                             //
-                            errorProcess.setTicket_step_pk(
-                                formatTicketStepPk(
-                                    ticketStep.getTicket_prefix(), ticketStep.getTicket_code()
-                                )
-                            );
-                            //
-                            errorProcess.setTicket_step_desc(ticketStep.getStep_desc());
+                            if (ticketStep != null) {
+                                errorProcess.setTicket_step_pk(
+                                        formatTicketStepPk(
+                                                ticketStep.getTicket_prefix(), ticketStep.getTicket_code()
+                                        )
+                                );
+                                //
+                                errorProcess.setTicket_step_desc(ticketStep.getStep_desc());
+                            }
                         }
                     }
                     //
-                    if(errorProcess != null) {
+                    if (errorProcess != null) {
                         errorProcessList.add(errorProcess);
                     }
                     //LUCHE - 15/01/2021 - CONTADOR DE LICENÇA DO SITESA
                     //Se for agendamento ou form espontaneo, verificar a necessidade de atualizar
                     //os contadores.
                     //TODO TRATAR O DECREMENTE DO APP_EXECUTION TB NO ABORT DA ACT011
-                    if(isScheduleForm || !isTicketForm){
+                    if (isScheduleForm || !isTicketForm) {
                         handleSiteExecutionUpdate(siteExecution, form_data);
                     }
                 }
@@ -532,7 +533,7 @@ public class WS_Save extends BaseWsIntentService {
                         siteExecution
                 );
                 //
-                if(dbSaveSuccess) {
+                if (dbSaveSuccess) {
                 /*27-08-2019 BARRIONUEVO
                    Controle de reprocessamento de n-form ao enviar registros com tokens
                  */
@@ -551,17 +552,17 @@ public class WS_Save extends BaseWsIntentService {
                         //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
                         return true;
                     }
-                }else{
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_database_save"),"" , "0");
+                } else {
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_database_save"), "", "0");
                     return false;
                 }
             case "ERROR_TOKEN_EXCEPTION":
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_token_excep"), "", "0");
                 //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_token_excep"));
                 //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_error_token_excep"),hmAuxRet, "", "0");
                 return false;
             default:
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_save") + " \n" + error_msg ,"" , "0");
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_save") + " \n" + error_msg, "", "0");
                 //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_save") + " \n" + error_msg);
                 //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_error_save"),hmAuxRet, "", "0");
                 return false;
@@ -577,12 +578,12 @@ public class WS_Save extends BaseWsIntentService {
      */
 
     private void handleSiteExecutionUpdate(List<MD_Site> siteExecution, GE_Custom_Form_Data form_data) {
-        if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
+        if (ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
             MD_Site mdSite = getMdSite(siteExecution, form_data.getCustomer_code(), form_data.getSite_code());
             if (mdSite != null && mdSite.getLicense_enabled() == 0) {
-                if(ConstantBaseApp.SYS_STATUS_DONE.equals(form_data.getCustom_form_status())){
+                if (ConstantBaseApp.SYS_STATUS_DONE.equals(form_data.getCustom_form_status())) {
                     mdSite.transferAppExecutionToServerCount();
-                }else{
+                } else {
                     mdSite.decreaseAppExecution();
                 }
             }
@@ -599,59 +600,65 @@ public class WS_Save extends BaseWsIntentService {
      * @param siteCode
      * @return
      */
-    private MD_Site getMdSite(List<MD_Site> siteExecution, long customerCode, String siteCode){
+    private MD_Site getMdSite(List<MD_Site> siteExecution, long customerCode, String siteCode) {
         for (MD_Site md_site : siteExecution) {
-            if( md_site.getCustomer_code() == customerCode
-                && md_site.getSite_code().equals(siteCode)
-            ){
+            if (md_site.getCustomer_code() == customerCode
+                    && md_site.getSite_code().equals(siteCode)
+            ) {
                 return md_site;
             }
         }
         //Se não acho o site na lista, busca do banco de dados
         MD_Site dbSite = ToolBox_Inf.getSiteObjInfo(getApplicationContext(), siteCode);
-        if(dbSite != null && dbSite.getLicense_enabled() == 0) {
+        if (dbSite != null && dbSite.getLicense_enabled() == 0) {
             siteExecution.add(dbSite);
             return dbSite;
-        }else{
+        } else {
             return null;
         }
     }
 
     private TK_Ticket_Step processTicketStepSaveReturn(long customer_code, Integer ticket_prefix, Integer ticket_code, Integer ticket_seq, Integer ticket_seq_tmp, Integer step_code) {
         TK_Ticket_Step auxStep =
-            ticketStepDao.getByString(
-                new TK_Ticket_Step_Sql_001(
-                    customer_code,
-                    ticket_prefix,
-                    ticket_code,
-                    step_code
-                ).toSqlQuery()
-            );
+                ticketStepDao.getByString(
+                        new TK_Ticket_Step_Sql_001(
+                                customer_code,
+                                ticket_prefix,
+                                ticket_code,
+                                step_code
+                        ).toSqlQuery()
+                );
         //
         return auxStep;
     }
 
     public static String formatTicketStepPk(Integer ticket_prefix, Integer ticket_code) {
-        if(ticket_prefix == null || ticket_code == null ){
+        if (ticket_prefix == null || ticket_code == null) {
             return "";
         }
         //
-        return  ticket_prefix +"."+ ticket_code;
+        return ticket_prefix + "." + ticket_code;
     }
 
     private MD_Schedule_Exec processScheduleExecSaveReturn(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
         //LUCHE - 14/02/2020
         MD_Schedule_Exec auxSchedule =
-            scheduleExecDao.getByString(
-                new MD_Schedule_Exec_Sql_001(
-                    customer_code,
-                    schedule_prefix,
-                    schedule_code,
-                    schedule_exec
-                ).toSqlQuery()
-            );
+                scheduleExecDao.getByString(
+                        new MD_Schedule_Exec_Sql_001(
+                                customer_code,
+                                schedule_prefix,
+                                schedule_code,
+                                schedule_exec
+                        ).toSqlQuery()
+                );
         //
-        auxSchedule.setStatus(Constant.SYS_STATUS_DONE);
+        if (auxSchedule != null) {
+            auxSchedule.setStatus(Constant.SYS_STATUS_DONE);
+            //Reseta informações de FCM
+            auxSchedule.setFcm_new_status(null);
+            auxSchedule.setFcm_user_nick(null);
+            auxSchedule.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        }
         //
         return auxSchedule;
     }
@@ -661,17 +668,17 @@ public class WS_Save extends BaseWsIntentService {
                                                             int custom_form_code,
                                                             int custom_form_version,
                                                             long custom_form_data
-                                                        ) throws Exception {
+    ) throws Exception {
         GE_Custom_Form_Local aux =
-            formLocalDao.getByString(
-                new GE_Custom_Form_Local_Sql_003(
-                    String.valueOf(customer_code),
-                    String.valueOf(custom_form_type),
-                    String.valueOf(custom_form_code),
-                    String.valueOf(custom_form_version),
-                    String.valueOf(custom_form_data)
-                ).toSqlQuery()
-            );
+                formLocalDao.getByString(
+                        new GE_Custom_Form_Local_Sql_003(
+                                String.valueOf(customer_code),
+                                String.valueOf(custom_form_type),
+                                String.valueOf(custom_form_code),
+                                String.valueOf(custom_form_version),
+                                String.valueOf(custom_form_data)
+                        ).toSqlQuery()
+                );
         //
         aux.setCustom_form_status(Constant.SYS_STATUS_DONE);
         //
@@ -680,22 +687,22 @@ public class WS_Save extends BaseWsIntentService {
 
     public boolean isFormCreateByTicket(GE_Custom_Form_Data geCustomFormData) {
         return
-            geCustomFormData.getTicket_prefix() != null && geCustomFormData.getTicket_prefix() > -1
-                && geCustomFormData.getTicket_code() != null && geCustomFormData.getTicket_code() > -1
-                && geCustomFormData.getTicket_seq() != null && geCustomFormData.getTicket_seq() > -1
-                && geCustomFormData.getTicket_seq_tmp() != null && geCustomFormData.getTicket_seq_tmp()  > -1
-                && geCustomFormData.getStep_code() != null && geCustomFormData.getStep_code() > -1;
+                geCustomFormData.getTicket_prefix() != null && geCustomFormData.getTicket_prefix() > -1
+                        && geCustomFormData.getTicket_code() != null && geCustomFormData.getTicket_code() > -1
+                        && geCustomFormData.getTicket_seq() != null && geCustomFormData.getTicket_seq() > -1
+                        && geCustomFormData.getTicket_seq_tmp() != null && geCustomFormData.getTicket_seq_tmp() > -1
+                        && geCustomFormData.getStep_code() != null && geCustomFormData.getStep_code() > -1;
     }
 
     private TSave_Rec.Error_Process checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {
         for (TSave_Rec.Error_Process error : error_process_list) {
-            if(
-                error.getCustomer_code() == customer_code
-                && error.getCustom_form_type() == custom_form_type
-                && error.getCustom_form_code() == custom_form_code
-                && error.getCustom_form_version() == custom_form_version
-                && error.getCustom_form_data() == custom_form_data
-            ){
+            if (
+                    error.getCustomer_code() == customer_code
+                            && error.getCustom_form_type() == custom_form_type
+                            && error.getCustom_form_code() == custom_form_code
+                            && error.getCustom_form_version() == custom_form_version
+                            && error.getCustom_form_data() == custom_form_data
+            ) {
                 return error;
             }
         }

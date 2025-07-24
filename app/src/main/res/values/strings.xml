@@ -125,6 +125,8 @@
     <string name="act002_ws_trip_upload_ttl">Upload Trip</string>
     <string name="act002_ws_trip_upload_msg">Uploading trip pendencies.</string>
     <string name="act002_upload_trip_error_msg">Error on fetch trip data to update with server.</string>
+    <string name="act002_ws_structure_sync_ttl">Serial strucuture.</string>
+    <string name="act002_ws_structure_sync_msg">Download serial strucuture.</string>
     <string name="license_site_dialog_ttl">Choose Site with licence</string>
     <string name="license_site_dialog_filter_hint">Select the Site of your licence</string>
     <string name="license_site_dialog_close">Cancel</string>

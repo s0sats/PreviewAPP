@@ -51,4 +51,8 @@ public interface Act002_Main_Presenter {
     boolean checkTripSyncNeed();
 
     void executeWSTripUpdateFull();
+
+    void executeWSSerialStructureSync(Integer total);
+
+    int serialStructureSyncRequiredTotal();
 }

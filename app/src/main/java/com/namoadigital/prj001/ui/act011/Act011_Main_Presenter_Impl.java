@@ -79,7 +79,6 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
-import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -271,6 +270,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         FSTrip trip = dao.getTrip();
         return trip != null && trip.getSyncRequired() == 1;
     }
+
     @Override
     public boolean isTripInUpdateRequired() {
         FSTripDao dao = new FSTripDao(context);
@@ -308,24 +308,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     @Override
     public InitialSerialState getInitialSeialState(GE_Custom_Form_Data form_data, MD_Product_Serial serial) {
         ResponsibleStop responsibleStop = ResponsibleStop.NO_STOPPED;
-        if(form_data.getInitial_unavailability_reason() != null){
+        if (form_data.getInitial_unavailability_reason() != null) {
             responsibleStop = ResponsibleStop.valueOf(ResponsibleStop.class, form_data.getInitial_unavailability_reason());
         }
         TK_Ticket tkTicket;
         boolean isTicketSerialStopped = false;
-        if(form_data.getTicket_prefix() != null
-        && form_data.getTicket_code() != null) {
+        if (form_data.getTicket_prefix() != null
+                && form_data.getTicket_code() != null) {
             tkTicket = getTicketbyPk(
                     form_data.getTicket_prefix(),
                     form_data.getTicket_code()
             );
-            if(tkTicket != null) {
+            if (tkTicket != null) {
                 isTicketSerialStopped = tkTicket.getIsSerialStopped() != null && tkTicket.getIsSerialStopped().equals(1);
             }
         }
         return new InitialSerialState(
-                    null,
-                    form_data.getInitial_stopped_date(),
+                null,
+                form_data.getInitial_stopped_date(),
                 responsibleStop,
                 serial.getUnavailability_reason_option() == 1 && responsibleStop.isStopped() == 1.,
                 isTicketSerialStopped,
@@ -336,7 +336,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 serial.getHorimeter_supplier_desc(),
                 serial.getMeasure_block_input_time(),
                 serial.getMeasure_alert_input_time()
-            );
+        );
     }
 
     @Override
@@ -463,7 +463,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         form_code,
                         formversion_code,
                         String.valueOf(customFormLocal.getCustom_form_data())
-                    );
+                );
                 //Se não encontra, aborta abertura para evitar crash.
                 if (geOs == null) {
                     bAbortGeOs = true;
@@ -935,7 +935,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             List<GeOsDeviceItem> deviceItem = getDeviceItem(device);
 
             for (GeOsDeviceItem item : deviceItem) {
-                if(isDeviceItemAllowed(item, customFormLocal.getTicket_prefix(), customFormLocal.getTicket_code())) {
+                if (isDeviceItemAllowed(item, customFormLocal.getTicket_prefix(), customFormLocal.getTicket_code())) {
                     String itemDesc = new GetDeviceItemDescUseCase().invoke(
                             new GetDeviceItemDescUseCase.Input(
                                     item.getManual_desc(),
@@ -996,8 +996,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     private boolean isDeviceItemAllowed(GeOsDeviceItem item, Integer ticketPrefix, Integer ticketCode) {
-        return  (item.getTicket_prefix() == null && item.getTicket_code() == null)
-            || (item.getTicket_prefix() != null && item.getTicket_code() != null
+        return (item.getTicket_prefix() == null && item.getTicket_code() == null)
+                || (item.getTicket_prefix() != null && item.getTicket_code() != null
                 && item.getTicket_prefix().equals(ticketPrefix)
                 && item.getTicket_code().equals(ticketCode));
     }
@@ -1495,7 +1495,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         String.valueOf(custom_form_data)
                 ).toSqlQuery()
         );
-        if(formLocal != null){
+        if (formLocal != null) {
             formLocal.setDataFields(
                     custom_form_data_fieldDao.query(
                             new GE_Custom_Form_Data_Field_MULTI_SqlSpecification(
@@ -1511,7 +1511,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return formLocal;
 
     }
-
 
 
     private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {
@@ -2032,7 +2031,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     formData.getLocation_pendency()
             );
             //
-            if(isTicketSaveError){
+            if (isTicketSaveError) {
                 return;
             }
             //
@@ -2097,7 +2096,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
          *     Este codigo é um remendo para garantir que as imagens vao para o upload.
          *     Sera necessario uma analise mais minunciosa para identificar a real causa de nao ter
          *     as fotos das respostas e do dots na tabela de upload, o caso ocorreu na BAUKO.
-          */
+         */
         List<GE_File> filesTemp = new ArrayList<>();
         for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
             String sFile_v = df.getValue();
@@ -2107,24 +2106,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //
             GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
             //
-            if(FileHelperKt.hasFileForFileName(sFile_v)
-            && !ListHelperKt.findFilePath(geFiles, sFile_v)){
+            if (FileHelperKt.hasFileForFileName(sFile_v)
+                    && !ListHelperKt.findFilePath(geFiles, sFile_v)) {
                 filesTemp.add(setGE_FileForCurrentForm(sFile_v));
             }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto1())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto1())){
+            if (FileHelperKt.hasFileForFileName(content.getPhoto1())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto1())) {
                 filesTemp.add(setGE_FileForCurrentForm(content.getPhoto1()));
             }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto2())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto2())){
+            if (FileHelperKt.hasFileForFileName(content.getPhoto2())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto2())) {
                 filesTemp.add(setGE_FileForCurrentForm(content.getPhoto2()));
             }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto3())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto3())){
+            if (FileHelperKt.hasFileForFileName(content.getPhoto3())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto3())) {
                 filesTemp.add(setGE_FileForCurrentForm(content.getPhoto3()));
             }
-            if(FileHelperKt.hasFileForFileName(content.getPhoto4())
-                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto4())){
+            if (FileHelperKt.hasFileForFileName(content.getPhoto4())
+                    && !ListHelperKt.findFilePath(geFiles, content.getPhoto4())) {
                 filesTemp.add(setGE_FileForCurrentForm(content.getPhoto4()));
             }
             //
@@ -2693,15 +2692,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public void checkOriginDoneFlow(Bundle act083Bundle) {
-        if (act083Bundle == null) {
-            mView.callAct006(context, false);
+        if (bAgendado || act083Bundle == null) {
+            mView.callAct005(context);
         } else {
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
             String requestingAct = act083Bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
-
-            MyActionFilterParam myActionFilterParam = (MyActionFilterParam) act083Bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-            if (bAgendado || !ConstantBaseApp.ACT006.equals(origin)) {
+            if (!ConstantBaseApp.ACT006.equals(origin)) {
                 switch (origin) {
                     case ConstantBaseApp.ACT092:
                         mView.callAct092();
@@ -2723,10 +2720,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     if (checkAndExecUseCase.getCheck().invoke(CheckType.FILE_EXIST)) {
                         mView.callAct083();
                     } else {
-                        mView.callAct006(context, false);
+                        mView.callAct005(context);
                     }
                 } catch (Exception e) {
-                    mView.callAct006(context, false);
+                    mView.callAct005(context);
                 }
             }
         }
@@ -2940,9 +2937,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         deviceItem.setStatus_answer(SYS_STATUS_DONE);
 
         geOsDeviceItemDao.addUpdate(deviceItem);
+        String itemDesc = new GetDeviceItemDescUseCase().invoke(
+                new GetDeviceItemDescUseCase.Input(
+                        deviceItem.getManual_desc(),
+                        deviceItem.getStatus_modification_type(),
+                        deviceItem.getItem_check_desc(),
+                        deviceItem.getItem_check_desc_alt_vg(),
+                        deviceItem.isNO_CYCLE()
+                )
+        );
         //
         return new InspectionCell(
-                deviceItem.getItem_check_desc(),
+                itemDesc,
                 getDayCount(geOsDateStart, deviceItem),
                 getPhotoCount(deviceItem),
                 isRequiredPhoto(deviceItem),

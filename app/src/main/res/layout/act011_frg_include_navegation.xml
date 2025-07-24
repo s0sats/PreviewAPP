@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cl_prev_btn"
         style="@style/NamoaTheme3.Button.Outlined.Center.Icon"
@@ -39,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cl_drawer_btn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/cl_jump_next" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cl_check_btn"

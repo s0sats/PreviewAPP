@@ -26,6 +26,7 @@ import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -59,7 +60,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private HMAux selectedCustomerInfo;
     //Tmp que guarda a licença de site selecionado, usado somente no fluxo do otherDevice.
     private SiteLicense siteLicenseTmp = null;
-
+    private int structureSyncRequiredTotal = -1;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -518,19 +519,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             progressDialog.dismiss();
             mPresenter.getAllCustomers(false);
         }else if (wsProcess.equals(PROCESS_WS_SYNC)) {
-            progressDialog.dismiss();
-            //
-            mPresenter.setPeriodFilterPreference();
-            //
-            mPresenter.scheduleTicketCacheDownload();
-            //
-            callAct003(context);
-            //
-            ToolBox_Con.setPreference_Service(context, "SERVICE");
-            //Se customer permite agendados, tenta fazer download de possiveis
-            //blobs recebidos.
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_SCHEDULE_CHECKLIST)) {
-                startDownloadWorkers();
+            structureSyncRequiredTotal = mPresenter.serialStructureSyncRequiredTotal();
+            if (structureSyncRequiredTotal > 0) {
+                progressDialog.dismiss();
+                showPD(
+                        getString(R.string.act002_ws_structure_sync_ttl),
+                        context.getString(R.string.act002_ws_structure_sync_msg) + "0/" + structureSyncRequiredTotal,
+                        getString(R.string.generic_msg_cancel),
+                        getString(R.string.generic_msg_ok));
+                callSyncSerialStructure(structureSyncRequiredTotal);
+            }else {
+                syncResultFLow();
             }
         } else if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
             progressDialog.dismiss();
@@ -560,8 +559,40 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             ToolBox_Inf.hasFormProductOutdate(context);
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
+        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+            if(mPresenter.serialStructureSyncRequiredTotal() > 0){
+                callSyncSerialStructure(structureSyncRequiredTotal);
+            }else{
+                syncResultFLow();
+            }
         } else {
             progressDialog.dismiss();
+        }
+    }
+
+    private void syncResultFLow() {
+        progressDialog.dismiss();
+        //
+        mPresenter.setPeriodFilterPreference();
+        //
+        mPresenter.scheduleTicketCacheDownload();
+        //
+        callAct003(context);
+        //
+        ToolBox_Con.setPreference_Service(context, "SERVICE");
+        //Se customer permite agendados, tenta fazer download de possiveis
+        //blobs recebidos.
+        if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_SCHEDULE_CHECKLIST)) {
+            startDownloadWorkers();
+        }
+    }
+
+    private void callSyncSerialStructure(int structureSyncRequiredTotal) {
+        if (ToolBox_Con.isOnline(context, true)) {
+            mPresenter.executeWSSerialStructureSync(structureSyncRequiredTotal);
+        } else {
+            progressDialog.dismiss();
+            ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
         }
     }
 

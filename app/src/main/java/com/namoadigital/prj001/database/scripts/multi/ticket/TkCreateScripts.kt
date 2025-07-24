@@ -231,6 +231,7 @@ const val TK_TICKET_CACHE_CREATE_SCRIPT = """
         [preventive] int,
         [is_priority] int,
         [address] int,
+        [automatic_ticket_download] int not null default 0,
         CONSTRAINT [pk_tk_ticket_cache]
         PRIMARY KEY (customer_code,ticket_prefix,ticket_code));
 """

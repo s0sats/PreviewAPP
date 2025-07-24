@@ -8,6 +8,8 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
 import com.namoadigital.prj001.dao.md.MDProductSerialVGDao
+import com.namoadigital.prj001.extensions.cancelTicketDownloadWorker
+import com.namoadigital.prj001.extensions.scheduleDownloadTicket
 import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Product_Serial_Structure
@@ -86,12 +88,12 @@ class WS_Product_Serial_Structure :
         val bundle = intent!!.extras
         //
         try {
+            cancelTicketDownloadWorker(applicationContext)
             val customerCode = bundle!!.getLong(MD_Product_SerialDao.CUSTOMER_CODE, -1)
             val productCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE, -1)
             val serialCode = bundle.getLong(MD_Product_SerialDao.SERIAL_CODE, -1)
             val scnItemCheck = bundle.getInt(MD_Product_SerialDao.SCN_ITEM_CHECK, -1)
-            amountTotal = bundle.getInt("AMOUNT_TOTAL", -1)
-
+            amountTotal = bundle.getInt(AMOUNT_TOTAL, -1)
             processSerialStructure(customerCode, productCode, serialCode, scnItemCheck)
         } catch (e: Exception) {
             sb = ToolBox_Inf.wsExceptionTreatment(applicationContext, e)
@@ -115,6 +117,7 @@ class WS_Product_Serial_Structure :
                 )
             }
         } finally {
+            scheduleDownloadTicket(applicationContext)
             WBR_Product_Serial_Structure.completeWakefulIntent(intent)
         }
     }
@@ -126,7 +129,7 @@ class WS_Product_Serial_Structure :
         serialCode: Long,
         scnItemCheck: Int,
     ) {
-        val getSyncStructureRemains = getSyncStructureRemains()
+        val getSyncStructureRemains = amountTotal - getSyncStructureRemains()
         //
         val env = T_MD_Product_Serial_Structure()
         //
@@ -221,7 +224,7 @@ class WS_Product_Serial_Structure :
     }
 
     private fun getProgressInfo(getSyncStructureRemains:Int, amountTotal: Int): String = if(amountTotal > 0){
-        " ${amountTotal - getSyncStructureRemains}/$amountTotal"
+        " ${getSyncStructureRemains}/$amountTotal"
     }else{
         ""
     }
@@ -278,7 +281,7 @@ class WS_Product_Serial_Structure :
         structures: List<MD_Product_Serial_Structure>,
         customerCode: Long
     ) {
-
+        var syncStructureRemains = amountTotal -  getSyncStructureRemains()
         /**
          * REGRA
          * customerCode == -1 define se eh sync ou atualizadcao especifica de estrutura.
@@ -315,7 +318,17 @@ class WS_Product_Serial_Structure :
                                 database
                             )
                         }
-
+                        syncStructureRemains++
+                        //
+                        if(syncStructureRemains  % 20 == 0){
+                            ToolBox.sendBCStatus(
+                                applicationContext,
+                                "STATUS",
+                                hmAux_Trans["generic_processing_data"] + getProgressInfo(syncStructureRemains, amountTotal),
+                                "",
+                                "0"
+                            )
+                        }
                         daoObjReturn
                     }.watchStatus(
                         success = {
@@ -329,8 +342,7 @@ class WS_Product_Serial_Structure :
             }
             //
             if (dbResult) {
-                val syncStructureRemains = getSyncStructureRemains()
-                val msg = if(amountTotal > 0 && syncStructureRemains > 0){
+                val msg = if(amountTotal > 0 && getSyncStructureRemains() > 0){
                     hmAux_Trans["generic_processing_data"] + getProgressInfo(syncStructureRemains, amountTotal)
                 }else{
                     hmAux_Trans["generic_process_finalized_msg"]
@@ -453,5 +465,6 @@ class WS_Product_Serial_Structure :
 
     companion object {
         const val SERIAL_SYNC_LIST_BUNDLE = "SERIAL_SYNC_LIST_BUNDLE"
+        const val AMOUNT_TOTAL = "AMOUNT_TOTAL"
     }
 }

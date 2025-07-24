@@ -307,7 +307,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         initVars();
         iniUIFooter();
         initActions();
-
         //LUCHE - 12/02/2021 - substituido IntentService pelo worker
         ToolBox_Inf.scheduleFirebaseRegistrationWork(context);
         //LUCHE - 22/02/2021 - Comentado chamada pois agora não será recorrente será apenas quando FCM de ROom
@@ -368,7 +367,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if (ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
             call_Act089_Main();
         }
-
+        scheduleDownloadTicketWorker();
         mPresenter.deleteSerialSiteInventoryFile();
         invalidateOptionsMenu();
     }
@@ -935,12 +934,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         );
         //
         mPresenter.checkUpdateAvailable(appUpdateManager);
-
-
-        if (mPresenter.hasTicketForDownload()) {
-            TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
-            WorkerHelperKt.scheduleDownloadTicket(context);
-        }
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -1274,6 +1267,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
 
         //
+    }
+
+    private void scheduleDownloadTicketWorker() {
+        if (mPresenter.hasTicketForDownload()) {
+            TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
+            WorkerHelperKt.scheduleDownloadTicket(context);
+        }
     }
 
     /**
@@ -2136,19 +2136,36 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
-                        && !wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)
                         && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
                         && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
                 ) {
-                    progressDialog.dismiss();
-                    showSuccessDialog();
-                    //Atualiza traduções
-                    loadTranslation();
-                    //Atualiza menu e os badges
-                    //mPresenter.getMenuItens(hmAux_Trans);
+
+                    if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
+                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                            mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
+                        }else{
+                            progressDialog.dismiss();
+                            setWsSoProcess("");
+                            setWsProcess("");
+                            refreshUiData();
+                        }
+                    } else {
+                        progressDialog.dismiss();
+                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                            structurePendencyAmount = mPresenter.serialStructureSyncRequiredTotal();
+                            mPresenter.executeSerialStructureUpdate(true, structurePendencyAmount);
+                        } else {
+                            scheduleDownloadTicketWorker();
+                            showSuccessDialog();
+                            //Atualiza traduções
+                            loadTranslation();
+                            //Atualiza menu e os badges
+                            //mPresenter.getMenuItens(hmAux_Trans);
 //                    mPresenter.getMenuItensV2(hmAux_Trans);
-                    //Fecha Drawer
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                            //Fecha Drawer
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                    }
                 } else {
                     //LUCHE - 27/02/2020
                     //Add tratativa pós save após implementação do novo agendamento
@@ -2217,7 +2234,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mPresenter.processWS_SaveReturn(mLink);
 
             mPresenter.executeApSave(); // 3
-        } else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
+        /*} else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
             if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
                 mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
             } else {
@@ -2237,7 +2254,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         refreshUiData();
                     }
                 }
-            }
+            }*/
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
@@ -2557,6 +2574,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.executeTripDownload();
             } else if (masterDataSyncFlow) {
                 mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+            } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                    mPresenter.executeSerialStructureUpdate(true);
             } else {
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
@@ -2580,6 +2599,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             } else {
                 if (masterDataSyncFlow) {
                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                    mPresenter.executeSerialStructureUpdate(true);
                 } else {
                     refreshUiData();
                 }
@@ -2616,9 +2637,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     return null;
                 },
                 () -> {
-                    if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
-                        mPresenter.executeSerialStructureUpdate(true);
-                    } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                    if (mPresenter.hasSoSyncRequiredCloudRule()) {
                         mPresenter.executeWSSoSync();
                     } else if (mPresenter.hasTicketSyncRequired()) {
                         mPresenter.executeWSTicketDownload();
@@ -2627,6 +2646,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     } else {
                         if (masterDataSyncFlow) {
                             mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                        } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                            mPresenter.executeSerialStructureUpdate(true);
                         } else {
                             refreshUiData();
                         }
@@ -2930,9 +2951,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
-                    mPresenter.executeSerialStructureUpdate(true);
-                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                if (mPresenter.hasSoSyncRequiredCloudRule()) {
                     mPresenter.executeWSSoSync();
                 } else if (mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
@@ -3318,14 +3337,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 ToolBox_Inf.hasFormProductOutdate(context);
                                 executeSync();
                             } else {
-                                if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                                    mPresenter.executeSerialStructureUpdate(true);
-                                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                                if (mPresenter.hasSoSyncRequiredCloudRule()) {
                                     mPresenter.executeWSSoSync();
                                 } else if (mPresenter.hasTicketSyncRequired()) {
                                     mPresenter.executeWSTicketDownload();
                                 } else if (mPresenter.hasTripSyncRequired()) {
                                     mPresenter.executeTripDownload();
+                                }else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                                    mPresenter.executeSerialStructureUpdate(true);
                                 }
                             }
                         }
@@ -3493,9 +3512,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                if (hasSerialStructureSyncRequiredCloudRule) {
-                                    mPresenter.executeSerialStructureUpdate(true);
-                                } else if (hasSoSyncRequiredCloudRule) {
+                                if (hasSoSyncRequiredCloudRule) {
                                     mPresenter.executeWSSoSync();
                                 } else if (hasTicketSyncRequired) {
                                     mPresenter.executeWSTicketDownload();
@@ -3546,14 +3563,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         hasTicketSyncRequired ||
                         hasSerialStructureSyncRequiredCloudRule
                 )) {
-            if (hasSerialStructureSyncRequiredCloudRule) {
-                mPresenter.executeSerialStructureUpdate(true);
-            } else if (hasSoSyncRequiredCloudRule) {
+            if (hasSoSyncRequiredCloudRule) {
                 mPresenter.executeWSSoSync();
             } else if (hasTicketSyncRequired) {
                 mPresenter.executeWSTicketDownload();
-            } else {
+            } else if (hasTripSyncRequired) {
                 mPresenter.executeTripDownload();
+            } else {
+                mPresenter.executeSerialStructureUpdate(true);
             }
         } else if (hasUpdateRequired) {
             if (ToolBox_Con.isOnline(context)) {

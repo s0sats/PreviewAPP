@@ -78,6 +78,7 @@ class TkTicketCacheDao(
         const val PREVENTIVE = "preventive"
         const val IS_PRIORITY = "is_priority"
         const val ADDRESS = "address"
+        const val AUTOMATIC_TICKET_DOWNLOAD = "automatic_ticket_download"
     }
 
     private val toTkTicketCacheMapper: Mapper<Cursor, TkTicketCache>
@@ -306,8 +307,13 @@ class TkTicketCacheDao(
             SELECT c.* 
             FROM $TABLE c
             WHERE
-                c.${KANBAN} = 1
-            AND c.${MAIN_USER} = $userCode    
+            (
+                (
+                     c.${KANBAN} = 1 
+                 AND c.${MAIN_USER} = $userCode 
+                ) 
+              or c.${AUTOMATIC_TICKET_DOWNLOAD} = 1
+            )    
             AND NOT EXISTS(
                 SELECT 1
                     FROM ${TK_TicketDao.TABLE} t
@@ -315,7 +321,6 @@ class TkTicketCacheDao(
                           and t.${TK_TicketDao.TICKET_PREFIX} = c.${TICKET_PREFIX}
                           and t.${TK_TicketDao.TICKET_CODE} = c.${TICKET_CODE}
            )
-           LIMIT 10
         """.trimIndent()
         )
         return query.map {
@@ -349,7 +354,6 @@ class TkTicketCacheDao(
             WHERE $CUSTOMER_CODE = $customerCode
             AND $TICKET_PREFIX = $ticketPrefix
             AND $TICKET_CODE = $ticketCode
-            AND $KANBAN = 1
         """.trimIndent())
     }
 
@@ -438,6 +442,9 @@ class TkTicketCacheDao(
                     put(PREVENTIVE,ticketCache.preventive)
                     put(IS_PRIORITY,ticketCache.is_priority)
                     put(ADDRESS,ticketCache.address)
+                    if(ticketCache.automatic_ticket_download > -1){
+                        put(AUTOMATIC_TICKET_DOWNLOAD,ticketCache.automatic_ticket_download)
+                    }
                 }
             }
             //
@@ -501,6 +508,7 @@ class TkTicketCacheDao(
                             preventive = getIntOrNull(getColumnIndex(PREVENTIVE)),
                             is_priority = getIntOrNull(getColumnIndex(IS_PRIORITY)),
                             address = getIntOrNull(getColumnIndex(ADDRESS)),
+                            automatic_ticket_download = getInt(getColumnIndex(AUTOMATIC_TICKET_DOWNLOAD)),
                     )
                 }
             }

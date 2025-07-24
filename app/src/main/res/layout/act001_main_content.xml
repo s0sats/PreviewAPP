@@ -74,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/namoa_color_dark_blue"
+            android:drawableEnd="@drawable/ic_visibility_black_24dp"
             android:hint="@string/act001_password"
             android:inputType="textPassword" />
 

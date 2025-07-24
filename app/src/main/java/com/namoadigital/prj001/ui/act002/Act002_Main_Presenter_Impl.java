@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act002;
 
+import static com.namoadigital.prj001.service.WS_Product_Serial_Structure.AMOUNT_TOTAL;
 import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp;
 import com.namoadigital.prj001.core.trip.domain.usecase.SendTripFullUseCase;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
@@ -34,11 +36,13 @@ import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Sync;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -646,6 +650,28 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         );
         //
         return auxTickets;
+    }
+
+    @Override
+    public void executeWSSerialStructureSync(Integer total) {
+        mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+        Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+        bundle.putInt(AMOUNT_TOTAL, total);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public int serialStructureSyncRequiredTotal() {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        return serialDao.serialStructureSyncRequiredTotal();
     }
 
 }

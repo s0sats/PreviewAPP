@@ -25,6 +25,7 @@ import com.namoadigital.prj001.core.data.domain.model.BarCodeFlow;
 import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
 import com.namoadigital.prj001.core.data.local.preferences.barcode_settings.BarCodeFlowPref;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.worker.WorkDownloadTicket;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -1431,6 +1432,7 @@ public class ToolBox_Con {
         workManager.cancelUniqueWork(Work_DownLoad_Customer_Logo.WORKER_TAG);
         workManager.cancelUniqueWork(Work_DownLoad_Picture.WORKER_TAG);
         workManager.cancelUniqueWork(Work_DownLoad_PDF.WORKER_TAG);
+        workManager.cancelUniqueWork(WorkDownloadTicket.Companion.getWORKER_TAG());
         //Workers de upload
         workManager.cancelUniqueWork(Work_Upload_Img.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Upload_Img_Chat.WORKER_TAG);

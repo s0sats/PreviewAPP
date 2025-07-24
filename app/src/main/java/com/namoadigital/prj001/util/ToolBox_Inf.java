@@ -3300,6 +3300,11 @@ public class ToolBox_Inf {
 
         Constant.HMAUX_TRANS_LIB.put("position_barcode_area_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("position_barcode_area_lbl") || Constant.HMAUX_TRANS_LIB.get("position_barcode_area_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.position_barcode_area_lbl) : Constant.HMAUX_TRANS_LIB.get("position_barcode_area_lbl")));
         Constant.HMAUX_TRANS_LIB.put("enter_text_other_options_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("enter_text_other_options_lbl") || Constant.HMAUX_TRANS_LIB.get("enter_text_other_options_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.enter_text_other_options_lbl) : Constant.HMAUX_TRANS_LIB.get("enter_text_other_options_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("go_for_nfc_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("go_for_nfc_lbl") || Constant.HMAUX_TRANS_LIB.get("go_for_nfc_lbl").contains(Constant.APP_MODULE + "/") ? "NFC" : Constant.HMAUX_TRANS_LIB.get("go_for_nfc_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("serial_validation_hint_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("serial_validation_hint_lbl") || Constant.HMAUX_TRANS_LIB.get("serial_validation_hint_lbl").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("serial_validation_hint_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("btn_serial_validation_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_serial_validation_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_serial_validation_lbl").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("btn_serial_validation_lbl")));
+        Constant.HMAUX_TRANS_LIB.put("btn_serial_validation_error", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_serial_validation_error") || Constant.HMAUX_TRANS_LIB.get("btn_serial_validation_error").contains(Constant.APP_MODULE + "/") ? "btn_serial_validation_error" : Constant.HMAUX_TRANS_LIB.get("btn_serial_validation_error")));
+        Constant.HMAUX_TRANS_LIB.put("btn_serial_reader_error", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_serial_reader_error") || Constant.HMAUX_TRANS_LIB.get("btn_serial_reader_error").contains(Constant.APP_MODULE + "/") ? "btn_serial_reader_error" : Constant.HMAUX_TRANS_LIB.get("btn_serial_reader_error")));
 
         Constant.HMAUX_TRANS_LIB.put("btn_rotate_screen_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_rotate_screen_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_rotate_screen_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_rotate_screen_lbl")));
         Constant.HMAUX_TRANS_LIB.put("btn_touch_flash_lbl", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_touch_flash_lbl") || Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.btn_touch_flash_lbl) : Constant.HMAUX_TRANS_LIB.get("btn_touch_flash_lbl")));
@@ -8723,8 +8728,8 @@ public class ToolBox_Inf {
         }
         switch (ticketOriginType) {
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
-            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
                 return ticketTypeDesc;
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM:

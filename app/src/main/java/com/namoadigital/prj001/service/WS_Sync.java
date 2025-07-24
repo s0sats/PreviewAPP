@@ -78,6 +78,7 @@ import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
 import com.namoadigital.prj001.extensions.ListHelperKt;
+import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -113,10 +114,6 @@ import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
 import com.namoadigital.prj001.model.MD_Product_Serial;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
@@ -130,7 +127,6 @@ import com.namoadigital.prj001.model.MdDeviceTp;
 import com.namoadigital.prj001.model.MdItemCheck;
 import com.namoadigital.prj001.model.MdJustifyItem;
 import com.namoadigital.prj001.model.MdOrderType;
-import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.SO_Pack_Express;
@@ -147,7 +143,6 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
-import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg;
 import com.namoadigital.prj001.model.region.MDRegion;
 import com.namoadigital.prj001.model.trip.FSEventType;
 import com.namoadigital.prj001.model.trip.FSTrip;
@@ -286,9 +281,12 @@ public class WS_Sync extends BaseWsIntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
+            if(dataPackageType!= null
+            && dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+                WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
+            }
 //            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             /**
              * 15/02/2022 - BARRIONUEVO
@@ -327,7 +325,6 @@ public class WS_Sync extends BaseWsIntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
             WBR_Sync.completeWakefulIntent(intent);
         }
 
@@ -1020,7 +1017,7 @@ public class WS_Sync extends BaseWsIntentService {
              * Se scn_item_check do server =  ao db, não faz nada, se não, reconstroi estrutura.
              */
             File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
-            File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
+            /*File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
             File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
             File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
             File[] files_serial_tp_device_item_material = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_material-");
@@ -1032,9 +1029,9 @@ public class WS_Sync extends BaseWsIntentService {
             ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials = new ArrayList<>();
             ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials = new ArrayList<>();
             ArrayList<MDProductSerialVg> mdProductSerialVG = new ArrayList<>();
-            /**
+            *//**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
-             */
+             *//*
             for (File _file : files_serial_tp_device) {
                 serialTpDevices.addAll(
                         gson.fromJson(
@@ -1047,9 +1044,9 @@ public class WS_Sync extends BaseWsIntentService {
                 );
             }
 
-            /**
+            *//**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
-             */
+             *//*
             for (File _file : files_serial_tp_device_item) {
                 serialTpDeviceItems.addAll(
                         gson.fromJson(
@@ -1062,9 +1059,9 @@ public class WS_Sync extends BaseWsIntentService {
                 );
             }
 
-            /**
+            *//**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
-             */
+             *//*
             for (File _file : files_serial_tp_device_item_hist) {
                 serialTpDeviceItemHists.addAll(
                         gson.fromJson(
@@ -1076,9 +1073,9 @@ public class WS_Sync extends BaseWsIntentService {
                         )
                 );
             }
-            /**
+            *//**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_MATERIAL
-             */
+             *//*
             for (File _file : files_serial_tp_device_item_material) {
                 serialTpDeviceItemMaterials.addAll(
                         gson.fromJson(
@@ -1114,7 +1111,7 @@ public class WS_Sync extends BaseWsIntentService {
                                 }.getType()
                         )
                 );
-            }
+            }*/
 
             for (File _file : files_serial) {
                 ArrayList<MD_Product_Serial> serialList = gson.fromJson(
@@ -1134,24 +1131,24 @@ public class WS_Sync extends BaseWsIntentService {
                  *     Seta sync_process para 1 e chama metodo de insert criando TMP
                  */
                 serialDao.processSerialSync(
-                        serialList,
-                        serialTpDevices,
+                        serialList
+                        /*serialTpDevices,
                         serialTpDeviceItems,
                         serialTpDeviceItemHists,
                         serialTpDeviceItemMaterials,
                         serialTpDeviceItemHistMaterials,
-                        mdProductSerialVG
+                        mdProductSerialVG*/
                 );
             }
 
             //Libera pro GB
             files_serial = null;
-            files_serial_tp_device = null;
+           /* files_serial_tp_device = null;
             files_serial_tp_device_item = null;
             files_serial_tp_device_item_hist = null;
             files_serial_tp_device_item_material = null;
             files_serial_tp_device_item_hist_mat = null;
-            md_product_serial_vg = null;
+            md_product_serial_vg = null;*/
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,

@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.adapter;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,13 +96,21 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 //gambiarra ancestrais
                 tv_ttl.setText(item.get(LABEL_TTL));
                 //
-                tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
+                String label = item.get(LABEL_ITEM_1);
+                if(label!= null
+                        && label.contains("null")
+                        && hmAux_Trans.hasConsistentValue("sys_not_found_lbl")
+                ){
+                    tv_item1_ttl.setText(hmAux_Trans.get("sys_not_found_lbl"));
+                }else{
+                    tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
+                }
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));
                 //
-                tv_item2_ttl.setVisibility(View.GONE);
-                tv_item2_value.setVisibility(View.GONE);
-                tv_item3_ttl.setVisibility(View.GONE);
-                tv_item3_value.setVisibility(View.GONE);
+                tv_item2_ttl.setVisibility(GONE);
+                tv_item2_value.setVisibility(GONE);
+                tv_item3_ttl.setVisibility(GONE);
+                tv_item3_value.setVisibility(GONE);
                 break;
             case CONFIG_3_ITENS_NEW:
                 /*
@@ -108,7 +119,7 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 iv_flag.setVisibility(View.GONE);
                 */
                 tv_ttl.setText(item.get(LABEL_TTL));
-                iv_flag.setVisibility(View.GONE);
+                iv_flag.setVisibility(GONE);
                 //
                 tv_item1_ttl.setText(item.get(LABEL_ITEM_1));
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));
@@ -122,8 +133,8 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 break;
             case CONFIG_3_ITENS:
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
-                tv_ttl.setVisibility(View.GONE);
-                iv_flag.setVisibility(View.GONE);
+                tv_ttl.setVisibility(GONE);
+                iv_flag.setVisibility(GONE);
                 //
                 tv_item1_ttl.setText(hmAux_Trans.get(LABEL_ITEM_1));
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));
@@ -131,16 +142,16 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 tv_item2_ttl.setText(hmAux_Trans.get(LABEL_ITEM_2));
                 tv_item2_value.setText(item.get(VALUE_ITEM_2));
                 //
-                tv_item3_ttl.setVisibility(View.VISIBLE);
+                tv_item3_ttl.setVisibility(VISIBLE);
                 tv_item3_ttl.setText(hmAux_Trans.get(LABEL_ITEM_3));
-                tv_item3_value.setVisibility(View.VISIBLE);
+                tv_item3_value.setVisibility(VISIBLE);
                 tv_item3_value.setText(item.get(VALUE_ITEM_3));
                 //
                 break;
             case CONFIG_2_ITENS:
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
-                tv_ttl.setVisibility(View.GONE);
-                iv_flag.setVisibility(View.GONE);
+                tv_ttl.setVisibility(GONE);
+                iv_flag.setVisibility(GONE);
                 //
                 tv_item1_ttl.setText(hmAux_Trans.get(item.get(LABEL_ITEM_1)));
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));
@@ -148,15 +159,15 @@ public class Generic_Results_Adapter extends BaseAdapter {
                 tv_item2_ttl.setText(hmAux_Trans.get(item.get(LABEL_ITEM_2)));
                 tv_item2_value.setText(item.get(VALUE_ITEM_2));
                 //
-                tv_item3_ttl.setVisibility(View.GONE);
-                tv_item3_value.setVisibility(View.GONE);
+                tv_item3_ttl.setVisibility(GONE);
+                tv_item3_value.setVisibility(GONE);
                 //
                 break;
 
             default:
                 tv_ttl.setText(hmAux_Trans.get(LABEL_TTL));
-                tv_ttl.setVisibility(View.GONE);
-                iv_flag.setVisibility(View.GONE);
+                tv_ttl.setVisibility(GONE);
+                iv_flag.setVisibility(GONE);
                 //
                 tv_item1_ttl.setText(hmAux_Trans.get(LABEL_ITEM_1));
                 tv_item1_value.setText(item.get(VALUE_ITEM_1));

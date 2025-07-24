@@ -24,3 +24,16 @@ fun List<GE_File>.findFilePath(fileName: String):Boolean{
     }
     return filenameFromList.contains(fileName)
 }
+
+fun <T> listToHashMap(list: List<T>, pageSize: Int = 30): HashMap<Int, List<T>> {
+    val page = HashMap<Int, List<T>>()
+    val totalPage = (list.size + pageSize - 1) / pageSize
+
+    for (i in 0 until totalPage) {
+        val start = i * pageSize
+        val end = minOf(start + pageSize, list.size)
+        page[i + 1] = list.subList(start, end)
+    }
+
+    return page
+}

@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.ui.act011.frags
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import com.namoa_digital.namoa_library.R
 import com.namoa_digital.namoa_library.ctls.CustomFF
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
@@ -13,6 +16,7 @@ import com.namoadigital.prj001.databinding.Act011FrgFfBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.ToolBox_Inf
+
 
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
@@ -90,6 +94,17 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
     override fun getViewBinding() = Act011FrgFfBinding.inflate(layoutInflater)
     override fun getHeaderInclude() = binding.incHeader
     override fun getNavegationInclude() = binding.incNavegation
+
+    override fun getMandatoryFields(): List<CustomFF> {
+        val mandatory: MutableList<CustomFF> = mutableListOf()
+        for (field in customFF) {
+            if (!field.isValid || !field.isValidDots) {
+                mandatory.add(field)
+            }
+        }
+        mandatory.sortBy { it.getmPage() }
+        return mandatory
+    }
 
     /**
      * Seta os componentes dessa tab no fragmento, adicionando "indice" da pergunta no label.
@@ -200,5 +215,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
         super.onDetach()
         _mFrgListener = null
     }
+
 }
 

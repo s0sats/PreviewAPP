@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.namoa_digital.namoa_library.ctls.CustomFF
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
@@ -91,6 +91,8 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      * Roda respostas automaticas e retorna qtd aplicada.
      */
     abstract override fun applyAutoAnswer(): Int
+
+    open fun getMandatoryFields(): List<CustomFF> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,4 +327,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         _mInfraListener = null
     }
     //endregion
+
+
 }

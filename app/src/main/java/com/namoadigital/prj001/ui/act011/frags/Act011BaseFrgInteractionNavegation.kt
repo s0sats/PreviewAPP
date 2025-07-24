@@ -16,4 +16,5 @@ interface Act011BaseFrgInteractionNavegation {
     fun getSerialInfo() : MD_Product_Serial
 
     fun getProductIconBmp() : Bitmap?
+
 }

@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act001;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,10 +10,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -48,6 +53,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     private MKEditTextNM mk_login;
     private EditText et_password;
+    private boolean isPasswordVisible = false;
     private Button btn_login;
     private TextView tv_dev_db;
     private TextView tv_version;
@@ -159,6 +165,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
 //        mPresenter.checkLogin();
         //
+
     }
 
     @Override
@@ -191,6 +198,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initActions() {
         mk_login.setmBARCODE(true);
         mk_login.setmOCR(false);
@@ -252,6 +260,38 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
             }
         });
+
+        et_password.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (et_password.getRight() - et_password.getCompoundDrawablesRelative()[2].getBounds().width() - et_password.getPaddingEnd())) {
+                    togglePasswordVisibility();
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    private void togglePasswordVisibility() {
+        int icon;
+        isPasswordVisible = !isPasswordVisible;
+
+        if (isPasswordVisible) {
+            icon = R.drawable.baseline_visibility_off_24;
+            et_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        } else {
+            icon = R.drawable.ic_visibility_black_24dp;
+            et_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+
+        et_password.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                null,
+                null,
+                ContextCompat.getDrawable(this, icon),
+                null
+        );
+
+        et_password.setSelection(et_password.getText().length());
     }
 
     private void checkDevelopmentMode() {

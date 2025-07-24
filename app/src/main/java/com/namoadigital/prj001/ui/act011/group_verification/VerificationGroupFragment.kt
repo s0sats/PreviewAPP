@@ -7,6 +7,9 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.google.gson.Gson
 import com.namoa_digital.namoa_library.compose.theme.NamoaApplicationTheme
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.FragmentVerificationGroupBinding
@@ -52,6 +55,16 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
         hmAuxTrans[TAB_VERIFICATION_GROUP_LBL] ?: TAB_VERIFICATION_GROUP_LBL
 
     override fun applyAutoAnswer(): Int = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
+            tabLastIndex = it.getInt(PARAM_LAST_INDEX)
+            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO, true)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val jsonGeOs = arguments?.getString(ARG_GE_OS, "")
@@ -112,16 +125,21 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
         const val SECTION_ITEM_WITHOUT_GROUP_LBL = "section_item_without_group_lbl"
         const val TOAST_SUCCESS_UPDATE_INSPECTION_LIST = "toast_success_update_inspection_list"
         const val TOAST_ERROR_UPDATE_INSPECTION_LIST = "toast_error_update_inspection_list"
-        const val TITLE_ERROR_GET_LIST_VERIFICATION_GROUP = "title_error_get_list_verification_group"
-        const val LABEL_ERROR_GET_LIST_VERIFICATION_GROUP = "label_error_get_list_verification_group"
+        const val TITLE_ERROR_GET_LIST_VERIFICATION_GROUP =
+            "title_error_get_list_verification_group"
+        const val LABEL_ERROR_GET_LIST_VERIFICATION_GROUP =
+            "label_error_get_list_verification_group"
         const val LOADING_LBL = "loading_lbl"
         const val LOADING_UPDATE_GROUP_LBL = "loading_update_group_lbl"
         const val LOADING_UPDATE_INSPECTION_LIST_LBL = "loading_update_inspection_list_lbl"
         const val ERROR_SAVE_SWITCH_LBL = "error_save_switch_lbl"
         const val GROUP_EXPIRED_VERIFICATION_GROUP_LBL = "group_expired_verification_group_lbl"
-        const val GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL = "group_predicted_date_verification_group_lbl"
-        const val GROUP_IN_EXECUTION_VERIFICATION_GROUP_LBL = "group_in_execution_verification_group_lbl"
-        const val ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL = "item_with_ticket_verification_group_lbl"
+        const val GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL =
+            "group_predicted_date_verification_group_lbl"
+        const val GROUP_IN_EXECUTION_VERIFICATION_GROUP_LBL =
+            "group_in_execution_verification_group_lbl"
+        const val ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL =
+            "item_with_ticket_verification_group_lbl"
         const val ITEM_USER_VERIFICATION_GROUP_LBL = "item_user_verification_group_lbl"
 
         fun loadTranslation(): List<String> {
@@ -163,19 +181,24 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
                 this.tabIndex = tabIndex
                 this.tabLastIndex = tabCount
                 this.formStatus = formStatus
+
+                val gson = Gson()
+                val jsonGeOs = gson.toJson(geOs)
+
+                val args = Bundle().apply {
+                    putString(ARG_GE_OS, jsonGeOs)
+                    putLong(ARG_PRODUCT_CODE, productCode)
+                    putLong(ARG_SERIAL_CODE, serialCode)
+                    putBoolean(ARG_IS_CONTINOUS, isFormContinuous)
+                    putInt(GE_Custom_Form_Field_LocalDao.PAGE, tabIndex)
+                    putInt(PARAM_LAST_INDEX, tabCount)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
+                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
+                }
+
+                arguments = args
             }
 
-            val gson = Gson()
-            val jsonGeOs = gson.toJson(geOs)
-
-            val args = Bundle().apply {
-                putString(ARG_GE_OS, jsonGeOs)
-                putLong(ARG_PRODUCT_CODE, productCode)
-                putLong(ARG_SERIAL_CODE, serialCode)
-                putBoolean(ARG_IS_CONTINOUS, isFormContinuous)
-            }
-
-            fragment.arguments = args
             return fragment
         }
     }

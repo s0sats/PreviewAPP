@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.extensions.listToHashMap
 import com.namoadigital.prj001.extensions.sendFCMStatus
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
 import com.namoadigital.prj001.model.DaoObjReturn
@@ -56,10 +57,14 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
     private var reSend: Boolean = true
     private val ticketToSend = java.util.ArrayList<TK_Ticket>()
     override fun doWork(): Result {
-        Log.d("WorkDownloadTicket", "doWork")
         //
+        //
+//        Log.d("SYNC_STRUCTURE", "------------------doWork--------------------")
+//        Log.d("SYNC_STRUCTURE", "isStopped: $isStopped")
         if(ToolBox_Con.getPreference_Customer_Code(context) == -1L
-            || ToolBox_Con.getPreference_User_Code(context).isBlank()){
+            || ToolBox_Con.getPreference_User_Code(context).isBlank()
+            || isStopped
+            ){
             return Result.success()
         }
         //
@@ -76,12 +81,30 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
                 }
             }else{
                 syncList
-            }.take(10)
-            //
-            if (tkTicketToSyncs.isNotEmpty()){
-               result = syncTickets(tkTicketToSyncs)
             }
             //
+            if (tkTicketToSyncs.isNotEmpty()){
+                val tickets: HashMap<Int, List<TkTicketToSync>> = listToHashMap(tkTicketToSyncs, 10)
+                //
+                for ((page, list) in tickets) {
+//                    Log.d("SYNC_STRUCTURE", "-------Loop--------------------")
+//                    Log.d("SYNC_STRUCTURE", "progress: ${page}/${tickets.size}")
+//                    Log.d("SYNC_STRUCTURE", "isStopped: $isStopped")
+                    //
+                    if(!isStopped) {
+                        result = syncTickets(list)
+                        if (!result) {
+                            break
+                        }
+                    }else{
+//                        Log.d("SYNC_STRUCTURE", "Result.success by isStopped: $isStopped")
+                        return Result.success()
+                    }
+                }
+                //
+            }
+            //
+
             return if (result){
                 context.sendFCMStatus(ConstantBaseApp.FCM_MODULE_TICKET)
                 val hasTicketAfterDownload = getSyncList().isNotEmpty() || ticketDao.syncList.isNotEmpty()
@@ -96,9 +119,12 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
             //
         } catch (httpException: NetworkConnectionException){
             ToolBox_Inf.registerException(javaClass.name, httpException)
+//            Log.d("SYNC_STRUCTURE", "-------NetworkConnectionException---------")
             return Result.retry()
         } catch (e: Exception){
             ToolBox_Inf.registerException(javaClass.name, e)
+//            Log.d("SYNC_STRUCTURE", "-------Exception---------")
+//            Log.d("SYNC_STRUCTURE", "Exception: ${e.message}")
             return Result.failure()
         }
     }
@@ -300,11 +326,7 @@ class WorkDownloadTicket(val context: Context, workerParams: WorkerParameters) :
     }
 
     private fun getTicketToEnv(tkTicketToSyncs: List<TkTicketToSync>): List<T_TK_Ticket_Download_PK_Env> {
-
-
-
-
-        return tkTicketToSyncs.map {
+         return tkTicketToSyncs.map {
             val tTkTicketDownloadPkEnv = T_TK_Ticket_Download_PK_Env()
             tTkTicketDownloadPkEnv.customer_code = it.customerCode
             tTkTicketDownloadPkEnv.ticket_prefix = it.ticketPrefix

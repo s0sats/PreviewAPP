@@ -59,6 +59,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -156,6 +157,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgInspection;
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction;
+import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -164,7 +166,6 @@ import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act086.Act086Main;
 import com.namoadigital.prj001.ui.act087.FormOsHeaderFrg;
-import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment;
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -218,6 +219,9 @@ public class Act011_Main extends Base_Activity
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private View fabComponent;
+    private TextView fabBadgeTextView;
+    private FloatingActionButton fabJumpToMandatory;
 
     private FormViewPager pager;
 
@@ -315,6 +319,9 @@ public class Act011_Main extends Base_Activity
     //da act086
     private boolean isNavegationFromGeOsFlow = false;
     private boolean firstDateSelection = false;
+
+    private boolean showFabAlertComponent = false;
+    private List<CustomFF> mandatoryUnansweredFields = new ArrayList<>();
 
     private MeasureFF.OnValidationListener measureValidateListener = null;
 
@@ -765,6 +772,10 @@ public class Act011_Main extends Base_Activity
         //
         pager = findViewById(R.id.act011_pager);
         //
+        fabJumpToMandatory = findViewById(R.id.jump_mandatory);
+        fabComponent = findViewById(R.id.fab_component);
+        fabBadgeTextView = findViewById(R.id.fab_badge_textview);
+        //
         mDrawerToggle = new ActionBarDrawerToggle(
                 Act011_Main.this,
                 mDrawerLayout,
@@ -1121,6 +1132,8 @@ public class Act011_Main extends Base_Activity
                 tabs
         );
         //
+        initializeMandatoryList();
+        //
         formData.setLocation_type("");
         formData.setLocation_lat("");
         formData.setLocation_lng("");
@@ -1134,6 +1147,9 @@ public class Act011_Main extends Base_Activity
             //Reseta var de fluxo finaliza + novo
             finalizeNewFlow = false;
             //
+            showFabAlertComponent = true;
+            updateFabBadge();
+
             ToolBox.alertMSG(
                     Act011_Main.this,
                     hmAux_Trans.get("alert_error_on_finalize_title"),
@@ -1142,6 +1158,9 @@ public class Act011_Main extends Base_Activity
                     0
             );
         } else {
+            showFabAlertComponent = false;
+            updateFabBadge();
+
             if (showFinalizeOpt && allowFinalizeWithNewBtn()
                     || isFormOs) {
 
@@ -1618,7 +1637,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private void initActions() {
-
+        fabJumpToMandatory.setOnClickListener(v -> jumpToFirstMandatoryField());
     }
 
     @Override
@@ -1751,6 +1770,11 @@ public class Act011_Main extends Base_Activity
                     }
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
+                    customField.setOnValueChangeListener(baseControl -> {
+                        if (!(baseControl instanceof CustomFF)) return;
+                        CustomFF field = (CustomFF) baseControl;
+                        updateFieldMandatoryList(field);
+                    });
                     //Add na lista de customFF
                     customFFs.add(customField);
                     //Add nos controles dinamicos
@@ -1800,7 +1824,7 @@ public class Act011_Main extends Base_Activity
         if (formLocal.getIs_so() == 1) {
             int acessoryIndex = pages + 1;
             this.acessoryFormViews = acessoryFormViews;
-            if(addVerificationGroup) {
+            if (addVerificationGroup) {
                 addVerificationGroupsFragment(
                         geOs,
                         tabs,
@@ -1859,7 +1883,6 @@ public class Act011_Main extends Base_Activity
             pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
                 }
 
                 @Override
@@ -1882,11 +1905,11 @@ public class Act011_Main extends Base_Activity
                             audioFF.setForceStopAudio(true);
                         }
                     });
+
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
-
                 }
             });
             //Seta dados no drawer
@@ -2010,6 +2033,7 @@ public class Act011_Main extends Base_Activity
             );
         }
 
+
     }
 
     private void addFinishOS(GE_Custom_Form_Data formData, ArrayList<Act011FormTab> tabs, int tabQty) {
@@ -2075,7 +2099,7 @@ public class Act011_Main extends Base_Activity
                 updateListInspectionCells();
                 onRefreshTabCounter();
                 resultFailed = false;
-            }catch (Exception e){
+            } catch (Exception e) {
                 ToolBox.registerException(getClass().getName(), e);
             } finally {
                 pager.setSwipeEnabled(true);
@@ -2101,7 +2125,7 @@ public class Act011_Main extends Base_Activity
 
     private boolean isFormContinuous() {
         TK_Ticket_Form tkTicketFormContinuous = getTkTicketFormContinuous();
-        return tkTicketFormContinuous!= null
+        return tkTicketFormContinuous != null
                 && tkTicketFormContinuous.getCustom_form_data_partition() != null;
     }
 
@@ -2250,6 +2274,7 @@ public class Act011_Main extends Base_Activity
         mkEditTextNMFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        mkEditTextNMFF.updateComponent();
         return mkEditTextNMFF;
     }
 
@@ -2902,8 +2927,8 @@ public class Act011_Main extends Base_Activity
         act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false), tabIndex);
     }
 
-    public void onRefreshTabCounter(){
-        for(Act011BaseFrg screen : screens){
+    public void onRefreshTabCounter() {
+        for (Act011BaseFrg screen : screens) {
             act011FfOption.updateTabList(screen.getTabObj(false), screen.getTabIndex());
         }
     }
@@ -4863,8 +4888,8 @@ public class Act011_Main extends Base_Activity
     }
 
     private void updateListInspectionCells() throws Exception {
-        for(Act011BaseFrg screen : screens){
-            if(screen instanceof Act011FrgInspection){
+        for (Act011BaseFrg screen : screens) {
+            if (screen instanceof Act011FrgInspection) {
                 Act011FrgInspection frgInspection = (Act011FrgInspection) screen;
                 AcessoryFormView acessoryFormView = frgInspection.acessoryFormView;
                 mPresenter.updateAcessoryFormViews(geOs, formLocal, acessoryFormView);
@@ -5248,5 +5273,79 @@ public class Act011_Main extends Base_Activity
         );
     }
 
+    public void jumpToFirstMandatoryField() {
+        if (!mandatoryUnansweredFields.isEmpty()) {
+            CustomFF firstError = mandatoryUnansweredFields.get(0);
+
+            pager.setCurrentItem(firstError.getmPage() - 1, true);
+            scrollToLastCustomFFClicked(firstError);
+        }
+    }
+
+    private void initializeMandatoryList() {
+        if (customFFs != null && customFFs.isEmpty()) return;
+        mandatoryUnansweredFields.clear();
+
+        for (CustomFF field : customFFs) {
+            if (!field.isValid() || !field.isValidDots()) {
+                mandatoryUnansweredFields.add(field);
+            }
+        }
+
+
+    }
+
+    private void updateFieldMandatoryList(CustomFF field) {
+        if (!showFabAlertComponent) return;
+
+        //um campo é inválido se uma das duas validações falhar.
+        final boolean isFieldConsideredInvalid = !field.isValid() || !field.isValidDots();
+        //um campo é válido quando as duas condições for verdadeira
+        final boolean isFieldConsideredValid = field.isValid() && field.isValidDots();
+        //verifica se o campo está na lista de não respondidos
+        final boolean isFieldInList = mandatoryUnansweredFields.contains(field);
+
+        if (isFieldConsideredInvalid) {
+            if (!isFieldInList) {
+
+                int newFieldSequence = field.getmSequence();
+                int insertIndex = -1;
+
+                for (int i = 0; i < mandatoryUnansweredFields.size(); i++) {
+                    if (newFieldSequence < mandatoryUnansweredFields.get(i).getmSequence()) {
+                        insertIndex = i;
+                        break;
+                    }
+                }
+
+                if (insertIndex != -1) {
+                    mandatoryUnansweredFields.add(insertIndex, field);
+                } else {
+                    mandatoryUnansweredFields.add(field);
+                }
+            }
+        } else if (isFieldConsideredValid) {
+            if (isFieldInList) {
+                mandatoryUnansweredFields.remove(field);
+            }
+        }
+        field.setValidationBackGroundDots();
+
+        updateFabBadge();
+    }
+
+    private void updateFabBadge() {
+        if (fabComponent == null) return;
+
+        int total = mandatoryUnansweredFields.size();
+
+        if (showFabAlertComponent && total > 0) {
+            fabBadgeTextView.setText(String.valueOf(total));
+            fabComponent.setVisibility(View.VISIBLE);
+        } else {
+            showFabAlertComponent = false;
+            fabComponent.setVisibility(View.GONE);
+        }
+    }
 
 }

@@ -155,7 +155,8 @@ class SqlAct083_001(
                      c.kanban_stage,
                      c.able_to_done,
                      c.preventive,
-                     c.is_priority
+                     c.is_priority,
+                     c.automatic_ticket_download
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE

@@ -1,23 +1,27 @@
 package com.namoadigital.prj001.ui.act022;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT011;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT022;
+
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputLayout;
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoa_digital.namoa_library.view.BarCode_Activity;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
+import com.namoa_digital.namoa_library.view.scanner.BaseScannerActivity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -42,15 +46,16 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     private String product_code;
     private String serial_id;
+    private String serial_id_from_barcode;
+    private boolean back_pressed_flow = false;
 
     private MD_Product mdProduct;
 
-    private TextView tv_product_desc;
-    private MKEditTextNM mk_serial_id;
-    private TextInputLayout til_mk_serial;
-    private ImageView iv_nfc;
+
+    private TextView tv_qrcode_reader_ttl;
+    private MaterialButton btn_qrcode_reader;
     private MaterialButton btn_cancel;
-    private MaterialButton btn_ok;
+    private ButtonNFC btn_nfc_reader;
 
     private boolean isShowingAlert = false;
 
@@ -76,7 +81,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT022
+                ACT022
         );
 
         loadTranslation();
@@ -95,6 +100,9 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         transList.add("alert_nfc_auth_cancel_ttl");
         transList.add("alert_nfc_auth_cancel_msg");
         transList.add("serial_hint_lbl");
+        transList.add("qr_code_reader_lbl");
+        transList.add("nfc_reader_lbl");
+        transList.add("alert_serial_confirmation_ttl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -108,26 +116,27 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     private void initVars() {
         recoverIntentsInfo();
         //
-        setbNFCStatus(true);
-        setNFC_PARAMS_TECH_SERIAL(true);
+        tv_qrcode_reader_ttl  = findViewById(R.id.tv_qrcode_reader_ttl);
+        btn_qrcode_reader  = findViewById(R.id.btn_qrcode_reader);
+        btn_cancel  =  findViewById(R.id.btn_cancel);
+        btn_nfc_reader  = findViewById(R.id.btn_nfc_reader);
+//        mk_serial_id  = findViewById(R.id.act022_mket_serial_id);
 
-        tv_product_desc = (TextView) findViewById(R.id.act022_tv_product_desc_value);
-        mk_serial_id = (MKEditTextNM) findViewById(R.id.act022_mket_serial_id);
-        til_mk_serial = findViewById(R.id.til_mket_serial);
-        iv_nfc = (ImageView) findViewById(R.id.act022_iv_nfc);
-        btn_cancel = findViewById(R.id.act022_btn_cancel);
+        tv_qrcode_reader_ttl.setText(hmAux_Trans.get("alert_serial_confirmation_ttl"));
+        btn_qrcode_reader.setText(hmAux_Trans.get("qr_code_reader_lbl"));
+        btn_nfc_reader.setText(hmAux_Trans.get("nfc_reader_lbl"));
         btn_cancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
-        btn_ok = findViewById(R.id.act022_btn_ok);
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-
-        til_mk_serial.setHint(hmAux_Trans.get("serial_hint_lbl"));
         //LUCHE - 10/06/2019
-        setupMketSerialInputTech();
+//        setupMketSerialInputTech();
 
         if (supportNFC) {
-            iv_nfc.setVisibility(View.VISIBLE);
+            btn_nfc_reader.setVisibility(View.VISIBLE);
+            btn_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+            btn_nfc_reader.setmProduct(true);
+            btn_nfc_reader.setmSerial(true);
+            btn_nfc_reader.setmProgressClose(true);
         } else {
-            iv_nfc.setVisibility(View.GONE);
+            btn_nfc_reader.setVisibility(View.GONE);
         }
 
         mPresenter = new Act022_Main_Presenter(
@@ -141,13 +150,25 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
                 )
         );
 
-        controls_sta.add(mk_serial_id);
-
         mdProduct = mPresenter.getMD_Produt(product_code);
 
-        tv_product_desc.setText(mdProduct.getProduct_desc());
         //LUCHE - 10/06/2019
-        setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
+//        setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
+//        controls_sta.add(mk_serial_id);
+        callBarcodeActivity();
+
+    }
+
+    private void callBarcodeActivity() {
+        Intent intent = new Intent(this, BarCode_Activity.class);
+
+        intent.putExtra(BarCode_Activity.SERIAL_VALIDATION, serial_id);
+        intent.putExtra(BarCode_Activity.SERIAL_VALIDATION_BACK_TTL, hmAux_Trans.get("alert_nfc_auth_cancel_ttl"));
+        intent.putExtra(BarCode_Activity.SERIAL_VALIDATION_BACK_MSG, hmAux_Trans.get("alert_nfc_auth_cancel_msg"));
+
+
+        startActivity(intent);
+
     }
 
     private void recoverIntentsInfo() {
@@ -166,8 +187,8 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT022;
-        mAct_Title = Constant.ACT022 + "_" + "title";
+        mAct_Info = ACT022;
+        mAct_Title = ACT022 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -187,29 +208,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
     private void initActions() {
 
-//        mk_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-//            @Override
-//            public void reportTextBySpecialist(String s) {
-//                mPresenter.processValidation(product_code, serial_id, "", s);
-//            }
-//        });
-        mk_serial_id.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-            @Override
-            public void reportTextBySpecialist(final String s) {
-
-                new Handler().postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                String serial_id_formatted = ToolBox_Inf.removeForbidenChars(s);
-                                mk_serial_id.setText(serial_id_formatted);
-                                mPresenter.processValidation(product_code, serial_id, "", serial_id_formatted);
-                            }
-                        },
-                        500
-                );
-            }
-        });
+        btn_nfc_reader.setOnClickListener(actionBTN);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,12 +229,10 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
             }
         });
 
-        btn_ok.setOnClickListener(new View.OnClickListener() {
+        btn_qrcode_reader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String serial_id_formatted = mk_serial_id.getText().toString();
-                mk_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id_formatted));
-                mPresenter.processValidation(product_code, serial_id, "", mk_serial_id.getText().toString());
+                callBarcodeActivity();
             }
         });
     }
@@ -246,30 +243,30 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
      * Metodo que seta quais são as tecnologias de entrada de dados
      * usando os parametros do profile.
      */
-    private void setupMketSerialInputTech() {
-        //LUCHE - 10/06/2019
-        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
-        //via parametro do profile.
-        //mk_serial_id.setmOCR(false);
-        //LUCHE - 26/09/2019
-        //Agora o parametro ocr padrão é o leitor OCR da mosolf e esta sendo utlizado
-        //com a var mOCR
-        mk_serial_id.setmOCR(
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
-            )
-        );
-        mk_serial_id.setmNFC(false);
-        mk_serial_id.setmBARCODE(
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
-            )
-        );
-    }
+//    private void setupMketSerialInputTech() {
+//        //LUCHE - 10/06/2019
+//        //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
+//        //via parametro do profile.
+//        //mk_serial_id.setmOCR(false);
+//        //LUCHE - 26/09/2019
+//        //Agora o parametro ocr padrão é o leitor OCR da mosolf e esta sendo utlizado
+//        //com a var mOCR
+//        mk_serial_id.setmOCR(
+//            ToolBox_Inf.profileExists(
+//                context,
+//                Constant.PROFILE_MENU_PROFILE,
+//                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+//            )
+//        );
+//        mk_serial_id.setmNFC(false);
+//        mk_serial_id.setmBARCODE(
+//            ToolBox_Inf.profileExists(
+//                context,
+//                Constant.PROFILE_MENU_PROFILE,
+//                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+//            )
+//        );
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -285,13 +282,13 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
      * Seta regra de validação no campo.
      * Seta também variaveis para ignorarem mim e max e validação de vin após leitura de barcode
      * para true;
-     * @param serial_rule
+//     * @param serial_rule
      */
-    public void setSerialRule(String serial_rule){
-        mk_serial_id.setmInputTypeValidator(serial_rule);
-        mk_serial_id.setmIgnoreVINValidationOnRead(true);
-        mk_serial_id.setmIgnoreMaxMinSize(true);
-    }
+//    public void setSerialRule(String serial_rule){
+//        mk_serial_id.setmInputTypeValidator(serial_rule);
+//        mk_serial_id.setmIgnoreVINValidationOnRead(true);
+//        mk_serial_id.setmIgnoreMaxMinSize(true);
+//    }
 
     @Override
     public void showMSG() {
@@ -314,6 +311,22 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        /**
+         * BARRIONUEVO 26-06-2025
+         * O Fluxo do barcode retorna o controle para a tela antes de limpeza das preferencias
+         * para garantir que a proxima tela terá o valor seguinte foi feita a tratativa no onResume().
+         */
+        if(serial_id_from_barcode!=null) {
+            mPresenter.processValidation(product_code, serial_id, "", serial_id_from_barcode);
+        } else if(back_pressed_flow){
+            sendReturn("");
+        }
+
+    }
+
+    @Override
     public void sendReturn(String status) {
         ToolBox.setPreference_UI_ID(context, -1);
         ToolBox.setPreference_UI_TYPE(context, 2);
@@ -325,6 +338,24 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked();
+    }
+
+    @Override
+    protected void getBarcodeCallback(Integer id, String value) {
+
+        serial_id_from_barcode = null;
+        back_pressed_flow = false;
+        switch (value){
+            case BaseScannerActivity.ON_BACK_PRESSED:
+                back_pressed_flow = true;
+                break;
+            case BaseScannerActivity.ON_NFC_PROCESS:
+//                btn_nfc_reader.performClick();
+                break;
+            default:
+                serial_id_from_barcode = ToolBox_Inf.removeForbidenChars(value);
+                break;
+        }
     }
 
     @Override

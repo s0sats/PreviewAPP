@@ -61,6 +61,7 @@ class TkTicketCache(
         @SerializedName("preventive") var preventive: Int? = null,
         @SerializedName("is_priority") var is_priority: Int? = null,
         @SerializedName("address") var address: Int? = null,
+        @SerializedName("automatic_ticket_download") var automatic_ticket_download: Int,
 ){
     fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status

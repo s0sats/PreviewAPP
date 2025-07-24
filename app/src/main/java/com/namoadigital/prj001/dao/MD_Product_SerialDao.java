@@ -22,6 +22,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
@@ -682,21 +683,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * Metodo especifico para sincronizar os dados do serial
      *
      * @param md_product_serials
-     * @param serialTpDevices
-     * @param serialTpDeviceItems
-     * @param serialTpDeviceItemHists
-     * @param serialTpDeviceItemMaterials
-     * @param serialTpDeviceItemHistMaterials
      * @return
      */
     public boolean processSerialSync(
-            Iterable<MD_Product_Serial> md_product_serials,
-            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices,
-            ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems,
-            ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists,
-            ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials,
-            ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials,
-            ArrayList<MDProductSerialVg> mdProductSerialVgs
+            Iterable<MD_Product_Serial> md_product_serials
     ) {
         boolean processReturn = false;
 
@@ -723,15 +713,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                     //
                     this.addUpdate(md_product_serial, db);
                     //LUCHE - 10/11/2021 - Tratativa para seriais com estrutura
-                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, md_product_serial, dbSerial, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
+//                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, md_product_serial, dbSerial, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
                 } else {
                     md_product_serial.setSync_process(1);
                     //
                     this.addUpdateTmp(md_product_serial, db);
                     //Se é um novo serial e tem estrutura, insere.
-                    if (md_product_serial.getHas_item_check() == 1) {
+                    /*if (md_product_serial.getHas_item_check() == 1) {
                         tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials, mdProductSerialVgs);
-                    }
+                    }*/
                 }
 
             }
@@ -1763,5 +1753,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                         serialCode
                 ).toSqlQuery()
         );
+    }
+
+    public int serialStructureSyncRequiredTotal() {
+        List<MD_Product_Serial> serial = query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size();
     }
 }

@@ -1,17 +1,12 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_TICKET_DOWNLOAD;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL;
 
-import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +18,7 @@ import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.Se
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
+import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -80,8 +76,9 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
             String ticket_pks = bundle.getString(TK_TicketDao.TICKET_PREFIX, "");
             int isLoginSync = bundle.getInt(IS_LOGIN_PROCESS, 0);
             //
+            WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
+            //
             processTicketDownload(ticket_pks,isLoginSync);
-
             cleanNotification();
         } catch (Exception e) {
 
@@ -92,6 +89,7 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
+            WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
             //Verifica se existem form com pendencia de GPS
             checkSetLocationPendencyPreferenceFalse();
             //Chama atualização da notificação.
