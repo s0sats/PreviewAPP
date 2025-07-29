@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act022;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT011;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT022;
 
 import android.content.DialogInterface;
@@ -48,6 +47,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
     private String serial_id;
     private String serial_id_from_barcode;
     private boolean back_pressed_flow = false;
+    private boolean nfc_flow = false;
 
     private MD_Product mdProduct;
 
@@ -155,7 +155,7 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
         //LUCHE - 10/06/2019
 //        setSerialRule(mdProduct != null ? mdProduct.getSerial_rule() : null);
 //        controls_sta.add(mk_serial_id);
-        callBarcodeActivity();
+//        callBarcodeActivity();
 
     }
 
@@ -322,8 +322,9 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
             mPresenter.processValidation(product_code, serial_id, "", serial_id_from_barcode);
         } else if(back_pressed_flow){
             sendReturn("");
+        } else if(!nfc_flow){
+            callBarcodeActivity();
         }
-
     }
 
     @Override
@@ -345,12 +346,13 @@ public class Act022_Main extends Base_Activity_Frag_NFC_Geral implements Act022_
 
         serial_id_from_barcode = null;
         back_pressed_flow = false;
+        nfc_flow = false;
         switch (value){
             case BaseScannerActivity.ON_BACK_PRESSED:
                 back_pressed_flow = true;
                 break;
             case BaseScannerActivity.ON_NFC_PROCESS:
-//                btn_nfc_reader.performClick();
+                nfc_flow = true;
                 break;
             default:
                 serial_id_from_barcode = ToolBox_Inf.removeForbidenChars(value);
