@@ -44,6 +44,8 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String BUTTON_NC = "button_nc";
     public static final String BUTTON_PHOTO = "button_photo";
     public static final String BUTTON_COMMENT = "button_comment";
+    public static final String CONDITIONAL_SEQ = "conditional_seq";
+    public static final String CONDITIONAL_NC = "conditional_nc";
 
     public GE_Custom_Form_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -287,6 +289,19 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_field.setButton_nc(cursor.getInt(cursor.getColumnIndex(BUTTON_NC)));
             custom_form_field.setButton_photo(cursor.getInt(cursor.getColumnIndex(BUTTON_PHOTO)));
             custom_form_field.setButton_comment(cursor.getInt(cursor.getColumnIndex(BUTTON_COMMENT)));
+            if (cursor.isNull(cursor.getColumnIndex(CONDITIONAL_SEQ))) {
+                custom_form_field.setConditional_seq(null);
+            }else {
+                custom_form_field.setConditional_seq(cursor.getInt(cursor.getColumnIndex(CONDITIONAL_SEQ)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(CONDITIONAL_NC))) {
+                custom_form_field.setConditional_nc(null);
+            }else {
+                custom_form_field.setConditional_nc(cursor.getInt(cursor.getColumnIndex(CONDITIONAL_NC)));
+            }
+
+
 
             return custom_form_field;
         }
@@ -366,6 +381,9 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             } else {
                 contentValues.put(BUTTON_COMMENT, custom_form_field.getButton_comment());
             }
+
+            contentValues.put(CONDITIONAL_SEQ, custom_form_field.getConditional_seq());
+            contentValues.put(CONDITIONAL_NC, custom_form_field.getConditional_nc());
 
             return contentValues;
         }

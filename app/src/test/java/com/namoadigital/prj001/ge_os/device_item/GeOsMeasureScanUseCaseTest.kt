@@ -285,7 +285,6 @@ class GeOsMeasureScanUseCaseTest {
         process_type = "asdasdsad",
         display_option = "asdasdsd",
         item_check_group_code = null,
-        force_exe_expired_vg = 0,
         backup_product_code = null,
         backup_product_id = null,
         backup_product_desc = null,
@@ -315,6 +314,8 @@ class GeOsMeasureScanUseCaseTest {
         initial_unavailability_reason = null,
         final_is_serial_stopped = null,
         final_unavailability_reason = null,
+        allowFormInThePast = 0,
+        process_vg = null
     )
 
 

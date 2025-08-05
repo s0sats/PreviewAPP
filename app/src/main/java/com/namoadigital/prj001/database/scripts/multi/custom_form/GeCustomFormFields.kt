@@ -9,6 +9,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.BUTTON_COMMENT
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.BUTTON_NC
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.BUTTON_PHOTO
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.COMMENT
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CONDITIONAL_NC
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CONDITIONAL_SEQ
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CUSTOMER_CODE
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CUSTOM_FORM_CODE
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CUSTOM_FORM_DATA_CONTENT
@@ -91,6 +93,16 @@ val geCustomFormFieldsDatabaseTable = DatabaseTable(
         Column(BUTTON_NC, ColumnType.INT, isNullable = false, defaultValue = "1"),
         Column(BUTTON_PHOTO, ColumnType.INT, isNullable = false, defaultValue = "1"),
         Column(BUTTON_COMMENT, ColumnType.INT, isNullable = false, defaultValue = "1"),
+        Column(
+            name = CONDITIONAL_SEQ,
+            type = ColumnType.INT,
+            isNullable = true,
+        ),
+        Column(
+            name = CONDITIONAL_NC,
+            type = ColumnType.INT,
+            isNullable = true,
+        ),
     ),
     primaryKey = listOf(
         CUSTOMER_CODE,

@@ -71,7 +71,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [ge_custom_form_blobs_local]([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [blob_code] int not null, [blob_name] text not null DEFAULT '' COLLATE NOCASE, [blob_url] text not null DEFAULT '' COLLATE NOCASE, [blob_url_local] text not null DEFAULT '' COLLATE NOCASE, constraint [pk_ge_custom_form_blobs] primary key([customer_code], [custom_form_type] , [custom_form_code] , [custom_form_version] , [blob_code]));");
 
             script.append(GeCustomFormCreateScriptsKt.GE_CUSTOM_FORM_FORM_CREATE_SCRIPT);
-            script.append("create table if not exists [ge_custom_form_data_fields] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [custom_form_data] int not null, [custom_form_seq] int not null, [value] text not null DEFAULT '' COLLATE NOCASE, [value_extra] text not null DEFAULT '' COLLATE NOCASE, constraint pk_form_data_fields primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,custom_form_seq));");
+            script.append("create table if not exists [ge_custom_form_data_fields] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [custom_form_data] int not null, [custom_form_seq] int not null, [value] text not null DEFAULT '' COLLATE NOCASE, [value_extra] text not null DEFAULT '' COLLATE NOCASE, [is_active] int not null default 0, constraint pk_form_data_fields primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,custom_form_seq));");
             script.append("create table if not exists [ge_custom_form_products] ([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [product_code] int not null, constraint pk_ge_custom_form_products primary key(customer_code, custom_form_type, custom_form_code, custom_form_version, product_code));");
             script.append("create table if not exists [ge_custom_form_blobs]([customer_code] int not null, [custom_form_type] int not null, [custom_form_code] int not null, [custom_form_version] int not null, [blob_code] int not null, [blob_name] text not null DEFAULT '' COLLATE NOCASE, [blob_url] text not null DEFAULT '' COLLATE NOCASE, [blob_url_local] text not null DEFAULT '' COLLATE NOCASE, constraint [pk_ge_custom_form_blobs] primary key([customer_code], [custom_form_type] , [custom_form_code] , [custom_form_version] , [blob_code]));");
             script.append("create table if not exists [ge_custom_form_operations]([customer_code] int NOT NULL, [custom_form_type] int NOT NULL, [custom_form_code] int NOT NULL, [custom_form_version] int NOT NULL, [operation_code] int NOT NULL, PRIMARY KEY([customer_code], [custom_form_type], [custom_form_code], [custom_form_version], [operation_code]));");
@@ -295,6 +295,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV21().migrate(db);
                 case 22:
                     MigrationsKt.getMigrationV22().migrate(db);
+                case 23:
+                    MigrationsKt.getMigrationV23().migrate(db);
                     break;
             }
 

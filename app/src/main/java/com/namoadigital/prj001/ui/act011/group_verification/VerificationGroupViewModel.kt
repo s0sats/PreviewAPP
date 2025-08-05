@@ -37,9 +37,10 @@ class VerificationGroupViewModel @Inject constructor(
         when (event) {
             is VerificationGroupEvent.OnHandleListVerificationGroup -> {
                 handleListVerificationGroup(
-                    event.formPKs,
-                    event.hasProcessVg,
-                    event.isReadOnly
+                    processType = event.processType,
+                    formPks = event.formPKs,
+                    hasProcessVg = event.hasProcessVg,
+                    isReadOnly = event.isReadOnly
                 )
             }
 
@@ -93,7 +94,7 @@ class VerificationGroupViewModel @Inject constructor(
                             it.copy(
                                 listGroups = it.listGroups.map { map ->
                                     if (map.vgCode == vgCode) {
-                                        map.copy(selected = item.isActive())
+                                        map.copy(isActive = item.isActive())
                                     } else {
                                         map
                                     }
@@ -121,7 +122,7 @@ class VerificationGroupViewModel @Inject constructor(
                             currentState.copy(
                                 listGroups = currentState.listGroups.map { map ->
                                     if (map.vgCode == vgCode) {
-                                        map.copy(selected = !switchState)
+                                        map.copy(isActive = !switchState)
                                     } else {
                                         map
                                     }
@@ -138,6 +139,7 @@ class VerificationGroupViewModel @Inject constructor(
     }
 
     private fun handleListVerificationGroup(
+        processType: String = _state.value.processType,
         formPks: VerificationGroupState.FormPK = _state.value.formPK,
         hasProcessVg: ProcessVg? = _state.value.hasProcessVg,
         isReadOnly: Boolean = _state.value.isReadOnly
@@ -147,7 +149,8 @@ class VerificationGroupViewModel @Inject constructor(
                 Input(
                     formPks,
                     isReadOnly,
-                    hasProcessVg
+                    hasProcessVg,
+                    processType
                 )
             ).collect { result ->
                 result.watchStatus(
@@ -158,7 +161,8 @@ class VerificationGroupViewModel @Inject constructor(
                                 stateLoading = it.disableLoading,
                                 error = null,
                                 formPK = formPks,
-                                hasProcessVg = hasProcessVg
+                                hasProcessVg = hasProcessVg,
+                                processType = processType
                             )
                         }
                     },

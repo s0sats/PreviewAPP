@@ -182,8 +182,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -199,7 +201,8 @@ public class Act011_Main extends Base_Activity
         Act011BaseFrgInteractionNavegation,
         Act011FrgFFInteraction,
         InspectionListFragmentInteraction,
-        Act011BaseFrgInteraction {
+        Act011BaseFrgInteraction,
+        CustomFF.OnFieldStateChangeListener {
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
@@ -231,6 +234,8 @@ public class Act011_Main extends Base_Activity
 
     private ArrayList<Act011BaseFrg> screens;
     private transient ArrayList<CustomFF> customFFs;
+    private transient Map<Integer, List<CustomFF>> childrenByParentSeq = new HashMap<>();
+
     private ArrayList<GE_File> geFiles;
 
     private ArrayList<HMAux> pdfs_local;
@@ -1329,11 +1334,14 @@ public class Act011_Main extends Base_Activity
         geFiles.clear();
 
         for (int i = 0; i < customFFs.size(); i++) {
-            String sFile_v = customFFs.get(i).getmValue();
-            String sFile_e_1 = customFFs.get(i).getmDots_photo1();
-            String sFile_e_2 = customFFs.get(i).getmDots_photo2();
-            String sFile_e_3 = customFFs.get(i).getmDots_photo3();
-            String sFile_e_4 = customFFs.get(i).getmDots_photo4();
+            CustomFF customFF = customFFs.get(i);
+            if (customFF == null || !customFF.isDynamicallyVisible()) continue;
+
+            String sFile_v = customFF.getmValue();
+            String sFile_e_1 = customFF.getmDots_photo1();
+            String sFile_e_2 = customFF.getmDots_photo2();
+            String sFile_e_3 = customFF.getmDots_photo3();
+            String sFile_e_4 = customFF.getmDots_photo4();
 
             if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION) || sFile_v.endsWith(MEDIA_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
@@ -1687,6 +1695,7 @@ public class Act011_Main extends Base_Activity
         if (cf_fields != null && cf_fields.size() > 0) {
             pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get(PAGE));
             //
+            childrenByParentSeq.clear();
             for (HMAux cf : cf_fields) {
 
                 if (includeField
@@ -1770,16 +1779,26 @@ public class Act011_Main extends Base_Activity
                     }
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
+
                     customField.setOnValueChangeListener(baseControl -> {
                         if (!(baseControl instanceof CustomFF)) return;
                         CustomFF field = (CustomFF) baseControl;
                         updateFieldMandatoryList(field);
                     });
+                    orderSeqByParentSeq(customField);
                     //Add na lista de customFF
                     customFFs.add(customField);
                     //Add nos controles dinamicos
                     controls_dyn.add(customField);
                 }
+            }
+        }
+        //
+        for (CustomFF customFF : customFFs) {
+            List<CustomFF> children = childrenByParentSeq.get(customFF.getmSequence());
+            if (children != null && !children.isEmpty()) {
+                customFF.setOnFieldStateChangeListener(this);
+                onNonCompliantVisibilityChange(customFF);
             }
         }
         //
@@ -1809,7 +1828,8 @@ public class Act011_Main extends Base_Activity
                         formData.getCustom_form_status(),
                         mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                         mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                        formLocal.getIs_so() == 1
+                        formLocal.getIs_so() == 1,
+                        true
 
                 );
                 custom_form_ff.setCustomFF(customFFs);
@@ -1905,7 +1925,6 @@ public class Act011_Main extends Base_Activity
                             audioFF.setForceStopAudio(true);
                         }
                     });
-
                 }
 
                 @Override
@@ -2033,7 +2052,23 @@ public class Act011_Main extends Base_Activity
             );
         }
 
+    }
 
+    private void orderSeqByParentSeq(CustomFF component) {
+        Integer childrenSeq = component.getmParentSeq();
+        if (childrenSeq == null) return;
+
+        setChildrenByParentSeq(component, childrenSeq);
+    }
+
+    private void setChildrenByParentSeq(CustomFF component, Integer childrenSeq) {
+        List<CustomFF> children = childrenByParentSeq.get(childrenSeq);
+
+        if (children == null) {
+            childrenByParentSeq.put(childrenSeq, new ArrayList<>());
+        }
+
+        childrenByParentSeq.get(childrenSeq).add(component);
     }
 
     private void addFinishOS(GE_Custom_Form_Data formData, ArrayList<Act011FormTab> tabs, int tabQty) {
@@ -2175,7 +2210,7 @@ public class Act011_Main extends Base_Activity
         labelFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
         labelFF.showButtons(false, false, false);
-
+        setParentAndConditional(cf, labelFF);
         return labelFF;
     }
 
@@ -2274,7 +2309,9 @@ public class Act011_Main extends Base_Activity
         mkEditTextNMFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
-        mkEditTextNMFF.updateComponent();
+        setParentAndConditional(cf, mkEditTextNMFF);
+
+
         return mkEditTextNMFF;
     }
 
@@ -2337,6 +2374,9 @@ public class Act011_Main extends Base_Activity
         comboBoxFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        setParentAndConditional(cf, comboBoxFF);
+
+
         return comboBoxFF;
     }
 
@@ -2390,6 +2430,8 @@ public class Act011_Main extends Base_Activity
         checkBoxFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        setParentAndConditional(cf, checkBoxFF);
+
         return checkBoxFF;
     }
 
@@ -2431,7 +2473,24 @@ public class Act011_Main extends Base_Activity
         ratingImageFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        setParentAndConditional(cf, ratingImageFF);
+
         return ratingImageFF;
+    }
+
+    private void setParentAndConditional(HMAux cf, CustomFF customFF) {
+        if ((cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_SEQ) == null &&
+                cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_NC) == null) ||
+                (cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_SEQ).isEmpty() &&
+                        cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_NC).isEmpty())
+        ) {
+            customFF.setmParentSeq(null);
+            customFF.setCondition(null);
+            return;
+        }
+
+        customFF.setmParentSeq(Integer.valueOf(Objects.requireNonNull(cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_SEQ))));
+        customFF.setCondition(Integer.valueOf(Objects.requireNonNull(cf.get(GE_Custom_Form_Field_LocalDao.CONDITIONAL_NC))));
     }
 
     private CustomFF cfg_RatingBar(HMAux cf) {
@@ -2469,6 +2528,8 @@ public class Act011_Main extends Base_Activity
                 cf.get(GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT).equalsIgnoreCase("1")
         );
 
+        setParentAndConditional(cf, ratingBarFF);
+
         return ratingBarFF;
     }
 
@@ -2501,11 +2562,11 @@ public class Act011_Main extends Base_Activity
 
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
-        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
-        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        //Projeto delecao logica de formulario visava a cChangequalsIgnoreCase(Constant.SYS_STATUS_DELETED)
         pictureFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
+
+        setParentAndConditional(cf, pictureFF);
 
         return pictureFF;
     }
@@ -2553,6 +2614,8 @@ public class Act011_Main extends Base_Activity
         //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
         photoFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
+
+        setParentAndConditional(cf, photoFF);
 
         return photoFF;
     }
@@ -2634,6 +2697,8 @@ public class Act011_Main extends Base_Activity
         audioFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        setParentAndConditional(cf, audioFF);
+
         return audioFF;
     }
 
@@ -2673,6 +2738,8 @@ public class Act011_Main extends Base_Activity
         videoFF.setmEnabled(!formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) &&
                 !formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE));
 
+        setParentAndConditional(cf, videoFF);
+
         return videoFF;
     }
 
@@ -2683,6 +2750,43 @@ public class Act011_Main extends Base_Activity
                 filterOperation.filter(ff);
             }
         }
+    }
+
+    @Override
+    public void onNonCompliantVisibilityChange(CustomFF component) {
+        List<CustomFF> children = childrenByParentSeq.get(component.getmSequence());
+        boolean isNonCompliant = component.isNonCompliant();
+        if (children == null || children.isEmpty()) return;
+
+        for (CustomFF child : children) {
+            if (component.getVisibility() != View.GONE) {
+                switch (child.getCondition()) {
+                    case SHOW_COMPLIANT:
+                        child.setVisibility(!isNonCompliant ? View.VISIBLE : View.GONE);
+                        child.setDynamicallyVisible(!isNonCompliant);
+                        break;
+
+                    case SHOW_NON_COMPLIANT:
+                        child.setVisibility(isNonCompliant ? View.VISIBLE : View.GONE);
+                        child.setDynamicallyVisible(isNonCompliant);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                child.setVisibility(View.GONE);
+                child.setDynamicallyVisible(false);
+            }
+            onNonCompliantVisibilityChange(child);
+            //
+            updateFieldMandatoryList(child);
+        }
+
+        if (pager == null || pager.getAdapter() == null || component.getmParentSeq() == null)
+            return;
+        pager.getAdapter().notifyDataSetChanged();
+
+        onRefreshTabCounter();
     }
 
     interface CustomFFListOperation {
@@ -2805,6 +2909,7 @@ public class Act011_Main extends Base_Activity
             if (customFFs.get(i).getmSequence() == df.getCustom_form_seq()) {
                 df.setValue(customFFs.get(i).getmValue());
                 df.setValue_extra(customFFs.get(i).getmValue_Extra());
+                df.setActive(customFFs.get(i).isDynamicallyVisible() ? 1 : 0);
                 break;
             }
         }
@@ -2835,29 +2940,31 @@ public class Act011_Main extends Base_Activity
         } catch (Exception e) {
             //
             for (int i = 0; i < customFFs.size(); i++) {
-                //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
-                //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-                if (ipage == -1) {
-                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                        numberOfErrors += 1;
-                    }
-                    //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                    customFFs.get(i).setValidationBackGroundDots();
-                    //                }
-                } else {
-                    if (customFFs.get(i).getmPage() == ipage) {
+
+                if (customFFs.get(i).isDynamicallyVisible()) {
+                    //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+                    //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
+                    if (ipage == -1) {
                         if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                             numberOfErrors += 1;
                         }
-                        //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                        //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
                         customFFs.get(i).setValidationBackGroundDots();
-                        //                    }
+                        //                }
                     } else {
+                        if (customFFs.get(i).getmPage() == ipage) {
+                            if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                                numberOfErrors += 1;
+                            }
+                            //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                            customFFs.get(i).setValidationBackGroundDots();
+                            //                    }
+                        } else {
+                        }
                     }
                 }
             }
         }
-
         return numberOfErrors;
     }
 
@@ -2929,7 +3036,12 @@ public class Act011_Main extends Base_Activity
 
     public void onRefreshTabCounter() {
         for (Act011BaseFrg screen : screens) {
-            act011FfOption.updateTabList(screen.getTabObj(false), screen.getTabIndex());
+            if (!showFabAlertComponent) {
+                if (screen instanceof Act011FrgFF) {
+                    ((Act011FrgFF) screen).setCheckItemHighLight(false);
+                }
+            }
+            act011FfOption.updateTabList(screen.getTabObj(includeField), screen.getTabIndex());
         }
     }
 
@@ -3276,7 +3388,8 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void showFormCancelledMsg(final GE_Custom_Form_Local customFormLocal, final MD_Schedule_Exec scheduleExec) {
+    public void showFormCancelledMsg(final GE_Custom_Form_Local customFormLocal,
+                                     final MD_Schedule_Exec scheduleExec) {
         android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
         dialogScheduleWarning.setTitle(hmAux_Trans.get("alert_schedule_cancelled_by_server_ttl"));
         dialogScheduleWarning.setMessage(
@@ -4142,7 +4255,8 @@ public class Act011_Main extends Base_Activity
 
     }
 
-    private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {
+    private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout
+            ll_tracking_val, MD_Product_Serial serial) {
         if (serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
             ll_tracking.setVisibility(View.GONE);
         } else {
@@ -4171,7 +4285,8 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo_id, String conteudo_desc) {
+    private void setSerialInfo(LinearLayout layout, TextView tvValor, String
+            conteudo_id, String conteudo_desc) {
         if (conteudo_id == null || conteudo_id.isEmpty()) {
             hideView(layout);
         } else {
@@ -4241,7 +4356,8 @@ public class Act011_Main extends Base_Activity
         //
     }
 
-    private void showNotFinalizedDialogOpt(Act011CheckDialogBinding mainBinding, AlertDialog mainDialog) {
+    private void showNotFinalizedDialogOpt(Act011CheckDialogBinding mainBinding, AlertDialog
+            mainDialog) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         CheckDialogFinalizeBinding binding = CheckDialogFinalizeBinding.inflate(getLayoutInflater());
@@ -4468,7 +4584,8 @@ public class Act011_Main extends Base_Activity
         });
     }
 
-    private void finalizedAndSendForm(int finalizedService, Act011CheckDialogBinding binding, AlertDialog alertDialog) {
+    private void finalizedAndSendForm(int finalizedService, Act011CheckDialogBinding
+            binding, AlertDialog alertDialog) {
         String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
         String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
         String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
@@ -4523,7 +4640,8 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String startDate, String endDate) {
+    private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String
+            startDate, String endDate) {
         String errorMsg = "";
         //
         TK_Ticket_Form tkTicketForm = getTkTicketFormContinuous();
@@ -5287,6 +5405,7 @@ public class Act011_Main extends Base_Activity
         mandatoryUnansweredFields.clear();
 
         for (CustomFF field : customFFs) {
+            if (!field.isDynamicallyVisible()) continue;
             if (!field.isValid() || !field.isValidDots()) {
                 mandatoryUnansweredFields.add(field);
             }
@@ -5299,13 +5418,13 @@ public class Act011_Main extends Base_Activity
         if (!showFabAlertComponent) return;
 
         //um campo é inválido se uma das duas validações falhar.
-        final boolean isFieldConsideredInvalid = !field.isValid() || !field.isValidDots();
+        final boolean isFieldConsideredInvalid = (!field.isValid() || !field.isValidDots()) && field.isDynamicallyVisible();
         //um campo é válido quando as duas condições for verdadeira
-        final boolean isFieldConsideredValid = field.isValid() && field.isValidDots();
+        final boolean isFieldConsideredValid = field.isValid() && field.isValidDots() && field.isDynamicallyVisible();
         //verifica se o campo está na lista de não respondidos
         final boolean isFieldInList = mandatoryUnansweredFields.contains(field);
 
-        if (isFieldConsideredInvalid) {
+        if (isFieldConsideredInvalid ) {
             if (!isFieldInList) {
 
                 int newFieldSequence = field.getmSequence();
@@ -5328,9 +5447,16 @@ public class Act011_Main extends Base_Activity
             if (isFieldInList) {
                 mandatoryUnansweredFields.remove(field);
             }
+        } else {
+            if (isFieldInList) {
+                mandatoryUnansweredFields.remove(field);
+            }
         }
-        field.setValidationBackGroundDots();
-
+        //
+        if(field.isDynamicallyVisible()) {
+            field.setValidationBackGroundDots();
+        }
+        //
         updateFabBadge();
     }
 

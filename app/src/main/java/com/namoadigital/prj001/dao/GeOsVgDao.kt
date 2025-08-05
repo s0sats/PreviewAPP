@@ -52,6 +52,7 @@ class GeOsVgDao(context: Context) :
         const val PARTITIONED_EXECUTION = "partitioned_execution"
         const val IS_ACTIVE = "is_active"
         const val HAS_EXPIRED = "has_expired"
+        const val EXEC_ONLY_PREVENTIVE = "exec_only_preventive"
 
     }
 
@@ -106,6 +107,7 @@ class GeOsVgDao(context: Context) :
                 put(PARTITIONED_EXECUTION, it.partitionedExecution)
                 put(IS_ACTIVE, it.isActive)
                 put(HAS_EXPIRED, it.hasExpired)
+                put(EXEC_ONLY_PREVENTIVE, it.execOnlyPreventive)
             }
         }
         return contentValues
@@ -141,6 +143,7 @@ class GeOsVgDao(context: Context) :
                 restriction_decimal = getStringOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                 isActive = getInt(getColumnIndex(IS_ACTIVE)),
                 hasExpired = getInt(getColumnIndex(HAS_EXPIRED)),
+                execOnlyPreventive = getInt(getColumnIndex(EXEC_ONLY_PREVENTIVE))
             )
         }
     }
@@ -250,7 +253,8 @@ class GeOsVgDao(context: Context) :
                         '$valueSufix' $VALUE_SUFFIX,
                         $restrictionDecimal $RESTRICTION_DECIMAL,
                         0 $IS_ACTIVE,
-                        0 $HAS_EXPIRED
+                        0 $HAS_EXPIRED,
+                        i.$EXEC_ONLY_PREVENTIVE
                     FROM
                         ${MDProductSerialVGDao.TABLE_NAME} si,
                         ${MDVerificationGroupDao.TABLE} i

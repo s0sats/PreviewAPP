@@ -11,7 +11,8 @@ sealed class VerificationGroupEvent {
     data class OnHandleListVerificationGroup(
         val hasProcessVg: ProcessVg? = null,
         val formPKs: VerificationGroupState.FormPK,
-        val isReadOnly: Boolean
+        val isReadOnly: Boolean,
+        val processType: String
     ) : VerificationGroupEvent()
     data object OnRetry : VerificationGroupEvent()
     data class OnUpdateScreens(val isFailed: Boolean?) : VerificationGroupEvent()

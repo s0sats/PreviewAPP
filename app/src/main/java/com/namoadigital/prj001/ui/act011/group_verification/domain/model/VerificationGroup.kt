@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act011.group_verification.domain.model
 
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act011.group_verification.composable.components.badge.model.NamoaBadges
 
 data class VerificationGroup(
@@ -12,10 +11,9 @@ data class VerificationGroup(
     val ticket: String? = null, // Ticket ID.CODE
     val user: String? = null, // USER PARTIÇÃO
     val alerts: List<NamoaBadges> = emptyList(), // ALERTAS
-    var selected: Boolean = false, // AUTO-SELECT
+    var isActive: Boolean = false, // AUTO-SELECT
     val canToggle: Boolean = true,// USUARIO PODE MUDAR SWITCH ?,
 ){
 
-    fun isSelected() = selected
 
 }

@@ -2,8 +2,8 @@ package com.namoadigital.prj001.finish_os
 
 import app.cash.turbine.test
 import com.namoadigital.prj001.core.IResult
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os.GeOsRepository
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.measure_tp.MeasureTpRepository
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
@@ -144,7 +144,8 @@ class ValidateFinishOSUseCase {
         so_allow_change_order_type = 1,
         so_allow_backup = 1,
         device_tp_code_main = 1,
-        allowFormInThePast = 1
+        allowFormInThePast = 1,
+        process_vg = null
     )
 
     val meMeasureTp = MeMeasureTp(

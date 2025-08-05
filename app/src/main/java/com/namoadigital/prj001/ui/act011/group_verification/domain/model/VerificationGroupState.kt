@@ -13,6 +13,7 @@ data class VerificationGroupState(
     val hasProcessVg: ProcessVg? = null,
     val updateScreens: Boolean = false,
     val isReadOnly: Boolean = false,
+    val processType: String = ""
 ){
 
     val disableLoading = StateLoading(false)

@@ -1,16 +1,16 @@
 package com.namoadigital.prj001.ge_os.device_item
 
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsStatusScanUseCase
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUALLY_FORCED_DATE
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUALLY_FORCED_ITEM
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MEASURE_ALERT
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUALLY_FORCED_DATE
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,7 +21,7 @@ class GeOsStatusScanUseCaseTest {
 
 
     @Test
-    fun `scan device item measure alert`()  {
+    fun `scan device item measure alert`() {
         val deviceItem = geOsDeviceItem(
             900f,
             "2025-07-16 00:00:00 -0300",
@@ -42,7 +42,7 @@ class GeOsStatusScanUseCaseTest {
     }
 
     @Test
-    fun `scan device item LIMIT_DATE_REACHED`()  {
+    fun `scan device item LIMIT_DATE_REACHED`() {
         val deviceItem = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -63,7 +63,7 @@ class GeOsStatusScanUseCaseTest {
     }
 
     @Test
-    fun `scan device item Normal`()  {
+    fun `scan device item Normal`() {
         val deviceItem = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -82,8 +82,9 @@ class GeOsStatusScanUseCaseTest {
 
         assertEquals(ITEM_CHECK_STATUS_NORMAL, deviceItem.item_check_status)
     }
+
     @Test
-    fun `scan device item manually forced item`()  {
+    fun `scan device item manually forced item`() {
         val deviceItem = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -105,7 +106,7 @@ class GeOsStatusScanUseCaseTest {
     }
 
     @Test
-    fun `scan device item limit date reached com grupo e regressao`()  {
+    fun `scan device item limit date reached com grupo e regressao`() {
         val deviceItemLDR = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -121,14 +122,14 @@ class GeOsStatusScanUseCaseTest {
                 dateStartLastMinute = "2025-04-09 00:00:00 -0300",
                 isContinuousForm = false,
 
-            )
+                )
         )
 
         assertEquals(ITEM_CHECK_STATUS_NORMAL, deviceItemLDR.item_check_status)
     }
 
     @Test
-    fun `scan device item projected date reached com grupo e regressao`()  {
+    fun `scan device item projected date reached com grupo e regressao`() {
         val deviceItemPDR = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -144,14 +145,14 @@ class GeOsStatusScanUseCaseTest {
                 dateStartLastMinute = "2025-04-09 00:00:00 -0300",
                 isContinuousForm = false,
 
-            )
+                )
         )
 
         assertEquals(ITEM_CHECK_STATUS_NORMAL, deviceItemPDR.item_check_status)
     }
 
     @Test
-    fun `scan device item measure alert com grupo e regressao`()  {
+    fun `scan device item measure alert com grupo e regressao`() {
         val deviceItemMA = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -167,14 +168,14 @@ class GeOsStatusScanUseCaseTest {
                 dateStartLastMinute = "2025-04-09 00:00:00 -0300",
                 isContinuousForm = false,
 
-            )
+                )
         )
 
         assertEquals(ITEM_CHECK_STATUS_NORMAL, deviceItemMA.item_check_status)
     }
 
     @Test
-    fun `scan device item manually forced date com grupo e regressao`()  {
+    fun `scan device item manually forced date com grupo e regressao`() {
         val deviceItemMA = geOsDeviceItem(
             1100f,
             "2025-07-16 00:00:00 -0300",
@@ -196,7 +197,7 @@ class GeOsStatusScanUseCaseTest {
     }
 
 
-    private val mdProductSerialMocked =  MD_Product_Serial(
+    private val mdProductSerialMocked = MD_Product_Serial(
     ).apply {
         this.customer_code = 147
         this.product_code = 2
@@ -295,7 +296,7 @@ class GeOsStatusScanUseCaseTest {
         restriction_decimal = null,
         value_cycle_size = null,
         cycle_tolerance = null,
-        date_start = "2025-04-09 12:45:00 -0300" ,
+        date_start = "2025-04-09 12:45:00 -0300",
         date_end = null,
         last_measure_value = null,
         last_measure_date = null,
@@ -310,15 +311,16 @@ class GeOsStatusScanUseCaseTest {
         initial_unavailability_reason = null,
         final_is_serial_stopped = null,
         final_unavailability_reason = null,
+        allowFormInThePast = 0,
+        process_vg = null
     )
 
 
-
     private fun geOsDeviceItem(
-        next_cycle_measure :Float,
+        next_cycle_measure: Float,
         next_cycle_measure_date: String,
         next_cycle_limit_date: String,
-        status: String?=null
+        status: String? = null
     ) = GeOsDeviceItem(
         customer_code = 1,
         custom_form_type = 1,

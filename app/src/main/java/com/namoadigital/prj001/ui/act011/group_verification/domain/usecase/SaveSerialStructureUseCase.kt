@@ -6,7 +6,6 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
-import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsSaveSerialStructureUseCase
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
 import javax.inject.Inject
 
 class SaveSerialStructureUseCase @Inject constructor(
@@ -39,10 +37,10 @@ class SaveSerialStructureUseCase @Inject constructor(
             .mapNotNull { group ->
                 group.vgCode?.let { code ->
                     input.geOsDeviceItems.find { it.vg_code == code }?.apply {
-                        this.is_visible = if (group.selected) 1 else 0
+                        this.is_visible = if (group.isActive) 1 else 0
                     }
                     input.geOsVgs.find { it.vgCode == code }?.apply {
-                        this.isActive = if (group.selected) 1 else 0
+                        this.isActive = if (group.isActive) 1 else 0
                     }
                 }
             }

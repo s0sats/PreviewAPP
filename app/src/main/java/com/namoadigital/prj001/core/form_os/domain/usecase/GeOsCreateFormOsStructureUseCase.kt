@@ -3,6 +3,7 @@ package com.namoadigital.prj001.core.form_os.domain.usecase
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MdOrderType.Companion.PROCESS_TYPE_PREVENTIVE
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
@@ -54,7 +55,8 @@ class GeOsCreateFormOsStructureUseCase  @Inject constructor(
                     dateConsider = input.formOsHeader.getDateConsider(),
                     ticketPrefix = input.ticketPrefix,
                     ticketCode = input.ticketCode,
-                    isBlockExecution = ProcessVg.isBlockExecution(input.formOsHeader.process_vg)
+                    isBlockExecution = ProcessVg.isBlockExecution(input.formOsHeader.process_vg),
+                    isPreventiveOs = input.formOsHeader.process_type == PROCESS_TYPE_PREVENTIVE
                 )
             )
 

@@ -48,6 +48,9 @@ class GeOsScanVerificationGroupUseCaseTest {
             restrictionDecimal = null,
             measureConsider = 1000f,
             dateConsider = currentDate,
+            ticketPrefix = null,
+            ticketCode = null,
+            isBlockExecution = false
         )
 
         // VG 1: manual_date não é nulo → status deve ser MANUALLY_FORCED_DATE
@@ -78,7 +81,7 @@ class GeOsScanVerificationGroupUseCaseTest {
                 productCode = 2,
                 serialCode = 12,
                 vgCode = 2,
-                nextCycleMeasure = 900f, 
+                nextCycleMeasure = 900f,
                 nextCycleMeasureDate = futureDate,
                 nextCycleLimitDate = futureDate,
                 vgStatus = VgStatus.NORMAL.status,
@@ -166,6 +169,9 @@ class GeOsScanVerificationGroupUseCaseTest {
             restrictionDecimal = null,
             measureConsider = 1000f,
             dateConsider = currentDate,
+            ticketPrefix = null,
+            ticketCode = null,
+            isBlockExecution = false
         )
 
         // Mock de VGs com diferentes cenários
@@ -306,7 +312,9 @@ class GeOsScanVerificationGroupUseCaseTest {
             restrictionDecimal = null,
             measureConsider = 1000f,
             dateConsider = currentDate,
-            
+            ticketPrefix = null,
+            ticketCode = null,
+            isBlockExecution = false
         )
 
         // Mock de VG com condições normais
@@ -366,7 +374,9 @@ class GeOsScanVerificationGroupUseCaseTest {
             restrictionDecimal = null,
             measureConsider = 1000f,
             dateConsider = currentDate,
-            
+            ticketPrefix = null,
+            ticketCode = null,
+            isBlockExecution = false
         )
 
         // Mock com VGs em estado de alerta
@@ -447,11 +457,13 @@ class GeOsScanVerificationGroupUseCaseTest {
             restrictionDecimal = null,
             measureConsider = 81f,
             dateConsider = currentDate,
-            
+            ticketPrefix = null,
+            ticketCode = null,
+            isBlockExecution = false
         )
 
-         val mockVgList = listOf(
-             GeOsVg(
+        val mockVgList = listOf(
+            GeOsVg(
                 customerCode = 147,
                 customFormType = 1,
                 customFormCode = 101,
@@ -502,23 +514,23 @@ class GeOsScanVerificationGroupUseCaseTest {
                 manualDate = null,
                 partitionedExecution = 0
             ),
-             GeOsVg(
-                 customerCode = 147,
-                 customFormType = 1,
-                 customFormCode = 101,
-                 customFormVersion = 1,
-                 customFormData = 987654321,
-                 productCode = 2,
-                 serialCode = 12,
-                 vgCode = 5,
-                 nextCycleMeasure = 84f,
-                 nextCycleMeasureDate = "2025-04-22 16:25:00 -0300",
-                 nextCycleLimitDate = "2025-05-07 16:25:00 -0300",
-                 vgStatus = VgStatus.NORMAL.status,
-                 targetDate = "2025-04-22 16:25:00 -0300",
-                 manualDate = null,
-                 partitionedExecution = 0
-             ),
+            GeOsVg(
+                customerCode = 147,
+                customFormType = 1,
+                customFormCode = 101,
+                customFormVersion = 1,
+                customFormData = 987654321,
+                productCode = 2,
+                serialCode = 12,
+                vgCode = 5,
+                nextCycleMeasure = 84f,
+                nextCycleMeasureDate = "2025-04-22 16:25:00 -0300",
+                nextCycleLimitDate = "2025-05-07 16:25:00 -0300",
+                vgStatus = VgStatus.NORMAL.status,
+                targetDate = "2025-04-22 16:25:00 -0300",
+                manualDate = null,
+                partitionedExecution = 0
+            ),
             GeOsVg(
                 customerCode = 147,
                 customFormType = 1,
@@ -553,8 +565,8 @@ class GeOsScanVerificationGroupUseCaseTest {
                 manualDate = null,
                 partitionedExecution = 0
             ),
-          GeOsVg(
-              customerCode = 147,
+            GeOsVg(
+                customerCode = 147,
                 customFormType = 1,
                 customFormCode = 101,
                 customFormVersion = 1,

@@ -18,24 +18,24 @@ import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFrgValidation{
+abstract class Act011BaseFrg<VBinding : ViewBinding> : Fragment(), Act011BaseFrgValidation {
     protected val PARAM_LAST_INDEX = "LAST_INDEX"
 
     protected lateinit var binding: VBinding
-    private var _mNavListener : Act011BaseFrgInteractionNavegation? = null
+    private var _mNavListener: Act011BaseFrgInteractionNavegation? = null
     protected val mNavListener get() = _mNavListener!!
-    private var _mInfraListener : Act011BaseFrgInteraction? = null
+    private var _mInfraListener: Act011BaseFrgInteraction? = null
     private val mInfraListener get() = _mInfraListener!!
-//
+
+    //
     protected lateinit var hmAuxTrans: HMAux
     var tabIndex: Int = 0
     protected var tabLastIndex: Int = 0
     protected lateinit var formStatus: String
     protected var scheduleDesc: String? = null
     protected var scheduleComments: String? = null
-    protected val mTabItemCount: Int by lazy {
-        getTabCount()
-    }
+    protected val mTabItemCount: Int
+        get() = getTabCount()
     protected val mTabName: String by lazy {
         getTabName()
     }
@@ -119,9 +119,9 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
          * Como o HmAuxTrans estava pesando, caso seja um recuperação da act e frgs, chama interface
          * que resgata traduções da act
          */
-        savedInstanceState?.let{
-            if(!::hmAuxTrans.isInitialized){
-                hmAuxTrans =  mInfraListener.recoverHmAuxTrans()
+        savedInstanceState?.let {
+            if (!::hmAuxTrans.isInitialized) {
+                hmAuxTrans = mInfraListener.recoverHmAuxTrans()
             }
         }
         return binding.root
@@ -175,10 +175,10 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         }
     }
 
-    private fun isFirstTab(): Boolean{
-        return  if(isFormOs){
+    private fun isFirstTab(): Boolean {
+        return if (isFormOs) {
             tabIndex == 0
-        }else{
+        } else {
             tabIndex == 1
         }
     }
@@ -188,13 +188,13 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun setSerialInfo(incSerial: CvProductSerialWithIconBinding) {
         val serialInfo = mNavListener.getSerialInfo()
-        with(incSerial){
+        with(incSerial) {
             tvProductSerialId.text = hmAuxTrans["lbl_no_serial_placeholder"]
             tvProductSerialInfos.text = ""
             tvProductSerialInfos.visibility = View.GONE
             ivEditableSerial.visibility = View.GONE
             //Define exibição do id e marca cor modelo.
-            if(!serialInfo.serial_id.isNullOrEmpty()){
+            if (!serialInfo.serial_id.isNullOrEmpty()) {
                 tvProductSerialId.text = serialInfo.serial_id
                 //
                 tvProductSerialInfos.apply {
@@ -202,11 +202,12 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
                         ToolBox_Inf.formatSerialBrandModelColor(serialInfo)
                     //
                     text = serialBrandModelColor ?: ""
-                    visibility = if(serialBrandModelColor.isNullOrEmpty()) View.GONE else View.VISIBLE
+                    visibility =
+                        if (serialBrandModelColor.isNullOrEmpty()) View.GONE else View.VISIBLE
 
                 }
             }
-            if(serialInfo.serial_id.isNullOrEmpty()){
+            if (serialInfo.serial_id.isNullOrEmpty()) {
                 tvProductSerialId.visibility = View.GONE
                 cvProductSerialCard.visibility = View.GONE
             }
@@ -225,7 +226,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      * Seta as a chamada das interfaces nos clicks dos botões de navegacao e finalizacao
      */
     private fun setNavegationListeners(incNavegation: Act011FrgIncludeNavegationBinding) {
-        with(incNavegation){
+        with(incNavegation) {
             clPrevBtn.setOnClickListener {
                 mNavListener.previosTab()
             }
@@ -297,8 +298,9 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     /**
      * Define se status causa readonly
      */
-    protected fun readOnlyStatus() = (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
-            || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true))
+    protected fun readOnlyStatus() =
+        (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
+                || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true))
 
     //region Set interface
     /**
@@ -306,12 +308,12 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is Act011BaseFrgInteractionNavegation ){
+        if (context is Act011BaseFrgInteractionNavegation) {
             _mNavListener = context as Act011BaseFrgInteractionNavegation
         } else {
             throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteractionNavegation")
         }
-        if(context is Act011BaseFrgInteraction ){
+        if (context is Act011BaseFrgInteraction) {
             _mInfraListener = context as Act011BaseFrgInteraction
         } else {
             throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteraction")

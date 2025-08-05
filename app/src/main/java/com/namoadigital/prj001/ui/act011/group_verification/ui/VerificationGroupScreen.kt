@@ -72,6 +72,7 @@ fun VerificationGroupScreen(
             viewModel.onEvent(
                 VerificationGroupEvent.OnHandleListVerificationGroup(
                     hasProcessVg = geOs.getProcessVg(),
+                    processType = geOs.process_type,
                     formPKs = VerificationGroupState.FormPK(
                         customerCode = geOs.customer_code,
                         customFormType = geOs.custom_form_type,

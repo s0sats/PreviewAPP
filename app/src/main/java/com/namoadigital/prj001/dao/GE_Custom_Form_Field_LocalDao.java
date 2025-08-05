@@ -49,6 +49,8 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String BUTTON_NC = "button_nc";
     public static final String BUTTON_PHOTO = "button_photo";
     public static final String BUTTON_COMMENT = "button_comment";
+    public static final String CONDITIONAL_SEQ = "conditional_seq";
+    public static final String CONDITIONAL_NC = "conditional_nc";
 
     public GE_Custom_Form_Field_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -348,6 +350,16 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setButton_nc(cursor.getInt(cursor.getColumnIndex(BUTTON_NC)));
             custom_form_field_local.setButton_photo(cursor.getInt(cursor.getColumnIndex(BUTTON_PHOTO)));
             custom_form_field_local.setButton_comment(cursor.getInt(cursor.getColumnIndex(BUTTON_COMMENT)));
+            if (cursor.isNull(cursor.getColumnIndex(CONDITIONAL_SEQ))) {
+                custom_form_field_local.setConditional_seq(null);
+            }else {
+                custom_form_field_local.setConditional_seq(cursor.getInt(cursor.getColumnIndex(CONDITIONAL_SEQ)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONDITIONAL_NC))) {
+                custom_form_field_local.setConditional_nc(null);
+            }else {
+                custom_form_field_local.setConditional_nc(cursor.getInt(cursor.getColumnIndex(CONDITIONAL_NC)));
+            }
 
 
             return custom_form_field_local;
@@ -437,6 +449,10 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             } else {
                 contentValues.put(BUTTON_COMMENT, custom_form_field_local.getButton_comment());
             }
+
+            contentValues.put(CONDITIONAL_SEQ, custom_form_field_local.getConditional_seq());
+            contentValues.put(CONDITIONAL_NC, custom_form_field_local.getConditional_nc());
+
             return contentValues;
 
         }
@@ -475,7 +491,12 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
 
             //contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get(CUSTOM_FORM_FIELD_DESC));
             contentValues.put(CUSTOM_FORM_FIELD_DESC, hmAux.get("TXT_VALUE".toLowerCase()));
-
+            if (hmAux.hasConsistentValue(CONDITIONAL_SEQ) && !Objects.requireNonNull(hmAux.get(CONDITIONAL_SEQ)).isEmpty()) {
+                contentValues.put(CONDITIONAL_SEQ, hmAux.get(CONDITIONAL_SEQ));
+            }
+            if (hmAux.hasConsistentValue(CONDITIONAL_NC) && !Objects.requireNonNull(hmAux.get(CONDITIONAL_NC)).isEmpty()) {
+                contentValues.put(CONDITIONAL_NC, hmAux.get(CONDITIONAL_NC));
+            }
             return contentValues;
 
         }

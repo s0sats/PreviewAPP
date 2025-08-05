@@ -18,8 +18,8 @@ android {
         applicationId = "com.namoadigital.prj001"
         minSdk = 21
         targetSdk = 34
-        versionCode = 421
-        versionName = "6.13.3"
+        versionCode = 423
+        versionName = "6.14.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled = true
@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.junit.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -178,6 +179,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.0") {
         exclude(group = "com.android.support", module = "support-annotations")
     }
+    testImplementation(kotlin("test", "1.9.0"))
 }
 
 /*apply plugin: 'com.google.gms.google-services'

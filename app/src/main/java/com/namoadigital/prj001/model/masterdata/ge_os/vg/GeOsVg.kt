@@ -29,6 +29,7 @@ data class GeOsVg(
     @SerializedName("partitioned_execution") val partitionedExecution: Int? = null,
     @SerializedName("isActive") var isActive: Int = 0,
     @SerializedName("hasExpired") var hasExpired: Int = 0,
+    @SerializedName("exec_only_preventive") var execOnlyPreventive: Int = 0,
 ) {
 
     var ticket = if (partitionedTicketPrefix != null && partitionedTicketCode != null) {
@@ -38,9 +39,9 @@ data class GeOsVg(
     fun isValidTickets(
         prefix: Int?,
         code: Int?,
-    ) : Boolean {
-        if(prefix == null || code == null) return false
-        if(partitionedTicketPrefix == null || partitionedTicketCode == null) return false
+    ): Boolean {
+        if (prefix == null || code == null) return false
+        if (partitionedTicketPrefix == null || partitionedTicketCode == null) return false
         return true
     }
 
@@ -48,13 +49,14 @@ data class GeOsVg(
         prefix: Int?,
         code: Int?,
     ): Boolean {
-        if(prefix == null || code == null) return false
-        if(partitionedTicketPrefix == null || partitionedTicketCode == null) return false
+        if (prefix == null || code == null) return false
+        if (partitionedTicketPrefix == null || partitionedTicketCode == null) return false
         return prefix == partitionedTicketPrefix && code == partitionedTicketCode
     }
 
     fun isExpired() = hasExpired == 1
     fun isActive() = isActive == 1
+    fun isExecOnlyPreventive() = execOnlyPreventive == 1
 
     fun hasPartition() = partitionedExecution == 1
 }

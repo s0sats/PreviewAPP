@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.GeOsVgDao.Companion.CUSTOM_FORM_CODE
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.CUSTOM_FORM_DATA
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.CUSTOM_FORM_TYPE
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.CUSTOM_FORM_VERSION
+import com.namoadigital.prj001.dao.GeOsVgDao.Companion.EXEC_ONLY_PREVENTIVE
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.HAS_EXPIRED
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.IS_ACTIVE
 import com.namoadigital.prj001.dao.GeOsVgDao.Companion.MANUAL_DATE
@@ -69,6 +70,7 @@ val GEOsVgScript = DatabaseTable(
 
         Column(IS_ACTIVE, ColumnType.INT, isNullable = false, defaultValue = "0"),
         Column(HAS_EXPIRED, ColumnType.INT, isNullable = false, defaultValue = "0"),
+        Column(EXEC_ONLY_PREVENTIVE, ColumnType.INT, isNullable = false, defaultValue = "0"),
     ),
     primaryKey = listOf(
         CUSTOMER_CODE,

@@ -5,7 +5,6 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PROCESS;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_WAITING_SYNC;
 import static com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item.APPLY_MATERIAL_REQUIRED;
-import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ADJUST;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ALERT;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ALREADY_OK;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_FIXED;
@@ -17,6 +16,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -889,7 +889,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             }
         }
 
-        for (GeOsDeviceItem item : list ) {
+        for (GeOsDeviceItem item : list) {
             String key = item.getGeOsDeviceItemCodeAndSeq().toLowerCase();
             InspectionCell cell = cellByCode.get(key);
             if (cell != null) {
@@ -984,9 +984,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private boolean isHideAlreadyOKBtn(GeOsDeviceItem item) {
         return !item.isNO_CYCLE()
-                        && item.isCycleExpired()
-                        && (item.isCritical()
-                        || item.getAlready_ok_hide() == 1);
+                && item.isCycleExpired()
+                && (item.isCritical()
+                || item.getAlready_ok_hide() == 1);
     }
 
     private boolean checkDescAlt(GeOsDeviceItem item) {
@@ -1041,15 +1041,20 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
 
-    private boolean isRequiredPhoto(GeOsDeviceItem item){
-        if(item.getExec_type() == null) return false;
-        if(getPhotoCount(item) != 0) return false;
-        switch (item.getExec_type()){
-            case EXEC_TYPE_FIXED: return item.getRequire_photo_fixed() == 1;
-            case EXEC_TYPE_ALERT: return item.getRequire_photo_alert() == 1;
-            case EXEC_TYPE_ALREADY_OK: return item.getRequire_photo_already_ok() == 1;
-            case EXEC_TYPE_NOT_VERIFIED: return item.getRequire_photo_not_verified() == 1;
-            default: return false;
+    private boolean isRequiredPhoto(GeOsDeviceItem item) {
+        if (item.getExec_type() == null) return false;
+        if (getPhotoCount(item) != 0) return false;
+        switch (item.getExec_type()) {
+            case EXEC_TYPE_FIXED:
+                return item.getRequire_photo_fixed() == 1;
+            case EXEC_TYPE_ALERT:
+                return item.getRequire_photo_alert() == 1;
+            case EXEC_TYPE_ALREADY_OK:
+                return item.getRequire_photo_already_ok() == 1;
+            case EXEC_TYPE_NOT_VERIFIED:
+                return item.getRequire_photo_not_verified() == 1;
+            default:
+                return false;
         }
     }
 
@@ -1196,7 +1201,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         transactionSuccessfully = transaction.saveTicket(tkTicketStep);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        ToolBox_Inf.registerException(getClass().getName(),e);
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
                     //
                     if (!transactionSuccessfully) {
@@ -2060,6 +2065,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         geFileDao.addUpdate(geFiles, false);
         //LUCHE - 26/06/2020 - Substituido IntentService pel worker de upload de imagem
         ToolBox_Inf.scheduleUploadImgWork(context);
+        deleteHiddenPhotos(formData);
         /*Fim da fila de upload */
         //LUCHE - 08/09/2020
         //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
@@ -2099,6 +2105,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
          */
         List<GE_File> filesTemp = new ArrayList<>();
         for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+            if (!df.isActive()) continue;
+
             String sFile_v = df.getValue();
             String valueExtra = df.getValue_extra();
 
@@ -2900,7 +2908,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
 
-    private List<GeOsVg> getListGeOsVgs(GE_Custom_Form_Local formLocal, long productCode, long serialCode){
+    private List<GeOsVg> getListGeOsVgs(GE_Custom_Form_Local formLocal, long productCode, long serialCode) {
         GeOsVgDao dao = new GeOsVgDao(context);
         List<GeOsVg> geOsVgList = dao.getGeOsVgByFormCode(
                 formLocal.getCustomer_code(),
@@ -3123,5 +3131,62 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             return tkTicket.getKanban() == 1;
         }
         return false;
+    }
+
+    void deleteHiddenPhotos(GE_Custom_Form_Data formData) {
+        List<String> filesToDelete = new ArrayList<>();
+
+        for (GE_Custom_Form_Data_Field dataField : formData.getDataFields()) {
+
+            Log.d("deleteHiddenPhotos", "Field is Active: " + dataField.isActive());
+
+            if (dataField.isActive()) continue;
+
+
+            Log.d("deleteHiddenPhotos", "Field Value: " + dataField.getValue());
+            String value = dataField.getValue();
+            Log.d("deleteHiddenPhotos", "Field Value Extra: " + dataField.getValue_extra());
+            String valueExtra = dataField.getValue_extra();
+
+            GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
+            GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
+
+            if (FileHelperKt.hasFileForFileName(value)) {
+                Log.d("deleteHiddenPhotos", "add field: " + value);
+                filesToDelete.add(value);
+            }
+
+            if (FileHelperKt.hasFileForFileName(content.getPhoto1())) {
+                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto1());
+                filesToDelete.add(content.getPhoto1());
+            }
+
+            if (FileHelperKt.hasFileForFileName(content.getPhoto2())) {
+                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto2());
+                filesToDelete.add(content.getPhoto2());
+            }
+
+            if (FileHelperKt.hasFileForFileName(content.getPhoto3())) {
+                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto3());
+                filesToDelete.add(content.getPhoto3());
+            }
+
+            if (FileHelperKt.hasFileForFileName(content.getPhoto4())) {
+                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto4());
+                filesToDelete.add(content.getPhoto4());
+            }
+
+        }
+
+        for (String fileToDelete : filesToDelete) {
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + fileToDelete);
+            try {
+                if (file.exists() && !file.delete()) {
+                    throw new Exception("Erro ao deletar arquivo: " + fileToDelete);
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(this.getClass().getName(), e);
+            }
+        }
     }
 }

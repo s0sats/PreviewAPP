@@ -21,11 +21,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
     private val NO_LABEL_FOUND = "No label"
-
+    private val PARAM_CHECK_ITEM_HIGHLIGHT = "CHECK_ITEM_HIGHLIGHT"
     lateinit var customFF: ArrayList<CustomFF>
     private var _mFrgListener: Act011FrgFFInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
-
+    var checkItemHighLight: Boolean = true
     /**
      * Fun static para construcao do obj
      */
@@ -38,7 +38,8 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             formStatus: String,
             scheduleDesc: String?,
             scheduleComments: String?,
-            isFormOs: Boolean
+            isFormOs: Boolean,
+            checkItemHighLight: Boolean,
         ) = Act011FrgFF()
             .apply {
                 this.hmAuxTrans = hmAuxTrans
@@ -48,6 +49,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
                 this.scheduleDesc = scheduleDesc
                 this.scheduleComments = scheduleComments
                 this.isFormOs = isFormOs
+                this.checkItemHighLight = checkItemHighLight
                 //
                 arguments = Bundle().apply {
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
@@ -56,6 +58,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC, scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT, scheduleComments)
                     putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
+                    putBoolean(PARAM_CHECK_ITEM_HIGHLIGHT, checkItemHighLight)
                 }
             }
 
@@ -70,6 +73,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
+            checkItemHighLight = it.getBoolean(PARAM_CHECK_ITEM_HIGHLIGHT, true)
         }
     }
 
@@ -110,7 +114,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
      * Seta os componentes dessa tab no fragmento, adicionando "indice" da pergunta no label.
      */
     private fun loadControls() {
-        if (!customFF.isNullOrEmpty()) {
+        if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             var count = 0
             customFF.filter {
                 it.getmPage() == tabIndex
@@ -131,23 +135,31 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
     override fun getTabErrorCount(): Int {
         var errorCount = 0
-        if (!customFF.isNullOrEmpty()) {
+        if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             customFF.filter {
                 it.getmPage() == tabIndex
+                        && it.isDynamicallyVisible
             }.forEach { ff ->
                 if (!ff.isValid || !ff.isValidDots) {
                     errorCount++
                 }
-                ff.setValidationBackGroundDots()
+                /*
+                    BARRIONUEVO 31-07-2025
+                    Ajuste de ultima hr para evitar highlight apos resposta de condicional.
+                 */
+                if(checkItemHighLight) {
+                    ff.setValidationBackGroundDots()
+                }
             }
+            checkItemHighLight = true
         }
         return errorCount
     }
 
     override fun getTabCount(): Int {
-        return if (!customFF.isNullOrEmpty()) {
+        return if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             customFF.filter {
-                it.getmPage() == tabIndex && it.getmInclude() == 1
+                it.getmPage() == tabIndex && it.getmInclude() == 1 && it.isDynamicallyVisible
             }.size
         } else {
             0
@@ -163,7 +175,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
     }
 
     override fun getTabName(): String {
-        return if (!customFF.isNullOrEmpty()) {
+        return if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             customFF.find {
                 it.getmPage() == tabIndex && it.getmType().equals(CustomFF.TAB, true)
             }?.let {
@@ -190,7 +202,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
     override fun applyAutoAnswer(): Int {
         var count = 0
-        if (!customFF.isNullOrEmpty()) {
+        if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             customFF.filter {
                 it.getmPage() == tabIndex
             }.forEach { ff ->

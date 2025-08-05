@@ -7,4 +7,5 @@ class MDVerificationGroup(
     @SerializedName("vg_code") var vgCode: Int,
     @SerializedName("vg_id") var vgId: String,
     @SerializedName("vg_desc") var vgDesc: String,
+    @SerializedName("exec_only_preventive") var execOnlyPreventive: Int,
 )

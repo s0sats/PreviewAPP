@@ -28,6 +28,8 @@ public class GE_Custom_Form_Field_Local {
     private Integer button_nc;
     private Integer button_photo;
     private Integer button_comment;
+    private Integer conditional_seq;
+    private Integer conditional_nc;
 
     public long getCustomer_code() {
         return customer_code;
@@ -204,4 +206,21 @@ public class GE_Custom_Form_Field_Local {
     public void setButton_comment(Integer button_comment) {
         this.button_comment = button_comment;
     }
+
+    public Integer getConditional_seq() {
+        return conditional_seq;
+    }
+
+    public void setConditional_seq(Integer conditional_seq) {
+        this.conditional_seq = conditional_seq;
+    }
+
+    public Integer getConditional_nc() {
+        return conditional_nc;
+    }
+
+    public void setConditional_nc(Integer conditional_nc) {
+        this.conditional_nc = conditional_nc;
+    }
+
 }

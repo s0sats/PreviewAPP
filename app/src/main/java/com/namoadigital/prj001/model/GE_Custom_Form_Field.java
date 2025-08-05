@@ -48,6 +48,10 @@ public class GE_Custom_Form_Field {
     private Integer button_photo;
     @SerializedName("button_comment")
     private Integer button_comment;
+    @SerializedName("conditional_seq")
+    private Integer conditional_seq;
+    @SerializedName("conditional_nc")
+    private Integer conditional_nc;
 
     public GE_Custom_Form_Field() {
         this.custom_form_local_link = "";
@@ -211,5 +215,21 @@ public class GE_Custom_Form_Field {
 
     public void setButton_comment(Integer button_comment) {
         this.button_comment = button_comment;
+    }
+
+    public Integer getConditional_seq() {
+        return conditional_seq;
+    }
+
+    public void setConditional_seq(Integer conditional_seq) {
+        this.conditional_seq = conditional_seq;
+    }
+
+    public Integer getConditional_nc() {
+        return conditional_nc;
+    }
+
+    public void setConditional_nc(Integer conditional_nc) {
+        this.conditional_nc = conditional_nc;
     }
 }

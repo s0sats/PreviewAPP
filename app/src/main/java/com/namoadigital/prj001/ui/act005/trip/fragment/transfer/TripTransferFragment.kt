@@ -9,25 +9,21 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.core.util.WsTypeStatus
-import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.databinding.FrgTransferTripBinding
 import com.namoadigital.prj001.extensions.getColorStateListId
-import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.TripTarget
 import com.namoadigital.prj001.service.location.FsTripLocationService
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -187,7 +183,10 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
         if (FsTripLocationService.LatLog.value.latitude != null
             && FsTripLocationService.LatLog.value.longitude != null
         ) {
-            viewModel.addDestinationOverNight()
+            viewModel.addDestinationOverNight(
+                hmAuxTranslate[PROGRESS_TRIP_OVER_NIGHT_TTL],
+                hmAuxTranslate[PROGRESS_TRIP_OVER_NIGHT_MSG],
+            )
         }else{
             ToolBox.alertMSG(
                 context,

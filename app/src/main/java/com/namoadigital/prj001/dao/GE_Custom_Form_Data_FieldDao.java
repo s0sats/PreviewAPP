@@ -18,7 +18,7 @@ import java.util.List;
  * Created by neonhugo on 11/01/17.
  */
 
-public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Custom_Form_Data_Field> {
+public class GE_Custom_Form_Data_FieldDao extends BaseDao implements Dao<GE_Custom_Form_Data_Field> {
     private final Mapper<GE_Custom_Form_Data_Field, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Data_Field> toGE_Custom_Form_Data_FieldMapper;
 
@@ -31,8 +31,9 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
     public static final String CUSTOM_FORM_SEQ = "custom_form_seq";
     public static final String VALUE = "value";
     public static final String VALUE_EXTRA = "value_extra";
+    public static final String IS_ACTIVE = "is_active";
 
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_SEQ, VALUE, VALUE_EXTRA};
+    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_SEQ, VALUE, VALUE_EXTRA, IS_ACTIVE};
 
     public GE_Custom_Form_Data_FieldDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -104,7 +105,7 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -157,7 +158,7 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -181,7 +182,7 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -207,7 +208,7 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -231,7 +232,7 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -253,6 +254,8 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
             custom_form_data_field.setCustom_form_seq(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_SEQ)));
             custom_form_data_field.setValue(cursor.getString(cursor.getColumnIndex(VALUE)));
             custom_form_data_field.setValue_extra(cursor.getString(cursor.getColumnIndex(VALUE_EXTRA)));
+            custom_form_data_field.setActive(cursor.getInt(cursor.getColumnIndex(IS_ACTIVE)));
+
 
             return custom_form_data_field;
         }
@@ -288,6 +291,10 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
             if (custom_form_data_field.getValue_extra() != null) {
                 contentValues.put(VALUE_EXTRA, custom_form_data_field.getValue_extra());
             }
+            if (custom_form_data_field.getActive() != null) {
+                contentValues.put(IS_ACTIVE, custom_form_data_field.getActive());
+            }
+
 
             return contentValues;
 

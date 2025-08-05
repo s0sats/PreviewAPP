@@ -49,6 +49,9 @@ public class GE_Custom_Form_Data_Field {
     @SerializedName("value_n_extra")
     private String value_extra_json; // Resposta Extra (Foto/Comentario/Plano Acao) Json
 
+    @SerializedName("is_active")
+    private Integer isActive; // Para form condicional campo controla quem deve ser enviado ao server.
+
     public GE_Custom_Form_Data_Field() {
         this.customer_code = -1L;
         this.custom_form_type = -1;
@@ -271,6 +274,15 @@ public class GE_Custom_Form_Data_Field {
         }
     }
 
+    public Integer getActive() {
+        return isActive;
+    }
 
+    public boolean isActive() {
+        return isActive == 1;
+    }
 
+    public void setActive(Integer isActive) {
+        this.isActive = isActive;
+    }
 }

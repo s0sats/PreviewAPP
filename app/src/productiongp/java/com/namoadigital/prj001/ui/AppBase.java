@@ -104,7 +104,7 @@ public class AppBase extends Application {
         UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
         TICKET_JSON_PATH = DB_PATH + "/ticket";
         SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
-        OTHER_ACTIONS_JSON_PATH = DB_PATH +  "/otherActions";
+        OTHER_ACTIONS_JSON_PATH = DB_PATH + "/otherActions";
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
         SERIAL_SITE_INV_JSON_PATH = DB_PATH + "/siteInventory";
 
@@ -119,8 +119,8 @@ public class AppBase extends Application {
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
 
-        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
-        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
+        TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
 
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
@@ -137,9 +137,9 @@ public class AppBase extends Application {
         DB_VERSION_BASE = 14;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
-        DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
+        DB_NAME_CUSTOM = "cc" + DB_SUFIX;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 23;
+        DB_VERSION_CUSTOM = 24;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -174,6 +174,6 @@ public class AppBase extends Application {
     private void registerConnectionsChanges() {
         WBR_Connections_Change connectionsChange = new WBR_Connections_Change();
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(connectionsChange,intentFilter);
+        registerReceiver(connectionsChange, intentFilter);
     }
 }

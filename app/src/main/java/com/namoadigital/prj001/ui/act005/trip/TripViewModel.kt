@@ -218,7 +218,7 @@ class TripViewModel @Inject constructor(
         return destinationUseCase.getDestinationCounter?.invoke(fsTripDestination)
     }
 
-    fun addDestinationOverNight() {
+    fun addDestinationOverNight(tripOverNightTtl: String?, tripOverNightMsg: String?) {
 
         viewModelScope.launch {
             state.value.trip?.let {
@@ -255,8 +255,8 @@ class TripViewModel @Inject constructor(
                             _state.loadingState {
                                 ProgressState.Online(
                                     process = WS_TRIP_OVER_NIGHT,
-                                    title = TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL,
-                                    message = TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG,
+                                    title = tripOverNightTtl?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL,
+                                    message = tripOverNightMsg ?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG,
                                 )
                             }
                         } else {

@@ -6,6 +6,7 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
+import com.namoadigital.prj001.model.MdOrderType.Companion.PROCESS_TYPE_PREVENTIVE
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.model.masterdata.ge_os.ProcessVg
@@ -30,11 +31,12 @@ class MapToVerificationGroupsUseCase @Inject constructor(
     data class Input(
         val formPks: VerificationGroupState.FormPK,
         val isHistoric: Boolean,
-        val hasProcessVg: ProcessVg?
+        val hasProcessVg: ProcessVg?,
+        val processType: String
     )
 
     override suspend fun invoke(input: Input): Flow<IResult<List<VerificationGroup>>> {
-        val (formPks, isReadOnly, hasProcessVg) = input
+        val (formPks, isReadOnly, hasProcessVg, processType) = input
         return flow {
             emit(loading())
             runCatching {
@@ -64,6 +66,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                     serialCode = formPks.serialCode,
                 )
 
+
                 mapToVerificationGroups(
                     vgs = vgs,
                     items = deviceItems,
@@ -71,6 +74,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                     isReadOnly = isReadOnly,
                     ticketPrefix = form?.ticket_prefix,
                     ticketCode = form?.ticket_code,
+                    isPreventiveType = processType == PROCESS_TYPE_PREVENTIVE
                 )
             }.fold(
                 onSuccess = { listGroup ->
@@ -96,6 +100,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
         isReadOnly: Boolean,
         ticketPrefix: Int?,
         ticketCode: Int?,
+        isPreventiveType: Boolean
     ): List<VerificationGroup> {
 
         val itemsByVgCode = items.groupBy { it.vg_code }
@@ -135,9 +140,15 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                     ticket = if (inPartitionExecution && !sameTicket) ticket else null,
                     user = if (inPartitionExecution && !sameTicket) partitionedUser else null,
                     alerts = alerts,
-                    selected = vg.isActive(),
-                    canToggle = checkCanToggleSwitch(inPartitionExecution, hasProcessVg, isReadOnly)
+                    isActive = vg.isActive(),
+                    canToggle = checkCanToggleSwitch(
+                                inPartitionExecution,
+                                hasProcessVg,
+                                isPreventiveType,
+                                isReadOnly
+                            )
                 )
+
             }
         }.toMutableList()
 
@@ -160,7 +171,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                 VerificationGroup(
                     vgCode = null,
                     alerts = alerts,
-                    selected = true
+                    isActive = true
                 )
             )
         }
@@ -171,9 +182,11 @@ class MapToVerificationGroupsUseCase @Inject constructor(
     private fun GeOsVg.checkCanToggleSwitch(
         inPartitionExecution: Boolean,
         processVg: ProcessVg?,
-        isReadOnly: Boolean
+        isPreventiveType: Boolean,
+        isReadOnly: Boolean,
     ): Boolean = when {
         isReadOnly -> false
+        !isPreventiveType && isExecOnlyPreventive() -> false
         processVg == ProcessVg.BLOCK_EXECUTION -> false
         inPartitionExecution -> false
         (processVg == ProcessVg.FORCE_EXECUTION_EXPIRED) && isExpired() -> false

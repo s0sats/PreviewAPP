@@ -4,16 +4,20 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.core.database.CollationType
 import com.namoadigital.prj001.core.database.ColumnType
-import com.namoadigital.prj001.core.database.DatabaseTable
+import com.namoadigital.prj001.core.database.DatabaseTable.Column
 import com.namoadigital.prj001.core.database.addMissingColumns
 import com.namoadigital.prj001.core.database.updateColumn
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CONDITIONAL_NC
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao.CONDITIONAL_SEQ
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.GeOsVgDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
 import com.namoadigital.prj001.dao.MD_ProductDao
@@ -32,6 +36,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
@@ -44,9 +49,9 @@ import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_TYPE_CREATE_
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScript
-import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.VGProductSerialScript
 import com.namoadigital.prj001.database.scripts.multi.masterdata.MD_REGION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.masterdata.mdVerificationGroupDatabaseTable
+import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.VGProductSerialScript
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_FORCED
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
@@ -1002,19 +1007,19 @@ val migrationV17 = object : MigrationSQLite(17, 18) {
         db.addMissingColumns(
             tableName = GE_Custom_Form_FieldDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_FieldDao.BUTTON_NC,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "1"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_FieldDao.BUTTON_PHOTO,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "1"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_FieldDao.BUTTON_COMMENT,
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1026,19 +1031,19 @@ val migrationV17 = object : MigrationSQLite(17, 18) {
         db.addMissingColumns(
             tableName = GE_Custom_Form_Field_LocalDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_Field_LocalDao.BUTTON_NC,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "1"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_Field_LocalDao.BUTTON_PHOTO,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "1"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GE_Custom_Form_Field_LocalDao.BUTTON_COMMENT,
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1054,7 +1059,7 @@ val migrationV18 = object : MigrationSQLite(18, 19) {
         db.addMissingColumns(
             tableName = TK_TicketDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = TK_TicketDao.IS_TMP,
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1077,29 +1082,29 @@ val migrationV19 = object : MigrationSQLite(19, 20) {
         db.addMissingColumns(
             tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.TICKET_PREFIX,
                     type = ColumnType.INT,
                     isNullable = true,
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.TICKET_CODE,
                     type = ColumnType.INT,
                     isNullable = true,
                 ),
 
-            )
+                )
         )
         //
         db.addMissingColumns(
             tableName = GeOsDeviceItemDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.TICKET_PREFIX,
                     type = ColumnType.INT,
                     isNullable = true,
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.TICKET_CODE,
                     type = ColumnType.INT,
                     isNullable = true,
@@ -1121,7 +1126,7 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         db.addMissingColumns(
             tableName = MdOrderTypeDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = "force_exe_expired_vg",
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1135,7 +1140,7 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         db.addMissingColumns(
             tableName = MdItemCheckDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = MdItemCheckDao.ITEM_CHECK_DESC_ALT_VG,
                     type = ColumnType.TEXT,
                     isNullable = true,
@@ -1147,7 +1152,7 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         db.addMissingColumns(
             tableName = GeOsDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = "force_exe_expired_vg",
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1159,42 +1164,42 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         db.addMissingColumns(
             tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.ALREADY_OK_HIDE,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_FIXED,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_ALERT,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_ALREADY_OK,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.REQUIRE_PHOTO_NOT_VERIFIED,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.VG_CODE,
                     type = ColumnType.INT,
                     isNullable = true
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = MD_Product_Serial_Tp_Device_ItemDao.VG_ACTION,
                     type = ColumnType.INT,
                     isNullable = false,
@@ -1249,77 +1254,77 @@ val migrationV20 = object : MigrationSQLite(20, 21) {
         db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE [${MD_Product_SerialDao.HAS_ITEM_CHECK}]  = 1;""".trimIndent())
     }
 
-    private fun migrateGeOsDeviceItemTable(db:SQLiteDatabase) {
+    private fun migrateGeOsDeviceItemTable(db: SQLiteDatabase) {
         db.addMissingColumns(
             tableName = GeOsDeviceItemDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.ITEM_CHECK_DESC_ALT_VG,
                     type = ColumnType.TEXT,
                     isNullable = true,
                     collation = CollationType.NOCASE,
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.ALREADY_OK_HIDE,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.REQUIRE_PHOTO_FIXED,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.REQUIRE_PHOTO_ALERT,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.REQUIRE_PHOTO_ALREADY_OK,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.REQUIRE_PHOTO_NOT_VERIFIED,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.VG_CODE,
                     type = ColumnType.INT,
                     isNullable = true
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.VG_ACTION,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.IS_VISIBLE,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.COLOR_ITEM,
                     type = ColumnType.TEXT,
                     isNullable = false,
                     collation = CollationType.NOCASE,
                     defaultValue = GeOsDeviceItemStatusColor.GRAY.toString(),
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.STATUS_MODIFICATION_TYPE,
                     type = ColumnType.TEXT,
                     isNullable = true,
                     collation = CollationType.NOCASE,
                 ),
-                DatabaseTable.Column(
+                Column(
                     name = GeOsDeviceItemDao.AUTOMATIC_SELECTION_STATE,
                     type = ColumnType.TEXT,
                     isNullable = true,
@@ -1340,7 +1345,7 @@ val migrationV21 = object : MigrationSQLite(21, 22) {
         db.addMissingColumns(
             tableName = TK_Ticket_FormDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = TK_Ticket_FormDao.PROCESS_VG,
                     type = ColumnType.TEXT,
                     isNullable = true,
@@ -1352,7 +1357,7 @@ val migrationV21 = object : MigrationSQLite(21, 22) {
         db.addMissingColumns(
             tableName = TK_TicketDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = TK_TicketDao.TICKET_EDI_ID,
                     type = ColumnType.TEXT,
                     isNullable = true,
@@ -1364,7 +1369,7 @@ val migrationV21 = object : MigrationSQLite(21, 22) {
         db.addMissingColumns(
             tableName = TkTicketCacheDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = TkTicketCacheDao.TICKET_EDI_ID,
                     type = ColumnType.TEXT,
                     isNullable = true,
@@ -1373,6 +1378,7 @@ val migrationV21 = object : MigrationSQLite(21, 22) {
             )
         )
     }
+
     private fun migrateGeOs(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -1570,18 +1576,95 @@ val migrationV21 = object : MigrationSQLite(21, 22) {
 }
 
 
-
 val migrationV22 = object : MigrationSQLite(22, 23) {
     override fun migrate(db: SQLiteDatabase) {
         db.addMissingColumns(
             tableName = TkTicketCacheDao.TABLE,
             columnsToAdd = listOf(
-                DatabaseTable.Column(
+                Column(
                     name = TkTicketCacheDao.AUTOMATIC_TICKET_DOWNLOAD,
                     type = ColumnType.INT,
                     isNullable = false,
                     defaultValue = "0"
                 ),
+            )
+        )
+    }
+}
+
+val migrationV23 = object : MigrationSQLite(23, 24) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_Field_LocalDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = CONDITIONAL_SEQ,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+                Column(
+                    name = CONDITIONAL_NC,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                )
+            )
+        )
+
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_FieldDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = CONDITIONAL_SEQ,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+                Column(
+                    name = CONDITIONAL_NC,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_Data_FieldDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = GE_Custom_Form_Data_FieldDao.IS_ACTIVE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+            )
+        )
+        //
+        db.updateColumn(
+            tableName = GE_Custom_Form_Data_FieldDao.TABLE,
+            column = GE_Custom_Form_Data_FieldDao.IS_ACTIVE,
+            value = "1"
+        )
+        //
+        db.addMissingColumns(
+            tableName = MDVerificationGroupDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = MDVerificationGroupDao.EXEC_ONLY_PREVENTIVE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GeOsVgDao.TABLE_NAME,
+            columnsToAdd = listOf(
+                Column(
+                    name = GeOsVgDao.EXEC_ONLY_PREVENTIVE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
             )
         )
     }

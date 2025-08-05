@@ -18,7 +18,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 abstract class BaseDaoWithReturn<T>(
     context: Context,
-    private val tableName: String,
+    val tableName: String,
     mDBName: String,
     mDBVersion: Int,
     mDBMode: String
@@ -282,7 +282,7 @@ abstract class BaseDaoWithReturn<T>(
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB()
         }
         //
