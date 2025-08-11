@@ -1783,6 +1783,7 @@ public class Act011_Main extends Base_Activity
                     customField.setOnValueChangeListener(baseControl -> {
                         if (!(baseControl instanceof CustomFF)) return;
                         CustomFF field = (CustomFF) baseControl;
+                        onNonCompliantVisibilityChange(field);
                         updateFieldMandatoryList(field);
                     });
                     orderSeqByParentSeq(customField);
@@ -2759,7 +2760,8 @@ public class Act011_Main extends Base_Activity
         if (children == null || children.isEmpty()) return;
 
         for (CustomFF child : children) {
-            if (component.getVisibility() != View.GONE) {
+            if (component.getVisibility() != View.GONE
+            && component.isFieldAnswered()) {
                 switch (child.getCondition()) {
                     case SHOW_COMPLIANT:
                         child.setVisibility(!isNonCompliant ? View.VISIBLE : View.GONE);
