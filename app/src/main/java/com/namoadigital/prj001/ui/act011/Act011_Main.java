@@ -794,7 +794,7 @@ public class Act011_Main extends Base_Activity
                 hideSoftKeyboard(Act011_Main.this);
                 //Valida tabs e informa resultado ao drawer
                 updateTabStatusIntoDrawer(
-                        returnValidateTabObj(index_old)
+                        returnValidateTabObj(index_old, false)
                 );
             }
         };
@@ -1103,7 +1103,7 @@ public class Act011_Main extends Base_Activity
 //        formData.setLocation_lng("");
         //
         if (fieldsValidation) {
-            returnValidCheck(String.valueOf(-1));
+            returnValidCheck(String.valueOf(-1), fieldsValidation);
         }
 
         loadCustomFFValueIntoFormData();
@@ -1131,7 +1131,7 @@ public class Act011_Main extends Base_Activity
     private void checkAction(boolean showFinalizeOpt) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
         //
-        ArrayList<Act011FormTab> tabs = returnValidateTabObj(-1);
+        ArrayList<Act011FormTab> tabs = returnValidateTabObj(-1, true);
         //
         updateTabStatusIntoDrawer(
                 tabs
@@ -1829,15 +1829,14 @@ public class Act011_Main extends Base_Activity
                         formData.getCustom_form_status(),
                         mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                         mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                        formLocal.getIs_so() == 1,
-                        true
+                        formLocal.getIs_so() == 1
 
                 );
                 custom_form_ff.setCustomFF(customFFs);
                 //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
                 //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
                 //os campos estavam sendo validados e marcados como erro
-                tabs.add(custom_form_ff.getTabObj(includeField));
+                tabs.add(custom_form_ff.getTabObj(includeField, false));
                 screens.add(custom_form_ff);
             }
         }
@@ -1880,7 +1879,7 @@ public class Act011_Main extends Base_Activity
                                 acessoryFormView,
                                 acessoryFormViews.indexOf(acessoryFormView)
                         );
-                tabs.add(act011FrgInspection.getTabObj(includeField));
+                tabs.add(act011FrgInspection.getTabObj(includeField, false));
                 screens.add(act011FrgInspection);
                 acessoryIndex++;
             }
@@ -1917,7 +1916,7 @@ public class Act011_Main extends Base_Activity
                     setTitleForm();
                     //
                     updateTabStatusIntoDrawer(
-                            returnValidateTabObj(index_old)
+                            returnValidateTabObj(index_old, true)
                     );
 
                     filterCustomFF(CustomFF.AUDIO, each -> {
@@ -1999,7 +1998,7 @@ public class Act011_Main extends Base_Activity
                                 if (baseFrg instanceof Act011FrgFF) {
                                     int itensAuto = baseFrg.applyAutoAnswer();
                                     if (itensAuto > 0) {
-                                        updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
+                                        updateTabStatusIntoDrawer(baseFrg.getTabObj(false, false));
                                         quantidade += itensAuto;
                                     }
                                 }
@@ -2033,7 +2032,7 @@ public class Act011_Main extends Base_Activity
                         }
                     });
 
-            returnValidCheck(String.valueOf(index_old));
+            returnValidCheck(String.valueOf(index_old), false);
             if (bNew) {
                 saveV2(false);
             }
@@ -2089,7 +2088,7 @@ public class Act011_Main extends Base_Activity
             bundle.putLong(ARGUMENTS.FORM_DATA, formData.getCustom_form_data());
             bundle.putBoolean(ARGUMENTS.IS_READ_ONLY, true);
             finishOSFragment.setArguments(bundle);
-            tabs.add(finishOSFragment.getTabObj(true));
+            tabs.add(finishOSFragment.getTabObj(true, false));
             screens.add(finishOSFragment);
         }
     }
@@ -2107,7 +2106,7 @@ public class Act011_Main extends Base_Activity
                 mPresenter.getInitialSeialState(formData, getSerialInfo())
         );
         //
-        tabs.add(formOsHeaderFrg.getTabObj(includeField));
+        tabs.add(formOsHeaderFrg.getTabObj(includeField, false));
         screens.add(formOsHeaderFrg);
     }
 
@@ -2133,7 +2132,7 @@ public class Act011_Main extends Base_Activity
             boolean resultFailed = true;
             try {
                 updateListInspectionCells();
-                onRefreshTabCounter();
+                onRefreshTabCounter(false);
                 resultFailed = false;
             } catch (Exception e) {
                 ToolBox.registerException(getClass().getName(), e);
@@ -2154,7 +2153,7 @@ public class Act011_Main extends Base_Activity
             );
             return null;
         });
-        tabs.add(fragment.getTabObj(includeField));
+        tabs.add(fragment.getTabObj(includeField, false));
         screens.add(fragment);
 
     }
@@ -2788,7 +2787,7 @@ public class Act011_Main extends Base_Activity
             return;
         pager.getAdapter().notifyDataSetChanged();
 
-        onRefreshTabCounter();
+        onRefreshTabCounter(true);
     }
 
     interface CustomFFListOperation {
@@ -2927,17 +2926,17 @@ public class Act011_Main extends Base_Activity
      * @param sPage
      * @return
      */
-    private int returnValidCheck(String sPage) {
+    private int returnValidCheck(String sPage, Boolean validHighlight) {
         int numberOfErrors = 0;
         int ipage = Integer.parseInt(sPage);
         try {
             if (ipage == -1) {
                 for (Act011BaseFrg act011BaseFrg : screens) {
-                    numberOfErrors += act011BaseFrg.getTabErrorCount();
+                    numberOfErrors += act011BaseFrg.getTabErrorCount(validHighlight);
                 }
             } else if (ipage > 0) {
                 ipage = ipage - 1;
-                numberOfErrors = screens.get(ipage).getTabErrorCount();
+                numberOfErrors = screens.get(ipage).getTabErrorCount(validHighlight);
             }
         } catch (Exception e) {
             //
@@ -2977,16 +2976,16 @@ public class Act011_Main extends Base_Activity
      * @param page -1  se deve validar todos ou >0 se especifico
      * @return
      */
-    private ArrayList<Act011FormTab> returnValidateTabObj(int page) {
+    private ArrayList<Act011FormTab> returnValidateTabObj(int page, Boolean validHighLight) {
         ArrayList<Act011FormTab> tabs = new ArrayList<>();
         if (page == -1) {
             for (Act011BaseFrg baseFrg : screens) {
-                tabs.add(baseFrg.getTabObj(false));
+                tabs.add(baseFrg.getTabObj(false, validHighLight));
             }
         } else if (page > 0) {
             //Ajuste para pega o indice correto da tab no array de frags.
             page--;
-            tabs.add(screens.get(page).getTabObj(false));
+            tabs.add(screens.get(page).getTabObj(false, validHighLight));
         }
         return tabs;
     }
@@ -3033,17 +3032,12 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public void onRefreshTabCounter(int tabIndex) {
-        act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false), tabIndex);
+        act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false, false), tabIndex);
     }
 
-    public void onRefreshTabCounter() {
+    public void onRefreshTabCounter(Boolean validHighlight) {
         for (Act011BaseFrg screen : screens) {
-            if (!showFabAlertComponent) {
-                if (screen instanceof Act011FrgFF) {
-                    ((Act011FrgFF) screen).setCheckItemHighLight(false);
-                }
-            }
-            act011FfOption.updateTabList(screen.getTabObj(includeField), screen.getTabIndex());
+            act011FfOption.updateTabList(screen.getTabObj(includeField, validHighlight), screen.getTabIndex());
         }
     }
 
@@ -4687,7 +4681,7 @@ public class Act011_Main extends Base_Activity
                 Act011FrgInspection frgInspection = (Act011FrgInspection) fragment;
                 //Após atualizar lista da tab, precisa atualizar lista do drawer
                 updateTabStatusIntoDrawer(
-                        frgInspection.getTabObj(false)
+                        frgInspection.getTabObj(false, true)
                 );
             }
         }
@@ -5426,7 +5420,7 @@ public class Act011_Main extends Base_Activity
         //verifica se o campo está na lista de não respondidos
         final boolean isFieldInList = mandatoryUnansweredFields.contains(field);
 
-        if (isFieldConsideredInvalid ) {
+        if (isFieldConsideredInvalid) {
             if (!isFieldInList) {
 
                 int newFieldSequence = field.getmSequence();
@@ -5455,7 +5449,7 @@ public class Act011_Main extends Base_Activity
             }
         }
         //
-        if(field.isDynamicallyVisible()) {
+        if (field.isDynamicallyVisible()) {
             field.setValidationBackGroundDots();
         }
         //

@@ -397,6 +397,7 @@ public class Act027_Product_Edit extends BaseFragment {
                 pff_sketch.setVisibility(View.GONE);
             } else {
                 StringBuilder sbOptions = new StringBuilder();
+                pff_sketch.removeCustomFFStyle();
                 pff_sketch.setVisibility(View.VISIBLE);
                 pff_sketch.setmFName(mSm_so_product_event.getSketch_url_local());
 

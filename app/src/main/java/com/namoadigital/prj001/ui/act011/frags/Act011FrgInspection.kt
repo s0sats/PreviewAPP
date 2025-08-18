@@ -271,8 +271,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW
         ) && !acessoryFormView.isReadOnly
                 && (binding.chkNonForecastItem.isChecked
-                    || binding.edtInspectionFilter.text.toString().trim().isNotEmpty()
-                    || getNonForecastItem() == 0
+                || binding.edtInspectionFilter.text.toString().trim().isNotEmpty()
+                || getNonForecastItem() == 0
                 )
     }
 
@@ -340,11 +340,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private fun updateNonForecastCounter() {
         val count = getNonForecastItem()
         //
-        with(binding.tvNonForecastCount){
-            if (count > 0){
+        with(binding.tvNonForecastCount) {
+            if (count > 0) {
                 text = "+$count"
                 isEnabled = true
-            } else{
+            } else {
                 text = "0"
                 isEnabled = false
             }
@@ -419,7 +419,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
     override fun getNavegationInclude() = binding.incNavegation
 
-    override fun getTabErrorCount(): Int {
+    override fun getTabErrorCount(validHighlight: Boolean): Int {
 //        val problemReportedCount = acessoryFormView.inspections.count {
 //            it.status == MANUAL_ALERT && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
 //        }
@@ -451,13 +451,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
-    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
+    override fun getTabObj(skipFieldValidation: Boolean, validHighlight: Boolean): Act011FormTab {
         val colorCounts = acessoryFormView.inspections
             .asSequence()
             .groupBy { it.statusColor }
             .mapValues { (_, items) ->
                 val done = items.count { it.isVisible && it.isDone }
-                val total = items.count { (it.isVisible && !it.isPartitioned()) || (it.isPartitioned() && it.isDone) }
+                val total =
+                    items.count { (it.isVisible && !it.isPartitioned()) || (it.isPartitioned() && it.isDone) }
                 if (done < total) Act011FormCounter(done, total) else null
             }
 
@@ -471,12 +472,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             forecastCount = colorCounts[GeOsDeviceItemStatusColor.BLUE],
             criticalForecastCount = colorCounts[GeOsDeviceItemStatusColor.YELLOW],
             nonForecastCount = colorCounts[GeOsDeviceItemStatusColor.GRAY],
-            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(
+                validHighlight
+            )
         )
     }
 
-    override fun getTabStatus(): Act011FormTabStatus {
-        return if (getTabErrorCount() == 0) {
+    override fun getTabStatus(validHighlight: Boolean): Act011FormTabStatus {
+        return if (getTabErrorCount(validHighlight) == 0) {
             Act011FormTabStatus.OK
         } else {
             Act011FormTabStatus.ERROR
@@ -558,13 +561,13 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             }
         }
         //
-        if(item.requirePhotoAlreadyOk){
+        if (item.requirePhotoAlreadyOk) {
             onItemSelected(
                 position,
                 item.itemCodeAndSeq,
                 item.partitionedExecution
             )
-        }else {
+        } else {
             updateNonForecastCounter()
             mAdapter.refreshItemList(position, onAlreadyOkActionItem)
             mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
@@ -603,7 +606,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
-    fun refreshInspection(acessoryFormView: AcessoryFormView){
+    fun refreshInspection(acessoryFormView: AcessoryFormView) {
         this.acessoryFormView = acessoryFormView
         CoroutineScope(Dispatchers.Main).launch {
             mAdapter.refreshList(acessoryFormView)

@@ -1637,7 +1637,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
     }
 
-    override fun getTabErrorCount(): Int {
+    override fun getTabErrorCount(validHighlight: Boolean): Int {
         //Sem emodo edição, sem erros
         return 0
     }
@@ -1646,7 +1646,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         return 0
     }
 
-    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
+    override fun getTabObj(skipFieldValidation: Boolean, validHighLight: Boolean): Act011FormTab {
         return Act011FormTab(
             page = tabIndex,
             name = mTabName,
@@ -1656,12 +1656,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
-            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(validHighLight)
         )
 
     }
 
-    override fun getTabStatus(): Act011FormTabStatus {
+    override fun getTabStatus(validHighLight: Boolean): Act011FormTabStatus {
         return Act011FormTabStatus.OK
     }
 

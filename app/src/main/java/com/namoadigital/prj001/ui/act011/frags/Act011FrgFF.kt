@@ -1,11 +1,8 @@
 package com.namoadigital.prj001.ui.act011.frags
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
-import com.namoa_digital.namoa_library.R
 import com.namoa_digital.namoa_library.ctls.CustomFF
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
@@ -21,11 +18,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
 
     private val NO_LABEL_FOUND = "No label"
-    private val PARAM_CHECK_ITEM_HIGHLIGHT = "CHECK_ITEM_HIGHLIGHT"
     lateinit var customFF: ArrayList<CustomFF>
     private var _mFrgListener: Act011FrgFFInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
-    var checkItemHighLight: Boolean = true
+
     /**
      * Fun static para construcao do obj
      */
@@ -39,7 +35,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             scheduleDesc: String?,
             scheduleComments: String?,
             isFormOs: Boolean,
-            checkItemHighLight: Boolean,
         ) = Act011FrgFF()
             .apply {
                 this.hmAuxTrans = hmAuxTrans
@@ -49,7 +44,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
                 this.scheduleDesc = scheduleDesc
                 this.scheduleComments = scheduleComments
                 this.isFormOs = isFormOs
-                this.checkItemHighLight = checkItemHighLight
                 //
                 arguments = Bundle().apply {
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
@@ -58,7 +52,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC, scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT, scheduleComments)
                     putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
-                    putBoolean(PARAM_CHECK_ITEM_HIGHLIGHT, checkItemHighLight)
                 }
             }
 
@@ -73,7 +66,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
-            checkItemHighLight = it.getBoolean(PARAM_CHECK_ITEM_HIGHLIGHT, true)
         }
     }
 
@@ -133,7 +125,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
         }
     }
 
-    override fun getTabErrorCount(): Int {
+    override fun getTabErrorCount(validHighlight: Boolean): Int {
         var errorCount = 0
         if (::customFF.isInitialized && !customFF.isNullOrEmpty()) {
             customFF.filter {
@@ -147,11 +139,10 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
                     BARRIONUEVO 31-07-2025
                     Ajuste de ultima hr para evitar highlight apos resposta de condicional.
                  */
-                if(checkItemHighLight) {
+                if (validHighlight) {
                     ff.setValidationBackGroundDots()
                 }
             }
-            checkItemHighLight = true
         }
         return errorCount
     }
@@ -166,8 +157,8 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
         }
     }
 
-    override fun getTabStatus(): Act011FormTabStatus {
-        return if (getTabErrorCount() == 0) {
+    override fun getTabStatus(validHighlight: Boolean): Act011FormTabStatus {
+        return if (getTabErrorCount(validHighlight) == 0) {
             Act011FormTabStatus.OK
         } else {
             Act011FormTabStatus.ERROR
@@ -186,7 +177,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
         }
     }
 
-    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
+    override fun getTabObj(skipFieldValidation: Boolean, validHighlight: Boolean): Act011FormTab {
         return Act011FormTab(
             page = tabIndex,
             name = mTabName,
@@ -196,7 +187,9 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
-            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(
+                validHighlight
+            )
         )
     }
 

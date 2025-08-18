@@ -187,7 +187,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="15dp">
+            android:paddingLeft="10dp">
 
             <CheckBox
                 android:id="@+id/act027_product_edit_content_cb_inspection"

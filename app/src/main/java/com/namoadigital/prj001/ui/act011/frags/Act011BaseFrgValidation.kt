@@ -4,10 +4,14 @@ import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 
 interface Act011BaseFrgValidation {
-    fun getTabErrorCount(): Int
+    fun getTabErrorCount(validHighLight: Boolean = false): Int
     fun getTabCount(): Int
-    fun getTabObj(skipFieldValidation: Boolean = false): Act011FormTab
-    fun getTabStatus() : Act011FormTabStatus
-    fun getTabName() : String
+    fun getTabObj(
+        skipFieldValidation: Boolean = false,
+        validHighLight: Boolean = false
+    ): Act011FormTab
+
+    fun getTabStatus(validHighLight: Boolean = false): Act011FormTabStatus
+    fun getTabName(): String
     fun applyAutoAnswer(): Int
 }

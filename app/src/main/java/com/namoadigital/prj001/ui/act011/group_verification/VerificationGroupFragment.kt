@@ -33,11 +33,11 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
 
     override fun getNavegationInclude(): Act011FrgIncludeNavegationBinding = binding.incNavegation
 
-    override fun getTabErrorCount(): Int = 0
+    override fun getTabErrorCount(validHighlight: Boolean): Int = 0
 
     override fun getTabCount(): Int = 0
 
-    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab = Act011FormTab(
+    override fun getTabObj(skipFieldValidation: Boolean, validHighLight: Boolean): Act011FormTab = Act011FormTab(
         page = this.tabIndex,
         name = mTabName,
         tracking = null,
@@ -49,7 +49,7 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
         status = Act011FormTabStatus.OK
     )
 
-    override fun getTabStatus(): Act011FormTabStatus = Act011FormTabStatus.OK
+    override fun getTabStatus(validHighLight: Boolean): Act011FormTabStatus = Act011FormTabStatus.OK
 
     override fun getTabName(): String =
         hmAuxTrans[TAB_VERIFICATION_GROUP_LBL] ?: TAB_VERIFICATION_GROUP_LBL

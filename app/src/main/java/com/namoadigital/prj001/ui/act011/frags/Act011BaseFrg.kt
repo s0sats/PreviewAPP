@@ -59,7 +59,7 @@ abstract class Act011BaseFrg<VBinding : ViewBinding> : Fragment(), Act011BaseFrg
     /**
      * Retorna qtd de erro na tab
      */
-    abstract override fun getTabErrorCount(): Int
+    abstract override fun getTabErrorCount(validHighLight: Boolean): Int
 
     /**
      * Retorna a qtd de itens na tab
@@ -75,12 +75,15 @@ abstract class Act011BaseFrg<VBinding : ViewBinding> : Fragment(), Act011BaseFrg
     /**
      * Retorna a objTab baseado nos dados do frg
      */
-    abstract override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab
+    abstract override fun getTabObj(
+        skipFieldValidation: Boolean,
+        validHighLight: Boolean
+    ): Act011FormTab
 
     /**
      * Retorna a status da tab
      */
-    abstract override fun getTabStatus(): Act011FormTabStatus
+    abstract override fun getTabStatus(validHighLight: Boolean): Act011FormTabStatus
 
     /**
      * Retorna nome da tab

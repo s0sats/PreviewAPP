@@ -33,23 +33,24 @@ class FinishOSFragment constructor(
 
     override fun getNavegationInclude(): Act011FrgIncludeNavegationBinding = binding.incNavegation
 
-    override fun getTabErrorCount(): Int = 0
+    override fun getTabErrorCount(validHighLight: Boolean): Int = 0
 
     override fun getTabCount(): Int = 0
 
-    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab = Act011FormTab(
-        page = this.tabIndex,
-        name = mTabName,
-        tracking = null,
-        fieldCount = mTabItemCount,
-        problemReportedCount = null,
-        forecastCount = null,
-        criticalForecastCount = null,
-        nonForecastCount = null,
-        status = Act011FormTabStatus.OK
-    )
+    override fun getTabObj(skipFieldValidation: Boolean, validHighLight: Boolean): Act011FormTab =
+        Act011FormTab(
+            page = this.tabIndex,
+            name = mTabName,
+            tracking = null,
+            fieldCount = mTabItemCount,
+            problemReportedCount = null,
+            forecastCount = null,
+            criticalForecastCount = null,
+            nonForecastCount = null,
+            status = Act011FormTabStatus.OK
+        )
 
-    override fun getTabStatus(): Act011FormTabStatus = Act011FormTabStatus.OK
+    override fun getTabStatus(validHighLight: Boolean): Act011FormTabStatus = Act011FormTabStatus.OK
 
     override fun getTabName(): String = hmAuxTrans["finish_os_tab_name"] ?: ""
 
