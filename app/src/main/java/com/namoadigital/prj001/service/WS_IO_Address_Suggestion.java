@@ -1,9 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -13,6 +14,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Env;
 import com.namoadigital.prj001.model.T_IO_Address_Suggestion_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Address_Suggestion;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -20,7 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Address_Suggestion extends IntentService {
+public class WS_IO_Address_Suggestion extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

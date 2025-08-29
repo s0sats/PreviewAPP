@@ -205,4 +205,6 @@
     <string name="lib_dialog_video_delete_ttl">Video löschen</string>
     <string name="lib_dialog_video_delete_msg">Möchten Sie den aufgenommenen Video löschen?</string>
     <string name="lib_recording_video_lbl">Video aufnehmen</string>
+    <string name="location_pendency_ttl">Maßnahme erforderlich</string>
+    <string name="location_pendency_msg">Bitte die App öffnen, um die Standort-Funktion neuzustarten</string>
 </resources>

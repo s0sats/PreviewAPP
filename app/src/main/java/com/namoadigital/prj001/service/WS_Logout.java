@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.TLogout_Env;
 import com.namoadigital.prj001.model.TLogout_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -20,7 +21,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by DANIEL.LUCHE on 24/03/2017.
  */
 
-public class WS_Logout extends IntentService {
+public class WS_Logout extends BaseWsIntentService {
 
     private EV_User_CustomerDao customerDao;
 

@@ -868,32 +868,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        Intent mIntent = null;
+//        Intent mIntent = null;
 
-        if (fcmmessage_qty > 1) {
-            Bundle bundle = new Bundle();
-            bundle.putString("action", "NOTIFICATION");
-            mIntent = new Intent(getBaseContext(), Act018_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mIntent.putExtras(bundle);
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putString("action", "NOTIFICATION");
-            bundle.putLong("fcmmessage_code", fcmmessage_code);
-            mIntent = new Intent(getBaseContext(), Act019_Main.class);
-            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mIntent.putExtras(bundle);
-        }
+//        if (fcmmessage_qty > 1) {
+//            Bundle bundle = new Bundle();
+//            bundle.putString("action", "NOTIFICATION");
+//            mIntent = new Intent(getBaseContext(), Act018_Main.class);
+//            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            mIntent.putExtras(bundle);
+//        } else {
+//            Bundle bundle = new Bundle();
+//            bundle.putString("action", "NOTIFICATION");
+//            bundle.putLong("fcmmessage_code", fcmmessage_code);
+//            mIntent = new Intent(getBaseContext(), Act019_Main.class);
+//            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            mIntent.putExtras(bundle);
+//        }
         //
-        PendingIntent pi = PendingIntent.getActivity(this, 0, mIntent,
-                ToolBox_Inf.getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
-        );
+//        PendingIntent pi = PendingIntent.getActivity(this, 0, mIntent,
+//                ToolBox_Inf.getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
+//        );
         //
         NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(),nm);
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(false);
         builder.setContentTitle(title);
-        builder.setContentIntent(pi);
+//        builder.setContentIntent(pi);
         if (fcmmessage_qty > 1) {
             builder.setContentText("(" + String.valueOf(fcmmessage_qty) + ") " + context.getResources().getString(R.string.message_received_notification_sync));
         } else {

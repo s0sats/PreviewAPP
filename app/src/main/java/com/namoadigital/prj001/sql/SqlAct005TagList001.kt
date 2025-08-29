@@ -97,8 +97,8 @@ class SqlAct005TagList001(private val context: Context,
                 t.tag_operational_code, 
                 max(t.tag_operational_desc) tag_operational_desc,
                 count(t.tag_operational_code) qty,
-                count(case when t.main_user = $userCode then 1 else null end) - count(case when t.main_user = $userCode and t.ticket_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' then 1 else null end)  qty_main_user,
-                count(case when t.user_focus = 1 and (t.main_user != $userCode or t.main_user is null) then 1 else null end) - count(case when t.main_user = $userCode and (t.ticket_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' or t.step_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  then 1 else null end) qty_group,
+                count(case when t.main_user = $userCode then 1 else null end) - count(case when t.main_user = $userCode and (t.ticket_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' or t.step_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}') then 1 else null end)  qty_main_user,
+                count(case when t.user_focus = 1 and (t.main_user != $userCode or t.main_user is null) then 1 else null end) - count(case when t.user_focus = 1 and (t.main_user != $userCode or t.main_user is null) and (t.ticket_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' or t.step_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  then 1 else null end) qty_group,
                 count(case when t.user_focus = 0 then 1 else null end) + count(case when t.user_focus = 1 and (t.ticket_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' or t.step_status = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  then 1 else null end)  qty_other,
                 max(case when ifnull(t.has_in_processing,0) > 0
                             then 0
@@ -301,9 +301,9 @@ class SqlAct005TagList001(private val context: Context,
                 select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                        max(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                        count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) qty, 
-                       count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) qty_main_user, 
+                       count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) - count(gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}') qty_main_user, 
                        0 qty_group,
-                       0 qty_other,
+                       gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' qty_other,
                 max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                       then 1
                       else 0

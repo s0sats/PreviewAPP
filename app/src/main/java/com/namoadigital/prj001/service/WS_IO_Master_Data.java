@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Env;
 import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Master_Data;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -24,7 +25,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Master_Data extends IntentService {
+public class WS_IO_Master_Data extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

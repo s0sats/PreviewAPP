@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TNForm_PDF_Env;
 import com.namoadigital.prj001.model.TNForm_PDF_Rec;
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,7 +25,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_Generate_NForm_PDF extends IntentService {
+public class WS_Generate_NForm_PDF extends BaseWsIntentService {
     public static final String NFORM_PK_KEY = "NFORM_PK_KEY";
     public static final String TYPE_KEY = "TYPE_KEY";
 

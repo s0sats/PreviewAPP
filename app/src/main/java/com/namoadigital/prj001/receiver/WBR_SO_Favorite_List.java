@@ -2,7 +2,9 @@ package com.namoadigital.prj001.receiver;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
@@ -20,7 +22,11 @@ public class WBR_SO_Favorite_List extends WakefulBroadcastReceiver {
             mService.putExtras(new Bundle());
         }
 
-        startWakefulService(context, mService);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mService);
+        } else {
+            startWakefulService(context, mService);
+        }
     }
 
 

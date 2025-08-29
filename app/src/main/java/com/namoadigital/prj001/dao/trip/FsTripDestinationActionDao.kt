@@ -168,7 +168,7 @@ class FsTripDestinationActionDao(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsTripDestinationAction = toFsTripDestinationAction.map(cursor)
             }
@@ -190,7 +190,7 @@ class FsTripDestinationActionDao(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -209,7 +209,7 @@ class FsTripDestinationActionDao(
         var items = mutableListOf<FsTripDestinationAction>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FsTripDestinationAction = toFsTripDestinationAction.map(cursor)
                 items.add(uAux)
@@ -229,7 +229,7 @@ class FsTripDestinationActionDao(
         val items: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

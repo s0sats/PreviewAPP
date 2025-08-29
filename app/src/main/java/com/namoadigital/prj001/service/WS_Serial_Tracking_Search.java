@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -13,6 +13,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSerial_Tracking_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Tracking_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by d.luche on 06/09/2017.
  */
 
-public class WS_Serial_Tracking_Search extends IntentService {
+public class WS_Serial_Tracking_Search extends BaseWsIntentService {
     public static final String TRACKING_RESULT_KEY = "TRACKING_RESULT_KEY";
     public static final String NOT_EXISTS = "NOT_EXISTS";
     public static final String EXISTS = "EXISTS";

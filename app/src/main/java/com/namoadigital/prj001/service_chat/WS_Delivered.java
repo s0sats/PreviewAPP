@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Post_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_021;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.util.Constant;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_Delivered extends IntentService {
+public class WS_Delivered extends BaseWsIntentService {
 
     public WS_Delivered() {
         super("WS_Delivered");

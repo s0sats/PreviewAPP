@@ -107,7 +107,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             removeDeprecatedPreferences();
             //
             recoverIntentsInfo();
-            mPresenter.checkEnvironmentDevelopment();
+
             mPresenter.checkLogin();
         }
     }
@@ -165,7 +165,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
 //        mPresenter.checkLogin();
         //
-
+        mPresenter.checkEnvironmentDevelopment();
+        ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_BOOT_COMPLET_ID);
     }
 
     @Override
@@ -237,22 +238,23 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         selectEnvironmentDev.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                if(view != null){
+                    TextView textView = view.findViewById(R.id.text1);
+                    SpannableString item = (SpannableString) adapterView.getSelectedItem();
 
-                TextView textView = view.findViewById(R.id.text1);
-                SpannableString item = (SpannableString) adapterView.getSelectedItem();
-
-                SpannableString spannableString = new SpannableString(item);
-                int textColor = Color.BLACK;
+                    SpannableString spannableString = new SpannableString(item);
+                    int textColor = Color.BLACK;
 
 
-                if (pos == 0) {
-                    textColor = Color.RED;
-                } else if (pos == 1) {
-                    textColor = Color.parseColor("#ccaf14");
+                    if (pos == 0) {
+                        textColor = Color.RED;
+                    } else if (pos == 1) {
+                        textColor = Color.parseColor("#ccaf14");
+                    }
+
+                    spannableString.setSpan(new ForegroundColorSpan(textColor), 0, item.length(), 0);
+                    textView.setText(spannableString);
                 }
-
-                spannableString.setSpan(new ForegroundColorSpan(textColor), 0, item.length(), 0);
-                textView.setText(spannableString);
             }
 
             @Override

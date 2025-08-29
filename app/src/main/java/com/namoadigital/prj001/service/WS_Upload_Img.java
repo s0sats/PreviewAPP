@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.service;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.TUploadImg_Env;
 import com.namoadigital.prj001.model.TUploadImg_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.util.Constant;
@@ -28,7 +28,7 @@ import java.util.Calendar;
  * Created by neomatrix on 20/01/17.
  */
 
-public class WS_Upload_Img extends IntentService {
+public class WS_Upload_Img extends BaseWsIntentService {
 
     private long customer_code = -1L;
 

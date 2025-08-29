@@ -18,6 +18,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_N
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.HIGH_IMPORTANCE_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
@@ -1884,6 +1885,22 @@ public class ToolBox_Inf {
             nm.notify(id, builder.getNotification());
         }
     }
+
+    @NonNull
+    public static NotificationCompat.Builder getHighImportanceNotificationBuilder(Context context, NotificationManager notificationManager) {
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(HIGH_IMPORTANCE_CHANNEL_ID);
+            if (notificationChannel == null) {
+                ToolBox_Inf.createChannelNotification(context, notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_HIGH, HIGH_IMPORTANCE_CHANNEL_ID);
+            }
+            builder = new NotificationCompat.Builder(context, HIGH_IMPORTANCE_CHANNEL_ID);
+        } else {
+            builder = new NotificationCompat.Builder(context);
+        }
+        return builder;
+    }
+
 
     @NonNull
     public static NotificationCompat.Builder getNotificationBuilder(Context context, NotificationManager notificationManager) {

@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,6 +19,7 @@ import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.CH_Message_Sql_006;
 import com.namoadigital.prj001.sql.CH_Message_Sql_007;
 import com.namoadigital.prj001.sql.CH_Room_Sql_002;
@@ -59,7 +59,7 @@ import java.util.ArrayList;
  * Created by neomatrix on 28/10/16.
  */
 
-public class WS_DownLoad_Picture extends IntentService {
+public class WS_DownLoad_Picture extends BaseWsIntentService {
 
     private long customer_code;
 

@@ -286,7 +286,7 @@ class TkTicketOriginNcDao(
         var tkTicketOriginNc: TkTicketOriginNc? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 tkTicketOriginNc = toTkTicketOriginNcMapper.map(cursor)
             }
@@ -304,7 +304,7 @@ class TkTicketOriginNcDao(
         var hmAux: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -321,7 +321,7 @@ class TkTicketOriginNcDao(
         val tkTicketOriginNcs = mutableListOf<TkTicketOriginNc>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toTkTicketOriginNcMapper.map(cursor)
                 tkTicketOriginNcs.add(uAux)
@@ -340,7 +340,7 @@ class TkTicketOriginNcDao(
         val tkTicketOriginNcs: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 tkTicketOriginNcs.add(CursorToHMAuxMapper.mapN(cursor))
             }

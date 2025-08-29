@@ -3,7 +3,9 @@ package com.namoadigital.prj001.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
+import com.namoadigital.prj001.extensions.ContextKt;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -86,11 +88,18 @@ public class WBR_Connections_Change extends BroadcastReceiver {
      * @param context
      */
     private void activateLocationService(Context context) {
-        if (!SV_LocationTracker.status
-        && ToolBox_Inf.isUsrAppLogged(context)) {
+        if (ToolBox_Inf.isUsrAppLogged(context)
+                && !SV_LocationTracker.status
+                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                        || ContextKt.isAppInForeground(context)
+                    )
+        ) {
             int pendencies = ToolBox_Inf.getLocationPendencies(context);
-            if(pendencies>0) {
-                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+            if((!SV_LocationTracker.status && pendencies > 0)) {
+                ToolBox_Inf.call_Location_Tracker_On_Background(
+                        context,
+                        SV_LocationTracker.LOCATION_BACKGROUND
+                );
             }
         }
     }

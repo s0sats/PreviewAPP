@@ -18,6 +18,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SCHEDULED_PROFILE_CHECK = "SCHEDULED_PROFILE_CHECK";
     public static final String GENERIC_CHANNEL_ID = "GENERIC_CHANNEL_ID";
     public static final String PENDENCY_CHANNEL_ID = "PENDENCY_CHANNEL_ID";
+    public static final String HIGH_IMPORTANCE_CHANNEL_ID = "HIGH_IMPORTANCE_CHANNEL_ID";
     public static final String DEVICE_ITEM_PK = "DEVICE_ITEM_PK";
     public static final String DEVICE_ITEM_TAB_INDEX = "DEVICE_ITEM_TAB_INDEX";
     public static final String DEVICE_ITEM_LIST_INDEX = "DEVICE_ITEM_LIST_INDEX";
@@ -513,11 +514,13 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_CHAT_ROOM = 669;
     public static final int NOTIFICATION_CHAT_FOREGROUND_SERVICE = 670;
     public static final int NOTIFICATION_SYNC_ID = 671;
-    public static final int NOTIFICATION_SO_ID = 676;
     public static final int NOTIFICATION_TICKET_DOWNLOAD = 672;
     public static final int NOTIFICATION_CUSTOMER_SITE_LICENSE = 673;
     public static final int NOTIFICATION_CUSTOMER = 674;
     public static final int NOTIFICATION_C_ROOM = 675;
+    public static final int NOTIFICATION_SO_ID = 676;
+    public static final int NOTIFICATION_WS_ID = 677;
+    public static final int NOTIFICATION_BOOT_COMPLET_ID = 678;
     /**
      * Alarms
      */

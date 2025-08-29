@@ -226,7 +226,7 @@ class GeOsDeviceItemHistDao(
         var item: GeOsDeviceItemHist? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = toGeOsDeviceItemHistMapper.map(cursor)
             }
@@ -244,7 +244,7 @@ class GeOsDeviceItemHistDao(
         var item: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -261,7 +261,7 @@ class GeOsDeviceItemHistDao(
         val items = mutableListOf<GeOsDeviceItemHist>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toGeOsDeviceItemHistMapper.map(cursor)
                 items.add(uAux)
@@ -279,7 +279,7 @@ class GeOsDeviceItemHistDao(
         val items = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Obj_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_WS_Return;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -28,7 +29,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Ticket_Checkin extends IntentService {
+public class WS_TK_Ticket_Checkin extends BaseWsIntentService {
 
     public static final String WS_PARAM_TICKET_CHECKIN_LIST = "WS_TICKET_CHECKIN_LIST";
     public static final String ERROR_MSG_TICKET_NOT_FOUND = "TICKET_NOT_FOUND";

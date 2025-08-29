@@ -1,17 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;

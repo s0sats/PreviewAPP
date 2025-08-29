@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Add_User_Into_Room_Env;
 import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -26,7 +27,7 @@ import java.util.List;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_Add_User_Room_AP extends IntentService {
+public class WS_Add_User_Room_AP extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

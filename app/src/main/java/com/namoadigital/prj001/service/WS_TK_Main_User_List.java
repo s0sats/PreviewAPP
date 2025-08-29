@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.T_TK_Main_User_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Main_User_List_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Main_User_List_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Main_User_List extends IntentService {
+public class WS_TK_Main_User_List extends BaseWsIntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";

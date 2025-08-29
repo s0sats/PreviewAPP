@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ConstantBase
@@ -12,12 +9,12 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.SM_SODao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.SoStatusChangeEnv
+import com.namoadigital.prj001.model.SoStatusChangeRec
 import com.namoadigital.prj001.receiver.WBR_So_Status_Change
 import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.SM_SO_Sql_001
 import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException

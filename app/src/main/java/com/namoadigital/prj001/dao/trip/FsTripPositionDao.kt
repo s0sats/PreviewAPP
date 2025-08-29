@@ -225,7 +225,7 @@ class FsTripPositionDao @Inject constructor(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsTripPosition = toFsTripPosition.map(cursor)
             }
@@ -247,7 +247,7 @@ class FsTripPositionDao @Inject constructor(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -266,7 +266,7 @@ class FsTripPositionDao @Inject constructor(
         var items = mutableListOf<FsTripPosition>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FsTripPosition = toFsTripPosition.map(cursor)
                 items.add(uAux)
@@ -286,7 +286,7 @@ class FsTripPositionDao @Inject constructor(
         val items: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

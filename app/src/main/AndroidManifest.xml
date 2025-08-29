@@ -717,18 +717,19 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <receiver
             android:name=".receiver.WBR_Connections_Change"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receiver.WBR_BootCompleted"
-            android:exported="false">
+            android:enabled="true"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
-                <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
 

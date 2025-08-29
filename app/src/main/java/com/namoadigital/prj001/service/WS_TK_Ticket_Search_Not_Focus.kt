@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
 import android.content.Intent
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search_Not_Focus
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_011
@@ -21,7 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
-public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_Not_Focus") {
+public class WS_TK_Ticket_Search_Not_Focus : BaseWsIntentService("WS_TK_Ticket_Search_Not_Focus") {
 
 
     val RETURNED_TICKET_QTY = "RETURNED_TICKET_QTY"

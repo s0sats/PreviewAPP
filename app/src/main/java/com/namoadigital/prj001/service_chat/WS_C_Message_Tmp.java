@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
 import com.namoadigital.prj001.model.Chat_S_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  * Created by d.luche on 01/12/2017.
  */
 
-public class WS_C_Message_Tmp extends IntentService {
+public class WS_C_Message_Tmp extends BaseWsIntentService {
     private CH_MessageDao messageDao;
 
     public WS_C_Message_Tmp() {

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_008;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_013;
 import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_005;
@@ -40,7 +41,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Outbound_Item_Save extends IntentService {
+public class WS_IO_Outbound_Item_Save extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;

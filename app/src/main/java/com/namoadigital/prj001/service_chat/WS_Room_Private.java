@@ -16,6 +16,7 @@ import com.namoadigital.prj001.model.Chat_RoomPrivate_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_Room_Private extends IntentService {
+public class WS_Room_Private extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -26,7 +27,7 @@ import java.util.List;
  * Created by d.luche on 27/06/2017.
  */
 
-public class WS_SO_Search extends IntentService {
+public class WS_SO_Search extends BaseWsIntentService {
 
     public static final String SO_PREFIX_CODE = "so_prefix_code";
     public static final String SO_LIST_QTY = "so_list_qty";

@@ -1,14 +1,15 @@
 package com.namoadigital.prj001.service;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gson.Gson;
 import com.namoadigital.prj001.model.TUploadImg_Env;
 import com.namoadigital.prj001.model.TUploadImg_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Other_User_Img;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -20,7 +21,7 @@ import java.util.Calendar;
  * Created by d.luche 10/05/019.
  */
 
-public class WS_Upload_Other_User_Img extends IntentService {
+public class WS_Upload_Other_User_Img extends BaseWsIntentService {
 
 
     public WS_Upload_Other_User_Img() {

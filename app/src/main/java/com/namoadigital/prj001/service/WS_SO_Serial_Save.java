@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -25,6 +25,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Env;
 import com.namoadigital.prj001.model.TSO_Serial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Serial_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
@@ -45,7 +46,7 @@ import java.util.List;
  * Created by d.luche on 27/06/2017.
  */
 
-public class WS_SO_Serial_Save extends IntentService {
+public class WS_SO_Serial_Save extends BaseWsIntentService {
 
     public static final String SERIAL_SAVE = "serial_save";
     public static final String SO_ACTION_EXECUTION = "EXECUTION";

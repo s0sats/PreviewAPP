@@ -117,10 +117,13 @@ class SqlAct083_002(
 
     private fun getStatusFilter() {
         statusFilter = when (userFocus) {
-            1 -> """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
+            1 -> """    and      ( t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')
+                                 and ts.${TK_Ticket_StepDao.STEP_STATUS} != '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                                 )
                             and ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
                      """
             else -> """    and (t.${TK_TicketDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                                    or ts.${TK_Ticket_StepDao.STEP_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                                     OR (
                                         ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
                                         and t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
@@ -159,7 +162,8 @@ class SqlAct083_002(
                                     ts.${TK_Ticket_StepDao.STEP_DESC},
                                     IFNULL($FORECAST_START_FOCUS,$FORECAST_START_N_FOCUS) ${TK_Ticket_StepDao.FORECAST_START},
                                     IFNULL($FORECAST_END_FOCUS,$FORECAST_END_N_FOCUS) ${TK_Ticket_StepDao.FORECAST_END},
-                                    $INNER_UPDATE_REQUIRED
+                                    $INNER_UPDATE_REQUIRED,
+                                    ts.${TK_Ticket_StepDao.STEP_STATUS}
                                FROM 
                                     (SELECT
                                            s.${TK_Ticket_StepDao.CUSTOMER_CODE},
@@ -203,7 +207,8 @@ class SqlAct083_002(
                                            ifnull(
                                                     max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
                                                         c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
-                                                    ),0) $INNER_UPDATE_REQUIRED  
+                                                    ),0) $INNER_UPDATE_REQUIRED,
+                                          s.${TK_Ticket_StepDao.STEP_STATUS}
                                          FROM
                                            ${TK_Ticket_StepDao.TABLE} s,
                                            ${TK_Ticket_CtrlDao.TABLE} c

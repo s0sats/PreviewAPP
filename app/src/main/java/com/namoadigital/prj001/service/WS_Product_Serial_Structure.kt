@@ -28,7 +28,7 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class WS_Product_Serial_Structure :
-    BaseWsIntentService("WS_Product_Serial_Structure", IntentServiceMode.UPLOAD_DATA()) {
+    BaseWsIntentService("WS_Product_Serial_Structure", IntentServiceMode.DOWNLOAD_DATA()) {
 
     private val hmAux_Trans by lazy {
 

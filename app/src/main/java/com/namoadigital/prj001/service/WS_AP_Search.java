@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -16,6 +16,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSearch_Ap_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by d.luche on 23/02/2018.
  */
 
-public class WS_AP_Search extends IntentService {
+public class WS_AP_Search extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

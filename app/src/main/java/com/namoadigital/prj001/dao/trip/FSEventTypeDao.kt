@@ -225,7 +225,7 @@ class FSEventTypeDao(
         val fsTripEventTypes = mutableListOf<FSEventType>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toCursorToFSTripEventTypeMapperMapper.map(cursor)
                 fsTripEventTypes.add(uAux)
@@ -243,7 +243,7 @@ class FSEventTypeDao(
         val fsEventTypes: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsEventTypes.add(CursorToHMAuxMapper.mapN(cursor))
             }

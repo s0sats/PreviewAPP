@@ -248,7 +248,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         var mdProductSerialTpDevice: MD_Product_Serial_Tp_Device? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdProductSerialTpDevice = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
                 mdProductSerialTpDevice?.let {
@@ -269,7 +269,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         var mdProductSerialTpDevice: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdProductSerialTpDevice = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -286,7 +286,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         val mdProductSerialTpDevices = mutableListOf<MD_Product_Serial_Tp_Device>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
                 uAux?.let {
@@ -307,7 +307,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         val mdProductSerialTpDevices = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdProductSerialTpDevices.add(CursorToHMAuxMapper.mapN(cursor))
             }

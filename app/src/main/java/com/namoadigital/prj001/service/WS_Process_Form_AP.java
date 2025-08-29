@@ -1,12 +1,10 @@
 package com.namoadigital.prj001.service;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -17,6 +15,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.model.Chat_Message_Obj_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -31,7 +30,7 @@ import java.util.Calendar;
  * Created by neomatrix on 20/01/17.
  */
 
-public class WS_Process_Form_AP extends IntentService {
+public class WS_Process_Form_AP extends BaseWsIntentService {
 
     private long customer_code = -1L;
     private int safeCounter = 0;

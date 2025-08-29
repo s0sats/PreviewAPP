@@ -168,7 +168,7 @@ class SoPackExpressServicesLocalDao(
         var soPackExpressServicesLocal: SoPackExpressServicesLocal? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 soPackExpressServicesLocal = toSoPackExpressServicesLocalMapper.map(cursor)
             }
@@ -186,7 +186,7 @@ class SoPackExpressServicesLocalDao(
         var hmAux: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -203,7 +203,7 @@ class SoPackExpressServicesLocalDao(
         val tkTicketTypeProducts = mutableListOf<SoPackExpressServicesLocal>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toSoPackExpressServicesLocalMapper.map(cursor)
                 tkTicketTypeProducts.add(uAux)
@@ -221,7 +221,7 @@ class SoPackExpressServicesLocalDao(
         val tkTicketTypeProducts: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 tkTicketTypeProducts.add(CursorToHMAuxMapper.mapN(cursor))
             }

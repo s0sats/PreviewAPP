@@ -5391,7 +5391,7 @@ public class Act011_Main extends Base_Activity
         if (!mandatoryUnansweredFields.isEmpty()) {
             CustomFF firstError = mandatoryUnansweredFields.get(0);
 
-            pager.setCurrentItem(firstError.getmPage() - 1, true);
+            pager.setCurrentItem(isFormOs ? firstError.getmPage() : firstError.getmPage() - 1, true);
             scrollToLastCustomFFClicked(firstError);
         }
     }

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.IO_Move_Return;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Move_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_003;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_004;
@@ -30,7 +31,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Move_Save extends IntentService {
+public class WS_IO_Move_Save extends BaseWsIntentService {
     public static final String MOVE_EMPTY_LIST = "MOVE_EMPTY_LIST";
     public static final String MOVE_RETURN_LIST = "MOVE_RETURN_LIST";
     private HMAux hmAux_Trans = new HMAux();

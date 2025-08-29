@@ -1,16 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_CUSTOMER_SITE_LICENSE;
-
-import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

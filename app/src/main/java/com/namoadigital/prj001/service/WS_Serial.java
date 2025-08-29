@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,6 +10,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSerial_Env;
 import com.namoadigital.prj001.model.TSerial_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -22,7 +22,7 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 03/02/2017.
  */
 
-public class WS_Serial extends IntentService {
+public class WS_Serial extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

@@ -185,7 +185,7 @@ class MdDeviceTpDao(
         var mdDeviceTp: MdDeviceTp? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdDeviceTp = toMdDeviceTpMapper.map(cursor)
             }
@@ -203,7 +203,7 @@ class MdDeviceTpDao(
         var mdDeviceTp: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdDeviceTp = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -220,7 +220,7 @@ class MdDeviceTpDao(
         val mdDeviceTps = mutableListOf<MdDeviceTp>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMdDeviceTpMapper.map(cursor)
                 mdDeviceTps.add(uAux)
@@ -238,7 +238,7 @@ class MdDeviceTpDao(
         val mdDeviceTps = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdDeviceTps.add(CursorToHMAuxMapper.mapN(cursor))
             }

@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
 import android.content.Intent
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -9,6 +8,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Env
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Rec
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -17,7 +17,7 @@ import java.util.*
 const val SO_PRODUCT_CODE = "SO_PRODUCT_CODE"
 const val SO_SERIAL_CODE = "SO_SERIAL_CODE"
 
-class WS_Product_Serial_Backup : IntentService("WS_Product_Serial_Backup") {
+class WS_Product_Serial_Backup : BaseWsIntentService("WS_Product_Serial_Backup") {
 
     private val hmAux_Trans by lazy {
 

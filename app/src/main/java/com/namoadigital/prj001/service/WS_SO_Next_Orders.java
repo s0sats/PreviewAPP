@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,6 +13,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TSO_Next_Orders_Env;
 import com.namoadigital.prj001.model.TSO_Next_Orders_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Next_Orders;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -21,7 +21,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_SO_Next_Orders extends IntentService {
+public class WS_SO_Next_Orders extends BaseWsIntentService {
 
     public static final String SO_NEXT_SERVICES =  "SO_NEXT_SERVICES";
     public static final String SO_NEXT_STATUS_LIST_FILTER =  "SO_NEXT_STATUS_LIST_FILTER";

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.IO_Outbound_Save_Return;
 import com.namoadigital.prj001.model.T_IO_Outbound_Header_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Header_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Header_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -26,7 +27,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Outbound_Header_Save extends IntentService {
+public class WS_IO_Outbound_Header_Save extends BaseWsIntentService {
 
 
     private HMAux hmAux_Trans = new HMAux();

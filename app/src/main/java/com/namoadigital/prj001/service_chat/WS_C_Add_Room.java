@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
@@ -35,7 +36,7 @@ import java.util.UUID;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_C_Add_Room extends IntentService {
+public class WS_C_Add_Room extends BaseWsIntentService {
 
     public WS_C_Add_Room() {
         super("WS_C_Add_Room");

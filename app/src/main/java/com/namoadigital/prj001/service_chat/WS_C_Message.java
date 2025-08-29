@@ -25,6 +25,7 @@ import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_Delivered;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
@@ -47,7 +48,7 @@ import java.util.UUID;
  * Created by d.luche on 01/12/2017.
  */
 
-public class WS_C_Message extends IntentService {
+public class WS_C_Message extends BaseWsIntentService {
 
     //ANALISAR NECESSIDADE DE MUDANÇA PARA  CRIARA OBJ JSONE  AVALISA SE TYPE = IMAGE
     private final String CONTAINS_IMAGE_MSG = "\"type\":\"IMAGE\"";

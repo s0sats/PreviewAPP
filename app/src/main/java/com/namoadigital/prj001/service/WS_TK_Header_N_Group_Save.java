@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -29,6 +29,7 @@ import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
 import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.util.Constant;
@@ -39,7 +40,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Header_N_Group_Save extends IntentService {
+public class WS_TK_Header_N_Group_Save extends BaseWsIntentService {
 
     public static final String TIME_ACTION = "TIME_ACTION";
     public static final String MOVE_OTHER_DATE = "MOVE_OTHER_DATE";

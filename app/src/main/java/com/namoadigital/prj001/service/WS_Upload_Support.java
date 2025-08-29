@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import com.namoadigital.prj001.model.NamoaDeviceInfo;
 import com.namoadigital.prj001.model.TUpload_Support_Env;
 import com.namoadigital.prj001.model.TUpload_Support_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by d.luche on 09/05/2017.
  */
 
-public class WS_Upload_Support extends IntentService {
+public class WS_Upload_Support extends BaseWsIntentService {
 
 
 

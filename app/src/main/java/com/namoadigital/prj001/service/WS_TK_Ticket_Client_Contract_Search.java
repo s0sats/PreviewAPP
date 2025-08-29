@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Client_Contract_Search_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Client_Contract_Search_Param;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -29,7 +30,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Ticket_Client_Contract_Search extends IntentService {
+public class WS_TK_Ticket_Client_Contract_Search extends BaseWsIntentService {
     public static final String RETURNED_TICKET_QTY = "RETURNED_TICKET_QTY";
 
     private HMAux hmAux_Trans = new HMAux();

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.Main_Header_Env;
 import com.namoadigital.prj001.model.TCancelNFC_Rec;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +26,7 @@ import java.util.List;
  * Created by d.luche on 09/05/2017.
  */
 
-public class WS_Cancel_NFC extends IntentService {
+public class WS_Cancel_NFC extends BaseWsIntentService {
 
     private EV_UserDao userDao;
     private HMAux hmAux_Trans = new HMAux();

@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.Chat_C_Error;
 import com.namoadigital.prj001.model.TRoom_AP_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,7 +26,7 @@ import java.util.List;
  * Created by d.luche on 07/03/2018.
  */
 
-public class WS_Room_AP extends IntentService {
+public class WS_Room_AP extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.TSO_Create_Room_Env;
 import com.namoadigital.prj001.model.TSO_Create_Room_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.SM_SO_Sql_024;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -24,7 +25,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_SO_Create_Room extends IntentService {
+public class WS_SO_Create_Room extends BaseWsIntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";

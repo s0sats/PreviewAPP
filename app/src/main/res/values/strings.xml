@@ -206,6 +206,8 @@
     <string name="lib_dialog_video_delete_ttl">Erase video recorded</string>
     <string name="lib_dialog_video_delete_msg">Do you want to delete the recorded video?</string>
     <string name="lib_recording_video_lbl">Record video</string>
+    <string name="location_pendency_ttl">Action Required</string>
+    <string name="location_pendency_msg">Access the app to restart location services</string>
 
 
 </resources>

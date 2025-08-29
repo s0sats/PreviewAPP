@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.Serial_Log_Obj;
 import com.namoadigital.prj001.model.TSerial_Log_Env;
 import com.namoadigital.prj001.model.TSerial_Log_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Log;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -24,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_Serial_Log extends IntentService {
+public class WS_Serial_Log extends BaseWsIntentService {
 
     public static final String SERIAL_LOG_FILE =  "SERIAL_LOG_FILE";
 

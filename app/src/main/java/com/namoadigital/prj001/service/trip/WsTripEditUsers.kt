@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.namoadigital.prj001.core.DB_TRANSACTION_ERROR_LBL
 import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.success
-import com.namoadigital.prj001.core.NETWORK_GENERIC_ERROR
 import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse

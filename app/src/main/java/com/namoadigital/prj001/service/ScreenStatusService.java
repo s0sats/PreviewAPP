@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import androidx.annotation.Nullable;
-
 /**
  * Created by neomatrix on 1/16/18.
  */

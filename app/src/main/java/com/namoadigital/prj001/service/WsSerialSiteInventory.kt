@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
 import android.content.Intent
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
@@ -9,11 +8,12 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.SerialSiteEnv
 import com.namoadigital.prj001.model.SiteSerialInvRec
 import com.namoadigital.prj001.receiver.WBR_Serial_Site_Inv
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
+class WsSerialSiteInventory : BaseWsIntentService("WS_Serial_Site_Inv") {
 
 
     private var hmAux_Trans = HMAux()

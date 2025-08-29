@@ -1,15 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
-
 /**
  * Created by neomatrix on 1/16/18.
  */

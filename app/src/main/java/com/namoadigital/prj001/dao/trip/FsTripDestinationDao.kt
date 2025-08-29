@@ -251,7 +251,7 @@ class FsTripDestinationDao @Inject constructor(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 FsTripDestination = toFsTripDestination.map(cursor)
             }
@@ -273,7 +273,7 @@ class FsTripDestinationDao @Inject constructor(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -292,7 +292,7 @@ class FsTripDestinationDao @Inject constructor(
         var items = mutableListOf<FsTripDestination>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FsTripDestination = toFsTripDestination.map(cursor)
                 items.add(uAux)
@@ -311,7 +311,7 @@ class FsTripDestinationDao @Inject constructor(
         var items = mutableListOf<FsTripDestination>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FsTripDestination = toFsTripDestination.map(cursor)
                 items.add(uAux)
@@ -332,7 +332,7 @@ class FsTripDestinationDao @Inject constructor(
         val items: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

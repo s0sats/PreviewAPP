@@ -1,13 +1,14 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -19,7 +20,7 @@ import java.io.FilenameFilter;
  * Created by DANIEL.LUCHE on 07/03/2017.
  */
 
-public class WS_DownLoad_Customer_Logo extends IntentService {
+public class WS_DownLoad_Customer_Logo extends BaseWsIntentService {
 
     private long customer_code;
     private String user_code;

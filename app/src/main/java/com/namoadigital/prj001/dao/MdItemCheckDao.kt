@@ -189,7 +189,7 @@ class MdItemCheckDao (
         var item: MdItemCheck? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = toMdItemCheckMapper.map(cursor)
             }
@@ -207,7 +207,7 @@ class MdItemCheckDao (
         var item: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -224,7 +224,7 @@ class MdItemCheckDao (
         val items = mutableListOf<MdItemCheck>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMdItemCheckMapper.map(cursor)
                 items.add(uAux)
@@ -242,7 +242,7 @@ class MdItemCheckDao (
         val items = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

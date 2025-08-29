@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_BriefDao;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Env;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Get_Workgroup_List;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Get_Workgroup_List extends IntentService {
+public class WS_TK_Get_Workgroup_List extends BaseWsIntentService {
     public static final String TICKET_WORKGROUP_LIST_FILE =  "TICKET_WORKGROUP_LIST_FILE";
 
     private HMAux hmAux_Trans = new HMAux();

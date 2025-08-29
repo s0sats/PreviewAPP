@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service.location.usecase
 
-import android.util.Log
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.trip.data.position.TripPositionRepository
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref

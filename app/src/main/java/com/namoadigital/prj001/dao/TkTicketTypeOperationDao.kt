@@ -219,7 +219,7 @@ class TkTicketTypeOperationDao(
         val tkTicketTypeProducts = mutableListOf<TkTicketTypeOperation>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toTkTicketTypeOperationMapper.map(cursor)
                 tkTicketTypeProducts.add(uAux)
@@ -237,7 +237,7 @@ class TkTicketTypeOperationDao(
         val tkTicketTypeProducts: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 tkTicketTypeProducts.add(CursorToHMAuxMapper.mapN(cursor))
             }

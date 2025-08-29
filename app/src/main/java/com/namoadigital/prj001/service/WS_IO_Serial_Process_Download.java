@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -15,8 +15,17 @@ import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.IO_Inbound_Item;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Outbound;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Env;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Move;
+import com.namoadigital.prj001.model.T_IO_Serial_Process_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Serial_Process_Download;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +34,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Serial_Process_Download extends IntentService {
+public class WS_IO_Serial_Process_Download extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;

@@ -270,7 +270,7 @@ class TkTicketCacheDao(
         val tkTicketCaches = mutableListOf<TkTicketCache>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                val uAux = toTkTicketCacheMapper.map(cursor)
                 tkTicketCaches.add(uAux)
@@ -288,7 +288,7 @@ class TkTicketCacheDao(
         val tkTicketCaches: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 tkTicketCaches.add(CursorToHMAuxMapper.mapN(cursor))
             }

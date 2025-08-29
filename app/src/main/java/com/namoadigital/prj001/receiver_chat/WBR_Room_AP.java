@@ -2,7 +2,9 @@ package com.namoadigital.prj001.receiver_chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
@@ -24,6 +26,10 @@ public class WBR_Room_AP extends WakefulBroadcastReceiver {
             mService.putExtras(new Bundle());
         }
 
-        startWakefulService(context, mService);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mService);
+        } else {
+            startWakefulService(context, mService);
+        }
     }
 }

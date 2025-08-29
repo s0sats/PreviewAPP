@@ -418,7 +418,7 @@ abstract class BaseDaoWithReturn<T>(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toCursorToModelMapper.map(cursor)
                 model.add(uAux)
@@ -436,7 +436,7 @@ abstract class BaseDaoWithReturn<T>(
         val model: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 model.add(CursorToHMAuxMapper.mapN(cursor))
             }

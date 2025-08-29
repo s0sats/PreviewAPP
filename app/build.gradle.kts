@@ -9,17 +9,17 @@ plugins {
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
+    buildToolsVersion = "35.0.0"
     namespace = "com.namoadigital.prj001"
 
 
     defaultConfig {
         applicationId = "com.namoadigital.prj001"
         minSdk = 21
-        targetSdk = 34
-        versionCode = 428
-        versionName = "6.14.4"
+        targetSdk = 35
+        versionCode = 434
+        versionName = "6.15.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled = true

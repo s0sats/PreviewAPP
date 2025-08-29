@@ -1,14 +1,11 @@
 package com.namoadigital.prj001.service.location.usecase
 
-import android.util.Log
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.core.trip.data.position.TripPositionRepository
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.TripPositionAlertType
-import com.namoadigital.prj001.model.trip.TripStatus
-import com.namoadigital.prj001.model.trip.toTripStatus
 import com.namoadigital.prj001.service.location.util.calculateDistance
 
 

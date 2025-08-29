@@ -7,9 +7,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.core.wsExceptionTreatment
-import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.extensions.getUserSessionAPP
-import com.namoadigital.prj001.model.SM_SO
 import com.namoadigital.prj001.model.next_os.SetReservedUserEnv
 import com.namoadigital.prj001.model.next_os.SetReservedUserRec
 import com.namoadigital.prj001.receiver.base.BaseWakefulBroadcastReceiver
@@ -19,7 +17,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WSSoSetReservedUser : BaseWsIntentService("WSSoSetReservedUserReceiver",BaseWsIntentService.IntentServiceMode.DOWNLOAD_DATA()){
+class WSSoSetReservedUser : BaseWsIntentService("WSSoSetReservedUserReceiver", IntentServiceMode.DOWNLOAD_DATA()){
 
     override fun onHandleIntent(intent: Intent?) {
         try {

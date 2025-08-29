@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.model.TGoogle_Env;
 import com.namoadigital.prj001.model.TGoogle_Rec;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -21,7 +22,7 @@ import java.util.Calendar;
  * Created by neomatrix on 28/10/16.
  */
 
-public class WS_Google extends IntentService {
+public class WS_Google extends BaseWsIntentService {
 
     public WS_Google() {
         super("WS_Google");

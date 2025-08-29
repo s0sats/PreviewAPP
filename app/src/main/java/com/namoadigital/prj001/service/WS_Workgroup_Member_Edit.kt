@@ -11,15 +11,15 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Env
 import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Rec
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException
-import java.util.*
 
 class WS_Workgroup_Member_Edit :
-    IntentService("WS_Workgroup_Member_Edit")
+    BaseWsIntentService("WS_Workgroup_Member_Edit")
 {
     private val mModuleCode = Constant.APP_MODULE
     private val mResourceName = "ws_generic_resource"

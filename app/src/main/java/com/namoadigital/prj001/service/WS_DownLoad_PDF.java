@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,6 +11,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_007;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * Created by neomatrix on 28/10/16.
  */
 
-public class WS_DownLoad_PDF extends IntentService {
+public class WS_DownLoad_PDF extends BaseWsIntentService {
 
     private long customer_code;
     //private boolean mAp;

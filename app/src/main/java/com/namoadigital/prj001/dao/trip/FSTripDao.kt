@@ -553,7 +553,7 @@ class FSTripDao @Inject constructor(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toCursorToFSTripEventTypeMapperMapper.map(cursor)
                 fsTrips.add(uAux)
@@ -571,7 +571,7 @@ class FSTripDao @Inject constructor(
         val fsEventTypes: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsEventTypes.add(CursorToHMAuxMapper.mapN(cursor))
             }

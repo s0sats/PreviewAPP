@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.GsonBuilder
@@ -16,6 +15,7 @@ import com.namoadigital.prj001.model.MyActionsCache
 import com.namoadigital.prj001.model.TUnfocusAndHistoricEnv
 import com.namoadigital.prj001.model.TUnfocusAndHistoricRec
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
 import com.namoadigital.prj001.sql.TKTicketCacheSql002
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001
@@ -24,7 +24,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
+class WS_UnfocusAndHistoric : BaseWsIntentService("WS_UnfocusAndHistoric") {
 
     private val mModuleCode = Constant.APP_MODULE
     private val mResourceName = "ws_generic_resource"

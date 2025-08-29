@@ -1,13 +1,12 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
+import static com.namoadigital.prj001.service.WS_SO_Save.SO_NO_EMPTY_LIST;
+import static com.namoadigital.prj001.service.WS_SO_Save.SO_RETURN_LIST;
+
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,10 +28,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.service.WS_SO_Save.SO_NO_EMPTY_LIST;
-import static com.namoadigital.prj001.service.WS_SO_Save.SO_RETURN_LIST;
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
 
 
 /**

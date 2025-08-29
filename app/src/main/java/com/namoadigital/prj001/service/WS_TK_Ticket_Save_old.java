@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_old;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_old;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
@@ -34,7 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Ticket_Save_old extends IntentService {
+public class WS_TK_Ticket_Save_old extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;

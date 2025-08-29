@@ -198,7 +198,7 @@ class SmPriorityDao (
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 smPriority = toSmPriorityMapper.map(cursor)
             }
@@ -223,7 +223,7 @@ class SmPriorityDao (
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -242,7 +242,7 @@ class SmPriorityDao (
         var smPrioritys = mutableListOf<SmPriority>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: SmPriority = toSmPriorityMapper.map(cursor)
                 smPrioritys.add(uAux)
@@ -264,7 +264,7 @@ class SmPriorityDao (
         val smPrioritys: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 smPrioritys.add(CursorToHMAuxMapper.mapN(cursor))
             }

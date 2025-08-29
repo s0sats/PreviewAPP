@@ -12,6 +12,7 @@ import com.namoadigital.prj001.dao.EV_UserDao
 import com.namoadigital.prj001.model.T_Workgroup_Member_List_Env
 import com.namoadigital.prj001.model.T_Workgroup_Member_List_Rec
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -20,7 +21,7 @@ import java.io.File
 import java.io.IOException
 
 class WS_Workgroup_Member_List :
-    IntentService("WS_Workgroup_Member_List")
+    BaseWsIntentService("WS_Workgroup_Member_List")
 {
     private val mModuleCode = Constant.APP_MODULE
     private val mResourceName = "ws_generic_resource"

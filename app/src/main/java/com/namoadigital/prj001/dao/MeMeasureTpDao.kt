@@ -216,7 +216,7 @@ class MeMeasureTpDao(
         var item: MeMeasureTp? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = toMeMeasureTpMapper.map(cursor)
             }
@@ -234,7 +234,7 @@ class MeMeasureTpDao(
         var item: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 item = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -251,7 +251,7 @@ class MeMeasureTpDao(
         val items = mutableListOf<MeMeasureTp>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMeMeasureTpMapper.map(cursor)
                 items.add(uAux)
@@ -269,7 +269,7 @@ class MeMeasureTpDao(
         val items = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

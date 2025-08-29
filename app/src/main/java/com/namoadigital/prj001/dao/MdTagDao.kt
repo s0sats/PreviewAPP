@@ -192,7 +192,7 @@ class MdTagDao(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdTag = toMdTagMapper.map(cursor)
             }
@@ -217,7 +217,7 @@ class MdTagDao(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -236,7 +236,7 @@ class MdTagDao(
         var mdTags = mutableListOf<MdTag>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: MdTag = toMdTagMapper.map(cursor)
                 mdTags.add(uAux)
@@ -258,7 +258,7 @@ class MdTagDao(
         val mdTags: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdTags.add(CursorToHMAuxMapper.mapN(cursor))
             }

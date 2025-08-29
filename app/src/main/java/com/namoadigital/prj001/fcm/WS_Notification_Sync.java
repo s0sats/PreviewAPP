@@ -3,6 +3,7 @@ package com.namoadigital.prj001.fcm;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -10,7 +11,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by neomatrix on 28/10/16.
  */
 
-public class WS_Notification_Sync extends IntentService {
+public class WS_Notification_Sync extends BaseWsIntentService {
 
     public WS_Notification_Sync() {
         super("WS_Notification_Sync");

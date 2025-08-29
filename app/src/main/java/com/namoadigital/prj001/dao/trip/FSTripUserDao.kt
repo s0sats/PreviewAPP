@@ -161,7 +161,7 @@ class FSTripUserDao(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsTripUser = toFSTripUser.map(cursor)
             }
@@ -183,7 +183,7 @@ class FSTripUserDao(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -202,7 +202,7 @@ class FSTripUserDao(
         var items = mutableListOf<FSTripUser>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FSTripUser = toFSTripUser.map(cursor)
                 items.add(uAux)
@@ -222,7 +222,7 @@ class FSTripUserDao(
         var items = mutableListOf<FSTripUser>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FSTripUser = toFSTripUser.map(cursor)
                 items.add(uAux)
@@ -243,7 +243,7 @@ class FSTripUserDao(
         val items: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

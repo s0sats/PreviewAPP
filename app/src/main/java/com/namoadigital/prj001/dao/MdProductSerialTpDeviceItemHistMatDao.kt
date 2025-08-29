@@ -226,7 +226,7 @@ class MdProductSerialTpDeviceItemHistMatDao(
         var mdProductSerialTpDeviceItemHistMat: MdProductSerialTpDeviceItemHistMat? = null
 
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             if (cursor.moveToNext()) {
                 mdProductSerialTpDeviceItemHistMat =
                     toMdProductSerialTpDeviceItemHistMatMapper.map(cursor)
@@ -290,7 +290,7 @@ class MdProductSerialTpDeviceItemHistMatDao(
 
         openDB()
         try {
-            val cursor = db.rawQuery(query, null)
+            val cursor = db.rawQuery(query!!, null)
             while (cursor.moveToNext()) {
                 block(cursor)
             }

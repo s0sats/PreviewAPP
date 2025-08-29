@@ -199,7 +199,7 @@ class MdOrderTypeDao(
         var mdOrderType: MdOrderType? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdOrderType = toMdOrderTypeMapper.map(cursor)
             }
@@ -217,7 +217,7 @@ class MdOrderTypeDao(
         var mdOrderType: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdOrderType = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -234,7 +234,7 @@ class MdOrderTypeDao(
         val mdOrderTypes = mutableListOf<MdOrderType>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMdOrderTypeMapper.map(cursor)
                 mdOrderTypes.add(uAux)
@@ -252,7 +252,7 @@ class MdOrderTypeDao(
         val mdOrderTypes = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdOrderTypes.add(CursorToHMAuxMapper.mapN(cursor))
             }

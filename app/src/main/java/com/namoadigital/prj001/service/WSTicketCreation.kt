@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ConstantBase
@@ -12,7 +9,11 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.TK_Ticket
+import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec
+import com.namoadigital.prj001.model.TicketCreationEnv
+import com.namoadigital.prj001.model.TicketCreationParams
 import com.namoadigital.prj001.receiver.WBR_Ticket_Creation
 import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant

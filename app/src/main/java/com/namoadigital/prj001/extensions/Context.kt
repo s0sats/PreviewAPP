@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.extensions
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.DialogInterface
@@ -261,5 +262,15 @@ fun Context.isPackageInstalled(packageName: String): Boolean {
         true
     } catch (e: PackageManager.NameNotFoundException) {
         false
+    }
+}
+
+fun Context.isAppInForeground(): Boolean {
+    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val runningProcesses = activityManager.runningAppProcesses ?: return false
+
+    return runningProcesses.any { processInfo ->
+        processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                processInfo.processName == packageName
     }
 }

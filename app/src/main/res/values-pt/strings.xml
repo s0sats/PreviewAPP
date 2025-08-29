@@ -204,6 +204,7 @@
     <string name="lib_dialog_video_delete_ttl">Deletar vídeo</string>
     <string name="lib_dialog_video_delete_msg">Você deseja deletar o vídeo gravado?</string>
     <string name="lib_recording_video_lbl">Gravar vídeo</string>
-
+    <string name="location_pendency_ttl">Ação obrigatória</string>
+    <string name="location_pendency_msg">Acesse o app para restaurar os serviços de localização.</string>
 
 </resources>

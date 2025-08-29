@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.service;
 
+import static com.namoadigital.prj001.util.NotificationHelper.LOCATION_NOTIFICATION_ID;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -37,8 +39,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.NotificationHelper.LOCATION_NOTIFICATION_ID;
 
 /**
  * Created by neomatrix on 11/05/17.
@@ -316,6 +316,7 @@ public class SV_LocationTracker extends Service {
             case LOCATION_NFORM_ON:
 //                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
 //                recordProcess("onStartCommand -> async_gps: " + async_gps );
+                setNotificationForForegroundService();
                 setLocationListeners(LOCATION_INTERVAL_NFORM_ON);
                 break;
             //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
@@ -411,7 +412,6 @@ public class SV_LocationTracker extends Service {
     public void onCreate() {
         loadTranslation();
         isForegroundService = false;
-//        setNotificationForForegroundService();
 //        Notification notification = ToolBox_Inf.callPendencyNotification(getApplicationContext());
 //
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -442,8 +442,8 @@ public class SV_LocationTracker extends Service {
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
         builder.setContentText(hmAux_Trans.get("gps_searching_location"));
         notification = builder.build();
-        nm.notify(LOCATION_FOREGROUND_ID, notification);
-        startForeground(LOCATION_FOREGROUND_ID, notification);
+
+        startForeground(LOCATION_NOTIFICATION_ID, notification);
     }
 
     private void setLocationListeners(long location_interval) {

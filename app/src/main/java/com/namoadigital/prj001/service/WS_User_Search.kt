@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
 import android.content.Intent
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ToolBox.sendBCStatus
@@ -8,12 +7,13 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.TUser_Search_Env
 import com.namoadigital.prj001.model.TUser_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_User_Search
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
-class WS_User_Search : IntentService("WS_User_Search") {
+class WS_User_Search : BaseWsIntentService("WS_User_Search") {
 
     private val hmAux_Trans by lazy {
 

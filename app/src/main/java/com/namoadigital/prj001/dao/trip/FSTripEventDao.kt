@@ -217,7 +217,7 @@ class FSTripEventDao(
         }
         lateinit var cursor: Cursor
         try {
-            cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 fsEvent = toFSTripEvent.map(cursor)
             }
@@ -239,7 +239,7 @@ class FSTripEventDao(
         openDB()
 
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -258,7 +258,7 @@ class FSTripEventDao(
         var items = mutableListOf<FSTripEvent>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FSTripEvent = toFSTripEvent.map(cursor)
                 items.add(uAux)
@@ -278,7 +278,7 @@ class FSTripEventDao(
         var items = mutableListOf<FSTripEvent>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux: FSTripEvent = toFSTripEvent.map(cursor)
                 items.add(uAux)
@@ -298,7 +298,7 @@ class FSTripEventDao(
 
     fun query(sQuery: String?, db: SQLiteDatabase): MutableList<FSTripEvent> {
         var items = mutableListOf<FSTripEvent>()
-        val cursor = db.rawQuery(sQuery, null)
+        val cursor = db.rawQuery(sQuery!!, null)
         while (cursor.moveToNext()) {
             val uAux: FSTripEvent = toFSTripEvent.map(cursor)
             items.add(uAux)
@@ -312,7 +312,7 @@ class FSTripEventDao(
         val items: MutableList<HMAux> = ArrayList()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 items.add(CursorToHMAuxMapper.mapN(cursor))
             }

@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Chat_Room_Info_Env;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Info;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -18,7 +19,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_Room_Info extends IntentService {
+public class WS_Room_Info extends BaseWsIntentService {
 
     public WS_Room_Info() {
         super("WS_C_All_Read");

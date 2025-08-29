@@ -1,11 +1,11 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -13,7 +13,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by neomatrix on 16/01/17.
  */
 @Deprecated
-public class WS_UpdateSoftware extends IntentService {
+public class WS_UpdateSoftware extends BaseWsIntentService {
 
     private String l_version_link;
     private String l_version_required;

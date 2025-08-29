@@ -2,7 +2,6 @@ package com.namoadigital.prj001.service.ticket
 
 import android.content.Intent
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
@@ -11,7 +10,6 @@ import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.core.wsExceptionTreatment
 import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.getUserSessionAPP
 import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.ticket.TkSerialTmpSetRequest

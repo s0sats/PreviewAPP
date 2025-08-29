@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.service
 
-import android.app.IntentService
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ConstantBase
@@ -13,7 +10,8 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.ScheduleNotExecutedEnv
+import com.namoadigital.prj001.model.ScheduleNotExecutedRec
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
 import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001

@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.TUploadImg_Chat_Env;
 import com.namoadigital.prj001.model.TUploadImg_Chat_Rec;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_File_Sql_001;
 import com.namoadigital.prj001.sql.CH_Message_Sql_024;
@@ -28,7 +29,7 @@ import java.util.Calendar;
  * Created by neomatrix on 20/01/17.
  */
 
-public class WS_Upload_Img_Chat extends IntentService {
+public class WS_Upload_Img_Chat extends BaseWsIntentService {
 
     public WS_Upload_Img_Chat() {
         super("WS_Upload_Img_Chat");

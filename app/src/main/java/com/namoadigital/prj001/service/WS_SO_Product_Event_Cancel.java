@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Product_Event_Cancel_Env;
 import com.namoadigital.prj001.model.TSO_Product_Event_Cancel_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Product_Event_Cancel;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -25,7 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_SO_Product_Event_Cancel extends IntentService {
+public class WS_SO_Product_Event_Cancel extends BaseWsIntentService {
 
     private int so_prefix;
     private int so_code;

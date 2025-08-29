@@ -187,7 +187,7 @@ class MdJustifyItemDao(
         var mdJustifyItem: MdJustifyItem? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdJustifyItem = toMdJustifyItemMapper.map(cursor)
             }
@@ -205,7 +205,7 @@ class MdJustifyItemDao(
         var mdJustifyItem: HMAux? = null
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdJustifyItem = CursorToHMAuxMapper.mapN(cursor)
             }
@@ -222,7 +222,7 @@ class MdJustifyItemDao(
         val mdJustifyItems = mutableListOf<MdJustifyItem>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 val uAux = toMdJustifyItemMapper.map(cursor)
                 mdJustifyItems.add(uAux)
@@ -240,7 +240,7 @@ class MdJustifyItemDao(
         val mdJustifyItems = mutableListOf<HMAux>()
         openDB()
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
                 mdJustifyItems.add(CursorToHMAuxMapper.mapN(cursor))
             }

@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -25,7 +26,7 @@ import java.util.Calendar;
  * Created by neomatrix on 29/03/17.
  */
 
-public class RegistrationIntentService extends IntentService {
+public class RegistrationIntentService extends BaseWsIntentService {
 
 
     public RegistrationIntentService() {

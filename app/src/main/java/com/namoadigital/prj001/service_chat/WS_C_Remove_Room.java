@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -21,7 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 30/11/2017.
  */
 
-public class WS_C_Remove_Room extends IntentService {
+public class WS_C_Remove_Room extends BaseWsIntentService {
 
     public WS_C_Remove_Room() {
         super("WS_C_Remove_Room");

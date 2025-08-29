@@ -1,9 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -16,6 +17,7 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.T_IO_Move_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Move_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Download;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -23,7 +25,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_IO_Move_Download extends IntentService {
+public class WS_IO_Move_Download extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
