@@ -27,7 +27,23 @@ class GetAvailablesDestinationsUseCase constructor(
     override suspend fun invoke(input: Unit): Flow<IResult<List<DestinationAvailables>>> {
         return flow {
             emit(loading(true))
-            emit(success(getListDestinationAvailable().sortedBy { ToolBox_Inf.dateToMilliseconds(it.minDate) }))
+            val list = getListDestinationAvailable()
+            val sorted = list.sortedWith(Comparator { a, b ->
+                val aTime = a.minDate?.let(ToolBox_Inf::dateToMilliseconds)
+                val bTime = b.minDate?.let(ToolBox_Inf::dateToMilliseconds)
+
+                // Comparar datas, nulls por último
+                val dateCompare = when {
+                    aTime == null && bTime == null -> 0
+                    aTime == null -> 1   // null vai pro final
+                    bTime == null -> -1  // null vai pro final
+                    else -> aTime.compareTo(bTime)
+                }
+
+                // Se datas forem iguais (ou ambos null), desempata por siteDesc
+                if (dateCompare != 0) dateCompare else a.siteDesc!!.compareTo(b.siteDesc!!)
+            })
+            emit(success(sorted))
         }
     }
 
@@ -42,7 +58,9 @@ class GetAvailablesDestinationsUseCase constructor(
                 todayCnt = ticketRepository.getTicketTodayCntList(destination.siteCode ?: -1),
                 lateCnt = ticketRepository.getTicketLateCntList(destination.siteCode ?: -1),
                 nextCnt = ticketRepository.getTicketNextList(destination.siteCode ?: -1),
-                serialCnt = productSerialRepository.getListSerialsBySiteCode(destination.siteCode ?: -1).size
+                serialCnt = productSerialRepository.getListSerialsBySiteCode(
+                    destination.siteCode ?: -1
+                ).size
             )
         }.let(list::addAll)
 

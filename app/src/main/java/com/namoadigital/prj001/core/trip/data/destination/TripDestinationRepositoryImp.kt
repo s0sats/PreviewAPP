@@ -77,7 +77,7 @@ class TripDestinationRepositoryImp @Inject constructor(
     }
 
     override suspend fun getListSiteAddress(): List<DestinationAvailables> {
-        return dao.getSiteAddressList()
+        return dao.getSiteAddressList(context.getUserCode().toInt())
     }
 
     override fun execServiceSelectDestination(bundle: Bundle) {

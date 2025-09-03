@@ -307,6 +307,7 @@ class FsTripDestinationDao @Inject constructor(
         closeDB()
         return items
     }
+
     private fun queryForFullUpdate(sQuery: String?): MutableList<FsTripDestination>? {
         var items = mutableListOf<FsTripDestination>()
         openDB()
@@ -873,7 +874,7 @@ class FsTripDestinationDao @Inject constructor(
         }
     }
 
-    fun getSiteAddressList(): List<DestinationAvailables> {
+    fun getSiteAddressList(userCode: Int): List<DestinationAvailables> {
 
         query_HM(
             """
@@ -904,6 +905,9 @@ class FsTripDestinationDao @Inject constructor(
                       ON s.${MD_SiteDao.SITE_CODE} = t.${TK_TicketDao.OPEN_SITE_CODE}
                       AND t.${TK_TicketDao.HAS_ADDRESS} = 0
                       AND t.${TK_TicketDao.KANBAN} = 1
+                      AND t.${TK_TicketDao.MAIN_USER} = $userCode
+                      AND t.${TK_TicketDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}', '${ConstantBaseApp.SYS_STATUS_PROCESS}')
+                      AND t.${TK_TicketDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}')
                       LEFT JOIN $TABLE d
                       ON s.${MD_SiteDao.SITE_CODE} = d.${DESTINATION_SITE_CODE}
                       AND d.${DESTINATION_STATUS} = '${DestinationStatus.ARRIVED.toDescription()}'
@@ -935,7 +939,7 @@ class FsTripDestinationDao @Inject constructor(
                     regionCode = hmAux[MDRegionDao.REGION_CODE].takeIf { !it.isNullOrEmpty() }
                         ?.toInt(),
                     regionDesc = hmAux[MDRegionDao.REGION_DESC],
-                    minDate = hmAux["minDate"]
+                    minDate = hmAux["minDate"]?.ifEmpty { null }
                 )
             }
         }
