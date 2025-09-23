@@ -30,6 +30,7 @@ import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act011.Act011_Main
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheet
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -42,34 +43,44 @@ import com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION
 import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelection {
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
-    private val mPresenter: Act086MainContract.I_Presenter by lazy{
+    private val mPresenter: Act086MainContract.I_Presenter by lazy {
         Act086MainPresenter(
             context,
             this,
             bundle,
             mModule_Code,
             mResource_Code,
-            GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-            MD_Product_Serial_Tp_Device_Item_HistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM),
+            GeOsDeviceItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_Item_HistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                DB_VERSION_CUSTOM
+            ),
             MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
         )
     }
-    private val prefixPhoto: String by lazy{
+    private val prefixPhoto: String by lazy {
         mPresenter.getPrefixPhoto(
             deviceItem
         )
     }
 
-    private val verificationFrg: Act086VerificationFrg by lazy{
+    private val verificationFrg: Act086VerificationFrg by lazy {
         Act086VerificationFrg.newInstance(
             hmAux_Trans,
             prefixPhoto,
@@ -81,13 +92,13 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         )
     }
 
-    private val deviceItemVg : GeOsVg? by lazy {
+    private val deviceItemVg: GeOsVg? by lazy {
         mPresenter.getVerificationGroup(context, deviceItem)
     }
 
 
-    private val historicFrg: Act086HistoricFrg by lazy{
-        val hmAuxTransHistoricFrg =  mPresenter.loadHistoricFrgTranslation()
+    private val historicFrg: Act086HistoricFrg by lazy {
+        val hmAuxTransHistoricFrg = mPresenter.loadHistoricFrgTranslation()
 
         Act086HistoricFrg.newInstance(
             hmAuxTransHistoricFrg,
@@ -97,7 +108,11 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             deviceItem.next_cycle_limit_date,
             deviceItem.value_sufix,
             deviceItemVg?.vgDesc,
-            deviceItemVg?.formatLastValue(context, deviceItem.restriction_decimal, deviceItem.value_sufix),
+            deviceItemVg?.formatLastValue(
+                context,
+                deviceItem.restriction_decimal,
+                deviceItem.value_sufix
+            ),
             deviceItem.verification_instruction,
             deviceItem.restriction_decimal,
             dateStartUntilLastMinute,
@@ -106,12 +121,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
     private var isNewVerification = false
     private var _deviceItem: GeOsDeviceItem? = null
-    private val deviceItem get() =_deviceItem!!
+    private val deviceItem get() = _deviceItem!!
     private var deviceDesc: String = ""
     private var trackingNumber: String? = null
     private var readOnly: Boolean = false
     private var itemHist: ArrayList<Act086HistoricModel>? = null
-    private val dateStartUntilLastMinute :String by lazy{
+    private val dateStartUntilLastMinute: String by lazy {
         mPresenter.getDateStartUntilLastMinute()
     }
     private var partition_execution = 0
@@ -134,18 +149,23 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun recoverIntentsInfo() {
-        bundle = intent?.extras?:Bundle()
-        isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION,false)
+        bundle = intent?.extras ?: Bundle()
+        isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION, false)
         bundleDevice = bundle.getBundle(DEVICE_BUNDLE)!!
-        deviceDesc  = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC,"")
+        deviceDesc = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC, "")
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
         isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
-        readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
-        partition_execution = bundleDevice.getInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, 0)
+        readOnly =
+            defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
+        partition_execution =
+            bundleDevice.getInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, 0)
     }
 
     private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
-        if(formStatus == null || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) || formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)){
+        if (formStatus == null || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) || formStatus.equals(
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC
+            )
+        ) {
             return true
         }
         return false
@@ -169,26 +189,26 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun initVars() {
-        if(mPresenter.validBundleParams(isNewVerification)) {
+        if (mPresenter.validBundleParams(isNewVerification)) {
             getDeviceItem()
-            if(_deviceItem != null) {
+            if (_deviceItem != null) {
                 setLabels()
                 setHeaderInfo()
                 applyNewVerificationConfig()
                 initVerificationFrg()
                 getItemHist()
                 applyTvConsultApplyStatus()
-            }else{
+            } else {
                 paramErrorFlow()
             }
-        }else{
+        } else {
             paramErrorFlow()
         }
     }
 
     private fun applyTvConsultApplyStatus() {
         binding.act086TvConsult.apply {
-            isEnabled = mPresenter.hasAnyVisibleInfoIntoConsultFrag(deviceItem,itemHist)
+            isEnabled = mPresenter.hasAnyVisibleInfoIntoConsultFrag(deviceItem, itemHist)
         }
     }
 
@@ -225,21 +245,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
                         visibility = View.VISIBLE
                     }
                 }
-            }else{
+            } else {
                 notificationPartial.root.visibility = View.GONE
             }
             //
             act086TvDeviceDesc.text = deviceDesc
-            deviceItemVg?.let{
+            deviceItemVg?.let {
                 act086TvVgDesc.visibility = View.VISIBLE
                 act086TvVgDesc.text = it.vgDesc
             }
             //
             act086TvTrackingNum.apply {
                 text = trackingNumber
-                visibility = if(trackingNumber.isNullOrEmpty()){
+                visibility = if (trackingNumber.isNullOrEmpty()) {
                     View.GONE
-                }else {
+                } else {
                     View.VISIBLE
                 }
             }
@@ -252,7 +272,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
      * Seta texto na view e se for um novo item, a esconde
      */
     private fun setItemCheckDesc() {
-        with(binding){
+        with(binding) {
             act086TvItemCheckDesc.apply {
                 text = getItemCheckDesc()
                 visibility = if (isNewOrCreatedByApp()) {
@@ -264,27 +284,28 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         }
     }
 
-    private fun getItemCheckDesc() : String?{
+    private fun getItemCheckDesc(): String? {
         return GetDeviceItemDescUseCase().invoke(
             GetDeviceItemDescUseCase.Input(
-                    deviceItem.manual_desc,
-                    deviceItem.status_modification_type,
-                    deviceItem.item_check_desc,
-                    deviceItem.item_check_desc_alt_vg,
-                    deviceItem.isNO_CYCLE
+                deviceItem.manual_desc,
+                deviceItem.status_modification_type,
+                deviceItem.item_check_desc,
+                deviceItem.item_check_desc_alt_vg,
+                deviceItem.isNO_CYCLE
             )
         )
     }
 
     private fun setAlertDateInfo() {
-        with(binding){
-            act086TvAlertDate.apply{
-                if(deviceItem.target_date.isNullOrEmpty() || deviceItem.hideDaysInAlert){
+        with(binding) {
+            act086TvAlertDate.apply {
+                if (deviceItem.target_date.isNullOrEmpty() || deviceItem.hideDaysInAlert) {
                     visibility = View.GONE
                     text = null
-                }else{
+                } else {
                     visibility = View.VISIBLE
-                    val daysDiff = getDaysBetweenTargetAndOsDateStartLastSecond(deviceItem.target_date!!)
+                    val daysDiff =
+                        getDaysBetweenTargetAndOsDateStartLastSecond(deviceItem.target_date!!)
                     text = getAlertDateLbl(daysDiff)
                     setTextColor(getAlertDateTextColor(daysDiff))
                 }
@@ -313,8 +334,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         return try {
             "${dateFormat.format(cDate.time)} 23:59:59 ${ToolBox.getDeviceGMT(false)}"
-        }catch (e: Exception){
-            ToolBox_Inf.registerException(javaClass.name,e)
+        } catch (e: Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
             "1900-01-01 00:00:00 +00:00"
         }
     }
@@ -368,7 +389,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun applyNewVerificationConfig() {
-        if(isNewOrCreatedByApp()){
+        if (isNewOrCreatedByApp()) {
             binding.act086TvConsult.visibility = View.GONE
         }
     }
@@ -383,7 +404,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         )
     }
 
-    private fun setHistoricFrg(){
+    private fun setHistoricFrg() {
         setFrag(
             type = historicFrg,
             sTag = HISTORIC_FRG_TAG,
@@ -395,12 +416,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
 
     private fun updateActionBarTitle(fragment: Fragment) {
         supportActionBar?.let {
-            it.title = mPresenter.getActionBarTitle(fragment,isNewOrCreatedByApp())
+            it.title = mPresenter.getActionBarTitle(fragment, isNewOrCreatedByApp())
         }
     }
 
     private fun setLabels() {
-        with(binding){
+        with(binding) {
             act086TvConsult.text = hmAux_Trans["info_lbl"]
         }
 
@@ -414,7 +435,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun toggleTvConsultVisibility(visible: Boolean) {
-        binding.act086TvConsult.visibility = if(visible) View.VISIBLE else View.INVISIBLE
+        binding.act086TvConsult.visibility = if (visible) View.VISIBLE else View.INVISIBLE
     }
 
     /**
@@ -431,7 +452,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         when (fragment) {
-            is Act086VerificationFrg ->{
+            is Act086VerificationFrg -> {
                 fragment.showAlert = ::showAlert
                 fragment.checkScrollNeeds = ::checkScrollNeeds
                 fragment.leaveItem = ::leaveItem
@@ -442,15 +463,16 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         updateActionBarTitle(fragment)
     }
 
-    private fun checkScrollNeeds(viewBottomPosition: Int, heightToAdd: Int){
+    private fun checkScrollNeeds(viewBottomPosition: Int, heightToAdd: Int) {
         //Calcula a var que faltava, o tamanho do layout dos dados que ficam na act, os dados de header
         //Pega o top dfragPlaceholder e desconta os 32dp de margin top
-        var headerDataOffset = binding.act086FrgPlaceholder.top - ToolBox_Inf.convertDpToPixel(context,32f)
+        var headerDataOffset =
+            binding.act086FrgPlaceholder.top - ToolBox_Inf.convertDpToPixel(context, 32f)
         mPresenter.checkViewPositionIsVisible(
             viewBottomPosition,
             heightToAdd,
             scrollTop = binding.act086NvMain.scrollY,
-            actionBarHeight = supportActionBar?.let{it.height}?:0,
+            actionBarHeight = supportActionBar?.let { it.height } ?: 0,
             footerHeight = binding.include.height,
             headerDataOffset.toInt()
         )
@@ -462,15 +484,15 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
      * Caso seja deleção de item manual, remove do bundle o DEVICE_ITEM_LIST_INDEX
      * antes de chamar o backpress
      */
-    private fun leaveItem(isManualItemDelete: Boolean = false){
-        if(isManualItemDelete) {
+    private fun leaveItem(isManualItemDelete: Boolean = false) {
+        if (isManualItemDelete) {
             mPresenter.putListItemIndexOnLastPositionFromBundle()
         }
         onBackPressed()
     }
 
 
-    fun onMaterialPlannedInteraction(isPlanned: Boolean){
+    fun onMaterialPlannedInteraction(isPlanned: Boolean) {
         bundle.putBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, isPlanned)
 
         startActivity(
@@ -485,11 +507,16 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     override fun updateScrollPosition(newScrollTop: Int) {
-        binding.act086NvMain.scrollTo(0,newScrollTop)
+        binding.act086NvMain.scrollTo(0, newScrollTop)
     }
 
-    override fun showAlert(ttl: String?, msg: String?, positeClickListener: DialogInterface.OnClickListener?, negativeBtn: Int) {
-        if(negativeBtn == 0) {
+    override fun showAlert(
+        ttl: String?,
+        msg: String?,
+        positeClickListener: DialogInterface.OnClickListener?,
+        negativeBtn: Int
+    ) {
+        if (negativeBtn == 0) {
             ToolBox.alertMSG(
                 context,
                 ttl,
@@ -497,7 +524,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
                 positeClickListener,
                 negativeBtn
             )
-        }else{
+        } else {
             ToolBox.alertMSG_YES_NO(
                 context,
                 ttl,
@@ -569,13 +596,13 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             handleBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    companion object{
+    companion object {
         const val VERIFICATION_FRG_TAG = "VERIFICATION_FRG_TAG"
         const val HISTORIC_FRG_TAG = "HISTORIC_FRG_TAG"
         const val PARAM_PREFIX_PHOTO = "PARAM_PREFIX_PHOTO"
@@ -583,7 +610,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     override fun onPhotoSelection(drawable: Drawable) {
-        with(binding){
+        with(binding) {
             showHistPhoto(true)
             ivImageZoom.setImageDrawable(drawable)
             ivImageClose.setOnClickListener {
@@ -593,7 +620,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private fun Act086MainContentBinding.showHistPhoto(show: Boolean) {
-        clImageZoom.visibility = if(show) View.VISIBLE else  View.GONE
-        act086NvMain.visibility = if(show) View.INVISIBLE else  View.VISIBLE
+        clImageZoom.visibility = if (show) View.VISIBLE else View.GONE
+        act086NvMain.visibility = if (show) View.INVISIBLE else View.VISIBLE
     }
 }

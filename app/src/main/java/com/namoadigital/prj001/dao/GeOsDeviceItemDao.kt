@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
@@ -86,6 +87,22 @@ class GeOsDeviceItemDao(
         const val COLOR_ITEM = "color_item"
         const val STATUS_MODIFICATION_TYPE = "status_modification_type"
         const val AUTOMATIC_SELECTION_STATE = "automatic_selection_state"
+        const val MEASURE_ACTIVE = "measure_active"
+        const val MEASURE_REQUIRE_ID = "measure_require_id"
+        const val MEASURE_START_VALUE = "measure_start_value"
+        const val MEASURE_END_VALUE = "measure_end_value"
+        const val MEASURE_START_ID = "measure_start_id"
+        const val MEASURE_END_ID = "measure_end_id"
+        const val MEASURE_UN = "measure_un"
+        const val MEASURE_MIN = "measure_min"
+        const val MEASURE_MAX = "measure_max"
+        const val MEASURE_ALERT_MIN = "measure_alert_min"
+        const val MEASURE_ALERT_MAX = "measure_alert_max"
+        const val LAST_MEASURE_UN = "last_measure_un"
+        const val LAST_MEASURE_DATE = "last_measure_date"
+        const val LAST_MEASURE_VALUE = "last_measure_value"
+        const val LAST_MEASURE_ID = "last_measure_id"
+        const val LAST_MEASURE_ALERT = "last_measure_alert"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -619,6 +636,22 @@ class GeOsDeviceItemDao(
                         automatic_selection_state = GeOsDeviceItemAutomaticSelectionState.getAutomaticSelection(
                             getStringOrNull(getColumnIndex(AUTOMATIC_SELECTION_STATE))
                         ),
+                        measureActive = getIntOrNull(getColumnIndex(MEASURE_ACTIVE)),
+                        measureRequireId = getIntOrNull(getColumnIndex(MEASURE_REQUIRE_ID)),
+                        measureUn = getStringOrNull(getColumnIndex(MEASURE_UN)),
+                        measureMin = getDoubleOrNull(getColumnIndex(MEASURE_MIN)),
+                        measureMax = getDoubleOrNull(getColumnIndex(MEASURE_MAX)),
+                        measureAlertMin = getDoubleOrNull(getColumnIndex(MEASURE_ALERT_MIN)),
+                        measureAlertMax = getDoubleOrNull(getColumnIndex(MEASURE_ALERT_MAX)),
+                        lastMeasureValue = getDoubleOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
+                        lastMeasureId = getStringOrNull(getColumnIndex(LAST_MEASURE_ID)),
+                        lastMeasureUn = getStringOrNull(getColumnIndex(LAST_MEASURE_UN)),
+                        lastMeasureDate = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
+                        lastMeasureAlert = getIntOrNull(getColumnIndex(LAST_MEASURE_ALERT)),
+                        measureStartValue = getDoubleOrNull(getColumnIndex(MEASURE_START_VALUE)),
+                        measureEndValue = getDoubleOrNull(getColumnIndex(MEASURE_END_VALUE)),
+                        measureStartId = getStringOrNull(getColumnIndex(MEASURE_START_ID)),
+                        measureEndId = getStringOrNull(getColumnIndex(MEASURE_END_ID)),
                     )
                 }
             }
@@ -751,6 +784,37 @@ class GeOsDeviceItemDao(
                     //
                     put(AUTOMATIC_SELECTION_STATE, it.automatic_selection_state.toString())
                     //
+                    put(MEASURE_ACTIVE, it.measureActive)
+                    //
+                    put(MEASURE_REQUIRE_ID, it.measureRequireId)
+                    //
+                    put(MEASURE_UN, it.measureUn)
+                    //
+                    put(MEASURE_MIN, it.measureMin)
+                    //
+                    put(MEASURE_MAX, it.measureMax)
+                    //
+                    put(MEASURE_ALERT_MIN, it.measureAlertMin)
+                    //
+                    put(MEASURE_ALERT_MAX, it.measureAlertMax)
+                    //
+                    put(LAST_MEASURE_VALUE, it.lastMeasureValue)
+                    //
+                    put(LAST_MEASURE_ID, it.lastMeasureId)
+                    //
+                    put(LAST_MEASURE_UN, it.lastMeasureUn)
+                    //
+                    put(LAST_MEASURE_DATE, it.lastMeasureDate)
+                    //
+                    put(LAST_MEASURE_ALERT, it.lastMeasureAlert)
+                    //
+                    put(MEASURE_START_VALUE, it.measureStartValue)
+                    //
+                    put(MEASURE_END_VALUE, it.measureEndValue)
+                    //
+                    put(MEASURE_START_ID, it.measureStartId)
+                    //
+                    put(MEASURE_END_ID, it.measureEndId)
                 }
             }
             return contentValues

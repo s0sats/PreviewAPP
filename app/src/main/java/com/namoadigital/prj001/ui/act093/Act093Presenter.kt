@@ -7,12 +7,15 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
+import com.namoadigital.prj001.core.translate.TranslateMap
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_001
@@ -97,28 +100,33 @@ class Act093Presenter constructor(
                     )
 
                     state = _state
-                    if(serial.hasMeasureTp && serial.value_suffix.isNullOrBlank()){
+                    if (serial.hasMeasureTp && serial.value_suffix.isNullOrBlank()) {
                         view.onEvent(Act093Event.OnMeasureNotFound)
-                    }else {
+                    } else {
                         view.onEvent(Act093Event.OnUpdateScreen)
                     }
                 }
 
-            it.isFailed { exception ->
-                view.onEvent(Act093Event.Toast(exception.message ?: ""))
+                it.isFailed { exception ->
+                    view.onEvent(Act093Event.Toast(exception.message ?: ""))
+                }
             }
-        }
     }
 
     private var _state = MutableStateFlow(Act093State())
     override var state: StateFlow<Act093State> = _state
-    override fun getDeviceItemHist(context:Context, deviceItemModel: DeviceTpModel, hmAuxTrans: HMAux): ArrayList<Act086HistoricModel>? {
+    override fun getDeviceItemHist(
+        context: Context,
+        deviceItemModel: DeviceTpModel,
+        hmAuxTrans: HMAux
+    ): ArrayList<Act086HistoricModel>? {
         val mdProductSerialTpDeviceItemHistDao = MD_Product_Serial_Tp_Device_Item_HistDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             ConstantBaseApp.DB_VERSION_CUSTOM
         )
-        val mdProductSerialTpDeviceItemHistMatDao = MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
+        val mdProductSerialTpDeviceItemHistMatDao =
+            MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
 
         deviceItemModel.let {
             try {
@@ -134,7 +142,7 @@ class Act093Presenter constructor(
                     ).toSqlQuery()
                 ) as ArrayList
 
-                 val modelList = mdProductSerialTpDeviceItemHist.map { hist ->
+                val modelList = mdProductSerialTpDeviceItemHist.map { hist ->
                     val itemHistMat = mdProductSerialTpDeviceItemHistMatDao.getInputs(
                         hist.customer_code,
                         hist.serial_code.toInt(),
@@ -145,17 +153,22 @@ class Act093Presenter constructor(
                         hist.seq,
                     )
 
-                    val deviceItem = getDeviceItem(context,deviceItemModel)
+                    val deviceItem = getDeviceItem(context, deviceItemModel)
                     val serialInfo = state.value.serialInfo
                     //Convert para lista do adapter
+
                     Act086HistoricModel(
                         icon = hist.getIcon(),
                         titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
                         date = hist.getDate(context),
                         measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                        measure = ToolBox_Inf.getFormattedLastMeasureInfo(hist.exec_value, serialInfo.value_suffix, null),
-                        materialRequestLbl =  hmAuxTrans["material_requested_lbl"] ?: "",
-                        materialAppliedLbl =  hmAuxTrans["material_applied_lbl"] ?: "",
+                        measure = ToolBox_Inf.getFormattedLastMeasureInfo(
+                            hist.exec_value,
+                            serialInfo.value_suffix,
+                            null
+                        ),
+                        materialRequestLbl = hmAuxTrans["material_requested_lbl"] ?: "",
+                        materialAppliedLbl = hmAuxTrans["material_applied_lbl"] ?: "",
                         comment = hist.exec_comment,
                         exec_type = hist.exec_type,
                         manualInstruction = deviceItem?.manual_desc,
@@ -164,6 +177,7 @@ class Act093Presenter constructor(
                         photo2 = hist.exec_photo2,
                         photo3 = hist.exec_photo3,
                         photo4 = hist.exec_photo4,
+                        measureItemHist = createMeasureItemHist(hist, hmAuxTrans)
                     )
                 } as ArrayList
                 return modelList
@@ -172,6 +186,31 @@ class Act093Presenter constructor(
             }
         }
         return null
+    }
+
+    private fun createMeasureItemHist(
+        item: MD_Product_Serial_Tp_Device_Item_Hist,
+        translate: TranslateMap
+    ): Act086HistoricModel.MeasureItemHist? {
+        val hasAnyMeasureData = item.measureStartValue != null ||
+                item.measureFinalValue != null ||
+                !item.measure_un.isNullOrEmpty()
+
+        if (!hasAnyMeasureData) {
+            return null
+        }
+
+        return Act086HistoricModel.MeasureItemHist(
+            unit = item.measure_un,
+            labelMeasure = translate.textOf("measure_start_lbl"),
+            labelAfterMeasure = translate.textOf("measure_end_lbl"),
+            initialValue = item.measureStartValue,
+            initialId = item.measureStartId,
+            initialAlert = item.isInitialAlert,
+            finalValue = item.measureFinalValue,
+            finalId = item.measureFinalId,
+            finalAlert = item.isFinalAlert
+        )
     }
 
     override fun getDeviceItem(
@@ -205,7 +244,7 @@ class Act093Presenter constructor(
             )
             return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
         }
-       return 0
+        return 0
     }
 
     override fun loadHistoricFrgTranslation(): HMAux {
@@ -223,7 +262,11 @@ class Act093Presenter constructor(
         )
     }
 
-    override fun getVerificationGroupDesc(context: Context, customerCode:Long, vgCode:Int):String? {
+    override fun getVerificationGroupDesc(
+        context: Context,
+        customerCode: Long,
+        vgCode: Int
+    ): String? {
         val mdVerificationGroupDao = MDVerificationGroupDao(
             context,
         )
@@ -236,7 +279,7 @@ class Act093Presenter constructor(
     override fun getVerificationGroupLastValue(
         context: Context,
         model: MD_Product_Serial_Tp_Device_Item
-    ):String? {
+    ): String? {
         return model.vg_code?.let {
             infoUseCase.getVerificationGroupLastValue(
                 GetVerificationGroupLastValue.Input(
@@ -261,14 +304,15 @@ class Act093Presenter constructor(
                 _state.value.serialInfo.infoAdd.isNullOrEmpty() &&
                 _state.value.serialInfo.trackings == null
             ) {
-                view.onEvent(Act093Event.OpenDialog(
-                    Act093Event.OpenDialog.DialogType.ACTION(
-                        "alert_no_data_warning_title",
-                        "alert_no_data_warning_msg",
-                        action = { dialog, i ->
-                            view.onBack()
-                        }
-                    )))
+                view.onEvent(
+                    Act093Event.OpenDialog(
+                        Act093Event.OpenDialog.DialogType.ACTION(
+                            "alert_no_data_warning_title",
+                            "alert_no_data_warning_msg",
+                            action = { dialog, i ->
+                                view.onBack()
+                            }
+                        )))
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.database.scripts.multi
+package com.namoadigital.prj001.database.scripts.multi.ge_os
 
 const val GE_OS_CREATE_SCRIPT =
     """

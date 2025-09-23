@@ -25,11 +25,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
-    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
+    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
+),
     DaoWithReturn<MD_Product_Serial_Tp_Device_Item>,
-    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item>
-{
-    companion object{
+    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item> {
+    companion object {
         const val TABLE = "md_product_serial_tp_device_item"
         const val CUSTOMER_CODE = "customer_code"
         const val PRODUCT_CODE = "product_code"
@@ -60,21 +60,35 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val TICKET_PREFIX = "ticket_prefix"
         const val TICKET_CODE = "ticket_code"
         const val VG_ACTION = "vg_action"
+        const val MEASURE_ACTIVE = "measure_active"
+        const val MEASURE_REQUIRE_ID = "measure_require_id"
+        const val MEASURE_UN = "measure_un"
+        const val MEASURE_MIN = "measure_min"
+        const val MEASURE_MAX = "measure_max"
+        const val MEASURE_ALERT_MIN = "measure_alert_min"
+        const val MEASURE_ALERT_MAX = "measure_alert_max"
+        const val LAST_MEASURE_UN = "last_measure_un"
+        const val LAST_MEASURE_DATE = "last_measure_date"
+        const val LAST_MEASURE_VALUE = "last_measure_value"
+        const val LAST_MEASURE_ID = "last_measure_id"
+        const val LAST_MEASURE_ALERT = "last_measure_alert"
     }
 
-    private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item>
-    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device_Item,ContentValues>
+    private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor, MD_Product_Serial_Tp_Device_Item>
+    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device_Item, ContentValues>
 
     init {
-        this.toMD_Product_Serial_Tp_Device_ItemMapper = CursorToMD_Product_Serial_Tp_Device_ItemMapper()
+        this.toMD_Product_Serial_Tp_Device_ItemMapper =
+            CursorToMD_Product_Serial_Tp_Device_ItemMapper()
         this.toContentValuesMapper = MD_Product_Serial_Tp_Device_ItemToContentValuesMapper()
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(MD_Product_Serial_Tp_Device_Item: MD_Product_Serial_Tp_Device_Item?): StringBuilder{
-        MD_Product_Serial_Tp_Device_Item?.let{
+    private fun getWherePkClause(MD_Product_Serial_Tp_Device_Item: MD_Product_Serial_Tp_Device_Item?): StringBuilder {
+        MD_Product_Serial_Tp_Device_Item?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${MD_Product_Serial_Tp_Device_Item.customer_code}'  
                         AND ${PRODUCT_CODE} = '${MD_Product_Serial_Tp_Device_Item.product_code}'                           
                         AND ${SERIAL_CODE} = '${MD_Product_Serial_Tp_Device_Item.serial_code}'                           
@@ -85,11 +99,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                 )
         }
         throw Exception("NULL_OBJ_RECEIVED")
-        
+
     }
 
     override fun addUpdate(mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item?): DaoObjReturn {
-        return addUpdate(mdProductSerialTpDeviceItem,null)
+        return addUpdate(mdProductSerialTpDeviceItem, null)
     }
 
     override fun addUpdate(
@@ -100,9 +114,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        }else{
+        } else {
             this.db = dbInstance
         }
 
@@ -112,21 +126,30 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItem)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDeviceItem), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(
+                TABLE,
+                toContentValuesMapper.map(mdProductSerialTpDeviceItem),
+                sbWhere.toString(),
+                null
+            ).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItem))
+                db.insertOrThrow(
+                    TABLE,
+                    null,
+                    toContentValuesMapper.map(mdProductSerialTpDeviceItem)
+                )
             }
 
-            mdProductSerialTpDeviceItem?.let { item->
+            mdProductSerialTpDeviceItem?.let { item ->
                 /**
                  * Como hist é um valor setado dentro do init ou via delegate, quando é carregado direto do json
                  * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
                  * suporte a essa features do Kotlin
                  */
                 //Tenta inserir historico
-                if(item.hist != null && item.hist.isNotEmpty() ){
+                if (item.hist != null && item.hist.isNotEmpty()) {
                     daoObjReturn = tryAddUpdateHist(item.hist, db)
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
@@ -134,7 +157,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     }
                 }
                 //Tenta inserir insum planejado
-                if(item.material != null && item.material.isNotEmpty() ){
+                if (item.material != null && item.material.isNotEmpty()) {
                     daoObjReturn = tryAddUpdateMaterial(item.material, db)
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
@@ -172,8 +195,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         return daoObjReturn
     }
 
-    override fun addUpdate(mdProductSerialTpDeviceItems: MutableList<MD_Product_Serial_Tp_Device_Item>?, status: Boolean): DaoObjReturn {
-        return addUpdate(mdProductSerialTpDeviceItems, status,null)
+    override fun addUpdate(
+        mdProductSerialTpDeviceItems: MutableList<MD_Product_Serial_Tp_Device_Item>?,
+        status: Boolean
+    ): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItems, status, null)
     }
 
     override fun addUpdate(
@@ -190,7 +216,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         } else {
             db = dbInstance
         }
-        
+
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
@@ -199,7 +225,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             if (dbInstance == null) {
                 db.beginTransaction()
             }
-            
+
             if (status) {
                 db.delete(TABLE, null, null)
             }
@@ -207,11 +233,20 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             mdProductSerialTpDeviceItems?.forEach { mdProductSerialTpDeviceItem ->
                 val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItem)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDeviceItem), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(
+                    TABLE,
+                    toContentValuesMapper.map(mdProductSerialTpDeviceItem),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItem))
+                    db.insertOrThrow(
+                        TABLE,
+                        null,
+                        toContentValuesMapper.map(mdProductSerialTpDeviceItem)
+                    )
                 }
                 //Tenta inserir historico
                 mdProductSerialTpDeviceItem.let {
@@ -220,7 +255,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                      * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
                      * suporte a essa features do Kotlin
                      */
-                    if(it.hist != null && it.hist.isNotEmpty()){
+                    if (it.hist != null && it.hist.isNotEmpty()) {
                         daoObjReturn = tryAddUpdateHist(it.hist, db)
                         //Se erro durante insert, dispara exception abortando o processamento.
                         if (daoObjReturn.hasError()) {
@@ -228,7 +263,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         }
                     }
                     //Tenta inserir insum planejado
-                    if(it.material != null && it.material.isNotEmpty() ){
+                    if (it.material != null && it.material.isNotEmpty()) {
                         daoObjReturn = tryAddUpdateMaterial(it.material, db)
                         //Se erro durante insert, dispara exception abortando o processamento.
                         if (daoObjReturn.hasError()) {
@@ -238,7 +273,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                 }
             }
             //
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful()
             }
 
@@ -276,7 +311,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         //
         return daoObjReturn
     }
-    
+
     override fun addUpdate(sQuery: String?) {
         openDB()
         try {
@@ -306,7 +341,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItem)
             //Tenta update e armazena retorno
-            sqlRet = db.delete(TABLE,sbWhere.toString(), null).toLong()
+            sqlRet = db.delete(TABLE, sbWhere.toString(), null).toLong()
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -382,7 +417,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         } finally {
         }
         closeDB()
-        return  mdProductSerialTpDeviceItem
+        return mdProductSerialTpDeviceItem
     }
 
     override fun query(sQuery: String?): MutableList<MD_Product_Serial_Tp_Device_Item> {
@@ -426,8 +461,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
     /**
      * Fun que tenta o insert do historico.
      */
-    private fun tryAddUpdateHist(hist: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>, db: SQLiteDatabase?): DaoObjReturn {
-        return getItemHistDao().addUpdate(hist,false,db)
+    private fun tryAddUpdateHist(
+        hist: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>,
+        db: SQLiteDatabase?
+    ): DaoObjReturn {
+        return getItemHistDao().addUpdate(hist, false, db)
     }
 
     /**
@@ -462,8 +500,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
     /**
      * Fun que tenta o insert do historico.
      */
-    private fun tryAddUpdateMaterial(material: MutableList<MD_Product_Serial_Tp_Device_Item_Material>, db: SQLiteDatabase?): DaoObjReturn {
-        return getItemMaterialDao().addUpdate(material,false,db)
+    private fun tryAddUpdateMaterial(
+        material: MutableList<MD_Product_Serial_Tp_Device_Item_Material>,
+        db: SQLiteDatabase?
+    ): DaoObjReturn {
+        return getItemMaterialDao().addUpdate(material, false, db)
     }
 
     /**
@@ -477,19 +518,24 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         )
     }
 
-    private class CursorToMD_Product_Serial_Tp_Device_ItemMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device_Item> {
+    private class CursorToMD_Product_Serial_Tp_Device_ItemMapper :
+        Mapper<Cursor, MD_Product_Serial_Tp_Device_Item> {
         override fun map(cursor: Cursor?): MD_Product_Serial_Tp_Device_Item? {
             cursor?.let {
-                with(cursor){
+                with(cursor) {
                     return MD_Product_Serial_Tp_Device_Item(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
                         product_code = getLong(getColumnIndex(PRODUCT_CODE)),
                         serial_code = getLong(getColumnIndex(SERIAL_CODE)),
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
-                        item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)) ,
-                        item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
-                        apply_material = getString(getColumnIndex(APPLY_MATERIAL)) ,
-                        verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
+                        item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)),
+                        item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
+                        apply_material = getString(getColumnIndex(APPLY_MATERIAL)),
+                        verification_instruction = getStringOrNull(
+                            getColumnIndex(
+                                VERIFICATION_INSTRUCTION
+                            )
+                        ),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
@@ -499,7 +545,11 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         require_photo_fixed = getInt(getColumnIndex(REQUIRE_PHOTO_FIXED)),
                         require_photo_alert = getInt(getColumnIndex(REQUIRE_PHOTO_ALERT)),
                         require_photo_already_ok = getInt(getColumnIndex(REQUIRE_PHOTO_ALREADY_OK)),
-                        require_photo_not_verified = getInt(getColumnIndex(REQUIRE_PHOTO_NOT_VERIFIED)),
+                        require_photo_not_verified = getInt(
+                            getColumnIndex(
+                                REQUIRE_PHOTO_NOT_VERIFIED
+                            )
+                        ),
                         vg_code = getIntOrNull(getColumnIndex(VG_CODE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getDoubleOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
@@ -515,6 +565,18 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         ticket_prefix = getIntOrNull(getColumnIndex(TICKET_PREFIX)),
                         ticket_code = getIntOrNull(getColumnIndex(TICKET_CODE)),
                         vg_action = getInt(getColumnIndex(VG_ACTION)),
+                        measureActive = getIntOrNull(getColumnIndex(MEASURE_ACTIVE)),
+                        measureRequireId = getIntOrNull(getColumnIndex(MEASURE_REQUIRE_ID)),
+                        measureUn = getStringOrNull(getColumnIndex(MEASURE_UN)),
+                        measureMin = getDoubleOrNull(getColumnIndex(MEASURE_MIN)),
+                        measureMax = getDoubleOrNull(getColumnIndex(MEASURE_MAX)),
+                        measureAlertMin = getDoubleOrNull(getColumnIndex(MEASURE_ALERT_MIN)),
+                        measureAlertMax = getDoubleOrNull(getColumnIndex(MEASURE_ALERT_MAX)),
+                        lastMeasureValue = getDoubleOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
+                        lastMeasureId = getStringOrNull(getColumnIndex(LAST_MEASURE_ID)),
+                        lastMeasureUn = getStringOrNull(getColumnIndex(LAST_MEASURE_UN)),
+                        lastMeasureDate = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
+                        lastMeasureAlert = getIntOrNull(getColumnIndex(LAST_MEASURE_ALERT)),
                     )
                 }
             }
@@ -522,89 +584,118 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         }
     }
 
-    private class MD_Product_Serial_Tp_Device_ItemToContentValuesMapper : Mapper<MD_Product_Serial_Tp_Device_Item, ContentValues> {
+    private class MD_Product_Serial_Tp_Device_ItemToContentValuesMapper :
+        Mapper<MD_Product_Serial_Tp_Device_Item, ContentValues> {
         override fun map(mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item?): ContentValues {
             val contentValues = ContentValues()
             //
             mdProductSerialTpDeviceItem?.let {
-                with(contentValues){
-                    if(mdProductSerialTpDeviceItem.customer_code > -1){
-                        put(CUSTOMER_CODE,mdProductSerialTpDeviceItem.customer_code)
+                with(contentValues) {
+                    if (mdProductSerialTpDeviceItem.customer_code > -1) {
+                        put(CUSTOMER_CODE, mdProductSerialTpDeviceItem.customer_code)
                     }
-                    if(mdProductSerialTpDeviceItem.product_code > -1){
-                        put(PRODUCT_CODE,mdProductSerialTpDeviceItem.product_code)
+                    if (mdProductSerialTpDeviceItem.product_code > -1) {
+                        put(PRODUCT_CODE, mdProductSerialTpDeviceItem.product_code)
                     }
-                    if(mdProductSerialTpDeviceItem.serial_code > -1){
-                        put(SERIAL_CODE,mdProductSerialTpDeviceItem.serial_code)
+                    if (mdProductSerialTpDeviceItem.serial_code > -1) {
+                        put(SERIAL_CODE, mdProductSerialTpDeviceItem.serial_code)
                     }
-                    if(mdProductSerialTpDeviceItem.device_tp_code > -1){
-                        put(DEVICE_TP_CODE,mdProductSerialTpDeviceItem.device_tp_code)
+                    if (mdProductSerialTpDeviceItem.device_tp_code > -1) {
+                        put(DEVICE_TP_CODE, mdProductSerialTpDeviceItem.device_tp_code)
                     }
-                    if(mdProductSerialTpDeviceItem.item_check_code > -1){
-                        put(ITEM_CHECK_CODE,mdProductSerialTpDeviceItem.item_check_code)
+                    if (mdProductSerialTpDeviceItem.item_check_code > -1) {
+                        put(ITEM_CHECK_CODE, mdProductSerialTpDeviceItem.item_check_code)
                     }
-                    if(mdProductSerialTpDeviceItem.item_check_seq > -1){
-                        put(ITEM_CHECK_SEQ,mdProductSerialTpDeviceItem.item_check_seq)
+                    if (mdProductSerialTpDeviceItem.item_check_seq > -1) {
+                        put(ITEM_CHECK_SEQ, mdProductSerialTpDeviceItem.item_check_seq)
                     }
-                    if(mdProductSerialTpDeviceItem.apply_material != null){
-                        put(APPLY_MATERIAL,mdProductSerialTpDeviceItem.apply_material)
+                    if (mdProductSerialTpDeviceItem.apply_material != null) {
+                        put(APPLY_MATERIAL, mdProductSerialTpDeviceItem.apply_material)
                     }
-                    put(VERIFICATION_INSTRUCTION,mdProductSerialTpDeviceItem.verification_instruction)
+                    put(
+                        VERIFICATION_INSTRUCTION,
+                        mdProductSerialTpDeviceItem.verification_instruction
+                    )
 
-                    if(mdProductSerialTpDeviceItem.require_justify_problem > -1){
-                        put(REQUIRE_JUSTIFY_PROBLEM,mdProductSerialTpDeviceItem.require_justify_problem)
+                    if (mdProductSerialTpDeviceItem.require_justify_problem > -1) {
+                        put(
+                            REQUIRE_JUSTIFY_PROBLEM,
+                            mdProductSerialTpDeviceItem.require_justify_problem
+                        )
                     }
-                    if(mdProductSerialTpDeviceItem.critical_item > -1){
-                        put(CRITICAL_ITEM,mdProductSerialTpDeviceItem.critical_item)
+                    if (mdProductSerialTpDeviceItem.critical_item > -1) {
+                        put(CRITICAL_ITEM, mdProductSerialTpDeviceItem.critical_item)
                     }
 
-                    if(it.change_adjust > -1){
+                    if (it.change_adjust > -1) {
                         put(CHANGE_ADJUST, it.change_adjust)
                     }
 
-                    if(mdProductSerialTpDeviceItem.order_seq > -1){
-                        put(ORDER_SEQ,mdProductSerialTpDeviceItem.order_seq)
+                    if (mdProductSerialTpDeviceItem.order_seq > -1) {
+                        put(ORDER_SEQ, mdProductSerialTpDeviceItem.order_seq)
                     }
-                    if(mdProductSerialTpDeviceItem.structure > -1){
-                        put(STRUCTURE,mdProductSerialTpDeviceItem.structure)
-                    }
-
-                    if(mdProductSerialTpDeviceItem.already_ok_hide > -1){
-                        put(ALREADY_OK_HIDE,mdProductSerialTpDeviceItem.already_ok_hide)
-                    }
-                    if(mdProductSerialTpDeviceItem.require_photo_fixed > -1){
-                        put(REQUIRE_PHOTO_FIXED,mdProductSerialTpDeviceItem.require_photo_fixed)
-                    }
-                    if(mdProductSerialTpDeviceItem.require_photo_alert > -1){
-                        put(REQUIRE_PHOTO_ALERT,mdProductSerialTpDeviceItem.require_photo_alert)
-                    }
-                    if(mdProductSerialTpDeviceItem.require_photo_already_ok > -1){
-                        put(REQUIRE_PHOTO_ALREADY_OK,mdProductSerialTpDeviceItem.require_photo_already_ok)
-                    }
-                    if(mdProductSerialTpDeviceItem.require_photo_not_verified > -1){
-                        put(REQUIRE_PHOTO_NOT_VERIFIED,mdProductSerialTpDeviceItem.require_photo_not_verified)
+                    if (mdProductSerialTpDeviceItem.structure > -1) {
+                        put(STRUCTURE, mdProductSerialTpDeviceItem.structure)
                     }
 
-                    put(VG_CODE,mdProductSerialTpDeviceItem.vg_code)
-
-
-                    put(MANUAL_DESC,mdProductSerialTpDeviceItem.manual_desc)
-
-                    if(mdProductSerialTpDeviceItem.next_cycle_measure != null){
-                        put(NEXT_CYCLE_MEASURE,mdProductSerialTpDeviceItem.next_cycle_measure)
+                    if (mdProductSerialTpDeviceItem.already_ok_hide > -1) {
+                        put(ALREADY_OK_HIDE, mdProductSerialTpDeviceItem.already_ok_hide)
                     }
-                    put(NEXT_CYCLE_MEASURE_DATE,mdProductSerialTpDeviceItem.next_cycle_measure_date)
-                    put(NEXT_CYCLE_LIMIT_DATE,mdProductSerialTpDeviceItem.next_cycle_limit_date)
-                    if(mdProductSerialTpDeviceItem.item_check_status != null){
-                        put(ITEM_CHECK_STATUS,mdProductSerialTpDeviceItem.item_check_status)
+                    if (mdProductSerialTpDeviceItem.require_photo_fixed > -1) {
+                        put(REQUIRE_PHOTO_FIXED, mdProductSerialTpDeviceItem.require_photo_fixed)
+                    }
+                    if (mdProductSerialTpDeviceItem.require_photo_alert > -1) {
+                        put(REQUIRE_PHOTO_ALERT, mdProductSerialTpDeviceItem.require_photo_alert)
+                    }
+                    if (mdProductSerialTpDeviceItem.require_photo_already_ok > -1) {
+                        put(
+                            REQUIRE_PHOTO_ALREADY_OK,
+                            mdProductSerialTpDeviceItem.require_photo_already_ok
+                        )
+                    }
+                    if (mdProductSerialTpDeviceItem.require_photo_not_verified > -1) {
+                        put(
+                            REQUIRE_PHOTO_NOT_VERIFIED,
+                            mdProductSerialTpDeviceItem.require_photo_not_verified
+                        )
+                    }
+
+                    put(VG_CODE, mdProductSerialTpDeviceItem.vg_code)
+
+
+                    put(MANUAL_DESC, mdProductSerialTpDeviceItem.manual_desc)
+
+                    if (mdProductSerialTpDeviceItem.next_cycle_measure != null) {
+                        put(NEXT_CYCLE_MEASURE, mdProductSerialTpDeviceItem.next_cycle_measure)
+                    }
+                    put(
+                        NEXT_CYCLE_MEASURE_DATE,
+                        mdProductSerialTpDeviceItem.next_cycle_measure_date
+                    )
+                    put(NEXT_CYCLE_LIMIT_DATE, mdProductSerialTpDeviceItem.next_cycle_limit_date)
+                    if (mdProductSerialTpDeviceItem.item_check_status != null) {
+                        put(ITEM_CHECK_STATUS, mdProductSerialTpDeviceItem.item_check_status)
                     }
                     put(TARGET_DATE, mdProductSerialTpDeviceItem.target_date)
                     put(PARTITIONED_EXECUTION, mdProductSerialTpDeviceItem.partitioned_execution)
                     put(TICKET_PREFIX, mdProductSerialTpDeviceItem.ticket_prefix)
                     put(TICKET_CODE, mdProductSerialTpDeviceItem.ticket_code)
-                    if(mdProductSerialTpDeviceItem.vg_action > -1){
-                        put(VG_ACTION,mdProductSerialTpDeviceItem.vg_action)
+                    if (mdProductSerialTpDeviceItem.vg_action > -1) {
+                        put(VG_ACTION, mdProductSerialTpDeviceItem.vg_action)
                     }
+
+                    put(MEASURE_ACTIVE, mdProductSerialTpDeviceItem.measureActive)
+                    put(MEASURE_REQUIRE_ID, mdProductSerialTpDeviceItem.measureRequireId)
+                    put(MEASURE_UN, mdProductSerialTpDeviceItem.measureUn)
+                    put(MEASURE_MIN, mdProductSerialTpDeviceItem.measureMin)
+                    put(MEASURE_MAX, mdProductSerialTpDeviceItem.measureMax)
+                    put(MEASURE_ALERT_MIN, mdProductSerialTpDeviceItem.measureAlertMin)
+                    put(MEASURE_ALERT_MAX, mdProductSerialTpDeviceItem.measureAlertMax)
+                    put(LAST_MEASURE_VALUE, mdProductSerialTpDeviceItem.lastMeasureValue)
+                    put(LAST_MEASURE_ID, mdProductSerialTpDeviceItem.lastMeasureId)
+                    put(LAST_MEASURE_UN, mdProductSerialTpDeviceItem.lastMeasureUn)
+                    put(LAST_MEASURE_DATE, mdProductSerialTpDeviceItem.lastMeasureDate)
+                    put(LAST_MEASURE_ALERT, mdProductSerialTpDeviceItem.lastMeasureAlert)
                 }
             }
             //

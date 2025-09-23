@@ -6,7 +6,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.Normalizer
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 fun String?.formatForDisplay() = if (this.isNullOrBlank()) "" else this
 
@@ -25,9 +27,13 @@ fun checkIfHasCharInvalid(value: String): Boolean {
     return regexPattern.containsMatchIn(value)
 }
 
-fun String.parseDatePair(): Pair<String, String> {
+fun String?.parseDatePair(): Pair<String, String> {
+    if (this == null) return Pair("", "")
     return try {
-        val old = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault()).parse(this)
+        val old = SimpleDateFormat(
+            ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+            Locale.getDefault()
+        ).parse(this)
         val newDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(old!!)
         val newHour = SimpleDateFormat("HH:mm", Locale.getDefault()).format(old)
         Pair(newDate, newHour)
@@ -39,7 +45,10 @@ fun String.parseDatePair(): Pair<String, String> {
 
 fun String.parseDate(): String {
     return try {
-        val old = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault()).parse(this)
+        val old = SimpleDateFormat(
+            ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+            Locale.getDefault()
+        ).parse(this)
         val newDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(old!!)
         val newHour = SimpleDateFormat("HH:mm", Locale.getDefault()).format(old)
         "$newDate $newHour"
@@ -53,16 +62,16 @@ fun String.parseFullDate(withSeconds: Boolean = true): String {
     return try {
 //        val simpleSeconds = SimpleDateFormat("ss", Locale.getDefault())
 //        val currentSeconds = simpleSeconds.format(Date())
-        val dateFormat = if(withSeconds) "dd/MM/yy HH:mm:ss" else "dd/MM/yy HH:mm"
+        val dateFormat = if (withSeconds) "dd/MM/yy HH:mm:ss" else "dd/MM/yy HH:mm"
         val formatDate = "$this:00"
         val simpleDate = SimpleDateFormat(dateFormat, Locale.getDefault())
-        val currentSimpleDate =  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentSimpleDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-        val old = simpleDate.parse(if(withSeconds) formatDate else this)
+        val old = simpleDate.parse(if (withSeconds) formatDate else this)
         val gmtDate = currentSimpleDate.format(old!!)
         val gmtValue = ToolBox.getDeviceGMT(false)
         "$gmtDate $gmtValue"
-    }catch (e: Exception){
+    } catch (e: Exception) {
         ToolBox_Inf.registerException("StringHelper (parseFullDate)", e)
         ""
     }
@@ -122,7 +131,17 @@ fun addHourToDateLimited(): String {
 
 }
 
-fun getFormattedAddress(address: String):String{
+fun String.isValidDecimalInput(maxDecimalPlaces: Int = 2): Boolean {
+    if (this.isEmpty()) return true // Permite campo vazio
+
+    // Regex para número decimal com até 'maxDecimalPlaces' casas
+    // Permite: "", "1", "123", "1.2", "12.34", "." (enquanto digita), "1."
+    // Não permite: "1.234", "abc", "1..2"
+    val regexPattern = "^\\d*\\.?\\d{0,$maxDecimalPlaces}$"
+    return this.matches(Regex(regexPattern))
+}
+
+fun getFormattedAddress(address: String): String {
     return address.trim()
         .replace("-", "")
         .replace(" ", "+")

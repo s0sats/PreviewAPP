@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -14,12 +15,12 @@ import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBindi
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.InspectionCell
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ADJUST
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext
 import java.util.Objects
 import kotlin.math.abs
 
@@ -30,7 +31,7 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int) -> Unit,
+    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int, measureBottomSheetContext: MeasureBottomSheetContext?) -> Unit,
     private val onAlreadyOkItemSelected: (position: Int, item: InspectionCell) -> Unit,
     private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -78,7 +79,8 @@ class Act011InspectionFormAdapter(
                 onItemSelected(
                     position,
                     inspectionCell.itemCodeAndSeq,
-                    inspectionCell.partitionedExecution
+                    inspectionCell.partitionedExecution,
+                    inspectionCell.measureItemData?.context
                 )
             }
             binding.root.setOnClickListener(openItemListener)
@@ -128,7 +130,7 @@ class Act011InspectionFormAdapter(
         //no anterior caso exista.
         val oldHighlight = highlightedItemPosition
         highlightedItemPosition = position
-        if(oldHighlight > -1) {
+        if (oldHighlight > -1) {
             notifyItemChanged(oldHighlight)
         }
         inspectionsFiltered[position] = onAlreadyOkActionItem
@@ -205,6 +207,12 @@ class Act011InspectionFormAdapter(
             inspection?.apply {
 
                 val context = binding.root.context
+
+                binding.tvMeasureDetail.apply {
+                    text = "${measureItemData?.formatted}"
+                    this@apply.isVisible = measureItemData?.showLastMeasure == true
+                }
+
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
                     binding.llAnswerInfo.visibility = View.VISIBLE
@@ -222,6 +230,7 @@ class Act011InspectionFormAdapter(
                     if (inspection.status == InspectionCell.MANUAL_ALERT
                         || inspection.hideAlreadyOKBtn
                         || read_only
+                        || measureItemData != null
                     ) {
                         binding.tvAutoAlreadyOk.visibility = View.GONE
                     }
@@ -241,7 +250,7 @@ class Act011InspectionFormAdapter(
                     } else {
                         text = statusTransalted
                     }
-                    setTextColor(ContextCompat.getColor(context,tagColor))
+                    setTextColor(ContextCompat.getColor(context, tagColor))
                     invalidate()
                 }
                 binding.vCellColorTag.apply {
@@ -270,6 +279,7 @@ class Act011InspectionFormAdapter(
                                     R.drawable.ic_build_black_24dp
                                 )
                         }
+
                         EXEC_TYPE_ALERT -> {
                             binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
@@ -278,6 +288,7 @@ class Act011InspectionFormAdapter(
                                 )
 
                         }
+
                         EXEC_TYPE_ALREADY_OK -> {
                             binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
@@ -319,9 +330,9 @@ class Act011InspectionFormAdapter(
                     //se data maior ou menor que 0.
                     binding.tvDayCount.apply {
                         visibility = View.VISIBLE
-                        text = if(dayCount <= 0){
+                        text = if (dayCount <= 0) {
                             "${hmAuxTrans["inspection_alert_days"]}: ${abs(dayCount)}"
-                        }else{
+                        } else {
                             "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"
                         }
                         //LUCHE - 26/01/2022
@@ -333,8 +344,12 @@ class Act011InspectionFormAdapter(
 //                                ContextCompat.getColor(context,R.color.gray_colors_menu)
 //                            }
 //                        )
-                        setTextColor(ContextCompat.getColor(context,
-                            com.namoa_digital.namoa_library.R.color.gray_colors_menu))
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                com.namoa_digital.namoa_library.R.color.gray_colors_menu
+                            )
+                        )
                     }
                 }
                 //
@@ -377,7 +392,7 @@ class Act011InspectionFormAdapter(
                     }
                 }
                 //
-                if(isRequiredPhoto){
+                if (isRequiredPhoto) {
                     binding.ivPhoto.applyTintColor(R.color.namoa_color_highlight_required_item)
                     binding.tvPhotoCount.setTextColor(
                         ContextCompat.getColor(
@@ -385,7 +400,7 @@ class Act011InspectionFormAdapter(
                             R.color.namoa_color_highlight_required_item
                         )
                     )
-                }else{
+                } else {
                     binding.ivPhoto.applyTintColor(R.color.namoa_color_cone_item)
                     binding.tvPhotoCount.setTextColor(
                         ContextCompat.getColor(

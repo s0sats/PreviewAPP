@@ -17,6 +17,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao.Companion.MEASURE_END_ID
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao.Companion.MEASURE_END_VALUE
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao.Companion.MEASURE_START_ID
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao.Companion.MEASURE_START_VALUE
 import com.namoadigital.prj001.dao.GeOsVgDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
@@ -24,6 +28,18 @@ import com.namoadigital.prj001.dao.MD_ProductDao
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.LAST_MEASURE_ALERT
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.LAST_MEASURE_DATE
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.LAST_MEASURE_ID
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.LAST_MEASURE_UN
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.LAST_MEASURE_VALUE
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_ACTIVE
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_ALERT_MAX
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_ALERT_MIN
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_MAX
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_MIN
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_REQUIRE_ID
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao.Companion.MEASURE_UN
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MD_SiteDao
 import com.namoadigital.prj001.dao.MdItemCheckDao
@@ -1668,6 +1684,167 @@ val migrationV23 = object : MigrationSQLite(23, 24) {
             )
         )
     }
+}
+
+
+val migrationV24 = object : MigrationSQLite(24, 25) {
+    override fun migrate(db: SQLiteDatabase) {
+
+        val commonColumns = mutableListOf(
+            Column(
+                name = MEASURE_ACTIVE,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = MEASURE_REQUIRE_ID,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = MEASURE_UN,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = MEASURE_MIN,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = MEASURE_MAX,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = MEASURE_ALERT_MIN,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = MEASURE_ALERT_MAX,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+            Column(
+                name = LAST_MEASURE_VALUE,
+                type = ColumnType.REAL,
+                isNullable = true,
+            ),
+            Column(
+                name = LAST_MEASURE_ID,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = LAST_MEASURE_UN,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = LAST_MEASURE_DATE,
+                type = ColumnType.TEXT,
+                isNullable = true,
+            ),
+            Column(
+                name = LAST_MEASURE_ALERT,
+                type = ColumnType.INT,
+                isNullable = true,
+            ),
+        )
+
+        db.addMissingColumns(
+            tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
+            columnsToAdd = commonColumns
+        )
+
+        db.addMissingColumns(
+            tableName = GeOsDeviceItemDao.TABLE,
+            columnsToAdd = commonColumns.also {
+                it.add(
+                    Column(
+                        name = MEASURE_START_VALUE,
+                        type = ColumnType.REAL,
+                        isNullable = true,
+                    )
+                )
+                it.add(
+                    Column(
+                        name = MEASURE_END_VALUE,
+                        type = ColumnType.REAL,
+                        isNullable = true,
+                    )
+                )
+                it.add(
+                    Column(
+                        name = MEASURE_START_ID,
+                        type = ColumnType.TEXT,
+                        isNullable = true,
+                        collation = CollationType.NOCASE
+                    )
+                )
+                it.add(
+                    Column(
+                        name = MEASURE_END_ID,
+                        type = ColumnType.TEXT,
+                        isNullable = true,
+                        collation = CollationType.NOCASE
+                    )
+                )
+            }
+        )
+
+
+        val newHistColumns = listOf(
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_UN,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_INI_VALUE,
+                type = ColumnType.REAL,
+                isNullable = true
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_INI_ID,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_INI_ALERT,
+                type = ColumnType.INT,
+                isNullable = true
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_FIN_VALUE,
+                type = ColumnType.REAL,
+                isNullable = true
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_FIN_ID,
+                type = ColumnType.TEXT,
+                isNullable = true,
+                collation = CollationType.NOCASE
+            ),
+            Column(
+                name = MD_Product_Serial_Tp_Device_Item_HistDao.MEASURE_FIN_ALERT,
+                type = ColumnType.INT,
+                isNullable = true
+            )
+        )
+
+        db.addMissingColumns(
+            tableName = MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,
+            columnsToAdd = newHistColumns
+        )
+    }
+
 }
 
 @Deprecated(message = "Use a função com objeto Column")

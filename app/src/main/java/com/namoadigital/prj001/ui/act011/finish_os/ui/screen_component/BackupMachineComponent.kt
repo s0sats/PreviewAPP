@@ -64,7 +64,7 @@ import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormBackupMachineList
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
@@ -141,7 +141,7 @@ fun BackupMachineSerialComponent(
     }
 //    if (backupSerial != null) {
     Column(modifier = modifier) {
-        TitleSection(text = translateMap.translate(DIALOG_FINALIZE_BACKUP_MACHINE_TTL))
+        TitleSection(text = translateMap.textOf(DIALOG_FINALIZE_BACKUP_MACHINE_TTL))
 
         Box(
             modifier = Modifier
@@ -150,7 +150,7 @@ fun BackupMachineSerialComponent(
         ) {
 
             TitleSwitch(
-                title = translateMap.translate(DIALOG_FINALIZE_BACKUP_MACHINE_SWITCH_TTL),
+                title = translateMap.textOf(DIALOG_FINALIZE_BACKUP_MACHINE_SWITCH_TTL),
                 isRequiredOption = backupMachineSwitchState,
                 isEnabled = !isReadOnly,
                 initialSwitchState = backupMachineSwitchState,
@@ -205,7 +205,7 @@ fun BackupMachineSerialComponent(
                                     isErrorEnabled = false
                                     isHelperTextEnabled = true
                                     helperText = backupMachine?.productDesc
-                                    hint = translateMap.translate(DIALOG_SELECT_BACKUP_SERIAL_HINT)
+                                    hint = translateMap.textOf(DIALOG_SELECT_BACKUP_SERIAL_HINT)
                                     boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                                     val cornerRadiusPx = TypedValue.applyDimension(
                                         TypedValue.COMPLEX_UNIT_DIP,
@@ -276,7 +276,7 @@ fun BackupMachineSerialComponent(
                                     //
                                     textInputLayout.isErrorEnabled = true
                                     textInputLayout.error =
-                                        translateMap.translate(DIALOG_SELECT_BACKUP_SERIAL_HELP_LBL)
+                                        translateMap.textOf(DIALOG_SELECT_BACKUP_SERIAL_HELP_LBL)
                                     //
                                 }
                                 //
@@ -391,7 +391,7 @@ fun BackupMachineListDialog(
             ) {
                 Row {
                     Text(
-                        text = translateMap.translate(DIALOG_SELECT_BACKUP_MACHINE_TTL),
+                        text = translateMap.textOf(DIALOG_SELECT_BACKUP_MACHINE_TTL),
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Black
                     )
@@ -445,7 +445,7 @@ fun BackupMachineListDialog(
                             } else {
                                 Text(
                                     modifier = Modifier.padding(vertical = 8.dp),
-                                    text = translateMap.translate(
+                                    text = translateMap.textOf(
                                         DIALOG_SELECT_BACKUP_MACHINE_EMPTY_LBL
                                     ),
                                     style = MaterialTheme.typography.bodyLarge,
@@ -458,7 +458,7 @@ fun BackupMachineListDialog(
                             ) {
                                 TextButton(onClick = { onDialogDismiss() }) {
                                     Text(
-                                        text = translateMap.translate("sys_alert_btn_cancel"),
+                                        text = translateMap.textOf("sys_alert_btn_cancel"),
                                         style = NamoaTheme.typography.bodySmall.copy(
                                             fontWeight = FontWeight.Bold
                                         ),

@@ -31,7 +31,7 @@ import com.namoa_digital.namoa_library.compose.components.ApplicationSnackBar
 import com.namoa_digital.namoa_library.compose.components.lifecycle.LifeCycleEffect
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.SECTION_ITEM_WITHOUT_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.SECTION_SELECT_VERIFICATION_GROUP_LBL
@@ -118,7 +118,7 @@ fun VerificationGroupScreen(
             ) {
                 item {
                     Text(
-                        translateMap.translate(key = SECTION_SELECT_VERIFICATION_GROUP_LBL),
+                        translateMap.textOf(key = SECTION_SELECT_VERIFICATION_GROUP_LBL),
                         style = NamoaTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
@@ -129,7 +129,7 @@ fun VerificationGroupScreen(
                         group = group,
                         translateMap = translateMap,
                         onSwitchChange = {
-                            if(stateLoading.isLoading) return@VerificationGroupCard
+                            if (stateLoading.isLoading) return@VerificationGroupCard
                             viewModel.onEvent(
                                 VerificationGroupEvent.onGroupSwitchChange(
                                     isContinuousForm,
@@ -145,7 +145,7 @@ fun VerificationGroupScreen(
                 item {
                     Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
                     Text(
-                        translateMap.translate(key = SECTION_ITEM_WITHOUT_GROUP_LBL),
+                        translateMap.textOf(key = SECTION_ITEM_WITHOUT_GROUP_LBL),
                         style = NamoaTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
@@ -168,7 +168,7 @@ fun VerificationGroupScreen(
             ) {
                 CircularProgressIndicator()
                 Text(
-                    text = translateMap.translate(key = stateLoading.message),
+                    text = translateMap.textOf(key = stateLoading.message),
                     modifier = Modifier.paddingFromBaseline(top = NamoaTheme.spacing.mediumLarge),
                     textAlign = TextAlign.Center
                 )

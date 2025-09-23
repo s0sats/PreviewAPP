@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act086.bottomsheet
+package com.namoadigital.prj001.ui.act086.bottomsheet.adjust
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
@@ -18,7 +18,7 @@ class Act086_BottomSheet constructor(
     private val hmAux: HMAux,
     private val callAct090: (String) -> Unit,
     private val onRollBackRadioGroup: () -> Unit
-)  : BottomSheetDialogFragment() {
+) : BottomSheetDialogFragment() {
 
 
     private val binding: Act086BottomSheetBinding by lazy {
@@ -51,15 +51,15 @@ class Act086_BottomSheet constructor(
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if(exec_type.isEmpty()){
+        if (exec_type.isEmpty()) {
             onRollBackRadioGroup()
             dialog.dismiss()
         }
     }
 
 
-    private fun setLabels(){
-        with(binding){
+    private fun setLabels() {
+        with(binding) {
             act086BottomSheetTitle.text = hmAux["select_type_maintenance_lbl"]
             act086BottomSheetButtonAdjust.text = hmAux["adjust_lbl"]
             act086BottomSheetButtonChange.text = hmAux["change_lbl"]
@@ -67,10 +67,10 @@ class Act086_BottomSheet constructor(
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun initActions(){
-        with(binding){
+    private fun initActions() {
+        with(binding) {
 
-            when(buttonSelected){
+            when (buttonSelected) {
                 GeOsDeviceItem.EXEC_TYPE_FIXED -> {
                     act086BottomSheetButtonChange.changeColorButtons()
                 }
@@ -94,7 +94,7 @@ class Act086_BottomSheet constructor(
         }
     }
 
-    private fun MaterialButton.changeColorButtons(){
+    private fun MaterialButton.changeColorButtons() {
         setBackgroundColor(resources.getColor(R.color.namoa_color_light_blue3))
     }
 

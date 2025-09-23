@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.database;
 
-import static com.namoadigital.prj001.database.scripts.multi.GeOsDeviceItemScriptKt.GE_OS_DEVICE_ITEM_CREATE_TABLE;
-import static com.namoadigital.prj001.database.scripts.multi.masterdata.MDProductSerialTpDeviceItemScriptKt.MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_CREATE_SCRIPT;
 import static com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.ProductScriptKt.PRODUCT_CREATE_SCRIPT;
 import static com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.ProductSerialScriptKt.PRODUCT_SERIAL_CREATE_SCRIPT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
@@ -15,18 +13,21 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.namoadigital.prj001.database.scripts.multi.FSCreateScriptKt;
-import com.namoadigital.prj001.database.scripts.multi.GeOsScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.SmSoScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormFieldsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormLocalFieldsKt;
+import com.namoadigital.prj001.database.scripts.multi.ge_os.GeOsDeviceItemScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.ge_os.GeOsScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.MDItemCheckScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.MDProductSerialTpDeviceItemScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.OrderTypeScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.SiteScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.VerificationGroupKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.MDProductSerialVGScriptKt;
+import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.TpDeviceItemHistScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.ticket.TkCreateScriptsKt;
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.Constant;
@@ -169,13 +170,13 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append(MDItemCheckScriptKt.ITEM_CHECK_CREATE_SCRIPT);
             script.append(OrderTypeScriptKt.ORDER_TYPE_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device] ([customer_code] int not null,[product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [order_seq] int not null, [tracking_number] text collate nocase, [show_empty] int not null, constraint [pk_md_product_serial_tp_device] primary key(customer_code,product_code,serial_code,device_tp_code));");
-            script.append(MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_CREATE_SCRIPT);
-            script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item_hist]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [seq] int not null, [exec_type] text not null collate nocase, [exec_value] real not null, [exec_date] text not null collate nocase, [exec_comment] text collate nocase, [exec_material] int not null, [change_adjust] int not null default 0, [exec_photo1] text collate nocase, [exec_photo2] text collate nocase, [exec_photo3] text collate nocase, [exec_photo4] text collate nocase, constraint [pk_md_product_serial_tp_device_item_hist] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,seq));");
+            script.append(MDProductSerialTpDeviceItemScriptKt.getMdProductSerialTpDeviceItemTableScript());
+            script.append(TpDeviceItemHistScriptKt.getMDProductSerialTpDeviceItemHistScript());
             script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item_material]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [material_code] int not null, [qty] real not null, [origin] text, constraint [pk_md_product_serial_tp_device_item_material] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,material_code));");
             //Projeto OS no N-Form. TAbelas de Resposta
             script.append(GeOsScriptKt.GE_OS_CREATE_SCRIPT);
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device] ([customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [device_tp_id] text not null default '' collate nocase, [device_tp_desc] text not null default '' collate nocase, [order_seq] int not null, [tracking_number] text collate nocase,  [show_empty] int not null, constraint [pk_ge_os_device] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code));");
-            script.append(GE_OS_DEVICE_ITEM_CREATE_TABLE);
+            script.append(GeOsDeviceItemScriptKt.getGeOsDeviceItemScript());
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device_item_material]( [customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [material_code] int not null, [material_id] text not null collate nocase, [material_desc] text not null collate nocase, [material_qty] real not null, [material_unit] text collate nocase, [creation_ms] int not null, [material_planned] int not null default 0, [material_planned_used] int not null default 0, [material_planned_qty] real, [origin] text , constraint [pk_ge_os_device_item_material] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,material_code));");
             script.append("CREATE TABLE IF NOT EXISTS [ge_os_device_item_hist]( [customer_code] int not null, [custom_form_type]int not null, [custom_form_code]int not null, [custom_form_version]int not null, [custom_form_data]int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [seq] int not null, [exec_type] text not null collate nocase, [exec_value] real not null, [exec_date] text not null collate nocase, [exec_comment] text collate nocase, [exec_material] int not null, [change_adjust] int not null default 0, constraint [pk_ge_os_device_item_hist] primary key(customer_code,custom_form_type,custom_form_code,custom_form_version,custom_form_data,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,seq));");
             //
@@ -297,6 +298,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV22().migrate(db);
                 case 23:
                     MigrationsKt.getMigrationV23().migrate(db);
+                case 24:
+                    MigrationsKt.getMigrationV24().migrate(db);
                     break;
             }
 

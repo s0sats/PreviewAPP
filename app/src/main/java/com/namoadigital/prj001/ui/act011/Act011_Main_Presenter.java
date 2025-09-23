@@ -128,6 +128,7 @@ public interface Act011_Main_Presenter {
                                    int mTicket_code,
                                    int mTicket_seq_tmp,
                                    int mStep_code);
+
     CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
 
     @Nullable
@@ -171,6 +172,7 @@ public interface Act011_Main_Presenter {
     boolean isTripInUpdateRequired();
 
     void executeTripUpdate();
+
     boolean isUserOnSyncRequiredTrip();
 
     boolean hasSerialStructurePending();
@@ -185,4 +187,5 @@ public interface Act011_Main_Presenter {
 
     boolean addGeOsVgFragment(long customerCode, int productCode, String serialId, GE_Custom_Form_Local formLocal);
 
+    void saveInitialMeasurement(String itemPk, double newMeasure, String newID);
 }

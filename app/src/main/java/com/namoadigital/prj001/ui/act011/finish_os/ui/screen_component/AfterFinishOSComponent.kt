@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
@@ -80,7 +80,7 @@ fun AfterFinishOSComponent(
             },
     ) {
 
-        TitleSection(text = translateMap.translate(DIALOG_FINALIZE_OS_AFTER_TITLE_LBL))
+        TitleSection(text = translateMap.textOf(DIALOG_FINALIZE_OS_AFTER_TITLE_LBL))
 
         MachineFinalSwitch(
             modifier = Modifier.fillMaxWidth(),
@@ -134,7 +134,7 @@ fun MachineFinalSwitch(
     }
 
     TitleSwitch(
-        title = translateMap.translate(DIALOG_FINALIZED_OS_MACHINE_STOPPED_SWITCH_TTL),
+        title = translateMap.textOf(DIALOG_FINALIZED_OS_MACHINE_STOPPED_SWITCH_TTL),
         isRequiredOption = if (showResponsibleOptions) switchState else false,
         isEnabled = !isReadOnly,
         initialSwitchState = if (isReadOnly) machineStateFinal?.option != NO_STOPPED else false,
@@ -167,7 +167,7 @@ fun MachineFinalSwitch(
                             id = 1,
                             isSelected = optionSelected == ResponsibleStop.MAINTENANCE,
                             value = ResponsibleStop.MAINTENANCE,
-                            text = translateMap.translate(
+                            text = translateMap.textOf(
                                 DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_MAINTENANCE
                             ),
                         ),
@@ -175,7 +175,7 @@ fun MachineFinalSwitch(
                             id = 2,
                             isSelected = optionSelected == ResponsibleStop.THIRD_PARTY,
                             value = ResponsibleStop.THIRD_PARTY,
-                            text = translateMap.translate(
+                            text = translateMap.textOf(
                                 DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_THIRD_PARTY
                             ),
                         )
@@ -228,7 +228,7 @@ fun ScheduleFinishSwitch(
 
     TitleSwitch(
         modifier = modifier,
-        title = translateMap.translate(DIALOG_NOT_FINALIZE_INFO_LBL),
+        title = translateMap.textOf(DIALOG_NOT_FINALIZE_INFO_LBL),
         isRequiredOption = switchState,
         initialSwitchState = newServiceState.option != NewServiceChoose.FINALIZED,
         isEnabled = !isReadOnly,
@@ -244,28 +244,29 @@ fun ScheduleFinishSwitch(
         RadioGroup(
             modifier = modifier.padding(start = NamoaTheme.spacing.medium),
             isEnabled = !isReadOnly,
-            radioGroupOptions = RadioGroupOptions(listOf(
-                RadioGroupItem(
+            radioGroupOptions = RadioGroupOptions(
+                listOf(
+                    RadioGroupItem(
                     id = 1,
                     isSelected = newServiceState.option == NewServiceChoose.PLANNING,
                     value = NewServiceChoose.PLANNING,
-                    text = translateMap.translate(DIALOG_NOT_FINALIZE_DECIDE_PLANNING_LBL),
+                    text = translateMap.textOf(DIALOG_NOT_FINALIZE_DECIDE_PLANNING_LBL),
                 ),
                 RadioGroupItem(
                     id = 2,
                     isSelected = newServiceState.option is NewServiceChoose.RETURN,
                     value = NewServiceChoose.RETURN(getNextDay()),
-                    text = translateMap.translate(DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL),
+                    text = translateMap.textOf(DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL),
                     content = listOf {
                         DateTimePicker(
                             modifier = Modifier.fillMaxWidth(),
                             initialDate = timeSelected,
                             isDateEnabled = !isReadOnly,
                             isTimeEnabled = !isReadOnly,
-                            dateHint = translateLib.translate(MKDATETIME_DATE_TTL),
-                            timeHint = translateLib.translate(MKDATETIME_HOUR_TTL),
+                            dateHint = translateLib.textOf(MKDATETIME_DATE_TTL),
+                            timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
                             isError = dateError,
-                            errorText = translateMap.translate(
+                            errorText = translateMap.textOf(
                                 DIALOG_NOT_FINALIZED_DATE_INCORRECT_LBL
                             ),
                             onDateTimeSelected = {

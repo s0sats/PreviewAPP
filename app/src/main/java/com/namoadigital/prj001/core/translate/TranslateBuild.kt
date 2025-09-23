@@ -4,15 +4,20 @@ import android.content.Context
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
+import javax.inject.Inject
 
 typealias TranslateVar = String
 typealias ListTranslateVars = List<TranslateVar>
 typealias TranslateMap = Map<String, String>
 
-fun TranslateMap.translate(key: String): String = this[key] ?: "../$key"
+fun TranslateMap.textOf(key: String): String = this[key] ?: "../$key"
 
-
-class TranslateBuild(private val context: Context) {
+@ActivityRetainedScoped
+class TranslateBuild @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     private var moduleCode: String = ConstantBaseApp.APP_MODULE
     private var resourceName: String? = null
@@ -25,6 +30,11 @@ class TranslateBuild(private val context: Context) {
 
     fun listVars(vars: List<String>): TranslateBuild {
         this.listTranslateVars = vars
+        return this
+    }
+
+    fun listVars(block: () -> List<String>): TranslateBuild {
+        this.listTranslateVars = block()
         return this
     }
 
@@ -46,6 +56,6 @@ class TranslateBuild(private val context: Context) {
             resourceCode
         ).setLanguage(listTranslateVars)
 
-        return result.filter { listTranslateVars.contains(it.key) || it.key.contains("sys_")}
+        return result.filter { listTranslateVars.contains(it.key) || it.key.contains("sys_") }
     }
 }

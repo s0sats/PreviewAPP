@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.extensions.date.convertDateToFullTimeStampGMT
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishFormField
@@ -87,7 +87,7 @@ fun InfoOSComponent(
             is FinishValidation.Component.InfoOS.DateExceededMachineDateStopped -> {
                 initialDateError = Pair(
                     true,
-                    translateMap.translate(
+                    translateMap.textOf(
                         DIALOG_FINALIZE_FORM_OS_DATE_EXCEED_MACHINE_DATE_STOPPED_LBL
                     )
                 )
@@ -97,11 +97,11 @@ fun InfoOSComponent(
             is FinishValidation.Component.InfoOS.InvalidBothDate -> {
                 initialDateError = Pair(
                     true,
-                    translateMap.translate(DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL)
+                    translateMap.textOf(DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL)
                 )
                 finalDateError = Pair(
                     true,
-                    translateMap.translate(DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL)
+                    translateMap.textOf(DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL)
                 )
                 timeExecution = defaultText
             }
@@ -109,7 +109,7 @@ fun InfoOSComponent(
             is FinishValidation.Component.InfoOS.InvalidStartDate -> {
                 initialDateError = Pair(
                     true,
-                    translateMap.translate(DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL)
+                    translateMap.textOf(DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL)
                 )
                 finalDateError = Pair(false, "")
             }
@@ -117,7 +117,7 @@ fun InfoOSComponent(
             is FinishValidation.Component.InfoOS.DateExceededLastMeasureDate -> {
                 initialDateError = Pair(
                     true,
-                    translateMap.translate(
+                    translateMap.textOf(
                         DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_LAST_MEASURE_DATE_LBL
                     )
                 )
@@ -128,14 +128,14 @@ fun InfoOSComponent(
                 initialDateError = Pair(false, "")
                 finalDateError = Pair(
                     true,
-                    translateMap.translate(FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL)
+                    translateMap.textOf(FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL)
                 )
             }
 
             is FinishValidation.Component.InfoOS.PartialExecutionOS -> {
                 initialDateError = Pair(
                     true,
-                    "${translateMap.translate(DIALOG_FINALIZE_OS_FORM_INVALID_START_DATE_MSG)} ${
+                    "${translateMap.textOf(DIALOG_FINALIZE_OS_FORM_INVALID_START_DATE_MSG)} ${
                         infoOs?.partitionMinDate?.convertDateToFullTimeStampGMT(
                             inputFormat = FULL_TIMESTAMP_TZ_FORMAT_GMT,
                             outputFormat = "dd/MM/yyyy HH:mm"
@@ -160,11 +160,11 @@ fun InfoOSComponent(
     Column(
         modifier = modifier,
     ) {
-        TitleSection(text = translateMap.translate(DIALOG_FINALIZE_FORM_SO_INFO_LBL))
+        TitleSection(text = translateMap.textOf(DIALOG_FINALIZE_FORM_SO_INFO_LBL))
         Column(modifier = Modifier.padding(start = NamoaTheme.spacing.small)) {
             Text(
                 modifier = Modifier.padding(start = NamoaTheme.spacing.small),
-                text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_START_DATE_LBL),
+                text = translateMap.textOf(DIALOG_FINALIZE_OS_FORM_START_DATE_LBL),
                 style = NamoaTheme.typography.bodyLarge,
                 color = NamoaTheme.colors.onSurface
             )
@@ -175,8 +175,8 @@ fun InfoOSComponent(
                 initialDate = initialDate,
                 isError = initialDateError.first,
                 errorText = initialDateError.second,
-                dateHint = translateLib.translate(MKDATETIME_DATE_TTL),
-                timeHint = translateLib.translate(MKDATETIME_HOUR_TTL),
+                dateHint = translateLib.textOf(MKDATETIME_DATE_TTL),
+                timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
                 onDateTimeSelected = {
                     initialDate = it.fullTimeStampGMT
                     onInitialDateTimeSelected(it.fullTimeStampGMT)
@@ -187,7 +187,7 @@ fun InfoOSComponent(
 
             Text(
                 modifier = Modifier.padding(start = NamoaTheme.spacing.small),
-                text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_END_DATE_LBL),
+                text = translateMap.textOf(DIALOG_FINALIZE_OS_FORM_END_DATE_LBL),
                 style = NamoaTheme.typography.bodyLarge,
                 color = NamoaTheme.colors.onSurface
             )
@@ -198,8 +198,8 @@ fun InfoOSComponent(
                 isError = finalDateError.first,
                 errorText = finalDateError.second,
                 initialDate = finalDate,
-                dateHint = translateLib.translate(MKDATETIME_DATE_TTL),
-                timeHint = translateLib.translate(MKDATETIME_HOUR_TTL),
+                dateHint = translateLib.textOf(MKDATETIME_DATE_TTL),
+                timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
                 onDateTimeSelected = {
                     finalDate = it.fullTimeStampGMT
                     onFinalDateTimeSelected(it.fullTimeStampGMT)
@@ -217,7 +217,7 @@ fun InfoOSComponent(
             ) {
                 Text(
                     modifier = Modifier.padding(start = NamoaTheme.spacing.small),
-                    text = translateMap.translate(DIALOG_FINALIZE_OS_FORM_ELAPSED_TIME_LBL),
+                    text = translateMap.textOf(DIALOG_FINALIZE_OS_FORM_ELAPSED_TIME_LBL),
                     style = NamoaTheme.typography.bodyLarge,
                     color = NamoaTheme.colors.onSurface
                 )

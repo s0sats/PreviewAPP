@@ -1,0 +1,19 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="6dp"/>
+            <solid android:color="@color/m3_namoa_outline_variant"/>
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="10dp"/>
+                <solid android:color="@color/m3_namoa_primary"/>
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

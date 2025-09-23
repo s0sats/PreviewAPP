@@ -11,10 +11,13 @@ interface InspectionListFragmentInteraction {
         searchFilterValue: String,
         chkStatus: Boolean,
         itemCodeAndSeqPk: String,
-        partition_execution: Int = 0
+        partition_execution: Int = 0,
     )
+
     //
     fun onAlreadyOkAction(itemPk: String): InspectionCell
     fun onRefreshTabCounter(tabIndex: Int)
     fun getObjectView(position: Int): AcessoryFormView
+
+    fun onSaveInitialMeasurement(itemPk: String, newMeasure: Double?, newID: String? = null)
 }

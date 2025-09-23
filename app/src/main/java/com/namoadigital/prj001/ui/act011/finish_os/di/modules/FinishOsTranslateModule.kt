@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act011.finish_os.di.modules
 
-import android.content.Context
 import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZED_OS_MACHINE_STOPPED_SWITCH_TTL
@@ -50,7 +49,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Qualifier
 
@@ -67,8 +65,10 @@ object FinishOsTranslateModule {
     @FinishOsTranslate
     @ViewModelScoped
     fun providesFinishOsTranslate(
-        @ApplicationContext context: Context
+        translateBuild: TranslateBuild
     ): TranslateMap {
+
+        
         val list = mutableListOf(
             DIALOG_FINALIZE_FORM_SO_TTL,
             INITIAL_SERIAL_STATE_TTL,
@@ -114,7 +114,7 @@ object FinishOsTranslateModule {
             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_MSG,
         )
 
-        return TranslateBuild(context)
+        return translateBuild
             .resource(ACT011)
             .listVars(list)
             .build()

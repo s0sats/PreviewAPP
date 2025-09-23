@@ -45,7 +45,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.model.BaseSerialSearchItem
 import com.namoadigital.prj001.model.ticket.TkSerialSearchRequest.Companion.DEFAULT_PAGE_SIZE
 import com.namoadigital.prj001.ui.act070.model.ListSerialSearchItemsArguments
@@ -103,10 +103,10 @@ private fun SerialListComponent(
     Column(modifier) {
         HeaderSection(
             searchText,
-            title = translateMap.translate(DIALOG_TITLE_SERIAL_SEARCH),
-            hint = translateMap.translate(DIALOG_HINT_SERIAL_SEARCH),
-            sectionHeader = translateMap.translate(DIALOG_LABEL_SECTION_SERIAL_SEARCH),
-            emptyList = translateMap.translate(DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH),
+            title = translateMap.textOf(DIALOG_TITLE_SERIAL_SEARCH),
+            hint = translateMap.textOf(DIALOG_HINT_SERIAL_SEARCH),
+            sectionHeader = translateMap.textOf(DIALOG_LABEL_SECTION_SERIAL_SEARCH),
+            emptyList = translateMap.textOf(DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH),
             itemCount = filteredList.filterIsInstance<BaseSerialSearchItem.SerialSearchItem>().size,
             onSearchTextChange = { searchText = it },
             onClose = onClose
@@ -255,7 +255,7 @@ private fun ColumnScope.SerialList(
                 textAlign = TextAlign.Center,
                 style = NamoaTheme.typography.bodyMedium,
                 color = NamoaTheme.colors.outline,
-                text = translateMap.translate(DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH)
+                text = translateMap.textOf(DIALOG_LABEL_EMPTY_LIST_SERIAL_SEARCH)
             )
         }
     } else {
@@ -274,8 +274,8 @@ private fun ColumnScope.SerialList(
                     is BaseSerialSearchItem.SerialSearchItem -> SerialItem(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
-                        labelSite = translateMap.translate(DIALOG_LABEL_CARD_SITE_SERIAL_SEARCH),
-                        labelTicketOpen = translateMap.translate(
+                        labelSite = translateMap.textOf(DIALOG_LABEL_CARD_SITE_SERIAL_SEARCH),
+                        labelTicketOpen = translateMap.textOf(
                             DIALOG_LABEL_CARD_TICKET_OPEN_SERIAL_SEARCH
                         ),
                     ) { onSelectItem(it) }

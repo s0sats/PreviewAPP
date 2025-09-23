@@ -7,12 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsVgDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.model.Act086HistoricModel
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
@@ -43,7 +45,7 @@ class Act086MainPresenter(
 
     override fun getTranslation() = hmAuxTrans
 
-    private fun loadTranslation() : HMAux {
+    private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
             "act086_title",
             "product_ttl",
@@ -112,17 +114,19 @@ class Act086MainPresenter(
         //Pega o tamanho da tela do device
         val screenMetricHeight = ToolBox_Inf.getScreenMetrics(context)[1]
         //Tamanho da statusBar, baseado em relatos kkkk
-        val statusBars =  ToolBox.convertPixelsToDpIndeed(context, 25f).toInt()
+        val statusBars = ToolBox.convertPixelsToDpIndeed(context, 25f).toInt()
         //Desconta do tamanho da tela a action bar e o footer. Teria ainda a statusBar mas muito treta
-        val calculatedVisibleArea = screenMetricHeight - (footerHeight  + actionBarHeight + statusBars)
+        val calculatedVisibleArea =
+            screenMetricHeight - (footerHeight + actionBarHeight + statusBars)
         //Se o Top do scroll + area de visao disponivel for menor que a posicao Y do bottom do recycler
         //significa que item ficará escondido então tenta o scroll
         val calculatedScrollBottom = calculatedVisibleArea + scrollTop
-        if(calculatedScrollBottom < viewBottomPositionAdjuted){
+        if (calculatedScrollBottom < viewBottomPositionAdjuted) {
             //Soma o Top do scroll + a altura da celula ajustada
             //val newScrollTop = scrollTop + heightToAdd
             // Calcula a diferença entre o fim da view e fim da area visivel.
-            val scrollNeeds = maxOf((viewBottomPositionAdjuted - calculatedScrollBottom),heightToAdd)
+            val scrollNeeds =
+                maxOf((viewBottomPositionAdjuted - calculatedScrollBottom), heightToAdd)
             //Soma a necessidade ao scroll ja existente para saber a nova posicao
             val newScrollTop = scrollTop + scrollNeeds
             //Faz o scroll
@@ -135,24 +139,26 @@ class Act086MainPresenter(
      * Valida se item veio no bundle, se não é null, se tem "." e se seu split é igual a 10 elementos.
      */
     override fun validBundleParams(isNewVerification: Boolean): Boolean {
-       if( bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
-           && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE) != null
-           && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
-       ){
-           val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
-           deviceItemRawPk?.let {
-               //Se tiver
-               return try {
-                   //Se tiver "." e o split tiver 10 elementos
-                   it.contains(".")  && validPkSize(isNewVerification, it)
-               }catch (e: Exception){
-                   ToolBox_Inf.registerException(javaClass.name,e)
-                   false
-               }
+        if (bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
+            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE) != null
+            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+                .containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
+        ) {
+            val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+                .getString(ConstantBaseApp.DEVICE_ITEM_PK)
+            deviceItemRawPk?.let {
+                //Se tiver
+                return try {
+                    //Se tiver "." e o split tiver 10 elementos
+                    it.contains(".") && validPkSize(isNewVerification, it)
+                } catch (e: Exception) {
+                    ToolBox_Inf.registerException(javaClass.name, e)
+                    false
+                }
 
-           }
-       }
-       return false
+            }
+        }
+        return false
     }
 
     /**
@@ -163,7 +169,7 @@ class Act086MainPresenter(
     private fun validPkSize(isNewVerification: Boolean, it: String): Boolean {
         return (
                 (!isNewVerification && it.split(".").size == 10)
-                || (isNewVerification && it.split(".").size == 8)
+                        || (isNewVerification && it.split(".").size == 8)
                 )
     }
 
@@ -171,11 +177,12 @@ class Act086MainPresenter(
      * Fun que retorna o obj GeOsDeviceItem, resgatando do banco via pk, ou criando o no caso de novo
      */
     override fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem? {
-        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+            .getString(ConstantBaseApp.DEVICE_ITEM_PK)
         deviceItemRawPk?.let {
             try {
                 val splitedPK = it.split(".")
-                if(newVerification) {
+                if (newVerification) {
                     return createNewDeviceItem(splitedPK)
                 } else {
                     return geOsDeviceItemDao.getByString(
@@ -193,8 +200,8 @@ class Act086MainPresenter(
                         ).toSqlQuery()
                     )
                 }
-            }catch (e: Exception){
-                ToolBox_Inf.registerException(javaClass.name,e)
+            } catch (e: Exception) {
+                ToolBox_Inf.registerException(javaClass.name, e)
             }
         }
         return null
@@ -238,11 +245,11 @@ class Act086MainPresenter(
             ).toSqlQuery()
         )
         //
-        if( nextItemCheckSeqAux != null
+        if (nextItemCheckSeqAux != null
             && nextItemCheckSeqAux.hasConsistentValue(GeOsDeviceItemDao.ITEM_CHECK_SEQ)
             && nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ] != null
             && nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ]!!.isNotEmpty()
-        ){
+        ) {
             val nextItemCheckSeq = nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ]!!.toInt()
             return GeOsDeviceItem(
                 customer_code = splitedPK[0].toLong(),
@@ -323,7 +330,7 @@ class Act086MainPresenter(
 
     override fun getDeviceItemHist(isNewVerification: Boolean): ArrayList<Act086HistoricModel>? {
         //
-        if(!isNewVerification) {
+        if (!isNewVerification) {
             val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
                 .getString(ConstantBaseApp.DEVICE_ITEM_PK)
             deviceItemRawPk?.let {
@@ -343,14 +350,14 @@ class Act086MainPresenter(
                     return histItemList.map { hist ->
                         //
                         val itemHistMat = mdProductSerialTpDeviceItemHistMatDao.getInputs(
-                                hist.customer_code,
-                                hist.serial_code.toInt(),
-                                hist.product_code.toInt(),
-                                hist.device_tp_code,
-                                hist.item_check_seq,
-                                hist.item_check_code,
-                                hist.seq,
-                            )
+                            hist.customer_code,
+                            hist.serial_code.toInt(),
+                            hist.product_code.toInt(),
+                            hist.device_tp_code,
+                            hist.item_check_seq,
+                            hist.item_check_code,
+                            hist.seq,
+                        )
                         //
 //                        val itemHist = mdProductSerialTpDeviceItemHistDao.getByString(
 //                                MD_Product_Serial_Tp_Device_Item_Hist_Sql_001(
@@ -373,9 +380,15 @@ class Act086MainPresenter(
                             titleLbl = hist.getTitleFormated(loadHistoricFrgTranslation) ?: "",
                             date = hist.getDate(context),
                             measureLbl = loadHistoricFrgTranslation["last_measure_lbl"]!!,
-                            measure = ToolBox_Inf.getFormattedLastMeasureInfo(hist.exec_value, deviceItem?.value_sufix, deviceItem?.restriction_decimal),
-                            materialRequestLbl =  loadHistoricFrgTranslation["material_requested_lbl"] ?: "",
-                            materialAppliedLbl =  loadHistoricFrgTranslation["material_applied_lbl"] ?: "",
+                            measure = ToolBox_Inf.getFormattedLastMeasureInfo(
+                                hist.exec_value,
+                                deviceItem?.value_sufix,
+                                deviceItem?.restriction_decimal
+                            ),
+                            materialRequestLbl = loadHistoricFrgTranslation["material_requested_lbl"]
+                                ?: "",
+                            materialAppliedLbl = loadHistoricFrgTranslation["material_applied_lbl"]
+                                ?: "",
                             comment = hist.exec_comment,
                             exec_type = hist.exec_type,
                             manualInstruction = deviceItem?.manual_desc,
@@ -384,6 +397,10 @@ class Act086MainPresenter(
                             photo2 = hist.exec_photo2,
                             photo3 = hist.exec_photo3,
                             photo4 = hist.exec_photo4,
+                            measureItemHist = createMeasureItemHist(
+                                hist,
+                                loadHistoricFrgTranslation
+                            )
                         )
                     } as ArrayList
                 } catch (e: Exception) {
@@ -395,23 +412,50 @@ class Act086MainPresenter(
         return null
     }
 
+
+    private fun createMeasureItemHist(
+        item: MD_Product_Serial_Tp_Device_Item_Hist,
+        translate: HMAux
+    ): Act086HistoricModel.MeasureItemHist? {
+        val hasAnyMeasureData = item.measureStartValue != null ||
+                item.measureFinalValue != null ||
+                !item.measure_un.isNullOrEmpty()
+
+        if (!hasAnyMeasureData) {
+            return null
+        }
+
+        return Act086HistoricModel.MeasureItemHist(
+            unit = item.measure_un,
+            labelMeasure = translate.textOf("measure_start_lbl"),
+            labelAfterMeasure = translate.textOf("measure_end_lbl"),
+            initialValue = item.measureStartValue,
+            initialId = item.measureStartId,
+            initialAlert = item.isInitialAlert,
+            finalValue = item.measureFinalValue,
+            finalId = item.measureFinalId,
+            finalAlert = item.isFinalAlert
+        )
+    }
+
     /**
      * Fun que verifica se há alguma dado visivel no frag de historico / consulta.
      * Verifica o check status, next_cycle, intrução se lista de historico.
      */
     override fun hasAnyVisibleInfoIntoConsultFrag(
         deviceItem: GeOsDeviceItem,
-        itemHist:ArrayList<Act086HistoricModel>?
+        itemHist: ArrayList<Act086HistoricModel>?
     ): Boolean {
         //Se for um dos "status de alerta", verdadeiro
-        when(deviceItem.item_check_status){
+        when (deviceItem.item_check_status) {
             GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
-            GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
-            GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
-            GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED,
             GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
                 return true
             }
+
             else -> {
                 /*
                  *  Se o alert não será exibido, verfica se existe algumas das infos abaixo
@@ -419,12 +463,12 @@ class Act086MainPresenter(
                  *  - Proximo Ciclo
                  *  - Instrucao
                  */
-                if( (itemHist != null && itemHist.isNotEmpty())
+                if ((itemHist != null && itemHist.isNotEmpty())
                     || deviceItem.next_cycle_measure != null
                     || deviceItem.next_cycle_measure_date != null
-                    ||  deviceItem.next_cycle_limit_date != null
-                    ||  deviceItem.verification_instruction != null
-                ){
+                    || deviceItem.next_cycle_limit_date != null
+                    || deviceItem.verification_instruction != null
+                ) {
                     return true
                 }
             }
@@ -434,17 +478,18 @@ class Act086MainPresenter(
     }
 
     override fun getActionBarTitle(currentFrag: Fragment, newOrCreatedByApp: Boolean): String? {
-        return when(currentFrag){
-                is Act086HistoricFrg -> {
-                    hmAuxTrans["info_ttl"]
+        return when (currentFrag) {
+            is Act086HistoricFrg -> {
+                hmAuxTrans["info_ttl"]
+            }
+
+            else -> {
+                if (newOrCreatedByApp) {
+                    hmAuxTrans["new_check_item_ttl"]
+                } else {
+                    hmAuxTrans["check_item_ttl"]
                 }
-                else ->{
-                    if(newOrCreatedByApp){
-                        hmAuxTrans["new_check_item_ttl"]
-                    }else{
-                        hmAuxTrans["check_item_ttl"]
-                    }
-                }
+            }
         }
     }
 
@@ -453,7 +498,10 @@ class Act086MainPresenter(
      */
     override fun putListItemIndexOnLastPositionFromBundle() {
         bundle.apply {
-            getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX, Int.MAX_VALUE)
+            getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.putInt(
+                ConstantBaseApp.DEVICE_ITEM_LIST_INDEX,
+                Int.MAX_VALUE
+            )
         }
     }
 
@@ -464,9 +512,9 @@ class Act086MainPresenter(
         bundle.apply {
             val startDate = getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.getString(GeOsDao.DATE_START)
             //
-            return if(startDate != null){
+            return if (startDate != null) {
                 ToolBox_Inf.getDateLastMinute(startDate)
-            }else{
+            } else {
                 ToolBox_Inf.getDateLastMinute(
                     ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                 )
@@ -490,22 +538,26 @@ class Act086MainPresenter(
         //
     }
 
-    override fun onBackPressedClicked(fragmentManager: FragmentManager, deviceItem: GeOsDeviceItem) {
+    override fun onBackPressedClicked(
+        fragmentManager: FragmentManager,
+        deviceItem: GeOsDeviceItem
+    ) {
         //
         val currentFragment = getCurrentFrag(fragmentManager)
         //
-        when(currentFragment){
-            is Act086HistoricFrg ->{
+        when (currentFragment) {
+            is Act086HistoricFrg -> {
                 mView.popToVerificationFrag()
             }
-            is Act086VerificationFrg->{
 
-                if(currentFragment.isItemDescriptionInEditMode()){
+            is Act086VerificationFrg -> {
+
+                if (currentFragment.isItemDescriptionInEditMode()) {
                     currentFragment.resetItemDescription()
-                }else{
+                } else {
                     //Se é um item criado via app structure == 0 e não foi respondido, status_answer == null
                     //exibe msg de perda de dados ao sair
-                    if(deviceItem.structure == 0 && deviceItem.status_answer == null){
+                    if (deviceItem.structure == 0 && deviceItem.status_answer == null) {
                         mView.showAlert(
                             hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                             hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
@@ -515,11 +567,12 @@ class Act086MainPresenter(
                             },
                             1
                         )
-                    }else{
+                    } else {
                         mView.callAct011()
                     }
                 }
             }
+
             else -> mView.callAct011()
         }
     }
@@ -538,7 +591,7 @@ class Act086MainPresenter(
         val geOsVgDao = GeOsVgDao(
             context,
         )
-        return model.vg_code?.let{
+        return model.vg_code?.let {
             geOsVgDao.getByVgCode(
                 model.customer_code,
                 model.product_code,

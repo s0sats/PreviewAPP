@@ -25,7 +25,7 @@ data class DatabaseTable(
         }
 
         val primaryKeyDefinition = if (primaryKey.isNotEmpty()) {
-            ",\n        PRIMARY KEY(${primaryKey.joinToString(", ") { "[$it]" }})"
+            ",\n      CONSTRAINT [pk_$name] PRIMARY KEY(${primaryKey.joinToString(", ") { "[$it]" }})"
         } else ""
 
         return """

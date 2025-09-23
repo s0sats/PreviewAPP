@@ -28,6 +28,8 @@ class MD_Product_Serial_Tp_Device_Item_Hist_Sql_003(
                             AND h.${MD_Product_Serial_Tp_Device_Item_HistDao.DEVICE_TP_CODE} = '$device_tp_code'  
                             AND h.${MD_Product_Serial_Tp_Device_Item_HistDao.ITEM_CHECK_CODE} = '$itemCheckCode'                           
                             AND h.${MD_Product_Serial_Tp_Device_Item_HistDao.ITEM_CHECK_SEQ} = '$itemCheckSeq'        
+                            ORDER BY h.${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_DATE} DESC, 
+                            h.${MD_Product_Serial_Tp_Device_Item_HistDao.SEQ} DESC
                     """.trimMargin()
 
         return query

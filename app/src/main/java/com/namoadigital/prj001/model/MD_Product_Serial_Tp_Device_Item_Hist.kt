@@ -19,25 +19,42 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     @SerializedName("exec_photo4") val exec_photo4: String?,
     @SerializedName("exec_material") val exec_material: Int,
     @SerializedName("change_adjust") val change_adjust: Int,
+    @SerializedName("measure_un") var measure_un: String? = null,
+    @SerializedName("measure_ini_value") var measureStartValue: Double? = null,
+    @SerializedName("measure_ini_id") var measureStartId: String? = null,
+    @SerializedName("measure_ini_alert") var measureStartAlert: Int? = null,
+    @SerializedName("measure_fin_value") var measureFinalValue: Double? = null,
+    @SerializedName("measure_fin_id") var measureFinalId: String? = null,
+    @SerializedName("measure_fin_alert") var measureFinalAlert: Int? = null
 ) {
+
+    val isInitialAlert = measureStartAlert == 1
+    val isFinalAlert = measureFinalAlert == 1
+
     @SerializedName("customer_code")
     var customer_code: Long = -1
         private set
+
     @SerializedName("product_code")
     var product_code: Long = -1
         private set
+
     @SerializedName("serial_code")
     var serial_code: Long = -1
         private set
+
     @SerializedName("device_tp_code")
     var device_tp_code: Int = -1
         private set
+
     @SerializedName("item_check_code")
     var item_check_code: Int = -1
         private set
+
     @SerializedName("item_check_seq")
     var item_check_seq: Int = -1
         private set
+
     @SerializedName("material_hist")
     var material_hist = mutableListOf<MdProductSerialTpDeviceItemHistMat>()
         private set
@@ -45,6 +62,7 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     init {
         material_hist = mutableListOf<MdProductSerialTpDeviceItemHistMat>()
     }
+
     constructor(
         customer_code: Long,
         product_code: Long,
@@ -63,7 +81,13 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_photo4: String?,
         exec_material: Int,
         change_adjust: Int,
-
+        measure_un: String?,
+        measureStartValue: Double?,
+        measureStartId: String?,
+        measureStartAlert: Int?,
+        measureFinalValue: Double?,
+        measureFinalId: String?,
+        measureFinalAlert: Int?
     ) : this(
         seq,
         exec_type,
@@ -75,8 +99,15 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_photo3,
         exec_photo4,
         exec_material,
-        change_adjust
-    ){
+        change_adjust,
+        measure_un,
+        measureStartValue,
+        measureStartId,
+        measureStartAlert,
+        measureFinalValue,
+        measureFinalId,
+        measureFinalAlert
+    ) {
         this.customer_code = customer_code
         this.product_code = product_code
         this.serial_code = serial_code
@@ -85,7 +116,7 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         this.item_check_seq = item_check_seq
     }
 
-    fun setPk(item: MD_Product_Serial_Tp_Device_Item){
+    fun setPk(item: MD_Product_Serial_Tp_Device_Item) {
         this.customer_code = item.customer_code
         this.product_code = item.product_code
         this.serial_code = item.serial_code
@@ -97,15 +128,29 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         }
     }
 
-    fun getIcon() = when(exec_type){
-        GeOsDeviceItem.EXEC_TYPE_FIXED -> Pair(R.drawable.ic_build_black_24dp, R.color.namoa_os_form_done_action_blue)
+    fun getIcon() = when (exec_type) {
+        GeOsDeviceItem.EXEC_TYPE_FIXED -> Pair(
+            R.drawable.ic_build_black_24dp,
+            R.color.namoa_os_form_done_action_blue
+        )
 
-        GeOsDeviceItem.EXEC_TYPE_ADJUST -> Pair(R.drawable.ic_build_black_24dp, R.color.namoa_color_gray_8)
+        GeOsDeviceItem.EXEC_TYPE_ADJUST -> Pair(
+            R.drawable.ic_build_black_24dp,
+            R.color.namoa_color_gray_8
+        )
 
-        else -> Pair(R.drawable.ic_outline_report_problem_24_black, R.color.namoa_os_form_problem_red)
+        GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> Pair(
+            R.drawable.ic_done_black_24dp,
+            R.color.namoa_os_form_verified_green
+        )
+
+        else -> Pair(
+            R.drawable.ic_outline_report_problem_24_black,
+            R.color.namoa_os_form_problem_red
+        )
     }
 
-    fun getTitleFormated(hmAux: HMAux) = when(exec_type) {
+    fun getTitleFormated(hmAux: HMAux) = when (exec_type) {
         GeOsDeviceItem.EXEC_TYPE_FIXED -> if (change_adjust == 1) {
             hmAux["change_lbl"]
         } else {
@@ -115,6 +160,7 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["with_problem_lbl"]
 
         GeOsDeviceItem.EXEC_TYPE_ADJUST -> hmAux["adjust_lbl"]
+        GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> hmAux["already_ok_lbl"]
 
         else -> ""
     }
@@ -127,19 +173,22 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     )
 
     fun getMaterialLbl(hmAux: HMAux) =
-        when(exec_type){
+        when (exec_type) {
             GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["material_requested_lbl"]
             else -> hmAux["material_applied_lbl"]
         }
 
-    fun hasMaterialApplied(hmAux: HMAux) = when(exec_material){
+    fun hasMaterialApplied(hmAux: HMAux) = when (exec_material) {
         1 -> hmAux["YES"]
         else -> hmAux["NO"]
     }
 
-    companion object{
+    companion object {
         @JvmStatic
-        fun getSerialDeviceTpItemHistFromList(serial: MD_Product_Serial, deviceItemHistList: ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>) : ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> {
+        fun getSerialDeviceTpItemHistFromList(
+            serial: MD_Product_Serial,
+            deviceItemHistList: ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>
+        ): ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> {
             return deviceItemHistList.filter {
                 it.customer_code == serial.customer_code
                         && it.product_code == serial.product_code

@@ -28,21 +28,40 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("ticket_prefix") val ticket_prefix: Int?,
     @SerializedName("ticket_code") val ticket_code: Int?,
     @SerializedName("vg_action") val vg_action: Int,
+
+    //Measure Item
+    @SerializedName("measure_active") val measureActive: Int? = null,
+    @SerializedName("measure_require_id") val measureRequireId: Int? = null,
+    @SerializedName("measure_un") val measureUn: String? = null,
+    @SerializedName("measure_min") val measureMin: Double? = null,
+    @SerializedName("measure_max") val measureMax: Double? = null,
+    @SerializedName("measure_alert_min") val measureAlertMin: Double? = null,
+    @SerializedName("measure_alert_max") val measureAlertMax: Double? = null,
+    @SerializedName("last_measure_value") val lastMeasureValue: Double? = null,
+    @SerializedName("last_measure_id") val lastMeasureId: String? = null,
+    @SerializedName("last_measure_un") val lastMeasureUn: String? = null,
+    @SerializedName("last_measure_date") val lastMeasureDate: String? = null,
+    @SerializedName("last_measure_alert") val lastMeasureAlert: Int? = null,
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1
         private set
+
     @SerializedName("product_code")
     var product_code: Long = -1
         private set
+
     @SerializedName("serial_code")
     var serial_code: Long = -1
         private set
+
     @SerializedName("device_tp_code")
     var device_tp_code: Int = -1
         private set
+
     @SerializedName("hist")
     var hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
+
     @SerializedName("material")
     var material = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
 
@@ -84,6 +103,18 @@ class MD_Product_Serial_Tp_Device_Item(
         ticket_prefix: Int?,
         ticket_code: Int?,
         vg_action: Int,
+        measureActive: Int?,
+        measureRequireId: Int?,
+        measureUn: String?,
+        measureMin: Double?,
+        measureMax: Double?,
+        measureAlertMin: Double?,
+        measureAlertMax: Double?,
+        lastMeasureValue: Double?,
+        lastMeasureId: String?,
+        lastMeasureUn: String?,
+        lastMeasureDate: String?,
+        lastMeasureAlert: Int?,
     ) : this(
         item_check_code,
         item_check_seq,
@@ -109,7 +140,19 @@ class MD_Product_Serial_Tp_Device_Item(
         partitioned_execution,
         ticket_prefix,
         ticket_code,
-        vg_action
+        vg_action,
+        measureActive,
+        measureRequireId,
+        measureUn,
+        measureMin,
+        measureMax,
+        measureAlertMin,
+        measureAlertMax,
+        lastMeasureValue,
+        lastMeasureId,
+        lastMeasureUn,
+        lastMeasureDate,
+        lastMeasureAlert,
     ) {
         this.customer_code = customer_code
         this.product_code = product_code
@@ -117,7 +160,7 @@ class MD_Product_Serial_Tp_Device_Item(
         this.device_tp_code = device_tp_code
     }
 
-    fun setPk(device: MD_Product_Serial_Tp_Device){
+    fun setPk(device: MD_Product_Serial_Tp_Device) {
         this.customer_code = device.customer_code
         this.product_code = device.product_code
         this.serial_code = device.serial_code
@@ -135,8 +178,12 @@ class MD_Product_Serial_Tp_Device_Item(
         const val APPLY_MATERIAL_NO = "NO"
         const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
         const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"
+
         @JvmStatic
-        fun getSerialDeviceTpItemFromList(serial: MD_Product_Serial, deviceItemList: ArrayList<MD_Product_Serial_Tp_Device_Item>) : ArrayList<MD_Product_Serial_Tp_Device_Item> {
+        fun getSerialDeviceTpItemFromList(
+            serial: MD_Product_Serial,
+            deviceItemList: ArrayList<MD_Product_Serial_Tp_Device_Item>
+        ): ArrayList<MD_Product_Serial_Tp_Device_Item> {
             return deviceItemList.filter {
                 it.customer_code == serial.customer_code
                         && it.product_code == serial.product_code

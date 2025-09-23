@@ -31,15 +31,18 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/act086_historic_frg_alert_item_iv_last_adjust"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/act086_historic_frg_alert_item_tv_adjust_lbl"
                 style="@style/TextAppearance.Material3.LabelMedium"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Continua com problema" />
@@ -64,19 +67,51 @@
                 android:text="1094h"
                 android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintBottom_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
                 app:layout_constraintTop_toTopOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
                 app:layout_constraintWidth_default="wrap" />
 
+
+            <LinearLayout
+                android:id="@+id/act086_data_measure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_last_measure_val">
+
+                <TextView
+                    android:id="@+id/act086_historic_tv_ini_measure_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    tools:text="Medição: 55mm" />
+
+                <TextView
+                    android:id="@+id/act086_historic_tv_end_measure_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    tools:text="Medição: 55mm" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/act086_historic_frg_alert_item_tv_comment"
                 style="@style/TextAppearance.Material3.BodyMedium"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
                 android:paddingBottom="4dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                app:layout_constraintTop_toBottomOf="@+id/act086_data_measure"
                 tools:text="Ajuste feito nos campos" />
 
 
@@ -88,6 +123,7 @@
                 android:text="Foi aplicado insumo?"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 app:layout_constraintBottom_toTopOf="@id/frg_alert_item_tv_material_request_list_item"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
                 app:layout_constraintVertical_bias="0.0" />
@@ -100,8 +136,10 @@
                 android:text="123123123"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 app:layout_constraintBottom_toTopOf="@id/act086_historic_frg_alert_item_tv_material_applied_lbl"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_request_lbl" />
+
             <TextView
                 android:id="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl"
                 style="@style/TextAppearance.Material3.BodyMedium"
@@ -110,6 +148,7 @@
                 android:text="Foi aplicado insumo?"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 app:layout_constraintBottom_toTopOf="@id/frg_alert_item_tv_material_applied_list_item"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/frg_alert_item_tv_material_request_list_item"
                 app:layout_constraintVertical_bias="0.0" />
@@ -121,6 +160,7 @@
                 android:layout_height="wrap_content"
                 android:text="1231231231231"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl" />
 

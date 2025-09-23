@@ -31,18 +31,21 @@ import com.namoadigital.prj001.util.ToolBox_Inf
  * create an instance of this fragment.
  */
 class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
-    private val binding: Act086HistoricFrgBinding by lazy{
+    private val binding: Act086HistoricFrgBinding by lazy {
         Act086HistoricFrgBinding.inflate(layoutInflater)
     }
-    private val alertAdapter: Act086HistoricAdapter by lazy{
+    private val alertAdapter: Act086HistoricAdapter by lazy {
         Act086HistoricAdapter(
+            requireContext(),
             alertList,
             ::onPhotoSelected
         )
     }
+
     //
     private var _mFrgListener: PhotoSelection? = null
     private val mFrgListener get() = _mFrgListener!!
+
     //
     private var alertList = mutableListOf<Act086HistoricModel>()
     private lateinit var itemHist: ArrayList<GeOsDeviceItemHist>
@@ -56,29 +59,32 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private var verificationInstruction: String? = null
     private var restrictionDecimal: Int? = null
     private var dateStartUntilLastMinute: String? = null
+
     //
-    private val mPresenter: Act086HistoricFrgContract.IPresenter by lazy{
-            Act086HistoricFrgPresenter(
-                requireContext(),
-                this,
-                hmAux_Trans
-            )
+    private val mPresenter: Act086HistoricFrgContract.IPresenter by lazy {
+        Act086HistoricFrgPresenter(
+            requireContext(),
+            this,
+            hmAux_Trans
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            alertList = it.getSerializable(Act086HistoricModel::javaClass.name) as ArrayList<Act086HistoricModel>
+            hmAux_Trans =
+                HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            alertList =
+                it.getSerializable(Act086HistoricModel::javaClass.name) as ArrayList<Act086HistoricModel>
             itemCheckStatus = it.getString(GeOsDeviceItemDao.ITEM_CHECK_STATUS)
             nextCycleMeasure = it.getFloat(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE)
             nextCycleMeasureDate = it.getString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE)
-            nextCycleLimitDate =  it.getString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE)
-            lastExecutionDesc =  it.getString(GeOsVgDao.VG_DESC)
-            lastExecutionVal =  it.getString(VG_LAST_VALUE)
+            nextCycleLimitDate = it.getString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE)
+            lastExecutionDesc = it.getString(GeOsVgDao.VG_DESC)
+            lastExecutionVal = it.getString(VG_LAST_VALUE)
             measureValueSufix = it.getString(GeOsDeviceItemDao.VALUE_SUFIX)
             verificationInstruction = it.getString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION)
-            if(it.containsKey(GeOsDeviceItemDao.RESTRICTION_DECIMAL)) {
+            if (it.containsKey(GeOsDeviceItemDao.RESTRICTION_DECIMAL)) {
                 restrictionDecimal = it.getInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL)
             }
             dateStartUntilLastMinute = it.getString(GeOsDao.DATE_START)
@@ -96,7 +102,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         super.onViewCreated(view, savedInstanceState)
         initVars()
         initRecycle()
-        binding.act086HistoricFrgClAlertType.scrollTo(0,0)
+        binding.act086HistoricFrgClAlertType.scrollTo(0, 0)
     }
 
     private fun initVars() {
@@ -112,36 +118,37 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
 
     private fun setVgLastExec() {
 
-        with(binding){
-            if(!lastExecutionVal.isNullOrBlank()
-                && lastExecutionDesc != null){
+        with(binding) {
+            if (!lastExecutionVal.isNullOrBlank()
+                && lastExecutionDesc != null
+            ) {
                 act086HistoricFrgClLastVgExec.visibility = View.VISIBLE
 
-                act086HistoricFrgLastVgVal.text = lastExecutionVal?:""
-                act086HistoricFrgLastVgDesc.text = lastExecutionDesc?:""
-            }else{
+                act086HistoricFrgLastVgVal.text = lastExecutionVal ?: ""
+                act086HistoricFrgLastVgDesc.text = lastExecutionDesc ?: ""
+            } else {
                 act086HistoricFrgClLastVgExec.visibility = View.GONE
             }
         }
     }
 
     private fun setImageInfo() {
-        with(binding){
+        with(binding) {
 
         }
     }
 
     private fun setLabels() {
-        with(binding){
+        with(binding) {
             act086HistoricFrgTvAlertTypeTtl.text = hmAux_Trans["alert_type_ttl"]
             //act086HistoricFrgTvNextVerifyTtl.text = hmAux_Trans["next_cycle_ttl"]
             act086HistoricFrgTvMeasureLbl.text = hmAux_Trans["measure_lbl"]
             act086HistoricFrgTvDeadlineLbl.text = hmAux_Trans["limit_date_lbl"]
             act086HistoricFrgTvInstructionTtl.text = hmAux_Trans["verification_instruction_ttl"]
-/*            act086HistoricFrgTvLastAdjustTtl.text = hmAux_Trans["last_fix_ttl"]
-            act086HistoricFrgTvAdjustLbl.text = getMaintenanceLbl()
-            act086HistoricFrgTvLastMeasureLbl.text = hmAux_Trans["last_measure_lbl"]
-            act086HistoricFrgTvMaterialLbl.text = hmAux_Trans["material_applied_lbl"]*/
+            /*            act086HistoricFrgTvLastAdjustTtl.text = hmAux_Trans["last_fix_ttl"]
+                        act086HistoricFrgTvAdjustLbl.text = getMaintenanceLbl()
+                        act086HistoricFrgTvLastMeasureLbl.text = hmAux_Trans["last_measure_lbl"]
+                        act086HistoricFrgTvMaterialLbl.text = hmAux_Trans["material_applied_lbl"]*/
             act086HistoricFrgTvAlertHistoricTtl.text = hmAux_Trans["alert_historic_ttl"]
             act086HistoricFrgLastVgLbl.text = hmAux_Trans["last_vg_measure_lbl"]
         }
@@ -149,11 +156,11 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
 
 
     private fun setTypeAlertInfo() {
-        with(binding){
+        with(binding) {
             var visibility = View.GONE
             var textVal: String? = null
             //Só exibir tipo de alerta itemCheckStatus for um "alerta"
-            when(itemCheckStatus){
+            when (itemCheckStatus) {
                 GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
                 GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
                 GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT,
@@ -162,8 +169,9 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                     visibility = View.VISIBLE
                     textVal = hmAux_Trans[itemCheckStatus]
                 }
+
                 else -> {
-                    visibility =  View.GONE
+                    visibility = View.GONE
                     textVal = null
                 }
             }
@@ -174,14 +182,14 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     private fun setNextCycleInfo() {
-        with(binding){
-            if((nextCycleMeasure != null && nextCycleMeasureDate != null)
-               || nextCycleLimitDate != null
-            ){
+        with(binding) {
+            if ((nextCycleMeasure != null && nextCycleMeasureDate != null)
+                || nextCycleLimitDate != null
+            ) {
                 act086HistoricFrgClNextCycle.visibility = View.VISIBLE
                 configNextMeasureInfo()
                 configLimitDateInfo()
-            }else{
+            } else {
                 act086HistoricFrgClNextCycle.visibility = View.GONE
             }
         }
@@ -224,39 +232,51 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private fun getDateColor(date: String?): Int {
         var textColor = R.color.namoa_font_color_black222
         date?.let {
-           ToolBox_Inf.getDateDiferenceInMilliseconds(
+            ToolBox_Inf.getDateDiferenceInMilliseconds(
                 it,
-               dateStartUntilLastMinute?:ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
+                dateStartUntilLastMinute ?: ToolBox_Inf.getDateLastMinute(
+                    ToolBox.sDTFormat_Agora(
+                        ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT
+                    )
+                )
             ).let { dateDiff ->
-               if(dateDiff < 0){
-                   textColor = R.color.namoa_os_form_problem_red
-               }
-           }
+                if (dateDiff < 0) {
+                    textColor = R.color.namoa_os_form_problem_red
+                }
+            }
         }
         //
         return ContextCompat.getColor(requireContext(), textColor)
     }
 
     private fun getFormattedMeasureInfo(): String {
-        return "${ToolBox_Inf.millisecondsToString(
-            ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
-            ToolBox_Inf.nlsDateFormat(context)
-        )} (${mPresenter.getFormattedLastMeasureInfo(nextCycleMeasure!!,measureValueSufix,restrictionDecimal)})"
+        return "${
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
+                ToolBox_Inf.nlsDateFormat(context)
+            )
+        } (${
+            mPresenter.getFormattedLastMeasureInfo(
+                nextCycleMeasure!!,
+                measureValueSufix,
+                restrictionDecimal
+            )
+        })"
     }
 
     private fun getFormattedLimitDate(nextCycleLimitDate: String): String {
         return ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(nextCycleLimitDate),
-                ToolBox_Inf.nlsDateFormat(context)
+            ToolBox_Inf.dateToMilliseconds(nextCycleLimitDate),
+            ToolBox_Inf.nlsDateFormat(context)
         )
     }
 
     private fun setInstructionInfo() {
-        with(binding){
-            if(verificationInstruction != null){
+        with(binding) {
+            if (verificationInstruction != null) {
                 act086HistoricFrgClInstruction.visibility = View.VISIBLE
                 act086HistoricFrgTvInstructionVal.text = verificationInstruction
-            }else{
+            } else {
                 act086HistoricFrgClInstruction.visibility = View.GONE
                 act086HistoricFrgTvInstructionVal.text = null
             }
@@ -264,30 +284,30 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     //Excluir
-/*    private fun setLastFixedInfo() {
-        val lastFixed = itemHist.find {
-            it.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_FIXED,true)
-        }
-        //
-        with(binding) {
-            if(lastFixed != null) {
-                act086HistoricFrgClLastAdjust.visibility = View.VISIBLE
-                act086HistoricFrgTvAdjustDate.text = ToolBox_Inf.millisecondsToString(
-                                                        ToolBox_Inf.dateToMilliseconds(lastFixed.exec_date),
-                                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                                                    ).replace(" ", "\n")
-
-                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed.exec_value,measureValueSufix,restrictionDecimal)
-                act086HistoricFrgTvMaterialVal.text = if(lastFixed.exec_material == 1) hmAux_Trans["YES"] else hmAux_Trans["NO"]
-                act086HistoricFrgTvComment.apply {
-                    visibility = if(lastFixed.exec_comment.isNullOrEmpty()) View.GONE else  View.VISIBLE
-                    text = lastFixed.exec_comment
-                }
-            }else{
-                act086HistoricFrgClLastAdjust.visibility = View.GONE
+    /*    private fun setLastFixedInfo() {
+            val lastFixed = itemHist.find {
+                it.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_FIXED,true)
             }
-        }
-    }*/
+            //
+            with(binding) {
+                if(lastFixed != null) {
+                    act086HistoricFrgClLastAdjust.visibility = View.VISIBLE
+                    act086HistoricFrgTvAdjustDate.text = ToolBox_Inf.millisecondsToString(
+                                                            ToolBox_Inf.dateToMilliseconds(lastFixed.exec_date),
+                                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                                        ).replace(" ", "\n")
+
+                    act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed.exec_value,measureValueSufix,restrictionDecimal)
+                    act086HistoricFrgTvMaterialVal.text = if(lastFixed.exec_material == 1) hmAux_Trans["YES"] else hmAux_Trans["NO"]
+                    act086HistoricFrgTvComment.apply {
+                        visibility = if(lastFixed.exec_comment.isNullOrEmpty()) View.GONE else  View.VISIBLE
+                        text = lastFixed.exec_comment
+                    }
+                }else{
+                    act086HistoricFrgClLastAdjust.visibility = View.GONE
+                }
+            }
+        }*/
 
     private fun initRecycle() {
         binding.act086HistoricFrgRvAlertHistoric.apply {
@@ -298,9 +318,9 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
 
     private fun setHistoricInfo() {
         //Filtra itens que são alerta
-        if(alertList.isNotEmpty()) {
+        if (alertList.isNotEmpty()) {
             binding.act086HistoricFrgClAlertHistoric.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE
         }
     }
@@ -308,7 +328,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     fun onPhotoSelected(drawable: Drawable) {
         mFrgListener.onPhotoSelection(drawable)
     }
-    
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -325,23 +345,23 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         _mFrgListener = null
     }
 
-/*    private fun getMaintenanceLbl() : String? {
-        var label = hmAux_Trans["fixed_lbl"]
-        itemHist.forEach {
-            when(it.exec_type){
-                GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                    label = if(it.change_adjust == 1) hmAux_Trans["change_lbl"]
-                        else hmAux_Trans["fixed_lbl"]
-                }
+    /*    private fun getMaintenanceLbl() : String? {
+            var label = hmAux_Trans["fixed_lbl"]
+            itemHist.forEach {
+                when(it.exec_type){
+                    GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                        label = if(it.change_adjust == 1) hmAux_Trans["change_lbl"]
+                            else hmAux_Trans["fixed_lbl"]
+                    }
 
-                GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                    binding.act086HistoricFrgIvLastAdjust.setColorFilter(resources.getColor(R.color.bootstrap_gray))
-                    label = hmAux_Trans["adjust_lbl"]
+                    GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                        binding.act086HistoricFrgIvLastAdjust.setColorFilter(resources.getColor(R.color.bootstrap_gray))
+                        label = hmAux_Trans["adjust_lbl"]
+                    }
                 }
             }
-        }
-        return label
-    }*/
+            return label
+        }*/
 
     companion object {
         /**
@@ -369,17 +389,17 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             Act086HistoricFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
-                    putString(GeOsDeviceItemDao.ITEM_CHECK_STATUS,item_check_status)
-                    next_cycle_measure?.let{
+                    putString(GeOsDeviceItemDao.ITEM_CHECK_STATUS, item_check_status)
+                    next_cycle_measure?.let {
                         putFloat(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE, it)
                     }
-                    putString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE,next_cycle_measure_date)
-                    putString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE,next_cycle_limit_date)
+                    putString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE, next_cycle_measure_date)
+                    putString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE, next_cycle_limit_date)
                     putString(GeOsVgDao.VG_DESC, vg_desc)
                     putString(VG_LAST_VALUE, vg_last_value)
-                    putString(GeOsDeviceItemDao.VALUE_SUFIX,measure_value_sufix)
-                    putString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION,verification_instruction)
-                    restriction_decimal?.let{
+                    putString(GeOsDeviceItemDao.VALUE_SUFIX, measure_value_sufix)
+                    putString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION, verification_instruction)
+                    restriction_decimal?.let {
                         putInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL, it)
                     }
                     putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
@@ -388,25 +408,27 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             }
 
         fun getFragTranslationsVars() = listOf<String>(
-                "frg_historic_item_check_title",
-                "alert_type_ttl",
-                "next_cycle_ttl",
-                "measure_lbl",
-                "limit_date_lbl",
-                "verification_instruction_ttl",
-                "last_fix_ttl",
-                "last_measure_lbl",
-                "material_applied_lbl",
-                "alert_historic_ttl",
-                "material_requested_lbl",
-                "still_with_problem_lbl",
-                "change_lbl",
-                "fixed_lbl",
-                "adjust_lbl",
-                "with_problem_lbl",
-                "last_vg_measure_lbl",
+            "frg_historic_item_check_title",
+            "alert_type_ttl",
+            "next_cycle_ttl",
+            "measure_lbl",
+            "limit_date_lbl",
+            "verification_instruction_ttl",
+            "last_fix_ttl",
+            "last_measure_lbl",
+            "material_applied_lbl",
+            "alert_historic_ttl",
+            "material_requested_lbl",
+            "still_with_problem_lbl",
+            "change_lbl",
+            "fixed_lbl",
+            "adjust_lbl",
+            "with_problem_lbl",
+            "last_vg_measure_lbl",
+            "already_ok_lbl"
 
         )
+
         const val VG_LAST_VALUE = "VG_LAST_VALUE"
     }
 }

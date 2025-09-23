@@ -44,7 +44,8 @@
 
             <TextView
                 android:id="@+id/tv_status"
-                android:layout_width="wrap_content"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
                 android:textAlignment="viewStart"
@@ -59,16 +60,31 @@
                 tools:text="TextView" />
 
             <TextView
-                android:id="@+id/tv_day_count"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_measure_detail"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/my_action_info_margin_top"
-                android:textColor="@color/gray_colors_menu"
-                android:textSize="@dimen/font_size_font_12"
-                app:layout_constraintEnd_toEndOf="@+id/tv_status"
+                android:layout_marginTop="4dp"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_status"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_day_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:textColor="@color/gray_colors_menu"
+                style="@style/TextAppearance.Material3.BodySmall"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_measure_detail"
+                app:layout_constraintTop_toBottomOf="@+id/tv_measure_detail"
                 tools:text="TextView" />
 
             <View
@@ -113,21 +129,21 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_auto_already_ok"
                 style="@style/NamoaMaterialButtonOutlined"
-                app:strokeColor="@drawable/button_theme_primary"
-                android:textColor="@drawable/button_theme_primary"
-                app:iconTint="@drawable/button_theme_primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constrainedWidth="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
+                android:textColor="@drawable/button_theme_primary"
                 app:icon="@drawable/ic_done_black_24dp"
+                app:iconTint="@drawable/button_theme_primary"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintEnd_toStartOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
+                app:strokeColor="@drawable/button_theme_primary"
                 tools:text="Ja estava ok"
                 tools:visibility="visible" />
 
@@ -180,13 +196,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                app:layout_constrainedWidth="true"
                 android:clickable="false"
                 android:focusable="false"
-                app:layout_constraintHorizontal_bias="1"
                 app:icon="@drawable/ic_build_black_24dp"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="@+id/ll_answer_info"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@+id/ll_answer_info"
                 app:layout_constraintTop_toTopOf="@+id/ll_answer_info"
                 tools:text="Ajuste realizado" />
@@ -205,8 +221,8 @@
                     android:id="@+id/iv_commentary"
                     android:layout_width="@dimen/pipeline_step_icon_width"
                     android:layout_height="@dimen/pipeline_step_icon_height"
-                    android:layout_marginRight="8dp"
                     android:layout_gravity="center"
+                    android:layout_marginRight="8dp"
                     android:src="@drawable/ic_baseline_notes_24"
                     app:tint="@color/namoa_color_cone_item" />
 

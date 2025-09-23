@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.extensions.date.FormatDateType
 import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.ApplicationSwitch
@@ -56,23 +56,26 @@ fun VerificationGroupCard(
             when {
                 group.expired -> {
                     Text(
-                        text = translateMap.translate(GROUP_EXPIRED_VERIFICATION_GROUP_LBL),
+                        text = translateMap.textOf(GROUP_EXPIRED_VERIFICATION_GROUP_LBL),
                         color = Color.Red,
                         style = NamoaTheme.typography.labelMedium
                     )
                 }
 
                 group.predictedDate != null -> {
-                    val value = if(MAX_DATE_VALUE == group.predictedDate) "-" else context.formatDate(FormatDateType.OnlyDate(group.predictedDate))
+                    val value =
+                        if (MAX_DATE_VALUE == group.predictedDate) "-" else context.formatDate(
+                            FormatDateType.OnlyDate(group.predictedDate)
+                        )
                     Text(
-                        text = "${translateMap.translate(GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL)} $value",
+                        text = "${translateMap.textOf(GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL)} $value",
                         style = NamoaTheme.typography.labelMedium
                     )
                 }
 
                 group.inExecution -> {
                     Text(
-                        text = translateMap.translate(GROUP_IN_EXECUTION_VERIFICATION_GROUP_LBL),
+                        text = translateMap.textOf(GROUP_IN_EXECUTION_VERIFICATION_GROUP_LBL),
                         color = Color.Gray,
                         style = NamoaTheme.typography.labelMedium
                     )
@@ -89,7 +92,11 @@ fun VerificationGroupCard(
             if (group.inExecution) {
                 Spacer(modifier = Modifier.height(NamoaTheme.spacing.mediumLarge))
                 Text(
-                    "${translateMap.translate(ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL)} ${group.ticket}, ${translateMap.translate(ITEM_USER_VERIFICATION_GROUP_LBL)} ${group.user}",
+                    "${translateMap.textOf(ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL)} ${group.ticket}, ${
+                        translateMap.textOf(
+                            ITEM_USER_VERIFICATION_GROUP_LBL
+                        )
+                    } ${group.user}",
                     style = NamoaTheme.typography.labelMedium
                 )
             }

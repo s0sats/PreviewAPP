@@ -2760,7 +2760,7 @@ public class Act011_Main extends Base_Activity
 
         for (CustomFF child : children) {
             if (component.getVisibility() != View.GONE
-            && component.isFieldAnswered()) {
+                    && component.isFieldAnswered()) {
                 switch (child.getCondition()) {
                     case SHOW_COMPLIANT:
                         child.setVisibility(!isNonCompliant ? View.VISIBLE : View.GONE);
@@ -5470,4 +5470,9 @@ public class Act011_Main extends Base_Activity
         }
     }
 
+
+    @Override
+    public void onSaveInitialMeasurement(String itemPk, Double newMeasure, @Nullable String newID) {
+        mPresenter.saveInitialMeasurement(itemPk, newMeasure, newID);
+    }
 }

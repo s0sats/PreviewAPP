@@ -131,6 +131,9 @@ import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.sql.transaction.ticket.TransactionSaveTicketStepCtrlAtForm;
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop;
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext;
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments;
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData;
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -946,6 +949,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             )
                     );
                     //
+                    boolean isReadOnly = !isInProcessing(customFormLocal);
+                    MeasureBottomSheetContext measureBottomSheetContext = getMeasureBottomSheetContext(item, isReadOnly);
+                    //
+                    //
                     inspections.add(
                             new InspectionCell(itemDesc,
                                     getDayCount(geOs.getDate_start(), item),
@@ -968,7 +975,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                     item.getChange_adjust(),
                                     item.getPartitioned_execution(),
                                     item.getRequire_photo_already_ok() == 1,
-                                    !isInProcessing(customFormLocal)
+                                    isReadOnly,
+                                    item.getHasMeasureActive() ? new MeasureItemData(
+                                            item.getLastMeasureValue(),
+                                            item.getLastMeasureUn(),
+                                            item.isMeasureAlert(),
+                                            item.getLastMeasureDate(),
+                                            measureBottomSheetContext
+                                    ) : null
                             )
                     );
                 }
@@ -2954,6 +2968,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         deviceItem.isNO_CYCLE()
                 )
         );
+
         //
         return new InspectionCell(
                 itemDesc,
@@ -2977,7 +2992,37 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getChange_adjust(),
                 deviceItem.getPartitioned_execution(),
                 false,
-                false);
+                false,
+                null
+        );
+    }
+
+    @Nullable
+    private static MeasureBottomSheetContext getMeasureBottomSheetContext(
+            GeOsDeviceItem deviceItem,
+            boolean isReadOnly
+    ) {
+        MeasureBottomSheetContext measureBottomSheetContext = null;
+        if (deviceItem.getHasMeasureActive()) {
+            measureBottomSheetContext = new MeasureBottomSheetContext.Initial(
+                    new MeasureItemArguments(
+                            deviceItem.getMeasureStartValue(),
+                            deviceItem.getMeasureUn(),
+                            MeasureItemArguments.State.INITIAL,
+                            new MeasureItemArguments.MeasureAlert(
+                                    deviceItem.getMeasureMin(),
+                                    deviceItem.getMeasureMax()
+                            ),
+                            new MeasureItemArguments.MeasureID(
+                                    deviceItem.getLastMeasureId(),
+                                    deviceItem.isRequiredID(),
+                                    deviceItem.getMeasureStartId()
+                            ),
+                            isReadOnly
+                    )
+            );
+        }
+        return measureBottomSheetContext;
     }
 
     @Nullable
@@ -3188,5 +3233,30 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ToolBox_Inf.registerException(this.getClass().getName(), e);
             }
         }
+    }
+
+    @Override
+    public void saveInitialMeasurement(String itemPk, double newMeasure, String newID) {
+        String[] device_item_pk = itemPk.split("\\.");
+        GeOsDeviceItem deviceItem = geOsDeviceItemDao.getByString(
+                new GeOsDeviceItem_Sql_001(
+                        device_item_pk[0],
+                        device_item_pk[1],
+                        device_item_pk[2],
+                        device_item_pk[3],
+                        device_item_pk[4],
+                        device_item_pk[5],
+                        device_item_pk[6],
+                        device_item_pk[7],
+                        device_item_pk[8],
+                        device_item_pk[9]
+                ).toSqlQuery()
+        );
+
+
+        deviceItem.setMeasureStartValue(newMeasure);
+        deviceItem.setMeasureStartId(newID);
+        geOsDeviceItemDao.addUpdate(deviceItem);
+
     }
 }

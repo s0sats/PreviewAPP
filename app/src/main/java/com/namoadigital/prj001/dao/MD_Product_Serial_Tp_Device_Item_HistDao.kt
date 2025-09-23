@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -21,11 +23,12 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
-    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
+    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
+),
     DaoWithReturn<MD_Product_Serial_Tp_Device_Item_Hist>,
-    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item_Hist>{
+    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item_Hist> {
 
-    companion object{
+    companion object {
         const val TABLE = "md_product_serial_tp_device_item_hist"
         const val CUSTOMER_CODE = "customer_code"
         const val PRODUCT_CODE = "product_code"
@@ -44,21 +47,31 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         const val EXEC_PHOTO4 = "exec_photo4"
         const val EXEC_MATERIAL = "exec_material"
         const val CHANGE_ADJUST = "change_adjust"
+
+        const val MEASURE_UN = "measure_un"
+        const val MEASURE_INI_VALUE = "measure_ini_value"
+        const val MEASURE_INI_ID = "measure_ini_id"
+        const val MEASURE_INI_ALERT = "measure_ini_alert"
+        const val MEASURE_FIN_VALUE = "measure_fin_value"
+        const val MEASURE_FIN_ID = "measure_fin_id"
+        const val MEASURE_FIN_ALERT = "measure_fin_alert"
     }
 
-    private val toMD_Product_Serial_Tp_Device_Item_HistMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item_Hist>
-    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device_Item_Hist,ContentValues>
+    private val toMD_Product_Serial_Tp_Device_Item_HistMapper: Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Hist>
+    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device_Item_Hist, ContentValues>
 
     init {
-        this.toMD_Product_Serial_Tp_Device_Item_HistMapper = CursorToMD_Product_Serial_Tp_Device_Item_HistMapper()
+        this.toMD_Product_Serial_Tp_Device_Item_HistMapper =
+            CursorToMD_Product_Serial_Tp_Device_Item_HistMapper()
         this.toContentValuesMapper = MD_Product_Serial_Tp_Device_Item_HistToContentValuesMapper()
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?): StringBuilder{
-        mdProductSerialTpDeviceItemHist?.let{
+    private fun getWherePkClause(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?): StringBuilder {
+        mdProductSerialTpDeviceItemHist?.let {
             return java.lang.StringBuilder()
-                .append("""
+                .append(
+                    """
                         ${CUSTOMER_CODE} = '${mdProductSerialTpDeviceItemHist.customer_code}'  
                         AND ${PRODUCT_CODE} = '${mdProductSerialTpDeviceItemHist.product_code}'                           
                         AND ${SERIAL_CODE} = '${mdProductSerialTpDeviceItemHist.serial_code}'                           
@@ -70,21 +83,24 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                 )
         }
         throw Exception("NULL_OBJ_RECEIVED")
-        
+
     }
 
     override fun addUpdate(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?): DaoObjReturn {
         return addUpdate(mdProductSerialTpDeviceItemHist, null)
     }
 
-    override fun addUpdate(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?, dbInstance: SQLiteDatabase?): DaoObjReturn {
+    override fun addUpdate(
+        mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        }else{
+        } else {
             this.db = dbInstance
         }
         try {
@@ -93,11 +109,20 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItemHist)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDeviceItemHist), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(
+                TABLE,
+                toContentValuesMapper.map(mdProductSerialTpDeviceItemHist),
+                sbWhere.toString(),
+                null
+            ).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItemHist))
+                db.insertOrThrow(
+                    TABLE,
+                    null,
+                    toContentValuesMapper.map(mdProductSerialTpDeviceItemHist)
+                )
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -130,8 +155,11 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
     }
 
 
-    override fun addUpdate(mdProductSerialTpDeviceItemHists: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>?, status: Boolean): DaoObjReturn {
-        return addUpdate(mdProductSerialTpDeviceItemHists,status,null)
+    override fun addUpdate(
+        mdProductSerialTpDeviceItemHists: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>?,
+        status: Boolean
+    ): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItemHists, status, null)
     }
 
     override fun addUpdate(
@@ -166,14 +194,24 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
             mdProductSerialTpDeviceItemHists?.forEach { mdProductSerialTpDeviceItemHist ->
                 val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItemHist)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDeviceItemHist), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(
+                    TABLE,
+                    toContentValuesMapper.map(mdProductSerialTpDeviceItemHist),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItemHist))
+                    db.insertOrThrow(
+                        TABLE,
+                        null,
+                        toContentValuesMapper.map(mdProductSerialTpDeviceItemHist)
+                    )
                 }
-                if(mdProductSerialTpDeviceItemHist.material_hist != null && mdProductSerialTpDeviceItemHist.material_hist.isNotEmpty()){
-                    daoObjReturn = tryAddUpdateHistMat(mdProductSerialTpDeviceItemHist.material_hist, db)
+                if (mdProductSerialTpDeviceItemHist.material_hist != null && mdProductSerialTpDeviceItemHist.material_hist.isNotEmpty()) {
+                    daoObjReturn =
+                        tryAddUpdateHistMat(mdProductSerialTpDeviceItemHist.material_hist, db)
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
                         throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -181,7 +219,7 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                 }
             }
             //
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 db.setTransactionSuccessful()
             }
         } catch (e: SQLiteException) {
@@ -277,7 +315,7 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
             //Where para update
             val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItemHist)
             //Tenta update e armazena retorno
-            sqlRet = db.delete(TABLE,sbWhere.toString(), null).toLong()
+            sqlRet = db.delete(TABLE, sbWhere.toString(), null).toLong()
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -313,7 +351,8 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         try {
             val cursor = db.rawQuery(sQuery!!, null)
             while (cursor.moveToNext()) {
-                mdProductSerialTpDeviceItemHist = toMD_Product_Serial_Tp_Device_Item_HistMapper.map(cursor)
+                mdProductSerialTpDeviceItemHist =
+                    toMD_Product_Serial_Tp_Device_Item_HistMapper.map(cursor)
             }
             //
             cursor.close()
@@ -339,11 +378,12 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         } finally {
         }
         closeDB()
-        return  mdProductSerialTpDeviceItemHist
+        return mdProductSerialTpDeviceItemHist
     }
 
     override fun query(sQuery: String?): MutableList<MD_Product_Serial_Tp_Device_Item_Hist> {
-        val mdProductSerialTpDeviceItemHists = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
+        val mdProductSerialTpDeviceItemHists =
+            mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery!!, null)
@@ -377,28 +417,36 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         return mdProductSerialTpDeviceItemHists
     }
 
-    private class CursorToMD_Product_Serial_Tp_Device_Item_HistMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Hist> {
+    private class CursorToMD_Product_Serial_Tp_Device_Item_HistMapper :
+        Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Hist> {
         override fun map(cursor: Cursor?): MD_Product_Serial_Tp_Device_Item_Hist? {
             cursor?.let {
-                with(cursor){
+                with(cursor) {
                     return MD_Product_Serial_Tp_Device_Item_Hist(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
                         product_code = getLong(getColumnIndex(PRODUCT_CODE)),
                         serial_code = getLong(getColumnIndex(SERIAL_CODE)),
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
-                        item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)) ,
-                        item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
-                        seq =  getInt(getColumnIndex(SEQ)),
-                        exec_type = getString(getColumnIndex(EXEC_TYPE)) ,
-                        exec_value = getDouble(getColumnIndex(EXEC_VALUE)) ,
-                        exec_date = getString(getColumnIndex(EXEC_DATE)) ,
-                        exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)) ,
-                        exec_photo1 = getStringOrNull(getColumnIndex(EXEC_PHOTO1)) ,
-                        exec_photo2 = getStringOrNull(getColumnIndex(EXEC_PHOTO2)) ,
-                        exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)) ,
-                        exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)) ,
+                        item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)),
+                        item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
+                        seq = getInt(getColumnIndex(SEQ)),
+                        exec_type = getString(getColumnIndex(EXEC_TYPE)),
+                        exec_value = getDouble(getColumnIndex(EXEC_VALUE)),
+                        exec_date = getString(getColumnIndex(EXEC_DATE)),
+                        exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)),
+                        exec_photo1 = getStringOrNull(getColumnIndex(EXEC_PHOTO1)),
+                        exec_photo2 = getStringOrNull(getColumnIndex(EXEC_PHOTO2)),
+                        exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)),
+                        exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)),
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
-                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST))
+                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
+                        measure_un = getStringOrNull(getColumnIndex(MEASURE_UN)),
+                        measureStartValue = getDoubleOrNull(getColumnIndex(MEASURE_INI_VALUE)),
+                        measureStartId = getStringOrNull(getColumnIndex(MEASURE_INI_ID)),
+                        measureStartAlert = getIntOrNull(getColumnIndex(MEASURE_INI_ALERT)),
+                        measureFinalValue = getDoubleOrNull(getColumnIndex(MEASURE_FIN_VALUE)),
+                        measureFinalId = getStringOrNull(getColumnIndex(MEASURE_FIN_ID)),
+                        measureFinalAlert = getIntOrNull(getColumnIndex(MEASURE_FIN_ALERT))
                     )
                 }
             }
@@ -406,53 +454,69 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         }
     }
 
-    private class MD_Product_Serial_Tp_Device_Item_HistToContentValuesMapper : Mapper<MD_Product_Serial_Tp_Device_Item_Hist, ContentValues> {
+    private class MD_Product_Serial_Tp_Device_Item_HistToContentValuesMapper :
+        Mapper<MD_Product_Serial_Tp_Device_Item_Hist, ContentValues> {
         override fun map(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?): ContentValues {
             val contentValues = ContentValues()
             //
             mdProductSerialTpDeviceItemHist?.let {
-                with(contentValues){
-                    if(mdProductSerialTpDeviceItemHist.customer_code > -1){
-                        put(CUSTOMER_CODE,mdProductSerialTpDeviceItemHist.customer_code)
+                with(contentValues) {
+                    if (mdProductSerialTpDeviceItemHist.customer_code > -1) {
+                        put(CUSTOMER_CODE, mdProductSerialTpDeviceItemHist.customer_code)
                     }
-                    if(mdProductSerialTpDeviceItemHist.product_code > -1){
-                        put(PRODUCT_CODE,mdProductSerialTpDeviceItemHist.product_code)
+                    if (mdProductSerialTpDeviceItemHist.product_code > -1) {
+                        put(PRODUCT_CODE, mdProductSerialTpDeviceItemHist.product_code)
                     }
-                    if(mdProductSerialTpDeviceItemHist.serial_code > -1){
-                        put(SERIAL_CODE,mdProductSerialTpDeviceItemHist.serial_code)
+                    if (mdProductSerialTpDeviceItemHist.serial_code > -1) {
+                        put(SERIAL_CODE, mdProductSerialTpDeviceItemHist.serial_code)
                     }
-                    if(mdProductSerialTpDeviceItemHist.device_tp_code > -1){
-                        put(DEVICE_TP_CODE,mdProductSerialTpDeviceItemHist.device_tp_code)
+                    if (mdProductSerialTpDeviceItemHist.device_tp_code > -1) {
+                        put(DEVICE_TP_CODE, mdProductSerialTpDeviceItemHist.device_tp_code)
                     }
-                    if(mdProductSerialTpDeviceItemHist.item_check_code > -1){
-                        put(ITEM_CHECK_CODE,mdProductSerialTpDeviceItemHist.item_check_code)
+                    if (mdProductSerialTpDeviceItemHist.item_check_code > -1) {
+                        put(ITEM_CHECK_CODE, mdProductSerialTpDeviceItemHist.item_check_code)
                     }
-                    if(mdProductSerialTpDeviceItemHist.item_check_seq > -1){
-                        put(ITEM_CHECK_SEQ,mdProductSerialTpDeviceItemHist.item_check_seq)
+                    if (mdProductSerialTpDeviceItemHist.item_check_seq > -1) {
+                        put(ITEM_CHECK_SEQ, mdProductSerialTpDeviceItemHist.item_check_seq)
                     }
-                    if(mdProductSerialTpDeviceItemHist.seq > -1){
-                        put(SEQ,mdProductSerialTpDeviceItemHist.seq)
+                    if (mdProductSerialTpDeviceItemHist.seq > -1) {
+                        put(SEQ, mdProductSerialTpDeviceItemHist.seq)
                     }
-                    if(mdProductSerialTpDeviceItemHist.exec_type != null){
-                        put(EXEC_TYPE,mdProductSerialTpDeviceItemHist.exec_type)
+                    if (mdProductSerialTpDeviceItemHist.exec_type != null) {
+                        put(EXEC_TYPE, mdProductSerialTpDeviceItemHist.exec_type)
                     }
-                    if(mdProductSerialTpDeviceItemHist.exec_value > -1){
-                        put(EXEC_VALUE,mdProductSerialTpDeviceItemHist.exec_value)
+                    if (mdProductSerialTpDeviceItemHist.exec_value > -1) {
+                        put(EXEC_VALUE, mdProductSerialTpDeviceItemHist.exec_value)
                     }
-                    if(mdProductSerialTpDeviceItemHist.exec_date != null){
-                        put(EXEC_DATE,mdProductSerialTpDeviceItemHist.exec_date)
+                    if (mdProductSerialTpDeviceItemHist.exec_date != null) {
+                        put(EXEC_DATE, mdProductSerialTpDeviceItemHist.exec_date)
                     }
-                    put(EXEC_COMMENT,mdProductSerialTpDeviceItemHist.exec_comment)
-                    put(EXEC_PHOTO1,mdProductSerialTpDeviceItemHist.exec_photo1)
-                    put(EXEC_PHOTO2,mdProductSerialTpDeviceItemHist.exec_photo2)
-                    put(EXEC_PHOTO3,mdProductSerialTpDeviceItemHist.exec_photo3)
-                    put(EXEC_PHOTO4,mdProductSerialTpDeviceItemHist.exec_photo4)
+                    put(EXEC_COMMENT, mdProductSerialTpDeviceItemHist.exec_comment)
+                    put(EXEC_PHOTO1, mdProductSerialTpDeviceItemHist.exec_photo1)
+                    put(EXEC_PHOTO2, mdProductSerialTpDeviceItemHist.exec_photo2)
+                    put(EXEC_PHOTO3, mdProductSerialTpDeviceItemHist.exec_photo3)
+                    put(EXEC_PHOTO4, mdProductSerialTpDeviceItemHist.exec_photo4)
 
-                    if(mdProductSerialTpDeviceItemHist.exec_material > -1){
-                        put(EXEC_MATERIAL,mdProductSerialTpDeviceItemHist.exec_material)
+                    if (mdProductSerialTpDeviceItemHist.exec_material > -1) {
+                        put(EXEC_MATERIAL, mdProductSerialTpDeviceItemHist.exec_material)
                     }
 
-                    if(mdProductSerialTpDeviceItemHist.change_adjust > -1) put(CHANGE_ADJUST, it.change_adjust)
+                    if (mdProductSerialTpDeviceItemHist.change_adjust > -1) put(
+                        CHANGE_ADJUST,
+                        it.change_adjust
+                    )
+
+
+                    put(MEASURE_UN, it.measure_un)
+                    put(MEASURE_INI_VALUE, it.measureStartValue)
+                    put(MEASURE_INI_ID, it.measureStartId)
+                    put(MEASURE_INI_ALERT, it.measureStartAlert)
+
+                    put(MEASURE_FIN_VALUE, it.measureFinalValue)
+                    put(MEASURE_FIN_ID, it.measureFinalId)
+                    put(MEASURE_FIN_ALERT, it.measureFinalAlert)
+
+
                 }
             }
             //

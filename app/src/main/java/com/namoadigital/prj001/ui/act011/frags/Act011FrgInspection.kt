@@ -24,6 +24,10 @@ import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheet
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheetActions
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
@@ -530,9 +534,61 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     fun onItemSelected(
         position: Int,
         itemPk: String,
-        partitioned_execution: Int
+        partitioned_execution: Int,
+        measureBottomSheetContext: MeasureBottomSheetContext? = null
     ) {
         binding.apply {
+            if (measureBottomSheetContext != null &&
+                measureBottomSheetContext.arguments.value == null &&
+                !measureBottomSheetContext.arguments.isReadOnly
+            ) {
+                MeasureItemBottomSheet(
+                    measureItemBottomSheet = measureBottomSheetContext,
+                    actions = object : MeasureItemBottomSheetActions {
+                        override fun onNavigateReadOnly() {
+                            mFrgListener.onInspectionSelected(
+                                acessoryFormView,
+                                false,
+                                position,
+                                edtInspectionFilter.text.toString(),
+                                chkNonForecastItem.isChecked,
+                                itemPk,
+                                partitioned_execution,
+                            )
+                        }
+
+                        override fun onSaveMeasurement(
+                            newMeasure: Double?,
+                            newID: String?,
+                            state: MeasureItemArguments.State
+                        ) {
+                            _mFrgListener?.onSaveInitialMeasurement(
+                                acessoryFormView.devicePkPrefix + "." + itemPk,
+                                newMeasure,
+                                newID
+                            )
+
+                            mFrgListener.onInspectionSelected(
+                                acessoryFormView,
+                                false,
+                                position,
+                                edtInspectionFilter.text.toString(),
+                                chkNonForecastItem.isChecked,
+                                itemPk,
+                                partitioned_execution
+                            )
+                        }
+
+                    }
+                ).show(
+                    this@Act011FrgInspection.requireActivity().supportFragmentManager,
+                    "MeasureItemBottomSheet"
+                )
+                return@apply
+            }
+
+
+
             mFrgListener.onInspectionSelected(
                 acessoryFormView,
                 false,
@@ -565,7 +621,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             onItemSelected(
                 position,
                 item.itemCodeAndSeq,
-                item.partitionedExecution
+                item.partitionedExecution,
             )
         } else {
             updateNonForecastCounter()

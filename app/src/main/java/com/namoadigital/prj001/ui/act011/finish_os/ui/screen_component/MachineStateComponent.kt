@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.DateTimePicker
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.RadioGroup
@@ -69,7 +69,7 @@ fun MachineInitialComponent(
         TitleSection(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = translateMap.translate(INITIAL_SERIAL_STATE_TTL)
+            text = translateMap.textOf(INITIAL_SERIAL_STATE_TTL)
         )
 
         if (isVersionMachineStopped) {
@@ -77,7 +77,7 @@ fun MachineInitialComponent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = NamoaTheme.spacing.small),
-                text = translateMap.translate(INITIAL_SERIAL_STATE_STOPPED_TTL),
+                text = translateMap.textOf(INITIAL_SERIAL_STATE_STOPPED_TTL),
                 style = NamoaTheme.typography.bodyLarge,
                 color = NamoaTheme.colors.onSurface,
                 overflow = TextOverflow.Ellipsis
@@ -147,7 +147,7 @@ fun OptionDateComponent(
             is FinishValidation.Component.InitialMachine.DateExceededFormStartDate -> {
                 dateError = true
                 dateTextError =
-                    translateMap.translate(
+                    translateMap.textOf(
                         DIALOG_FINALIZE_INITIAL_MACHINE_DATE_EXCEED_FORM_START_ERROR_LBL
                     )
             }
@@ -155,7 +155,7 @@ fun OptionDateComponent(
             is FinishValidation.Component.InitialMachine.DateEmpty -> {
                 dateError = true
                 dateTextError =
-                    translateMap.translate(DIALOG_FINALIZE_INITIAL_MACHINE_DATE_EMPTY_ERROR_LBL)
+                    translateMap.textOf(DIALOG_FINALIZE_INITIAL_MACHINE_DATE_EMPTY_ERROR_LBL)
             }
 
             else -> {
@@ -169,8 +169,8 @@ fun OptionDateComponent(
     DateTimePicker(
         modifier = modifier.padding(bottom = NamoaTheme.spacing.mediumSmall),
         initialDate = initialDate,
-        dateHint = translateLib.translate(MKDATETIME_DATE_TTL),
-        timeHint = translateLib.translate(MKDATETIME_HOUR_TTL),
+        dateHint = translateLib.textOf(MKDATETIME_DATE_TTL),
+        timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
         isError = dateError,
         errorText = dateTextError,
         isDateEnabled = isEnabled,
@@ -240,7 +240,7 @@ fun OptionWithSwitch(
 
     TitleSwitch(
         modifier = modifier,
-        title = translateMap.translate(INITIAL_SERIAL_STATE_SWITCH_LBL),
+        title = translateMap.textOf(INITIAL_SERIAL_STATE_SWITCH_LBL),
         initialSwitchState = ResponsibleStop.isMachineStopped(responsibleStop),
         isRequiredOption = isRequiredOption,
         isEnabled = !isReadOnly,
@@ -258,7 +258,7 @@ fun OptionWithSwitch(
             ) {
 
                 Text(
-                    text = translateMap.translate(INITIAL_SERIAL_STATE_DATE_LBL),
+                    text = translateMap.textOf(INITIAL_SERIAL_STATE_DATE_LBL),
                     style = NamoaTheme.typography.bodyMedium,
                     color = NamoaTheme.colors.onSurface
                 )
@@ -275,7 +275,7 @@ fun OptionWithSwitch(
 
                 if (showOptionsWhenMachineStopped) {
                     Text(
-                        text = "${translateMap.translate(INITIAL_SERIAL_STATE_RESPONSIBLE_LBL)}:",
+                        text = "${translateMap.textOf(INITIAL_SERIAL_STATE_RESPONSIBLE_LBL)}:",
                         style = NamoaTheme.typography.bodyMedium,
                         color = NamoaTheme.colors.onSurface,
                     )
@@ -289,7 +289,7 @@ fun OptionWithSwitch(
                                 RadioGroupItem(
                                     id = 1,
                                     value = ResponsibleStop.MAINTENANCE,
-                                    text = translateMap.translate(
+                                    text = translateMap.textOf(
                                         INITIAL_SERIAL_STATE_MAINTENANCE_OPT
                                     ),
                                     isSelected = responsibleStopFromStopped == ResponsibleStop.MAINTENANCE
@@ -297,7 +297,7 @@ fun OptionWithSwitch(
                                 RadioGroupItem(
                                     id = 2,
                                     value = ResponsibleStop.THIRD_PARTY,
-                                    text = translateMap.translate(
+                                    text = translateMap.textOf(
                                         INITIAL_SERIAL_STATE_THIRD_PARTY_ERROR_OPT
                                     ),
                                     isSelected = responsibleStopFromStopped == ResponsibleStop.THIRD_PARTY
@@ -376,13 +376,13 @@ private fun OptionWithoutSwitch(
                 RadioGroupItem(
                     id = 0,
                     value = MachinesStatus.NO_STOPPED,
-                    text = translateMap.translate(INITIAL_SERIAL_STATE_NO_STOPPED_OPT),
+                    text = translateMap.textOf(INITIAL_SERIAL_STATE_NO_STOPPED_OPT),
                     isSelected = responsibleStop == ResponsibleStop.NO_STOPPED
                 ),
                 RadioGroupItem(
                     id = 1,
                     value = MachinesStatus.STOPPED_FOR(initialDate, responsibleStop),
-                    text = translateMap.translate(INITIAL_SERIAL_STATE_DATE_LBL),
+                    text = translateMap.textOf(INITIAL_SERIAL_STATE_DATE_LBL),
                     isSelected = ResponsibleStop.isMachineStopped(responsibleStop),
                     content = listOf(
                         {
@@ -404,7 +404,7 @@ private fun OptionWithoutSwitch(
                                         start = NamoaTheme.spacing.large
                                     ),
                                     text = "${
-                                        translateMap.translate(
+                                        translateMap.textOf(
                                             INITIAL_SERIAL_STATE_RESPONSIBLE_LBL
                                         )
                                     }:",
@@ -422,7 +422,7 @@ private fun OptionWithoutSwitch(
                                             RadioGroupItem(
                                                 id = 1,
                                                 value = ResponsibleStop.MAINTENANCE,
-                                                text = translateMap.translate(
+                                                text = translateMap.textOf(
                                                     INITIAL_SERIAL_STATE_MAINTENANCE_OPT
                                                 ),
                                                 isSelected = responsibleStop == ResponsibleStop.MAINTENANCE
@@ -430,7 +430,7 @@ private fun OptionWithoutSwitch(
                                             RadioGroupItem(
                                                 id = 2,
                                                 value = ResponsibleStop.THIRD_PARTY,
-                                                text = translateMap.translate(
+                                                text = translateMap.textOf(
                                                     INITIAL_SERIAL_STATE_THIRD_PARTY_ERROR_OPT
                                                 ),
                                                 isSelected = responsibleStop == ResponsibleStop.THIRD_PARTY

@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData
 import com.namoadigital.prj001.util.ConstantBaseApp
 import java.io.Serializable
 
@@ -19,7 +20,7 @@ data class InspectionCell(
     val commentRequired: Boolean,
     var status: String,
     val hideAlreadyOKBtn: Boolean = false,
-    var isVisible: Boolean =false,
+    var isVisible: Boolean = false,
     val statusColor: GeOsDeviceItemStatusColor,
     val isCritical: Boolean,
     val isNewItem: Boolean = false,
@@ -30,20 +31,23 @@ data class InspectionCell(
     val change_adjust: Int,
     val partitionedExecution: Int,
     val requirePhotoAlreadyOk: Boolean = false,
-    val read_only: Boolean = false
-): Serializable {
+    val read_only: Boolean = false,
+    val measureItemData: MeasureItemData? = null
+) : Serializable {
     var isDone: Boolean = false
+
     @ColorInt
     var tagColor: Int = 0
     var statusTransalted: String = ""
     var execTypeTranslated: String = ""
 
-    init{
+    init {
         initViewVars()
     }
 
 
     fun isPartitioned() = partitionedExecution == 1
+
     /**
      * Fun que baseado nos dados do construtor, define vars de "visualização"
      */
@@ -62,15 +66,18 @@ data class InspectionCell(
                     tagColor = R.color.namoa_color_gray_7
                     statusTransalted = hmAuxTrans["inspection_status_non_forecast_item_lbl"]!!
                 }
+
                 GeOsDeviceItemStatusColor.RED -> {
                     tagColor = R.color.namoa_os_form_problem_red
                     statusTransalted = hmAuxTrans["inspection_status_manual_alert_item_lbl"]!!
                 }
+
                 GeOsDeviceItemStatusColor.BLUE -> {
                     this.status = FORECAST
                     tagColor = R.color.namoa_color_pipeline_origin_icon
                     statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
                 }
+
                 GeOsDeviceItemStatusColor.YELLOW -> {
                     this.status = CRITICAL_FORECAST
                     tagColor = R.color.namoa_os_form_critical_forecast_yellow
@@ -101,23 +108,25 @@ data class InspectionCell(
                         hmAuxTrans["inspection_answer_still_in_alert_lbl"]!!
                     }
             }
+
             GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
                 execTypeTranslated = hmAuxTrans["inspection_answer_already_ok_lbl"]!!
             }
+
             GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> {
                 execTypeTranslated = hmAuxTrans["inspection_answer_not_verify_lbl"]!!
             }
         }
     }
 
-    fun getAllFieldForFilter() : String{
-        return  "$description|" +
+    fun getAllFieldForFilter(): String {
+        return "$description|" +
                 "$execTypeTranslated|" +
                 "$statusTransalted|"
-                    .replace("null|","")
+                    .replace("null|", "")
     }
 
-    companion object{
+    companion object {
         const val ANSWERED = "ANSWERED"
         const val NORMAL = "NORMAL"
         const val MANUAL_ALERT = "MANUAL_ALERT"

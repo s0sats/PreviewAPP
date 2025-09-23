@@ -9,6 +9,7 @@ data class Act086HistoricModel(
     val exec_type: String,
     val measureLbl: String,
     val measure: String,
+    val measureItemHist: MeasureItemHist? = null,
     val materialRequestLbl: String,
     val materialAppliedLbl: String,
     val comment: String?,
@@ -18,4 +19,18 @@ data class Act086HistoricModel(
     val photo2: String?,
     val photo3: String?,
     val photo4: String?,
-) : Serializable
+) : Serializable {
+
+    data class MeasureItemHist(
+        val unit: String?,
+        val labelMeasure: String?,
+        val labelAfterMeasure: String?,
+        val initialValue: Double?,
+        val initialId: String?,
+        val initialAlert: Boolean?,
+        val finalValue: Double?,
+        val finalId: String?,
+        val finalAlert: Boolean?
+    ) : Serializable
+
+}

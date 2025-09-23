@@ -48,7 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.translate.TranslateMap
-import com.namoadigital.prj001.core.translate.translate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act011.finish_os.FinishOSViewModel
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop.NO_STOPPED
@@ -149,14 +149,14 @@ private fun DialogFinishOS(
             .wrapContentHeight(),
         topBar = {
             FinishAppBar(
-                title = translateMap.translate(DIALOG_FINALIZE_FORM_SO_TTL),
+                title = translateMap.textOf(DIALOG_FINALIZE_FORM_SO_TTL),
                 onBackPressed = { ->
                     ToolBox.alertMSG_YES_NO(
                         context,
-                        uiState.translateMap.translate(
+                        uiState.translateMap.textOf(
                             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_TTL
                         ),
-                        uiState.translateMap.translate(
+                        uiState.translateMap.textOf(
                             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_MSG
                         ),
                         { confirmDialog, _ ->
@@ -331,7 +331,7 @@ fun FinishScreen(
         if (uiState.data?.showBalloonVerify == true && !isReadOnly) {
             ShowBallon(
                 modifier = Modifier.padding(NamoaTheme.spacing.medium),
-                text = uiState.translateMap.translate(DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL)
+                text = uiState.translateMap.textOf(DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL)
             )
         }
 
@@ -453,10 +453,10 @@ fun FinishScreen(
                 onCancel = {
                     ToolBox.alertMSG_YES_NO(
                         context,
-                        uiState.translateMap.translate(
+                        uiState.translateMap.textOf(
                             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_TTL
                         ),
-                        uiState.translateMap.translate(
+                        uiState.translateMap.textOf(
                             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_MSG
                         ),
                         { dialog, _ ->
@@ -510,7 +510,7 @@ fun ButtonFinishComponent(
                 onClick = onCancel
             ) {
                 Text(
-                    text = translateMap.translate(DIALOG_FINALIZE_OS_BTN_CANCEL),
+                    text = translateMap.textOf(DIALOG_FINALIZE_OS_BTN_CANCEL),
                     maxLines = 1
                 )
             }
@@ -531,7 +531,7 @@ fun ButtonFinishComponent(
                 enabled = isEnabled
             ) {
                 Text(
-                    text = translateMap.translate(DIALOG_FINALIZE_OS_BTN_SAVE),
+                    text = translateMap.textOf(DIALOG_FINALIZE_OS_BTN_SAVE),
                     maxLines = 1
                 )
             }
