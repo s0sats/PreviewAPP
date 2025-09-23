@@ -1709,22 +1709,22 @@ val migrationV24 = object : MigrationSQLite(24, 25) {
             ),
             Column(
                 name = MEASURE_MIN,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             Column(
                 name = MEASURE_MAX,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             Column(
                 name = MEASURE_ALERT_MIN,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             Column(
                 name = MEASURE_ALERT_MAX,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             Column(

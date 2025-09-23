@@ -117,22 +117,22 @@ private val mdProductSerialTpDeviceItemTable = with(MD_Product_Serial_Tp_Device_
             ),
             DatabaseTable.Column(
                 name = MEASURE_MIN,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             DatabaseTable.Column(
                 name = MEASURE_MAX,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             DatabaseTable.Column(
                 name = MEASURE_ALERT_MIN,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             DatabaseTable.Column(
                 name = MEASURE_ALERT_MAX,
-                type = ColumnType.INT,
+                type = ColumnType.REAL,
                 isNullable = true,
             ),
             DatabaseTable.Column(
