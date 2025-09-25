@@ -1170,6 +1170,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
             with(binding) {
+                if (hasInitializedStateHolder()) {
+                    val isFixedSelected = checkedId == act086VerificationFrgRdoAnswerFixed.id
+                    var currentState = stateHolder.getCurrentState()
+
+                    if (!isFixedSelected) {
+                        currentState = currentState.withAfterMeasurement(null, null)
+                    }
+                    stateHolder.updateState(currentState.withOptionSelected(isFixedSelected))
+                }
+
                 if (act086VerificationFrgRdoAnswerFixed.id == checkedId &&
                     act086VerificationFrgRdoAnswerFixed.isPressed &&
                     geOsDeviceItem.change_adjust == 1
@@ -1201,7 +1211,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     ttl = hmAux_Trans["alert_clear_item_data_ttl"]
                     msg = hmAux_Trans["alert_clear_item_data_confirm"]
                     listener = DialogInterface.OnClickListener { _, _ ->
-                        clearData()
+                        clearData(true)
                     }
                 }
             }
@@ -1403,7 +1413,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
-    private fun clearData() {
+    private fun clearData(clearMeasure: Boolean = false) {
         //mPresenter.resetDeviceItemData()
         with(binding) {
             act086VerificationFrgRgAnswers.clearCheck()
@@ -1416,7 +1426,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgClDeleteInfos.visibility = View.GONE
             mPresenter.deleteOldPhoto(prefixPhoto)
             applyRequiredFieldsLblVisibility()
-            if (hasInitializedStateHolder()) {
+            if (hasInitializedStateHolder() && clearMeasure) {
                 stateHolder.updateState(
                     stateHolder.getCurrentState()
                         .withInitialMeasurement(null, null)
@@ -2037,15 +2047,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             materialFragAdapter.notifyDataSetChanged()
         }
 
-        if (hasInitializedStateHolder()) {
-            val isFixedSelected = checkedId == act086VerificationFrgRdoAnswerFixed.id
-            var currentState = stateHolder.getCurrentState()
-
-            if (!isFixedSelected) {
-                currentState = currentState.withAfterMeasurement(null, null)
-            }
-            stateHolder.updateState(currentState.withOptionSelected(isFixedSelected))
-        }
     }
 }
 
