@@ -29,7 +29,6 @@ public class Sql_Act009_001 implements Specification {
     private String s_serial_id;
     private Integer block_spontaneous;
     private String ticketUnion;
-    private String isTripModeQuery = "";
 
     public Sql_Act009_001(
             long s_customer_code,
@@ -39,8 +38,7 @@ public class Sql_Act009_001 implements Specification {
             String s_site_code,
             String s_serial_id,
             Integer block_spontaneous,
-            boolean has_tk_ticket_is_form_off_hand,
-            boolean isTripMode
+            boolean has_tk_ticket_is_form_off_hand
     ) {
         this.s_customer_code = s_customer_code;
         this.s_product_code = s_product_code;
@@ -78,9 +76,6 @@ public class Sql_Act009_001 implements Specification {
                     "   AND ( '" + s_serial_id + "' IS NOT NULL)\n";
         } else {
             ticketUnion = "";
-        }
-        if(isTripMode){
-            isTripModeQuery = "   AND f.is_so = 1\n";
         }
     }
 
@@ -128,7 +123,6 @@ public class Sql_Act009_001 implements Specification {
                                 "   AND (f.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
                                 "   AND (f.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
                                 "   AND ( '" + s_serial_id + "' IS NOT NULL OR f.require_serial_done = 0)\n" +
-                                isTripModeQuery +
                                 ticketUnion +
                                 " )" +
                                 " ORDER BY \n" +

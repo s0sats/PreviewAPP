@@ -19,7 +19,7 @@ import java.util.List;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
+public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter {
 
     private Context context;
     private Act009_Main_View mView;
@@ -47,7 +47,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
         FSTripDao tripDao = new FSTripDao(context);
         boolean isTripMode = tripDao.getTrip() != null;
         List<HMAux> data = new ArrayList<>();
-        if(ToolBox_Inf.profileExists(
+        if (ToolBox_Inf.profileExists(
                 context,
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_BLOCK_FORM_SPONTANEOUS
@@ -64,7 +64,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                             ).toSqlQuery()
                     )
             );
-        }else{
+        } else {
             data.addAll(
                     custom_form_typeDao.query_HM(
                             new Sql_Act009_001(
@@ -75,29 +75,28 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                                     site_code_form_param,
                                     serial_id,
                                     blockSpontaneous,
-                                    isTripMode || has_tk_ticket_is_form_off_hand,
-                                    isTripMode
+                                    has_tk_ticket_is_form_off_hand
                             ).toSqlQuery()
                     )
             );
         }
         //Se apenas um tipo, auto seleciona
-        if(data != null && data.size() == 1){
-            if(back_action == 1) {
+        if (data != null && data.size() == 1) {
+            if (back_action == 1) {
                 onBackPressedClicked(actResqueting);
-            }else{
+            } else {
                 mView.addFormTypeInfoToBundle(data.get(0));
                 //
                 mView.callAct010(context);
             }
-        }else{
+        } else {
             mView.loadTagList(data);
         }
     }
 
     @Override
     public void onBackPressedClicked(String actResqueting) {
-        switch (actResqueting){
+        switch (actResqueting) {
             case ConstantBaseApp.ACT092:
                 mView.callAct092(context);
                 break;
@@ -117,9 +116,9 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                 mView.callAct028(context);
                 break;
             default:
-                if(mView.isHas_tk_ticket_is_form_off_hand()){
+                if (mView.isHas_tk_ticket_is_form_off_hand()) {
                     mView.callAct081(context);
-                }else{
+                } else {
                     mView.callAct006(context);
                 }
         }

@@ -21,10 +21,10 @@ import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MdOrderType;
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
 import com.namoadigital.prj001.service.WSTicketCreation;
@@ -97,7 +97,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         boolean isTripMode = tripDao.getTrip() != null;
 
         List<HMAux> forms = new ArrayList<>();
-        if(!ToolBox_Inf.profileExists(
+        if (!ToolBox_Inf.profileExists(
                 context,
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_BLOCK_FORM_SPONTANEOUS
@@ -112,13 +112,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                     site_code_form_param,
                                     serial_id,
                                     blockSpontaneous,
-                                    has_tk_ticket_is_form_off_hand ? 0 : null,
-                                    isTripMode
+                                    has_tk_ticket_is_form_off_hand ? 0 : null
                             ).toSqlQuery()
                     )
             );
         }
-        if(!has_tk_ticket_is_form_off_hand && !isTripMode) {
+        if (!has_tk_ticket_is_form_off_hand && !isTripMode) {
             List<HMAux> tickets =
                     tkTicketTypeDao.query_HM(
                             new Sql_Act010_002(
@@ -135,15 +134,15 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         }
         if (forms != null && forms.size() == 1) {
             HMAux aux = forms.get(0);
-            if(aux.hasConsistentValue(Act010_Main.IS_FORM)
+            if (aux.hasConsistentValue(Act010_Main.IS_FORM)
                     && "1".equals(aux.get(Act010_Main.IS_FORM))) {
                 validateOpenForm(aux);
-            }else{
+            } else {
                 mView.createTicketDialog(aux);
             }
         }
         //
-        if(!has_tk_ticket_is_form_off_hand) {
+        if (!has_tk_ticket_is_form_off_hand) {
             Collections.sort(forms, new Comparator<HMAux>() {
                 public int compare(HMAux obj1, HMAux obj2) {
                     return Objects.requireNonNull(obj1.get(Act010_Main.CUSTOM_DESC)).compareToIgnoreCase(Objects.requireNonNull(obj2.get(Act010_Main.CUSTOM_DESC)));
@@ -165,12 +164,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
         )
         ) {
-            if(validateFormSORestriction(item)) {
-                if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
+            if (validateFormSORestriction(item)) {
+                if (item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
                         && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
-                        && !ToolBox_Con.hasGPSResourceActive(context)){
+                        && !ToolBox_Con.hasGPSResourceActive(context)) {
                     mView.alertActiveGPSResource(item);
-                }else {
+                } else {
                     defineFormOrFormOsFlow(item);
                 }
             }
@@ -180,15 +179,15 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     private void defineFormOrFormOsFlow(HMAux item) {
-        if(isOsForm(item)) {
-            if(osFormAlreadyExists(item)
+        if (isOsForm(item)) {
+            if (osFormAlreadyExists(item)
                     && !mView.isHas_tk_ticket_is_form_off_hand()) {
                 setAct011Call(item);
-            }else{
+            } else {
                 if (serialHasStructure()) {
-                    if(serialHasMeasureTp()) {
+                    if (serialHasMeasureTp()) {
                         prepareOsFormCreation(item);
-                    }else{
+                    } else {
                         mView.showAlertMsg(
                                 hmAux_Trans.get("alert_os_form_ttl"),
                                 hmAux_Trans.get("alert_serial_without_measure_type_msg")
@@ -201,7 +200,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                     );
                 }
             }
-        }else{
+        } else {
             setAct011Call(item);
         }
     }
@@ -226,10 +225,10 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
      * @return
      */
     private boolean serialHasStructure() {
-        if(serial_id != null && !serial_id.isEmpty()){
+        if (serial_id != null && !serial_id.isEmpty()) {
             MD_Product_Serial serial = getMd_product_serial();
             //
-            if(serial != null && serial.getHas_item_check() == 1){
+            if (serial != null && serial.getHas_item_check() == 1) {
                 ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
                         serialTpDeviceDao.query(
                                 new MD_Product_Serial_Tp_Device_Sql_002(
@@ -286,11 +285,11 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 ToolBox_Con.getPreference_Customer_Code(context)
         ).toSqlQuery();
         List<MdOrderType> orderTypeList = orderTypeDao.query(orderTypeQuery);
-        if(orderTypeList.isEmpty()){
+        if (orderTypeList.isEmpty()) {
             mView.showAlertMsg(
                     hmAux_Trans.get("alert_order_type_empty_ttl"),
                     hmAux_Trans.get("alert_order_type_empty_msg"));
-        }else {
+        } else {
             mView.callAct087();
         }
         //
@@ -302,7 +301,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
      * @return
      */
     private boolean isOsForm(HMAux item) {
-        return  item.hasConsistentValue(GE_Custom_FormDao.IS_SO)
+        return item.hasConsistentValue(GE_Custom_FormDao.IS_SO)
                 && "1".equals(item.get(GE_Custom_FormDao.IS_SO));
     }
 
@@ -314,7 +313,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     private boolean serialHasMeasureTp() {
-        if(serial_id != null && !serial_id.isEmpty()) {
+        if (serial_id != null && !serial_id.isEmpty()) {
             MD_Product_Serial serial = getMd_product_serial();
 
             return measureTpDao.getByString(
@@ -322,7 +321,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                             serial.getCustomer_code(),
                             serial.getMeasure_tp_code() != null ? serial.getMeasure_tp_code() : -1
                     ).toSqlQuery()
-            ) != null ;
+            ) != null;
         }
 
         return false;
@@ -380,18 +379,18 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                         && (!so_prefix.equals(String.valueOf(formData.getSo_prefix())) ||
                         !so_code.equals(String.valueOf(formData.getSo_code())))
                 ) {
-                    if(formData.getSo_prefix() == null && formData.getSo_code() == null){
+                    if (formData.getSo_prefix() == null && formData.getSo_code() == null) {
                         //msg de não e possivel abrir form via S.O,pois ele ja existe sem S.O o.O
                         mView.showAlertMsg(
                                 hmAux_Trans.get("alert_so_form_exits_no_so_ttl"),
                                 hmAux_Trans.get("alert_so_form_exits_no_so_msg")
                         );
-                    }else{
+                    } else {
                         mView.showAlertMsg(
                                 hmAux_Trans.get("alert_so_form_exits_with_so_ttl"),
                                 hmAux_Trans.get("alert_so_form_exits_with_so_msg")
                                         + "\n" + hmAux_Trans.get("alert_so_lbl")
-                                        + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
+                                        + ":    " + formData.getSo_prefix() + "." + formData.getSo_code()
                         );
                     }
                     return false;
@@ -405,7 +404,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                             hmAux_Trans.get("alert_form_exits_with_so_ttl"),
                             hmAux_Trans.get("alert_form_exits_with_so_msg")
                                     + "\n" + hmAux_Trans.get("alert_so_lbl")
-                                    + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
+                                    + ":    " + formData.getSo_prefix() + "." + formData.getSo_code()
                     );
 
                     return false;
@@ -444,13 +443,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         Intent mIntent = new Intent(context, WBR_Ticket_Creation.class);
         Bundle bundle = new Bundle();
 
-        bundle.putLong(WSTicketCreation.WS_BUNDLE_CUSTOMER_CODE,customer_code);
-        bundle.putInt(WSTicketCreation.WS_BUNDLE_TYPE_CODE,type_code);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_CUSTOMER_CODE, customer_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_TYPE_CODE, type_code);
         bundle.putInt(WSTicketCreation.WS_BUNDLE_SITE_CODE, Integer.parseInt(site_code));
-        bundle.putLong(WSTicketCreation.WS_BUNDLE_OPERATION_CODE,operation_code);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_OPERATION_CODE, operation_code);
         bundle.putLong(WSTicketCreation.WS_BUNDLE_PRODUCT_CODE, product_code);
-        bundle.putLong(WSTicketCreation.WS_BUNDLE_SERIAL_CODE,serial_code);
-        bundle.putString(WSTicketCreation.WS_BUNDLE_COMMENTS,comments);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_SERIAL_CODE, serial_code);
+        bundle.putString(WSTicketCreation.WS_BUNDLE_COMMENTS, comments);
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -515,7 +514,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             //LUCHE - 22/10/2021
             //Substituido pelo defineFormOrFormOsFlow, para validar se é um form ou form tipo o.s
             defineFormOrFormOsFlow(item);
-        }else{
+        } else {
             mView.alertActiveGPSResource(item);
         }
     }
