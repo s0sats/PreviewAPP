@@ -10,6 +10,7 @@ data class Extract<T>(
 
 enum class ExtractType {
     ORIGIN,
+    START_TRIP,
     DESTINATION,
     ACTION,
     USER,

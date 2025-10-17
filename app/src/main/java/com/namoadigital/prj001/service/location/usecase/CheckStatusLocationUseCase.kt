@@ -26,7 +26,7 @@ class CheckStatusLocationUseCase(
     override fun invoke(input: Coordinates) {
         val trip = tripRepository.getTrip()
         val status = trip?.tripStatus?.toTripStatus() ?: TripStatus.NULL
-        val currentDate = getCurrentDateApi()
+        val currentDate = getCurrentDateApi(true)
         input.date = currentDate
         val tripPrefModel = currentTripPref.read()
 
@@ -35,10 +35,15 @@ class CheckStatusLocationUseCase(
 
         when {
             isPendingOrTransferOrWaitingDestination(status) -> {
-                val destination = destinationRepository.getDestinationByStatus(trip?.customerCode ?: -1,trip?.tripPrefix ?: -1, trip?.tripCode ?: -1, DestinationStatus.PENDING)
-                if(trip?.tripStatus == TripStatus.PENDING.toDescription()){
+                val destination = destinationRepository.getDestinationByStatus(
+                    trip?.customerCode ?: -1,
+                    trip?.tripPrefix ?: -1,
+                    trip?.tripCode ?: -1,
+                    DestinationStatus.PENDING
+                )
+                if (trip?.tripStatus == TripStatus.PENDING.toDescription()) {
                     handleDestinationNotDefined(input)
-                }else {
+                } else {
                     destination?.let {
                         it.destinationStatus?.let { status ->
                             if (isPendingDestination(status.toDestinationStatus())) {
@@ -50,15 +55,25 @@ class CheckStatusLocationUseCase(
             }
             //
             isOnSiteOrOverNight(status) -> {
-                val destination = destinationRepository.getDestinationByStatus(trip?.customerCode ?: -1,trip?.tripPrefix ?: -1, trip?.tripCode ?: -1, DestinationStatus.ARRIVED)
-                destination?.let{
+                val destination = destinationRepository.getDestinationByStatus(
+                    trip?.customerCode ?: -1,
+                    trip?.tripPrefix ?: -1,
+                    trip?.tripCode ?: -1,
+                    DestinationStatus.ARRIVED
+                )
+                destination?.let {
                     handleDestinationArrived(input, destination)
                 }
             }
             //
             isTransit(status) -> {
-                val destination = destinationRepository.getDestinationByStatus(trip?.customerCode ?: -1,trip?.tripPrefix ?: -1, trip?.tripCode ?: -1, DestinationStatus.TRANSIT)
-                destination?.let{
+                val destination = destinationRepository.getDestinationByStatus(
+                    trip?.customerCode ?: -1,
+                    trip?.tripPrefix ?: -1,
+                    trip?.tripCode ?: -1,
+                    DestinationStatus.TRANSIT
+                )
+                destination?.let {
                     handleDestinationTransit(input, destination)
                 }
             }
@@ -72,7 +87,7 @@ class CheckStatusLocationUseCase(
     ) {
 
         if (status == TripStatus.WAITING_DESTINATION) {
-            if(tripPrefModel.waiting_destination_date == null) {
+            if (tripPrefModel.waiting_destination_date == null) {
                 currentTripPref.write(
                     tripPrefModel.copy(
                         waiting_destination_date = input.date
@@ -129,11 +144,17 @@ class CheckStatusLocationUseCase(
     }
 
     private fun isPending(status: TripStatus) = status == TripStatus.PENDING
-    private fun isPendingOrTransferOrWaitingDestination(status: TripStatus) = status == TripStatus.PENDING || status == TripStatus.TRANSFER || status == TripStatus.WAITING_DESTINATION
-    private fun isOnSiteOrOverNight(status: TripStatus) = status == TripStatus.ON_SITE || status == TripStatus.OVER_NIGHT
+    private fun isPendingOrTransferOrWaitingDestination(status: TripStatus) =
+        status == TripStatus.PENDING || status == TripStatus.TRANSFER || status == TripStatus.WAITING_DESTINATION
+
+    private fun isOnSiteOrOverNight(status: TripStatus) =
+        status == TripStatus.ON_SITE || status == TripStatus.OVER_NIGHT
+
     private fun isTransit(status: TripStatus) = status == TripStatus.TRANSIT
-    private fun isTransitDestination(status: DestinationStatus) = status == DestinationStatus.TRANSIT
-    private fun isNotDefined(destinationStatus: DestinationStatus) : Boolean {
+    private fun isTransitDestination(status: DestinationStatus) =
+        status == DestinationStatus.TRANSIT
+
+    private fun isNotDefined(destinationStatus: DestinationStatus): Boolean {
         listOf(
             DestinationStatus.PENDING,
             DestinationStatus.ARRIVED,
@@ -142,7 +163,11 @@ class CheckStatusLocationUseCase(
             return !list.contains(destinationStatus)
         }
     }
-    private fun isArrived(destinationStatus: DestinationStatus) = destinationStatus == DestinationStatus.ARRIVED
-    private fun isPendingDestination(destinationStatus: DestinationStatus) = destinationStatus == DestinationStatus.PENDING
+
+    private fun isArrived(destinationStatus: DestinationStatus) =
+        destinationStatus == DestinationStatus.ARRIVED
+
+    private fun isPendingDestination(destinationStatus: DestinationStatus) =
+        destinationStatus == DestinationStatus.PENDING
 
 }

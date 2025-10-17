@@ -17,6 +17,7 @@ fun FSTrip.toTripUpdate() = FSTripFullUpdateEnv(
     originLat = this.originLat,
     originLon = this.originLon,
     originDate = this.originDate,
+    startDate = this.startDate,
     doneDate = this.doneDate,
     fleetStartPhotoChanged = this.fleetStartPhotoChanged,
     fleetStartPhotoKey = this.fleetStartPhotoLocal,

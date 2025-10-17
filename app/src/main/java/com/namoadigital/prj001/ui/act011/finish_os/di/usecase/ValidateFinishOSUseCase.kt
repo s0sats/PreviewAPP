@@ -213,7 +213,10 @@ class ValidateFinishOSUseCase constructor(
             is NewServiceChoose.RETURN -> {
                 if (isDateBefore(hasNewService.date, getCurrentDateApi()) ||
                     isDateEquals(hasNewService.date, getCurrentDateApi()) ||
-                    ToolBox_Inf.getDateDiferenceInDays(hasNewService.date, getCurrentDateApi()) > 14
+                    ToolBox_Inf.getDateDiferenceInDays(
+                        hasNewService.date,
+                        getCurrentDateApi()
+                    ) > 14
                 ) {
                     map[Component.ScheduleReturnForm] = Component.ScheduleReturnForm.DateIncorrectOS
                 }

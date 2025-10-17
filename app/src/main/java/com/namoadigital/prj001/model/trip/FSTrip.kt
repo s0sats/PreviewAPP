@@ -38,6 +38,7 @@ data class FSTrip(
     @Expose @SerializedName("requireFleetData") var requireFleetData: Int,
     @Expose @SerializedName("distanceRefMinutes") var distanceRefMinutes: Int = 5,
     @Expose @SerializedName("distanceRefMinutesTrans") var distanceRefMinutesTrans: Int = 10,
+    @Expose @SerializedName("startDate") var startDate: String? = null,
     @Expose @SerializedName("doneDate") var doneDate: String? = null,
     @Expose @SerializedName("users") var users: MutableList<FSTripUser>? = mutableListOf(),
     @Expose @SerializedName("events") var events: MutableList<FSTripEvent>? = mutableListOf(),

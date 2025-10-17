@@ -1,19 +1,32 @@
 package com.namoadigital.prj001.extensions.date
 
 import android.content.Context
-import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.absoluteValue
 
-fun getCurrentDateApi() = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
 
-fun String.convertDateToFullTimeStampGMT(inputFormat: String = DATE_FORMAT, outputFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT): String {
+fun getCurrentDateApi(resetSeconds: Boolean = false): String {
+    val calendar = Calendar.getInstance()
+    if (resetSeconds) {
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+    }
+    val date: Date? = calendar.getTime()
+    val sdf = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT, Locale.getDefault())
+    return sdf.format(date)
+}
+
+fun String.convertDateToFullTimeStampGMT(
+    inputFormat: String = DATE_FORMAT,
+    outputFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT
+): String {
     val sdfInput = SimpleDateFormat(inputFormat)
     val sdfOutput = SimpleDateFormat(outputFormat)
     var formattedDate: String = ""
@@ -97,7 +110,7 @@ fun calculateMinutesBetweenDates(
 
         val differenceInMillis = end!!.time - start!!.time
         differenceInMillis / (1000 * 60)
-    }catch (e: Exception){
+    } catch (e: Exception) {
         ToolBox_Inf.registerException("CalculateMinutesBetweenDates", e)
         -1L
     }
@@ -182,6 +195,6 @@ fun isDateEquals(startDate: String, endDate: String?): Boolean {
     } ?: false
 }
 
-fun String.getDateDiferenceInMinutes(secoundDate:String):Long{
-    return (ToolBox_Inf.getDateDiferenceInMilliseconds(this, secoundDate) /60000).absoluteValue
+fun String.getDateDiferenceInMinutes(secoundDate: String): Long {
+    return (ToolBox_Inf.getDateDiferenceInMilliseconds(this, secoundDate) / 60000).absoluteValue
 }

@@ -7,7 +7,6 @@ import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationU
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FsTripDestination
-import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeEnv
 import com.namoadigital.prj001.model.trip.toDescription
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -33,14 +32,7 @@ class TripPendingViewModel @Inject constructor(
     }
 
     fun checkStartTrip(trip: FSTrip?, destination: FsTripDestination?): Boolean {
-        trip?.let {
-            if (checkFleetData(it)
-                && checkDestinationData(it, destination)
-            ) {
-                return true
-            }
-        }
-        return false
+        return trip?.let { checkFleetData(it) } ?: false
     }
 
     fun startTrip(trip: FSTrip?, destination: FsTripDestination) {

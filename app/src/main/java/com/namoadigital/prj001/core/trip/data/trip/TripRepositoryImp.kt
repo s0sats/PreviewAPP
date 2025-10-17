@@ -39,6 +39,8 @@ import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FSTripFullUpdateEnv
 import com.namoadigital.prj001.model.trip.FSTripOriginEnv
 import com.namoadigital.prj001.model.trip.FSTripOriginRec
+import com.namoadigital.prj001.model.trip.FSTripStartEnv
+import com.namoadigital.prj001.model.trip.FSTripStartRec
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeRec
 import com.namoadigital.prj001.model.trip.TripFleetSetEnv
@@ -62,8 +64,8 @@ import com.namoadigital.prj001.ui.act005.trip.TripViewModel.Companion.JPG_EXTENS
 import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toOriginExtract
+import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toStartTripExtract
 import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.Dispatchers
@@ -123,8 +125,14 @@ class TripRepositoryImp @Inject constructor(
                 emit(loading(tripOnline))
                 var doneDate: String? = null
                 if (tripStatus == TripStatus.DONE) {
-                    doneDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                    doneDate = getCurrentDateApi(true)
                 }
+
+                var startDate: String? = null
+                if (tripStatus == TripStatus.START) {
+                    startDate = getCurrentDateApi(true)
+                }
+
                 if (tripOnline) {
                     val modelRequest =
                         TripStatusChangeEnv(
@@ -132,6 +140,7 @@ class TripRepositoryImp @Inject constructor(
                             tripCode = trip.tripCode,
                             scn = trip.scn,
                             tripStatus = tripStatus.toDescription(),
+                            startDate = startDate,
                             doneDate = doneDate
                         )
                     val manager = TokenManager<TripStatusChangeEnv>(context)
@@ -165,7 +174,11 @@ class TripRepositoryImp @Inject constructor(
                                     )
                                     //
                                     modelEnv.parameters?.let {
-                                        if(transaction.save(statusChanged)) {
+                                        if (transaction.save(
+                                                statusChanged,
+                                                startDate = startDate
+                                            )
+                                        ) {
                                             ToolBox.sendBCStatus(
                                                 context,
                                                 "CLOSE_ACT",
@@ -174,7 +187,7 @@ class TripRepositoryImp @Inject constructor(
                                                 "",
                                                 "0"
                                             )
-                                        }else{
+                                        } else {
                                             ToolBox.sendBCStatus(
                                                 context,
                                                 "CUSTOM_ERROR",
@@ -183,7 +196,7 @@ class TripRepositoryImp @Inject constructor(
                                                 ""
                                             )
                                         }
-                                    }?:ToolBox.sendBCStatus(
+                                    } ?: ToolBox.sendBCStatus(
                                         context,
                                         "CUSTOM_ERROR",
                                         genericTranslate["msg_no_data_returned"],
@@ -205,6 +218,8 @@ class TripRepositoryImp @Inject constructor(
                             failed = { throwable ->
                                 saveOfflineTripStatusChange(
                                     trip,
+                                    tripStatus,
+                                    startDate,
                                     doneDate,
                                     destinationSeq,
                                     destinationStatus,
@@ -219,6 +234,8 @@ class TripRepositoryImp @Inject constructor(
                 } else {
                     saveOfflineTripStatusChange(
                         trip,
+                        tripStatus,
+                        startDate,
                         doneDate,
                         destinationSeq,
                         destinationStatus,
@@ -234,13 +251,15 @@ class TripRepositoryImp @Inject constructor(
 
     private suspend fun FlowCollector<IResult<Unit>>.saveOfflineTripStatusChange(
         it: FSTrip,
+        tripStatus: TripStatus,
+        startDate: String?,
         doneDate: String?,
         destinationSeq: Int?,
         destinationStatus: String?,
         nextDestinationSeq: Int?,
         nextDestinationStatus: String?,
         nextTripStatus: String,
-        throwable:Throwable?=null
+        throwable: Throwable? = null
     ) {
         val transaction = TransactionWsTripDestinationStatusChange(
             context = context,
@@ -249,7 +268,14 @@ class TripRepositoryImp @Inject constructor(
         )
         //
         it.updateRequired = 1
-        it.doneDate = doneDate
+
+        if (tripStatus == TripStatus.DONE) {
+            it.doneDate = doneDate
+        }
+
+        if (tripStatus == TripStatus.START) {
+            it.startDate = startDate
+        }
         //
         val currentDestination =
             getDestinationForTripChange(destinationSeq, it, destinationStatus)
@@ -269,6 +295,7 @@ class TripRepositoryImp @Inject constructor(
                 nextDestinationSeq = nextDestination?.destinationSeq,
                 nextDestinationStatus = nextDestination?.destinationStatus
             ),
+            startDate = it.startDate,
             updateRequired = true
         )
 
@@ -365,7 +392,7 @@ class TripRepositoryImp @Inject constructor(
                     file_code = imagePath.replace(JPG_EXTENSION, "")
                     file_path = imagePath
                     file_status = GE_File.OPENED
-                    file_date = getCurrentDateApi()
+                    file_date = getCurrentDateApi(true)
                 }.let { fileModel ->
                     fileDao?.addUpdate(fileModel)
                 }
@@ -541,7 +568,7 @@ class TripRepositoryImp @Inject constructor(
                             destinationSeq = destinationSeq,
                             odometer = odometer,
                             photoPath = imageKey,
-                            photoChanged = if(destination?.arrivedFleetPhotoChanged == 1) 1 else model.photoChanged,
+                            photoChanged = if (destination?.arrivedFleetPhotoChanged == 1) 1 else model.photoChanged,
                             db = db
                         )
                     }
@@ -549,10 +576,10 @@ class TripRepositoryImp @Inject constructor(
                 }
 
                 else -> {
-                    val photoChanged = if(model.target.toTripTarget() == TripTarget.START){
-                        if(trip.fleetStartPhotoChanged == 1) 1 else model.photoChanged
-                    }else{
-                        if(trip.fleetEndPhotoChanged == 1) 1 else model.photoChanged
+                    val photoChanged = if (model.target.toTripTarget() == TripTarget.START) {
+                        if (trip.fleetStartPhotoChanged == 1) 1 else model.photoChanged
+                    } else {
+                        if (trip.fleetEndPhotoChanged == 1) 1 else model.photoChanged
                     }
                     dao.updateFleet(
                         tripPrefix = model.tripPrefix,
@@ -663,7 +690,7 @@ class TripRepositoryImp @Inject constructor(
                                     required = "0"
                                 )
                             )
-                            if(envModel.originType == null){
+                            if (envModel.originType == null) {
                                 DatabaseTransactionManager(context).executeTransaction {
                                     response.data?.let { data ->
                                         dao.updateScn(data.tripPrefix, data.tripCode, data.scn, it)
@@ -784,10 +811,16 @@ class TripRepositoryImp @Inject constructor(
         )
     }
 
-    override fun getExtract(trip: FSTrip?): Extract<FSTrip>? {
+    override fun getExtract(trip: FSTrip?): List<Extract<FSTrip>>? {
         trip?.let { trip ->
-            if (trip.tripStatus.toTripStatus() != TripStatus.PENDING)
-                return trip.toOriginExtract()
+            val list = mutableListOf<Extract<FSTrip>>()
+            if (trip.tripStatus.toTripStatus() != TripStatus.PENDING) {
+                list.add(trip.toOriginExtract())
+                trip.startDate?.let {
+                    list.add(trip.toStartTripExtract())
+                }
+                return list
+            }
         }
         return null
     }
@@ -796,33 +829,33 @@ class TripRepositoryImp @Inject constructor(
         return dao.getTripByDestination(destinationSeq)
     }
 
-    override fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv? {
-        userDao?.let{
+    override fun getTripFullUpdateEnv(trip: FSTrip): FSTripFullUpdateEnv? {
+        userDao?.let {
             val listAllUsers = it.getAllUsersForFullUpdate(trip.tripPrefix, trip.tripCode)
-            listAllUsers?.let{list->
+            listAllUsers?.let { list ->
                 trip.users?.addAll(list)
-            }?: run {
+            } ?: run {
                 trip.users = null
             }
-        }?: run {
+        } ?: run {
             trip.users = null
         }
-        if(trip.users == null){
+        if (trip.users == null) {
             return null
         }
         //
-        eventDao?.let{
+        eventDao?.let {
             val listAllUsers = it.listAllEvents(trip.tripPrefix, trip.tripCode)
-            listAllUsers?.let { list->
+            listAllUsers?.let { list ->
                 trip.events?.addAll(list)
-            }?:run {
+            } ?: run {
                 trip.events = null
             }
-        }?:run {
+        } ?: run {
             trip.events = null
         }
         //
-        if(trip.events == null){
+        if (trip.events == null) {
             return null
         }
         //
@@ -833,16 +866,16 @@ class TripRepositoryImp @Inject constructor(
                 tripCode = trip.tripCode
             )
             //
-            listAllDestination?.let { list->
+            listAllDestination?.let { list ->
                 trip.destinations?.addAll(list)
-            }?:run {
+            } ?: run {
                 trip.destinations = null
             }
-        }?:run {
+        } ?: run {
             trip.destinations = null
         }
         //
-        if(trip.destinations == null){
+        if (trip.destinations == null) {
             return null
         }
         //
@@ -853,20 +886,20 @@ class TripRepositoryImp @Inject constructor(
         return dao.hasTripUpdateRequired()
     }
 
-    override fun sendTripFullUpdate():Boolean {
+    override fun sendTripFullUpdate(): Boolean {
         dao.getTripWithUpdateRequired()?.let { trip ->
             //
             ToolBox_Inf.scheduleUploadImgWork(context)
             val tripEnv = getTripFullUpdateEnv(trip)
             //
-            tripEnv?.let{
+            tripEnv?.let {
                 context.sendToWebServiceReceiver<WBRSendTripFullUpdate> {
                     Bundle().putApiRequest(tripEnv)
                 }
-            }?: run{
+            } ?: run {
                 return false
             }
-        }?:run{
+        } ?: run {
             return false
         }
         return true
@@ -874,5 +907,92 @@ class TripRepositoryImp @Inject constructor(
 
     override fun existsTripWithUpdateRequired(): Boolean {
         return dao.getTripWithUpdateRequired() != null
+    }
+
+    override fun saveStartDateSet(date: String): Flow<IResult<Unit>> {
+        return flow {
+            dao.getTrip()?.let { trip ->
+                val isOnlineMode = ToolBox_Con.isOnline(context) && !trip.hasUpdateRequired
+
+                emit(loading(isOnlineMode))
+
+                val envModel = FSTripStartEnv(
+                    tripPrefix = trip.tripPrefix,
+                    tripCode = trip.tripCode,
+                    scn = trip.scn,
+                    startDate = date
+                )
+
+                if (!isOnlineMode) {
+                    DatabaseTransactionManager(context).executeTransaction {
+                        dao.updateStartDate(
+                            trip.tripPrefix,
+                            trip.tripCode,
+                            date,
+                            it
+                        )
+
+                        dao.updateRequired(
+                            tripPrefix = trip.tripPrefix,
+                            tripCode = trip.tripCode,
+                            updateRequired = 1,
+                            it,
+                        )
+                    }
+                    emit(success(Unit))
+                    return@flow
+                }
+
+
+                emit(loading())
+
+                val manager = TokenManager<FSTripStartEnv>(context)
+                val token = manager.getToken(envModel)
+
+                val model = ApiRequest(
+                    token = token,
+                    parameters = envModel
+                ).apply {
+                    session_app = context.getUserSessionAPP()
+                }
+
+                context.connectWS<ApiResponse<FSTripStartRec>>(
+                    url = Constant.WS_TRIP_START_SET,
+                    model = model
+                ) {
+                    it.results(
+                        success = { response ->
+                            manager.deleteToken()
+                            context.sendBCStatus(
+                                WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                    message = genericTranslate["generic_processing_data"],
+                                    required = "0"
+                                )
+                            )
+
+                            DatabaseTransactionManager(context).executeTransaction { db ->
+                                response.data?.let { data ->
+                                    dao.updateScn(data.tripPrefix, data.tripCode, data.scn, db)
+                                    dao.updateStartDate(
+                                        data.tripPrefix,
+                                        data.tripCode,
+                                        envModel.startDate,
+                                        db
+                                    )
+                                }
+                            }.success {
+                                context.sendBCStatus(WsTypeStatus.CLOSE_ACT(""))
+                            }.failed {
+                                context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                            }
+                        },
+                        failed = {
+                            emit(failed(it))
+                        }
+
+                    )
+                }
+            }
+        }.flowOn(Dispatchers.IO)
     }
 }

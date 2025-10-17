@@ -195,6 +195,8 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.ori
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.OriginDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.util.OriginOption
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_TITLE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.ReportBottomSheet
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.DialogEventTrip
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.DialogEventTrip.Companion.PROGRESS_EVENT_TRIP_DELETE_MSG
@@ -545,7 +547,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         when (tripStatus) {
             TripStatus.NULL.toDescription(),
             TripStatus.OVER_NIGHT.toDescription(),
-            -> {
+                -> {
                 if (FsTripLocationService.isTracking.value) {
                     context?.sendCommandToServiceTripLocation(LocationServiceConstants.STOP_LOCATION)
                 }
@@ -918,7 +920,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 is DestinationDialog -> dialog.updatePhotoDialog()
             }
         } ?: run {
-            if(cameFromOnPause && this !is TripExtractFragment){
+            if (cameFromOnPause && this !is TripExtractFragment) {
                 listener?.onSelectTrip()
             }
         }
@@ -1421,7 +1423,9 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             ERROR_TRY_SAVE_ONLINE_TITLE,
             ERROR_TRY_SAVE_ONLINE_MSG,
             ERROR_ADD_USER_TTL,
-            ERROR_ADD_USER_MSG
+            ERROR_ADD_USER_MSG,
+            PROCESS_DIALOG_START_DATE_TITLE,
+            PROCESS_DIALOG_START_DATE_MSG,
         ).let { list ->
             return TranslateResource(
                 requireContext(),
@@ -1487,6 +1491,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         const val WS_TRIP_SAVE_FLEET_END_TRIP = WS_TRIP_PREFIX + "save_fleet_end_trip"
         const val WS_TRIP_SAVE_FLEET_AND_ORIGIN = WS_TRIP_PREFIX + "save_fleet_and_origin"
         const val WS_TRIP_ORIGIN_SET = WS_TRIP_PREFIX + "origin_set"
+        const val WS_TRIP_START_DATE_SET = WS_TRIP_PREFIX + "start_date_set"
         const val WS_TRIP_ABORT_PENDING = WS_TRIP_PREFIX + "abort_pending"
         const val WS_TRIP_START = WS_TRIP_PREFIX + "start"
         const val WS_TRIP_START_WITHOUT_DESTINATION = WS_TRIP_PREFIX + "start_without_destination"

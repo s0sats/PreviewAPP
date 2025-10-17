@@ -8,8 +8,8 @@ import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FSTripFullUpdateEnv
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.preference.CurrentTripPrefModel
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
 import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
 import kotlinx.coroutines.flow.Flow
 
 interface TripRepository {
@@ -34,6 +34,7 @@ interface TripRepository {
         nextDestinationSeq: Int?,
         nextDestinationStatus: String?,
     ): Flow<IResult<Unit>>
+
     fun getPositionDistanceMin(): Double
 
     fun execCreateTrip(input: Coordinates?)
@@ -59,11 +60,12 @@ interface TripRepository {
     ): Flow<IResult<Unit>>
 
     fun getEvent(): FSTripEvent?
-    fun getExtract(trip: FSTrip?): Extract<FSTrip>?
+    fun getExtract(trip: FSTrip?): List<Extract<FSTrip>>?
     fun getTripByDestinationSeq(destinationSeq: Int): FSTrip?
-    fun getTripFullUpdateEnv(trip : FSTrip): FSTripFullUpdateEnv?
-    fun sendTripFullUpdate():Boolean
+    fun getTripFullUpdateEnv(trip: FSTrip): FSTripFullUpdateEnv?
+    fun sendTripFullUpdate(): Boolean
     fun getTripUpdateRequired(): Boolean
     fun existsTripWithUpdateRequired(): Boolean
     fun isTripOnline(it: FSTrip): Boolean
+    fun saveStartDateSet(date: String): Flow<IResult<Unit>>
 }

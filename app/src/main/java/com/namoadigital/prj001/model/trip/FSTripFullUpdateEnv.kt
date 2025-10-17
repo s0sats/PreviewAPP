@@ -17,6 +17,7 @@ data class FSTripFullUpdateEnv(
     @Expose @SerializedName("originLat") var originLat: Double? = null,
     @Expose @SerializedName("originLon") var originLon: Double? = null,
     @Expose @SerializedName("originDate") var originDate: String? = null,
+    @Expose @SerializedName("startDate") var startDate: String? = null,
     @Expose @SerializedName("doneDate") var doneDate: String? = null,
     @Expose @SerializedName("fleetStartPhotoChanged") var fleetStartPhotoChanged: Int = 0,
     @Expose @SerializedName("fleetStartPhotoKey") var fleetStartPhotoKey: String? = null,

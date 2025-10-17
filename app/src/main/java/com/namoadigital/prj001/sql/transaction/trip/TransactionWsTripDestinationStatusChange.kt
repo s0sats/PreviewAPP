@@ -4,14 +4,12 @@ import android.content.Context
 import com.namoadigital.prj001.dao.BaseDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
-import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeRec
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.toDestinationStatus
 import com.namoadigital.prj001.model.trip.toTripStatus
-import com.namoadigital.prj001.sql.FsTripDestinationSqlDelete
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -32,6 +30,7 @@ class TransactionWsTripDestinationStatusChange(
     lateinit var destination: FsTripDestination
     fun save(
         statusChanged: TripDestinationStatusChangeRec,
+        startDate: String? = null,
         updateRequired: Boolean = false
     ): Boolean {
         openDB()
@@ -44,8 +43,9 @@ class TransactionWsTripDestinationStatusChange(
                 tripCode = statusChanged.tripCode,
                 tripScn = statusChanged.scn,
                 status = statusChanged.tripStatus,
-                updateRequired = if(updateRequired) 1 else 0,
-                doneDate = if(statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) statusChanged.date else null,
+                updateRequired = if (updateRequired) 1 else 0,
+                startDate = startDate,
+                doneDate = if (statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) statusChanged.date else null,
                 dbInstance = db
             )
 
@@ -80,6 +80,7 @@ class TransactionWsTripDestinationStatusChange(
                                         db
                                     )
                             }
+
                             else -> {
                                 destinationResult = fsTripDestinationDao.updateStatus(
                                     statusChanged.tripPrefix,

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.core.trip.domain.usecase
 
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.SaveStartDateTripUseCase
+
 data class TripUseCase(
     val trip: GetTripUseCase,
     val statusChange: TripStatusChangeUseCase,
@@ -9,5 +11,6 @@ data class TripUseCase(
     val saveOrigin: SaveOriginUseCase,
     val getEvent: GetEventUseCase,
     val sendTripFull: SendTripFullUseCase,
-    val hasTripWithUpdateRequired: CheckExistsTripUpdateUseCase
+    val hasTripWithUpdateRequired: CheckExistsTripUpdateUseCase,
+    val saveStartDate: SaveStartDateTripUseCase,
 )

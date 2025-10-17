@@ -507,11 +507,11 @@ class DestinationDialog constructor(
                 isSuccess = false
             }
             if (isSuccess) {
-                if (dateBeforeTrip("$dateStart $hourStart")) {
+                if (dateBeforeStartTrip("$dateStart $hourStart")) {
                     setStartDateError()
                     tvDateStartInvalid.text =
                         hmAuxTranslate[DIALOG_DATE_START_EXCEEDED_TRIP_LBL] + ": " + context.formatDate(
-                            FormatDateType.DateAndHour(trip.originDate ?: "")
+                            FormatDateType.DateAndHour(trip.startDate ?: "")
                         )
                     layoutDateStartInvalid.visibility = View.VISIBLE
                     btnSave.isEnabled = false
@@ -525,9 +525,9 @@ class DestinationDialog constructor(
                             destination.destinationSeq,
                             GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.PREVIOUS
                         )
-                        val previousEndDate = previousDestination?.departedDate ?: trip.originDate
+                        val previousEndDate = previousDestination?.departedDate ?: trip.startDate
                         previousEndDate?.let {
-                            if (isDateBefore(
+                            if (isDateBeforeAndEquals(
                                     "$dateStart $hourStart",
                                     previousEndDate.parseDate()
                                 )
@@ -613,7 +613,7 @@ class DestinationDialog constructor(
                 )
                 val startDate = nextDestination?.arrivedDate
                 startDate?.let { startDate ->
-                    if (isDateBefore(startDate.parseDate(), "$dateEnd $hourEnd")) {
+                    if (isDateBeforeAndEquals(startDate.parseDate(), "$dateEnd $hourEnd")) {
                         setEndDateError()
                         tvDateEndInvalid.text =
                             "${hmAuxTranslate[DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL]} ${startDate.parseDate()}"

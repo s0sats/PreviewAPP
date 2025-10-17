@@ -46,7 +46,7 @@ class EventDoneDialog constructor(
             etLayoutEndHour.hint = hmAuxTranslate[DIALOG_EVENT_DONE_START_HOUR_HINT]
             btnFinish.text = hmAuxTranslate[DIALOG_EVENT_DONE_BTN_SAVE]
             tvDesc.text = hmAuxTranslate[DIALOG_EVENT_DONE_DESC_LBL]
-            val currentDate = getCurrentDateApi()
+            val currentDate = getCurrentDateApi(true)
             val (date, hour) = currentDate.parseDatePair()
             etEndDate.setText(date)
             etEndHour.setText(hour)

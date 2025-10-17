@@ -2,13 +2,13 @@ package com.namoadigital.prj001.ui.act005.trip.repository.mapping
 
 import com.namoadigital.prj001.adapter.trip.model.Extract
 import com.namoadigital.prj001.adapter.trip.model.ExtractType
+import com.namoadigital.prj001.model.trip.AvailableUsersRec
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FSTripUser
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.FsTripDestinationAction
 import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
-import com.namoadigital.prj001.model.trip.AvailableUsersRec
 
 fun AvailableUsersRec.toListAdapter() = TripUserEdit(
     userCode = this.userCode!!,
@@ -42,6 +42,14 @@ fun FSTrip.toOriginExtract() = Extract(
     dateStart = this.originDate,
     filter = this.originSiteDesc ?: "",
     model = this
+)
+
+fun FSTrip.toStartTripExtract() = Extract(
+    type = ExtractType.START_TRIP,
+    dateStart = this.startDate,
+    filter = "",
+    model = this
+
 )
 
 fun FsTripDestinationAction.toActionExtract() = Extract(

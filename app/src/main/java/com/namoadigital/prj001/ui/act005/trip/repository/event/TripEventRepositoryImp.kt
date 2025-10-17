@@ -90,7 +90,7 @@ class TripEventRepositoryImp constructor(
                         file_code = imagePath.replace(TripViewModel.JPG_EXTENSION, "")
                         file_path = imagePath
                         file_status = GE_File.OPENED
-                        file_date = getCurrentDateApi()
+                        file_date = getCurrentDateApi(true)
                     }.let { fileModel ->
                         fileDao.addUpdate(fileModel)
                     }

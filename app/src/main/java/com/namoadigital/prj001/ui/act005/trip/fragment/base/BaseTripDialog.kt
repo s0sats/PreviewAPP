@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act005.trip.fragment.base
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -207,6 +206,7 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
                 createTempPath(pathLocal)
                 _statePhotoPath.value = IResult.success(pathLocal)
             }
+
             photoUrl.isNotEmpty() && pathLocal.isNullOrEmpty() -> {
                 val file = File("${ConstantBase.CACHE_PATH_PHOTO}/$pathRemote")
                 if (file.exists()) {
@@ -216,6 +216,7 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
                     downloadAndSaveImage(context, photoUrl, pathRemote)
                 }
             }
+
             photoUrl.isNotEmpty() && !pathLocal.isNullOrEmpty() -> {
                 val file = File("${ConstantBase.CACHE_PATH_PHOTO}/$pathRemote")
                 if (pathLocal != pathRemote || !file.exists()) {
@@ -225,6 +226,7 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
                     _statePhotoPath.value = IResult.success(pathLocal)
                 }
             }
+
             else -> {
                 createTempPath(newPathFile)
                 _statePhotoPath.value = IResult.error(newPathFile)
@@ -281,7 +283,8 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
         } else {
             // Para não quebrar o código, define um caminho padrão e um erro de conexão.
             originPath = File("${ConstantBase.CACHE_PATH_PHOTO}/$fileName$JPG_EXTENSION")
-            _statePhotoPath.value = IResult.failed(NetworkConnectionException("No connection with ethernet"))
+            _statePhotoPath.value =
+                IResult.failed(NetworkConnectionException("No connection with ethernet"))
         }
     }
 
@@ -355,7 +358,17 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
                 date,
                 ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
             ) { userDate, tripDate -> userDate.before(tripDate) }
-        } ?: false
+        } == true
+    }
+
+    fun dateBeforeStartTrip(userSelectDate: String): Boolean {
+        return trip.startDate?.let { date ->
+            compareDates(
+                userSelectDate,
+                date,
+                ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
+            ) { userDate, tripDate -> userDate.before(tripDate) }
+        } == true
     }
 
     /**
@@ -369,10 +382,40 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
         return thresholdDate?.let { date ->
             compareDates(
                 userSelectDate,
-                date
-            ) { userDate, threshold -> userDate.before(threshold) || userDate == threshold }
-        } ?: false
+                date,
+            ) { userDate, threshold -> userDate.before(threshold) }
+        } == true
     }
+
+    /**
+     * Verifica se a data selecionada pelo usuário é igual à data limite.
+     *
+     * @param userSelectDate Data selecionada pelo usuário.
+     * @param thresholdDate Data limite para comparação.
+     * @return Verdadeiro se a data selecionada for igual à data limite.
+     */
+    fun isDateEquals(userSelectDate: String, thresholdDate: String?): Boolean {
+        return thresholdDate?.let { date ->
+            compareDates(userSelectDate, date) { userDate, threshold -> userDate == threshold }
+        } == true
+    }
+
+    /**
+     * Verifica se a data selecionada pelo usuário é anterior ou igual à data limite.
+     *
+     * @param userSelectDate Data selecionada pelo usuário.
+     * @param thresholdDate Data limite para comparação.
+     * @return Verdadeiro se a data selecionada for anterior ou igual à data limite.
+     */
+    fun isDateBeforeAndEquals(userSelectDate: String, thresholdDate: String?): Boolean {
+        return thresholdDate?.let { date ->
+            compareDates(
+                userSelectDate,
+                date,
+            ) { userDate, threshold -> userDate.before(threshold) || userDate == threshold }
+        } == true
+    }
+
 
     private fun compareDateToCurrent(
         userSelectDate: String,
@@ -383,7 +426,7 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
         return try {
             if (userSelectDate.trim().isEmpty()) return false
             val userDate = simpleDate.parse(userSelectDate)
-            val dialogDate = currentSimpleDate.parse(getCurrentDateApi())
+            val dialogDate = currentSimpleDate.parse(getCurrentDateApi(true))
             userDate?.let { user ->
                 dialogDate?.let { current ->
                     comparator(user, current)
@@ -438,10 +481,12 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
             val maxValue = nextDestination?.arrivedFleetOdometer ?: Long.MAX_VALUE
 
             if (value <= minimumValue) {
-                result = "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_LBL]}: $minimumValue"
+                result =
+                    "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_LBL]}: $minimumValue"
             }
             if (value >= maxValue) {
-                result = "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_LBL]}: $maxValue"
+                result =
+                    "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_LBL]}: $maxValue"
             }
         }
         return result

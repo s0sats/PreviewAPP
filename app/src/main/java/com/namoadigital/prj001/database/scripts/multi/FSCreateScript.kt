@@ -40,6 +40,7 @@ const val FS_TRIP_CREATE_SCRIPT =
         [distance_ref_minutes_trans] int not null default 10, 
         [require_fleet_data] int not null, 
         [origin_date] text collate nocase, 
+        [start_date] text collate nocase, 
         [done_date] text collate nocase, 
         CONSTRAINT [pk_fs_trip] 
         PRIMARY KEY([customer_code], [trip_prefix], [trip_code])
@@ -169,7 +170,7 @@ const val FS_TRIP_DESTINATION_CREATE_SCRIPT =
     );"""
 
 const val FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT =
-""" create table if not exists [fs_trip_destination_action]
+    """ create table if not exists [fs_trip_destination_action]
     (
         [customer_code] int not null, 
         [trip_prefix] int not null, 

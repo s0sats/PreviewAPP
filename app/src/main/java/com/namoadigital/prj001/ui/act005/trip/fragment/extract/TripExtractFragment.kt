@@ -31,8 +31,11 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripWsProgress
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.destination.DestinationDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.EditOriginDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.start_trip.EditStartTripDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.SaveDestinationEdit
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.SaveOriginEdit
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_TITLE
 import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +56,7 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
     private val hmAuxExtractTranslate by lazy {
         loadTranslation(requireContext())
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -92,17 +96,18 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
 
             val stateTrip = state.trip
             with(binding) {
-                tripId.text = "${hmAuxExtractTranslate[EXTRACT_TRIP_TITLE_LBL]} ${stateTrip.tripPrefix}.${stateTrip.tripCode}"
+                tripId.text =
+                    "${hmAuxExtractTranslate[EXTRACT_TRIP_TITLE_LBL]} ${stateTrip.tripPrefix}.${stateTrip.tripCode}"
                 emptyList.text = hmAuxExtractTranslate[EXTRACT_EMPTY_LIST_LBL]
 
                 etLayoutFilter.hint = hmAuxExtractTranslate[EXTRACT_FILTER_LBL]
 
 
                 state.listExtract?.let { listExtract ->
-                    if(listExtract.isEmpty()){
+                    if (listExtract.isEmpty()) {
                         emptyList.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
-                    }else {
+                    } else {
                         val adapter = ExtractAdapter(
                             context = requireContext(),
                             hmAuxTranslate = hmAuxExtractTranslate,
@@ -122,6 +127,10 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                             onSelectDestination = { item, position ->
                                 lastIndex = position
                                 showEditDestination(item)
+                            },
+                            onSelectStartTrip = { item, position ->
+                                lastIndex = position
+                                showEditStartTrip(item)
                             },
                             onSelectAction = { item, position ->
                                 item.actPDFLocal?.let {
@@ -180,6 +189,45 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
     }
 
 
+    fun showEditStartTrip(item: FSTrip) {
+        val trip = viewModel.state.value.trip
+        trip?.let {
+            dialogActive = EditStartTripDialog(
+                context = requireContext(),
+                trip = trip,
+                getDestinationThresholds = { customerCode, tripPrefix, tripCode, destinationSeq, type ->
+                    viewModel.getDestinationThresholds(
+                        customerCode,
+                        tripPrefix,
+                        tripCode,
+                        destinationSeq,
+                        type
+                    )
+                },
+                validateStartDate = { customerCode, tripPrefix, tripCode, date ->
+                    viewModel.validateStartTripDate(
+                        customerCode,
+                        tripPrefix,
+                        tripCode,
+                        date
+                    )
+                },
+                onSave = { date ->
+                    viewModel.saveStartTrip(
+                        dateStart = date,
+                        progressTranslate = TripWsProgress(
+                            process = WS_TRIP_START_DATE_SET,
+                            title = hmAuxTranslate[PROCESS_DIALOG_START_DATE_TITLE] ?: "",
+                            message = hmAuxTranslate[PROCESS_DIALOG_START_DATE_MSG] ?: "",
+                        )
+                    )
+                }
+            )
+            dialogActive?.show()
+        }
+    }
+
+
     private var chainOriginAndFleet: SaveOriginEdit.FLEET? = null
     private fun showEditOrigin(item: FSTrip) {
         dialogActive = EditOriginDialog(
@@ -219,7 +267,11 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                         chainOriginAndFleet = null
                         editSaveFleet(
                             fleetPlate = typeSave.fleet,
-                            odometer = if(typeSave.odometer.isNotBlank()){ typeSave.odometer.toLong()} else {null},
+                            odometer = if (typeSave.odometer.isNotBlank()) {
+                                typeSave.odometer.toLong()
+                            } else {
+                                null
+                            },
                             pathImage = typeSave.photoUpdate.path,
                             changePhoto = typeSave.photoUpdate.isNew,
                             deletePhoto = typeSave.photoUpdate.deletePhoto,
@@ -254,7 +306,7 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
         target: TripTarget = TripTarget.START
     ) {
         val progressTranslate = TripWsProgress(
-            process = if(target == TripTarget.END) WS_TRIP_SAVE_FLEET_END_TRIP
+            process = if (target == TripTarget.END) WS_TRIP_SAVE_FLEET_END_TRIP
             else WS_TRIP_SAVE_FLEET,
             title = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_TTL]!!,
             message = hmAuxTranslate[PROGRESS_FLEET_TRIP_SEND_MSG]!!
@@ -333,8 +385,10 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                             destinationSeq = save.destinationSeq,
                             progressTranslate = TripWsProgress(
                                 WS_TRIP_DESTINATION_EDIT_DATE,
-                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
-                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: ""
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL]
+                                    ?: "",
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG]
+                                    ?: ""
                             )
                         )
                     }
@@ -377,8 +431,10 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                             ),
                             progressTranslateFleet = TripWsProgress(
                                 WS_TRIP_DESTINATION_EDIT_DATE,
-                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL] ?: "",
-                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG] ?: ""
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_TLL]
+                                    ?: "",
+                                hmAuxTranslate[TripTranslate.PROGRESS_TRIP_DESTINATION_EDIT_MSG]
+                                    ?: ""
                             )
                         )
 
@@ -418,6 +474,7 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
         const val EXTRACT_CARD_EVENT_LBL = "extract_card_event_lbl"
         const val EXTRACT_CARD_EVENT_COST_LBL = "extract_card_event_cost_lbl"
         const val EXTRACT_CARD_USER_CURRENT_TRIP_LBL = "extract_card_user_current_trip_lbl"
+        const val EXTRACT_CARD_START_TRIP_LBL = "extract_card_start_trip_lbl"
         const val EXTRACT_CARD_ORIGIN_GPS_LBL = "extract_card_origin_gps_lbl"
         const val EXTRACT_CARD_USER_RESPONSIBLE_LBL = "extract_card_user_responsible_lbl"
         const val EXTRACT_CARD_PLATE_FLEET_LBL = "extract_card_plate_fleet_lbl"
@@ -426,8 +483,8 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
         const val EXTRACT_CARD_NOT_INFORMED_LBL = "extract_card_not_informed_lbl"
         const val EXTRACT_CARD_OVER_NIGHT_LBL = "extract_card_over_night_lbl"
         const val EXTRACT_EMPTY_LIST_LBL = "extract_empty_list_lbl"
-        const val ALERT_PDF_NOT_FOUND_TTL  = "alert_pdf_not_found_ttl"
-        const val ALERT_PDF_NOT_FOUND_MSG  = "alert_pdf_not_found_msg"
+        const val ALERT_PDF_NOT_FOUND_TTL = "alert_pdf_not_found_ttl"
+        const val ALERT_PDF_NOT_FOUND_MSG = "alert_pdf_not_found_msg"
         private fun Context.getExtractResource(): String = ToolBox_Inf.getResourceCode(
             this,
             MODULE_CODE,
@@ -451,7 +508,8 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                 EXTRACT_CARD_OVER_NIGHT_LBL,
                 ALERT_PDF_NOT_FOUND_TTL,
                 ALERT_PDF_NOT_FOUND_MSG,
-                EXTRACT_EMPTY_LIST_LBL
+                EXTRACT_EMPTY_LIST_LBL,
+                EXTRACT_CARD_START_TRIP_LBL
             ).let { list ->
                 return TranslateResource(
                     context = context,

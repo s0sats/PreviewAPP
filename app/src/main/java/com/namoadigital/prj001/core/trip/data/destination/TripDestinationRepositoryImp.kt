@@ -200,7 +200,7 @@ class TripDestinationRepositoryImp @Inject constructor(
             tripStatus = TripStatus.OVER_NIGHT.toDescription(),
             lat = currentLat,
             lon = currentLon,
-            arrivedDate = getCurrentDateApi(),
+            arrivedDate = getCurrentDateApi(true),
             arrivedLat = currentLat,
             arrivedLon = currentLon,
             distanceMin = trip.positionDistanceMin ?: 0.1
@@ -519,14 +519,14 @@ class TripDestinationRepositoryImp @Inject constructor(
             destinationStatus = destinationStatus,
             nextDestinationSeq = nextDestination?.destinationSeq,
             nextDestinationStatus = if (nextDestination != null) DestinationStatus.TRANSIT.toDescription() else null,
-            date = getCurrentDateApi(),
+            date = getCurrentDateApi(true),
         ).let { modelRec ->
             TransactionWsTripDestinationStatusChange(
                 context = context,
                 fsTripDao = tripDao,
                 fsTripDestinationDao = dao
             ).let { transaction ->
-                if (transaction.save(modelRec, true)) {
+                if (transaction.save(modelRec, updateRequired = true)) {
                     emit(handleNetworkError(throwable, context))
                 } else {
                     emit(failed(IOException("SAVE_ERROR")))

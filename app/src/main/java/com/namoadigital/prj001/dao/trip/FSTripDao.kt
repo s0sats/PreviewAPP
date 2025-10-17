@@ -89,6 +89,7 @@ class FSTripDao @Inject constructor(
         const val DISTANCE_REF_MINUTES = "distance_ref_minutes"
         const val DISTANCE_REF_MINUTES_TRANS = "distance_ref_minutes_trans"
         const val ORIGIN_DATE = "origin_date"
+        const val START_DATE = "start_date"
         const val DONE_DATE = "done_date"
         const val UPDATE_REQUIRED = "update_required"
     }
@@ -648,6 +649,7 @@ class FSTripDao @Inject constructor(
                     )
                     put(REQUIRE_FLEET_DATA, data.requireFleetData)
                     put(ORIGIN_DATE, data.originDate)
+                    put(START_DATE, data.startDate)
                     put(DONE_DATE, data.doneDate)
                     if (data.updateRequired > -1) put(UPDATE_REQUIRED, data.updateRequired)
 
@@ -705,6 +707,7 @@ class FSTripDao @Inject constructor(
                         distanceRefMinutesTrans = getInt(getColumnIndex(DISTANCE_REF_MINUTES_TRANS)),
                         requireFleetData = getInt(getColumnIndex(REQUIRE_FLEET_DATA)),
                         originDate = getStringOrNull(getColumnIndex(ORIGIN_DATE)),
+                        startDate = getStringOrNull(getColumnIndex(START_DATE)),
                         doneDate = getStringOrNull(getColumnIndex(DONE_DATE)),
                         updateRequired = getInt(getColumnIndex(UPDATE_REQUIRED))
                     )
@@ -845,14 +848,20 @@ class FSTripDao @Inject constructor(
         status: String,
         dbInstance: SQLiteDatabase? = null,
         updateRequired: Int = 0,
+        startDate: String? = null,
         doneDate: String? = null
     ): DaoObjReturn {
 
         var date = ""
 
-        if(doneDate != null){
+        if (doneDate != null) {
             date = ", $DONE_DATE = '$doneDate' "
         }
+
+        if (startDate != null) {
+            date += ", $START_DATE = '$startDate' "
+        }
+
 
         return queryForUpdate(
             """
@@ -1066,6 +1075,22 @@ class FSTripDao @Inject constructor(
         )
         if (value.isNotEmpty()) return value[0]
         return null
+    }
+
+    fun updateStartDate(
+        tripPrefix: Int,
+        tripCode: Int,
+        startDate: String?,
+        db: SQLiteDatabase? = null
+    ) {
+        addUpdate(
+            sQuery = """
+                UPDATE $TABLE
+                SET $START_DATE = '$startDate'
+                WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
+            """.trimIndent(),
+            dbInstance = db
+        )
     }
 
 

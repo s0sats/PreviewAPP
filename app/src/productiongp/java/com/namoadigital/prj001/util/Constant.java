@@ -17,8 +17,8 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
     public static final String WS_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_checklist.ws";
     public static final String WS_SERIAL = "https://portal.namoadigital.com/ws/prj001/server_serial.ws";
-    public static final String WS_SERIAL_SEARCH  = "https://portal.namoadigital.com/ws/prj001/server_product_serial.ws";
-    public static final String WS_SERIAL_TRACKING_SEARCH  = "https://portal.namoadigital.com/ws/prj001/server_serial_tracking.ws";
+    public static final String WS_SERIAL_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_product_serial.ws";
+    public static final String WS_SERIAL_TRACKING_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_serial_tracking.ws";
     public static final String WS_UPLOAD = "https://portal.namoadigital.com/inc/ws/aws_file.ws";
     public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SERIAL_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_serial.ws";
@@ -119,11 +119,15 @@ public class Constant extends ConstantBaseApp {
     public static String SET_LIST_USER = "https://portal.namoadigital.com/ws/prj001/server_sm_so_reserved_user.ws";
     public static String WS_SEARCH_SERIAL_LIST = "https://portal.namoadigital.com/ws/prj001/server_search_serial_list.ws";
     public static String WS_SERIAL_TMP_SET = "https://portal.namoadigital.com/ws/prj001/server_ticket_serial_tmp_set.ws";
+
+    public static String WS_TRIP_START_SET = "https://portal.namoadigital.com/ws/prj001/trip/trip_start_date_set.ws";
+
     // Connection Test
     public static final String WS_HOST = "portal.namoadigital.com";
     public static final int WS_PORT = 443;
     public static final int WS_TIMEOUT = 3000;
-    public static void refreshUrl(){
+
+    public static void refreshUrl() {
         //Metodo vazio pois produção não possui mudanca de ambientes.
     }
 }

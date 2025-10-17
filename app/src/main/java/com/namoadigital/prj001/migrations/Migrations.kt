@@ -1847,6 +1847,22 @@ val migrationV24 = object : MigrationSQLite(24, 25) {
 
 }
 
+val migrationV25 = object : MigrationSQLite(25, 26) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = FSTripDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = FSTripDao.START_DATE,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                    collation = CollationType.NOCASE
+                )
+            )
+        )
+    }
+}
+
 @Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(
     tableName: String,

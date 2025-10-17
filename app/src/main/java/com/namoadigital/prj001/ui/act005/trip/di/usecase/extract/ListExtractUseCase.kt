@@ -21,7 +21,7 @@ class ListExtractUseCase constructor(
     override fun invoke(input: Unit): List<Extract<*>> {
         val list = mutableListOf<Extract<*>>()
         val trip = repositoryTrip.getTrip()
-        repositoryTrip.getExtract(trip)?.let(list::add)
+        repositoryTrip.getExtract(trip)?.let(list::addAll)
         repositoryUser.getExtract(trip).let(list::addAll)
         repositoryEvent.getExtract(trip).let(list::addAll)
         repositoryDestination.getExtract(trip).let(list::addAll)
@@ -30,13 +30,15 @@ class ListExtractUseCase constructor(
 
 
         return list.sortedWith(compareBy<Extract<*>> {
-            it.dateStart?.let{ dateStart ->
-                ToolBox_Inf.dateToMilliseconds(dateStart.convertDateToFullTimeStampGMT(
-                    ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
-                    "yyyy-MM-dd HH:mm:00 ZZZZZ"
+            it.dateStart?.let { dateStart ->
+                ToolBox_Inf.dateToMilliseconds(
+                    dateStart.convertDateToFullTimeStampGMT(
+                        ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+                        "yyyy-MM-dd HH:mm:00 ZZZZZ"
                     )
                 )
-            }?: ToolBox_Inf.dateToMilliseconds(it.dateStart) }.thenBy { it.type})
+            } ?: ToolBox_Inf.dateToMilliseconds(it.dateStart)
+        }.thenBy { it.type })
 
 
     }

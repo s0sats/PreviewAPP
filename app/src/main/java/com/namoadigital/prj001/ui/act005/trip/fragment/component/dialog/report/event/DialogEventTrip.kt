@@ -80,7 +80,7 @@ class DialogEventTrip constructor(
 
                 initializeLabels()
                 initializeListeners()
-                if(!eventType.hidePhoto) {
+                if (!eventType.hidePhoto) {
                     observerPhoto()
                 } else {
                     photoLoading.visibility = View.GONE
@@ -243,7 +243,7 @@ class DialogEventTrip constructor(
             if (checkedId) {
                 setEndDateInputLayout(View.VISIBLE)
                 btnFinish.text = hmAuxTranslate[DIALOG_EVENT_BTN_FINISH]
-                val currentDate = getCurrentDateApi()
+                val currentDate = getCurrentDateApi(true)
                 val (endDate, endHour) = currentDate.parseDatePair()
                 etEndDate.setText(endDate)
                 etEndHour.setText(endHour)
@@ -515,7 +515,7 @@ class DialogEventTrip constructor(
             updateStateButtons(checkRequiredRules())
 
             if (isNewEvent) {
-                val currentDate = getCurrentDateApi()
+                val currentDate = getCurrentDateApi(true)
                 val (date, hour) = currentDate.parseDatePair()
                 etStartDate.setText(date)
                 etStartHour.setText(hour)

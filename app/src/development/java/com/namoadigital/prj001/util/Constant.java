@@ -113,6 +113,7 @@ public class Constant extends ConstantBaseApp {
     public static String WS_TRIP_FLEET_SET;
     public static String WS_TRIP_CHANGE_STATUS;
     public static String WS_TRIP_ORIGIN_SET;
+    public static String WS_TRIP_START_SET;
     public static String WS_TRIP_DESTINATION_EDIT;
     public static String WS_TRIP_EVENT;
     public static String WS_TRIP_UPDATE;
@@ -120,10 +121,6 @@ public class Constant extends ConstantBaseApp {
     public static String SET_LIST_USER;
     public static String WS_SEARCH_SERIAL_LIST;
     public static String WS_SERIAL_TMP_SET;
-
-
-
-
 
 
     public static String WS_HOST;
@@ -228,6 +225,7 @@ public class Constant extends ConstantBaseApp {
         WS_TRIP_NEW = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_new.ws";
         WS_TRIP_FLEET_SET = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_fleet_set.ws";
         WS_TRIP_CHANGE_STATUS = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_status.ws";
+        WS_TRIP_START_SET = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_start_date_set.ws";
         WS_TRIP_ORIGIN_SET = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_origin_set.ws";
         WS_TRIP_DESTINATION_EDIT = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_destination_edit.ws";
         WS_TRIP_EVENT = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/trip_event_set.ws";

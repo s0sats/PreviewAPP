@@ -12,6 +12,7 @@ object TripTranslate {
     //TRIP OFFLINE
     const val ALERT_TRIP_OFFLINE_TTL = "alert_trip_offline_ttl"
     const val ALERT_TRIP_OFFLINE_MSG = "alert_trip_offline_msg"
+
     //Fleet Dialog
     const val FLEET_DIALOG_ORIGIN_TITLE = "fleet_dialog_origin_title"
     const val FLEET_DIALOG_DESTINATION_TITLE = "fleet_dialog_destination_title"
@@ -42,7 +43,7 @@ object TripTranslate {
     //DIALOG ERROR
     const val DIALOG_ERROR_CLOSE_LBL = "dialog_error_btn_close"
 
-    object DialogOrigin{
+    object DialogOrigin {
 
         const val DIALOG_ORIGIN_TITLE = "dialog_origin_title"
         const val DIALOG_ORIGIN_CREATE_TRIP = "dialog_origin_create_trip"
@@ -59,6 +60,7 @@ object TripTranslate {
         const val DIALOG_ORIGIN_ERROR_SAVE_TTL = "dialog_origin_error_save_ttl"
         const val DIALOG_ORIGIN_ERROR_SAVE_MSG = "dialog_origin_error_save_msg"
     }
+
     //
     const val PROGRESS_TRIP_ERROR_SYNC_APP_TTL = "progress_trip_error_sync_app_ttl"
     const val PROGRESS_TRIP_ERROR_SYNC_APP_MSG = "progress_trip_error_sync_app_msg"
@@ -68,7 +70,8 @@ object TripTranslate {
     const val ALERT_TRIP_DESTINATION_DELETE_MSG = "alert_trip_destination_delete_msg"
     const val PROGRESS_CREATE_NEW_TRIP_TTL = "progress_create_new_trip_ttl"
     const val PROGRESS_CREATE_NEW_TRIP_MSG = "progress_create_new_trip_msg"
-    const val PROGRESS_CREATE_NEW_TRIP_GET_LOCATION_MSG = "progress_create_new_trip_get_location_msg"
+    const val PROGRESS_CREATE_NEW_TRIP_GET_LOCATION_MSG =
+        "progress_create_new_trip_get_location_msg"
     const val PROGRESS_FLEET_TRIP_SEND_TTL = "progress_fleet_trip_send_ttl"
     const val PROGRESS_FLEET_TRIP_SEND_MSG = "progress_fleet_trip_send_msg"
     const val PROGRESS_ORIGIN_TRIP_SEND_TTL = "progress_origin_trip_send_ttl"
@@ -123,23 +126,29 @@ object TripTranslate {
     const val DESTINATION_LATE_COUNTER_LBL = "destination_late_counter_lbl"
     const val DESTINATION_NEXT_COUNTER_LBL = "destination_next_counter_lbl"
     const val DESTINATION_SERIAL_COUNTER_LBL = "destination_serial_counter_lbl"
+
     //WAITING_DESTINATION
-    const val PLACEHOLDER_TRIP_WAITING_DESTINATION_TTL_LBL = "placeholder_trip_waiting_destination_ttl_lbl"
-    const val PLACEHOLDER_TRIP_WAITING_DESTINATION_SUB_TTL_LBL = "placeholder_trip_waiting_destination_sub_ttl_lbl"
+    const val PLACEHOLDER_TRIP_WAITING_DESTINATION_TTL_LBL =
+        "placeholder_trip_waiting_destination_ttl_lbl"
+    const val PLACEHOLDER_TRIP_WAITING_DESTINATION_SUB_TTL_LBL =
+        "placeholder_trip_waiting_destination_sub_ttl_lbl"
     const val TRIP_WAITING_DESTINATION_LBL = "trip_waiting_destination_lbl"
     const val TRIP_TO_TRANSFER_LBL = "trip_to_transfer_lbl"
+
     //TRANSIT
     const val TRIP_CALL_LBL = "trip_call_lbl"
     const val TRIP_MAP_LBL = "trip_map_lbl"
     const val TRIP_ON_SITE_LBL = "trip_on_site_lbl"
     const val TRIP_TO_ON_SITE_BTN = "trip_to_on_site_btn"
     const val TRIP_TRANSIT_LBL = "trip_transit_lbl"
+
     //TRANSFER
     const val PLACEHOLDER_TRIP_TRANSFER_TTL_LBL = "placeholder_trip_transfer_ttl_lbl"
     const val PLACEHOLDER_TRIP_TRANSFER_SUB_TTL_LBL = "placeholder_trip_transfer_sub_ttl_lbl"
     const val TRIP_TRANSFER_STATUS_LBL = "trip_transfer_status_lbl"
     const val TRIP_TO_OVER_NIGHT_LBL = "trip_to_over_night_lbl"
     const val TRIP_TO_END_LBL = "trip_to_end_lbl"
+
     //OVER NIGHT
     const val TRIP_OVER_NIGHT_LBL = "trip_over_night_lbl"
     const val PLACEHOLDER_TRIP_OVER_NIGHT_TTL = "placeholder_trip_over_night_ttl"
@@ -151,31 +160,34 @@ object TripTranslate {
     const val ALERT_NO_NAVIGATION_APP_FOUND_MSG = "alert_no_navigation_app_found_msg"
     const val ALERT_NO_CONTACT_APP_FOUND_TTL = "alert_no_contact_app_found_ttl"
     const val ALERT_NO_CONTACT_APP_FOUND_MSG = "alert_no_contact_app_found_msg"
+
     //ON_SITE
     const val TRIP_DEPARTED_LBL = "trip_departed_lbl"
     const val TRIP_DESTINATION_ARRIVED_DATE_LBL = "trip_destination_arrived_date_lbl"
     const val TRIP_DESTINATION_SEARCH_SERIAL_LBL = "trip_destination_search_serial_lbl"
-    const val TRIP_DESTINATION_MY_TICKETS_LBL= "trip_destination_my_tickets_lbl"
-    const val TRIP_ON_SITE_ODOMETER_WARNING= "trip_on_site_odometer_warning"
+    const val TRIP_DESTINATION_MY_TICKETS_LBL = "trip_destination_my_tickets_lbl"
+    const val TRIP_ON_SITE_ODOMETER_WARNING = "trip_on_site_odometer_warning"
     const val TRIP_ON_SITE_EXECUTION_LBL = "trip_on_site_execution_lbl"
     const val TRIP_ACTION_FORM_OS_BTN = "trip_action_form_os_btn"
     const val TRIP_SITE_TICKETS_BTN = "trip_site_tickets_btn"
     const val TRIP_DESTINATION_TICKETS_BTN = "trip_destination_tickets_btn"
     const val TRIP_ACTION_TICKET_BTN = "trip_action_ticket_btn"
+
     //TRIP WARNING
-    const val TRIP_WARNING_DEPARTED_FROM_ORIGIN_TTL  = "trip_warning_departed_from_origin_ttl"
-    const val TRIP_WARNING_DEPARTED_FROM_ORIGIN_MSG  = "trip_warning_departed_from_origin_msg"
-    const val TRIP_WARNING_ARRIVED_TO_SITE_TTL  = "trip_warning_arrived_to_site_ttl"
-    const val TRIP_WARNING_ARRIVED_TO_SITE_MSG  = "trip_warning_arrived_to_site_msg"
-    const val TRIP_WARNING_DEPARTED_FROM_SITE_TTL  = "trip_warning_departed_from_site_ttl"
-    const val TRIP_WARNING_DEPARTED_FROM_SITE_MSG  = "trip_warning_departed_from_site_msg"
-    const val TRIP_WARNING_WAITING_DESTINATION_TTL  = "trip_warning_waiting_destination_ttl"
-    const val TRIP_WARNING_WAITING_DESTINATION_MSG  = "trip_warning_waiting_destination_msg"
+    const val TRIP_WARNING_DEPARTED_FROM_ORIGIN_TTL = "trip_warning_departed_from_origin_ttl"
+    const val TRIP_WARNING_DEPARTED_FROM_ORIGIN_MSG = "trip_warning_departed_from_origin_msg"
+    const val TRIP_WARNING_ARRIVED_TO_SITE_TTL = "trip_warning_arrived_to_site_ttl"
+    const val TRIP_WARNING_ARRIVED_TO_SITE_MSG = "trip_warning_arrived_to_site_msg"
+    const val TRIP_WARNING_DEPARTED_FROM_SITE_TTL = "trip_warning_departed_from_site_ttl"
+    const val TRIP_WARNING_DEPARTED_FROM_SITE_MSG = "trip_warning_departed_from_site_msg"
+    const val TRIP_WARNING_WAITING_DESTINATION_TTL = "trip_warning_waiting_destination_ttl"
+    const val TRIP_WARNING_WAITING_DESTINATION_MSG = "trip_warning_waiting_destination_msg"
+
     //PDF ERROR
-    const val ALERT_STARTING_PDF_NOT_SUPPORTED_TTL  = "alert_starting_pdf_not_supported_ttl"
-    const val ALERT_STARTING_PDF_NOT_SUPPORTED_MSG  = "alert_starting_pdf_not_supported_msg"
-    const val ALERT_PDF_NOT_FOUND_TTL  = "alert_pdf_not_found_ttl"
-    const val ALERT_PDF_NOT_FOUND_MSG  = "alert_pdf_not_found_msg"
-    const val ALERT_POSITION_NOT_FOUND_TTL  = "alert_position_not_found_ttl"
-    const val ALERT_POSITION_NOT_FOUND_MSG  = "alert_position_not_found_msg"
+    const val ALERT_STARTING_PDF_NOT_SUPPORTED_TTL = "alert_starting_pdf_not_supported_ttl"
+    const val ALERT_STARTING_PDF_NOT_SUPPORTED_MSG = "alert_starting_pdf_not_supported_msg"
+    const val ALERT_PDF_NOT_FOUND_TTL = "alert_pdf_not_found_ttl"
+    const val ALERT_PDF_NOT_FOUND_MSG = "alert_pdf_not_found_msg"
+    const val ALERT_POSITION_NOT_FOUND_TTL = "alert_position_not_found_ttl"
+    const val ALERT_POSITION_NOT_FOUND_MSG = "alert_position_not_found_msg"
 }

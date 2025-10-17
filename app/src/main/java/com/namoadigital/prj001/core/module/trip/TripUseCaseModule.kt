@@ -1,4 +1,3 @@
-
 package com.namoadigital.prj001.core.module.trip
 
 import android.content.Context
@@ -8,8 +7,8 @@ import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositor
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepository
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
-import com.namoadigital.prj001.core.trip.domain.usecase.CheckNextDestinationStatusTripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.CheckExistsTripUpdateUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.CheckNextDestinationStatusTripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.CreateTripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationUseCase
@@ -45,7 +44,8 @@ import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetListEventTypeU
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.SaveEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.TripEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.extract.ListExtractUseCase
-import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.GetFirstDateOnTripUseCase
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.ValidateDateOnOriginUseCase
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.SaveStartDateTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.ExecEditUserUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.GetListTechnicalUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.TripUsersUseCase
@@ -82,7 +82,8 @@ object TripUseCaseModule {
             saveOrigin = SaveOriginUseCase(repository),
             getEvent = GetEventUseCase(repository),
             sendTripFull = SendTripFullUseCase(repository),
-            hasTripWithUpdateRequired = CheckExistsTripUpdateUseCase(repository)
+            hasTripWithUpdateRequired = CheckExistsTripUpdateUseCase(repository),
+            saveStartDate = SaveStartDateTripUseCase(repository)
         )
     }
 
@@ -119,7 +120,11 @@ object TripUseCaseModule {
                 repository,
                 tripRepository,
                 SelectDestinationUseCase(repository),
-                SaveDestinationUseCase(repository, tripRepository, CheckNextStatusWhenNewDestinationUseCase(repository, tripRepository))
+                SaveDestinationUseCase(
+                    repository,
+                    tripRepository,
+                    CheckNextStatusWhenNewDestinationUseCase(repository, tripRepository)
+                )
             )
         )
     }
@@ -187,11 +192,11 @@ object TripUseCaseModule {
     @Provides
     fun providesValidateOriginUseCase(
         event: TripEventRepository,
-        destination: TripDestinationRepository,
         user: TripUserRepository,
-    ) = GetFirstDateOnTripUseCase(
+        trip: TripRepository
+    ) = ValidateDateOnOriginUseCase(
         event,
-        destination,
         user,
+        trip
     )
 }

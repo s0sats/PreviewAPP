@@ -14,6 +14,7 @@ import com.namoadigital.prj001.adapter.trip.viewholder.TripDestinationActionView
 import com.namoadigital.prj001.adapter.trip.viewholder.TripDestinationViewHolder
 import com.namoadigital.prj001.adapter.trip.viewholder.TripEventViewHolder
 import com.namoadigital.prj001.adapter.trip.viewholder.TripOriginViewHolder
+import com.namoadigital.prj001.adapter.trip.viewholder.TripStartTripActionViewHolder
 import com.namoadigital.prj001.adapter.trip.viewholder.TripUserViewHolder
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
@@ -21,8 +22,6 @@ import com.namoadigital.prj001.model.trip.FSTripUser
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.FsTripDestinationAction
 import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
-import com.namoadigital.prj001.ui.act005.trip.fragment.extract.TripExtractFragment
 import java.util.Locale
 
 class ExtractAdapter constructor(
@@ -35,6 +34,7 @@ class ExtractAdapter constructor(
     private val onSelectOrigin: (FSTrip, Int) -> Unit,
     private val onSelectDestination: (FsTripDestination, Int) -> Unit,
     private val onSelectAction: (FsTripDestinationAction, Int) -> Unit,
+    private val onSelectStartTrip: (FSTrip, Int) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var filteredList: MutableList<Extract<*>> = mutableListOf()
@@ -73,7 +73,7 @@ class ExtractAdapter constructor(
             DESTINATION_VIEWTYPE -> {
                 view = LayoutInflater.from(context)
                     .inflate(R.layout.trip_extract_origin_destnation_item, parent, false)
-                TripDestinationViewHolder(context, view, hmAuxTranslate){ item, position ->
+                TripDestinationViewHolder(context, view, hmAuxTranslate) { item, position ->
                     onSelectDestination(item, position)
                 }
             }
@@ -81,11 +81,22 @@ class ExtractAdapter constructor(
             ACTION_VIEWTYPE -> {
                 view = LayoutInflater.from(context)
                     .inflate(R.layout.trip_extract_user_item, parent, false)
-                TripDestinationActionViewHolder(context, view, hmAuxTranslate){  item, position ->
+                TripDestinationActionViewHolder(context, view, hmAuxTranslate) { item, position ->
                     onSelectAction(item, position)
                 }
             }
-            else -> {null!!}
+
+            START_TRIP_VIEWTYPE -> {
+                view = LayoutInflater.from(context)
+                    .inflate(R.layout.trip_extract_start_trip_item, parent, false)
+                TripStartTripActionViewHolder(context, view, hmAuxTranslate) { item, position ->
+                    onSelectStartTrip(item, position)
+                }
+            }
+
+            else -> {
+                null!!
+            }
         }
     }
 
@@ -99,7 +110,12 @@ class ExtractAdapter constructor(
             is TripEventViewHolder -> holder.bind(item.model as FSTripEvent, position)
             is TripOriginViewHolder -> holder.bind(item.model as FSTrip, position)
             is TripDestinationViewHolder -> holder.bind(item.model as FsTripDestination, position)
-            is TripDestinationActionViewHolder -> holder.bind(item.model as FsTripDestinationAction, position)
+            is TripDestinationActionViewHolder -> holder.bind(
+                item.model as FsTripDestinationAction,
+                position
+            )
+
+            is TripStartTripActionViewHolder -> holder.bind(item.model as FSTrip, position)
 
         }
     }
@@ -114,17 +130,18 @@ class ExtractAdapter constructor(
             ExtractType.ORIGIN -> ORIGIN_VIEWTYPE
             ExtractType.DESTINATION -> DESTINATION_VIEWTYPE
             ExtractType.ACTION -> ACTION_VIEWTYPE
+            ExtractType.START_TRIP -> START_TRIP_VIEWTYPE
         }
     }
 
-    fun filter(query: String){
+    fun filter(query: String) {
         filteredList.clear()
-        if(query.isEmpty()){
+        if (query.isEmpty()) {
             filteredList.addAll(source)
-        }else{
+        } else {
             val lowercaseQuery = query.lowercase(Locale.getDefault())
             source.forEach { extract ->
-                when(extract.type){
+                when (extract.type) {
 
                     ExtractType.ORIGIN -> {
                         filteredList.add(extract)
@@ -135,7 +152,7 @@ class ExtractAdapter constructor(
                     }
 
                     else -> {
-                        if(extract.filter.lowercase().contains(lowercaseQuery)){
+                        if (extract.filter.lowercase().contains(lowercaseQuery)) {
                             filteredList.add(extract)
                         }
                     }
@@ -151,8 +168,9 @@ class ExtractAdapter constructor(
         private const val EVENT_VIEWTYPE = 0
         private const val USER_VIEWTYPE = 1
         private const val ORIGIN_VIEWTYPE = 2
-        private const val DESTINATION_VIEWTYPE = 3
-        private const val ACTION_VIEWTYPE = 4
+        private const val START_TRIP_VIEWTYPE = 3
+        private const val DESTINATION_VIEWTYPE = 4
+        private const val ACTION_VIEWTYPE = 5
     }
 
 }

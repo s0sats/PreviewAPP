@@ -14,6 +14,7 @@ object TranslateInfoDialogs {
 
     //ORIGIN
     const val DIALOG_ORIGIN_TITLE_LBL = "dialog_origin_title_lbl"
+    const val DIALOG_START_TRIP_TITLE_LBL = "dialog_start_trip_title_lbl"
     const val DIALOG_TYPE_GPS_LBL = "dialog_type_gps_lbl"
     const val DIALOG_DATE_START_LBL = "dialog_date_start_lbl"
     const val DIALOG_ORIGIN_START_LBL = "dialog_origin_start_lbl"
@@ -37,14 +38,22 @@ object TranslateInfoDialogs {
     const val DIALOG_ERROR_FLEET_PLATE_LBL = "dialog_error_fleet_plate_lbl"
     const val DIALOG_ERROR_ODOMETER_LBL = "dialog_error_odometer_lbl"
     const val DIALOG_DATE_START_EXCEEDED_TRIP_LBL = "dialog_date_start_exceeded_trip_lbl"
-    const val DIALOG_DATE_START_EXCEEDED_END_DATE_DESTINATION_LBL = "dialog_date_start_exceeded_end_date_destination_lbl"
-    const val DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL = "dialog_date_end_exceeded_start_date_destination_lbl"
+    const val DIALOG_DATE_START_EXCEEDED_END_DATE_DESTINATION_LBL =
+        "dialog_date_start_exceeded_end_date_destination_lbl"
+    const val DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL =
+        "dialog_date_end_exceeded_start_date_destination_lbl"
     const val DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_LBL = "dialog_value_should_be_higher_than_lbl"
     const val DIALOG_VALUE_SHOULD_BE_LOWER_THAN_LBL = "dialog_value_should_be_lower_than_lbl"
-    const val DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL = "dialog_value_should_be_higher_than_date_lbl"
-    const val DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL = "dialog_value_should_be_lower_than_date_lbl"
+    const val DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL =
+        "dialog_value_should_be_higher_than_date_lbl"
+    const val DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL =
+        "dialog_value_should_be_lower_than_date_lbl"
     const val DIALOG_RETRY_IMAGE_LBL = "dialog_retry_image_lbl"
     const val DIALOG_ERROR_FUTURE_DATE = "dialog_error_future_date"
+
+    const val PROCESS_DIALOG_START_DATE_TITLE = "process_dialog_start_date_title"
+    const val PROCESS_DIALOG_START_DATE_MSG = "process_dialog_start_date_msg"
+
     private fun Context.getResource(): String = ToolBox_Inf.getResourceCode(
         this,
         TripBaseFragment.MODULE_CODE,
@@ -80,6 +89,7 @@ object TranslateInfoDialogs {
             DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL,
             DIALOG_ERROR_FUTURE_DATE,
             DIALOG_RETRY_IMAGE_LBL,
+            DIALOG_START_TRIP_TITLE_LBL
         ).let { list ->
             return TranslateResource(
                 context,

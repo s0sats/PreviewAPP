@@ -39,7 +39,7 @@ class OriginDialog constructor(
     private val validateOriginDate: (Long, Int, Int) -> String?,
     private val listSites: List<HMAux>,
     private val onSave: (originAux: HMAux, date: String, originOptionSelected: OriginOption) -> Unit
-): BaseTripDialog<TripOriginDialogBinding>(trip) {
+) : BaseTripDialog<TripOriginDialogBinding>(trip) {
 
     private lateinit var currentDate: String
     private val hmAuxTranslate by lazy {
@@ -57,7 +57,7 @@ class OriginDialog constructor(
             initializeListeners()
 
 
-            when(trip.originType){
+            when (trip.originType) {
                 "SITE" -> selectOption(OriginOption.SITE())
                 "GPS" -> selectOption(OriginOption.GPS)
             }
@@ -74,7 +74,7 @@ class OriginDialog constructor(
         dialog.dismiss()
     }
 
-    override fun errorSendData(){
+    override fun errorSendData() {
         binding.btnSave.isEnabled = true
     }
 
@@ -88,8 +88,11 @@ class OriginDialog constructor(
             edittextOriginHourLayout.hint =
                 hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_HOUR_HINT]
 
-            currentDate = getCurrentDateApi()
-            val oldDate = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault()).parse(
+            currentDate = getCurrentDateApi(true)
+            val oldDate = SimpleDateFormat(
+                ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+                Locale.getDefault()
+            ).parse(
                 trip.originDate ?: currentDate
             )
             val newDate = SimpleDateFormat("dd/MM/yy").format(oldDate)
@@ -121,7 +124,8 @@ class OriginDialog constructor(
             }
 
             tvRadiobuttonCurrentLocation.apply {
-                text = hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_CURRENT_LOCATION_OPTION]
+                text =
+                    hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_CURRENT_LOCATION_OPTION]
                 setOnClickListener {
                     selectOption(OriginOption.GPS)
                 }
@@ -209,8 +213,10 @@ class OriginDialog constructor(
             if (isFuture) {
                 layoutErrorDate.visibility = View.VISIBLE
                 layoutErrorHour.visibility = View.VISIBLE
-                tvDateError.text = hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_FUTURE_DATE]
-                tvHourError.text = hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_FUTURE_DATE]
+                tvDateError.text =
+                    hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_FUTURE_DATE]
+                tvHourError.text =
+                    hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_FUTURE_DATE]
                 edittextOriginDateLayout.apply {
                     setHintTextColor(context, R.drawable.edittext_error)
                     setBoxStrokeColorState(context, R.drawable.edittext_error)
@@ -253,8 +259,10 @@ class OriginDialog constructor(
                     if (radiobuttonCurrentLocation.isChecked) {
                         OriginOption.GPS
                     } else {
-                        val siteCode = ssRadiobuttonOnSite.getmValue()[SearchableSpinner.CODE]?.toInt()
-                        val siteDesc = ssRadiobuttonOnSite.getmValue()[SearchableSpinner.DESCRIPTION]
+                        val siteCode =
+                            ssRadiobuttonOnSite.getmValue()[SearchableSpinner.CODE]?.toInt()
+                        val siteDesc =
+                            ssRadiobuttonOnSite.getmValue()[SearchableSpinner.DESCRIPTION]
                         OriginOption.SITE(siteCode, siteDesc)
                     }
                 )
@@ -264,7 +272,7 @@ class OriginDialog constructor(
                     hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_SAVE_TTL] ?: "",
                     hmAuxTranslate[TripTranslate.DialogOrigin.DIALOG_ORIGIN_ERROR_SAVE_MSG] ?: "",
                     actionPositiveLbl = hmAuxTranslate[TripTranslate.TRIP_RETRY_AGAIN],
-                    actionPositive = {dialog, _ ->
+                    actionPositive = { dialog, _ ->
                         btnSave.isEnabled = true
                     }
                 )
@@ -282,8 +290,9 @@ class OriginDialog constructor(
                 trip.originSiteCode ?: ""
             )
             var editTextDate = ""
-            if(originDate.isNotEmpty()){
-                val formattedDate = "${edittextDate.text} ${edittextHour.text}".toFormattedDateAndTime()
+            if (originDate.isNotEmpty()) {
+                val formattedDate =
+                    "${edittextDate.text} ${edittextHour.text}".toFormattedDateAndTime()
                 editTextDate = formattedDate.toFormattedString()
             }
             val dateText = edittextDate.text.toString()
@@ -301,13 +310,13 @@ class OriginDialog constructor(
                     && dateHasChange(editTextDate, originDate)
                     && checkOriginDate)
                     || ((optionSite && siteSelectedText.isNotEmpty() && originSiteCode != siteSelectedCode) ||
-                            (optionGps && originType != "GPS")
+                    (optionGps && originType != "GPS")
                     )
         }
     }
 
 
-    fun checkOriginDate(dateStart:String, hourStart:String):Boolean{
+    fun checkOriginDate(dateStart: String, hourStart: String): Boolean {
         validateOriginDate.let { invoke ->
             val dateError = invoke(
                 trip.customerCode,
@@ -320,7 +329,7 @@ class OriginDialog constructor(
                 layoutErrorHour.visibility = View.GONE
             }
             //
-            dateError?.let{
+            dateError?.let {
                 if (isDateBefore(dateError.parseDate(), "$dateStart $hourStart")) {
                     binding.apply {
                         layoutErrorDate.visibility = View.VISIBLE
@@ -339,8 +348,10 @@ class OriginDialog constructor(
         }
     }
 
-    private fun dateHasChange(editTextDate: String, originDate: String):Boolean{
-        return ToolBox_Inf.dateToMilliseconds(editTextDate) != ToolBox_Inf.dateToMilliseconds(originDate)
+    private fun dateHasChange(editTextDate: String, originDate: String): Boolean {
+        return ToolBox_Inf.dateToMilliseconds(editTextDate) != ToolBox_Inf.dateToMilliseconds(
+            originDate
+        )
     }
 
     private fun siteSelected(getHmAux: String): String {

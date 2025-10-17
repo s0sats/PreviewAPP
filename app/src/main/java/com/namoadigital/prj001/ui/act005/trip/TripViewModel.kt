@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.adapter.trip.model.ExtractType
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
@@ -37,7 +38,8 @@ import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetEventTypeUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.TripEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.extract.ListExtractUseCase
-import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.GetFirstDateOnTripUseCase
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.ValidateDateOnOriginUseCase
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.ValidateDateOnStartTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.ExecEditUserUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.InputParams
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.OutputParams
@@ -76,7 +78,8 @@ class TripViewModel @Inject constructor(
     private val userUseCase: TripUsersUseCase,
     private val eventUseCase: TripEventUseCase,
     private val extractUseCase: ListExtractUseCase,
-    private val validateOrigin: GetFirstDateOnTripUseCase
+    private val validateDate: ValidateDateOnOriginUseCase,
+    private val validateStartTrip: ValidateDateOnStartTripUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TripState())
@@ -241,7 +244,7 @@ class TripViewModel @Inject constructor(
                             _state.loadingState {
                                 ProgressState.Error(exceptionError, errorMsg = errorMsg)
                             }
-                            if(exceptionError is NetworkConnectionException){
+                            if (exceptionError is NetworkConnectionException) {
                                 _state.update { tripState ->
                                     tripState.copy(
                                         updateTripScreen = true
@@ -255,8 +258,10 @@ class TripViewModel @Inject constructor(
                             _state.loadingState {
                                 ProgressState.Online(
                                     process = WS_TRIP_OVER_NIGHT,
-                                    title = tripOverNightTtl?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL,
-                                    message = tripOverNightMsg ?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG,
+                                    title = tripOverNightTtl
+                                        ?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_TTL,
+                                    message = tripOverNightMsg
+                                        ?: TripTranslate.PROGRESS_TRIP_OVER_NIGHT_MSG,
                                 )
                             }
                         } else {
@@ -333,7 +338,7 @@ class TripViewModel @Inject constructor(
                             )
                         }
 
-                        if(exceptionError is NetworkConnectionException){
+                        if (exceptionError is NetworkConnectionException) {
                             getCurrentTrip()
                         }
                     }
@@ -393,7 +398,7 @@ class TripViewModel @Inject constructor(
                                 ProgressState.Error(exceptionError, errorMsg = errorMsg)
                             }
 
-                            if(exceptionError is NetworkConnectionException){
+                            if (exceptionError is NetworkConnectionException) {
                                 _state.update { tripState ->
                                     tripState.copy(
                                         updateTripScreen = true
@@ -483,7 +488,7 @@ class TripViewModel @Inject constructor(
                                 errorMsg = errorMsg
                             )
                         }
-                        if(exceptionError is NetworkConnectionException){
+                        if (exceptionError is NetworkConnectionException) {
                             getCurrentTrip()
                         }
                     }
@@ -537,7 +542,7 @@ class TripViewModel @Inject constructor(
                         _state.loadingState {
                             ProgressState.Error(exceptionError, errorMsg = errorMsg)
                         }
-                        if(exceptionError is NetworkConnectionException){
+                        if (exceptionError is NetworkConnectionException) {
                             getCurrentTrip()
                         }
                     }
@@ -627,7 +632,7 @@ class TripViewModel @Inject constructor(
                             _state.loadingState {
                                 ProgressState.Error(exceptionError, errorMsg = errorMsg)
                             }
-                            if(exceptionError is NetworkConnectionException){
+                            if (exceptionError is NetworkConnectionException) {
                                 _state.update { tripState ->
                                     tripState.copy(
                                         updateTripScreen = true
@@ -735,7 +740,7 @@ class TripViewModel @Inject constructor(
                             )
                         }
 
-                        if(exceptionError is NetworkConnectionException){
+                        if (exceptionError is NetworkConnectionException) {
                             getCurrentTrip()
                         }
                     }
@@ -850,15 +855,31 @@ class TripViewModel @Inject constructor(
     fun validateOriginDate(
         customerCode: Long,
         tripPrefix: Int,
-        tripCode: Int,
+        tripCode: Int
     ): String? {
-        return validateOrigin(
-            GetFirstDateOnTripUseCase.InputParam(
+        return validateDate(
+            ValidateDateOnOriginUseCase.InputParam(
                 customerCode,
                 tripPrefix,
                 tripCode,
             )
         ).dateError
+    }
+
+    fun validateStartTripDate(
+        customerCode: Long,
+        tripPrefix: Int,
+        tripCode: Int,
+        date: String,
+    ): Pair<String?, ExtractType> {
+        return validateStartTrip(
+            ValidateDateOnStartTripUseCase.InputParam(
+                customerCode = customerCode,
+                tripPrefix = tripPrefix,
+                tripCode = tripCode,
+                tripDate = date
+            )
+        )
     }
 
     fun removeLoadingState() {
@@ -886,6 +907,45 @@ class TripViewModel @Inject constructor(
 
     fun hasTripWithUpdateRequired(): Boolean {
         return useCase.hasTripWithUpdateRequired(Unit)
+    }
+
+    fun saveStartTrip(
+        dateStart: String,
+        progressTranslate: TripWsProgress
+    ) {
+        viewModelScope.launch {
+            useCase.saveStartDate(dateStart)
+                .results(
+                    success = {
+                        _state.loadingState { ProgressState.Offline }
+                        getCurrentTrip()
+                    },
+                    loading = { _, _ ->
+                        _state.loadingState {
+                            ProgressState.Online(
+                                process = progressTranslate.process,
+                                title = progressTranslate.title,
+                                message = progressTranslate.message
+                            )
+                        }
+
+                    },
+                    error = { errorMsg, exceptionError ->
+                        exceptionError?.let {
+                            _state.loadingState {
+                                ProgressState.Error(
+                                    exceptionError,
+                                    closeDialog = true,
+                                    errorMsg = errorMsg
+                                )
+                            }
+                        }
+                    },
+                    failed = { throwable ->
+                        _state.loadingState { ProgressState.Error(throwable) }
+                    }
+                )
+        }
     }
 
 

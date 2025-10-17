@@ -17,13 +17,14 @@ class PositionCalculateDistanceAndSaveUseCase constructor(
     private val positionRepository: TripPositionRepository,
     private val positionSaveUseCase: PositionSaveUseCase,
     private val currentTripPref: CurrentTripPref,
-    ): UseCaseWithoutFlow<PositionCalculateDistanceAndSaveUseCase.Params, Unit>{
+) : UseCaseWithoutFlow<PositionCalculateDistanceAndSaveUseCase.Params, Unit> {
 
     data class Params(
         val coordinates: Coordinates,
         val alertType: TripPositionAlertType?,
         val tripDestinationSeq: Int?
     )
+
     override fun invoke(input: Params) {
 
         val (coordinates, alertType) = input
@@ -32,27 +33,31 @@ class PositionCalculateDistanceAndSaveUseCase constructor(
         val lastPosition = positionRepository.getLocationRefSave()
 
         val differenceMinutes = lastPosition?.date?.let {
-             calculateMinutesBetweenDates(it, date, DATE_FORMAT_DEFAULT)
+            calculateMinutesBetweenDates(it, date, DATE_FORMAT_DEFAULT)
         } ?: run {
-            val newDate = getCurrentDateApi()
+            val newDate = getCurrentDateApi(true)
             input.coordinates.date = newDate
-            calculateMinutesBetweenDates(getCurrentDateApi(), date, DATE_FORMAT_DEFAULT)
+            calculateMinutesBetweenDates(
+                getCurrentDateApi(true),
+                date,
+                DATE_FORMAT_DEFAULT
+            )
         }
         //
         val currentDistance = calculateDistance(lastPosition ?: input.coordinates, coordinates)
         val locationPref = positionRepository.getLocationPref()
         //
-        trip?.let{
+        trip?.let {
             locationPref?.let {
                 //
                 var isRef = 0
                 it.position_counter += 1
                 it.transmission_counter += 1
                 //
-                if((it.position_counter >= trip.distanceRefMinutes)
+                if ((it.position_counter >= trip.distanceRefMinutes)
                     && (differenceMinutes >= 60
-                        || currentDistance >= (trip.positionDistanceMin?:0.5)
-                        )
+                            || currentDistance >= (trip.positionDistanceMin ?: 0.5)
+                            )
                 ) {
                     isRef = 1
                     it.isRef = 1
@@ -68,7 +73,7 @@ class PositionCalculateDistanceAndSaveUseCase constructor(
                         trip_prefix = trip.tripPrefix,
                         trip_code = trip.tripCode,
                         trip_scn = trip.scn,
-                        position_seq=-1,
+                        position_seq = -1,
                         last_alert_type = alertType?.toDescription(),
                         destination_seq = input.tripDestinationSeq,
                     )
@@ -83,9 +88,9 @@ class PositionCalculateDistanceAndSaveUseCase constructor(
                     )
                 )
                 //
-                if(it.transmission_counter >= trip.distanceRefMinutesTrans
+                if (it.transmission_counter >= trip.distanceRefMinutesTrans
                     && it.isRef == 1
-                ){
+                ) {
                     positionRepository.execPositionSave()
                 }
                 //

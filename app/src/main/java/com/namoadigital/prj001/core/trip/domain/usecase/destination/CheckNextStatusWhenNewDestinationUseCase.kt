@@ -50,7 +50,7 @@ class CheckNextStatusWhenNewDestinationUseCase constructor(
                         destinationSeq = destinationSeq,
                         tripStatus = TripStatus.OVER_NIGHT,
                         destinationStatus = DestinationStatus.ARRIVED,
-                        date = getCurrentDateApi(),
+                        date = getCurrentDateApi(true),
                         arrivedLat = FsTripLocationService.LatLog.value.latitude,
                         arrivedLon = FsTripLocationService.LatLog.value.longitude,
                     )
@@ -81,6 +81,7 @@ class CheckNextStatusWhenNewDestinationUseCase constructor(
                 }
 
             }
-        } ?: return Output()
+        }
+        return Output()
     }
 }
