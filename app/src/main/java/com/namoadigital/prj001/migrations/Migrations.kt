@@ -1860,6 +1860,15 @@ val migrationV25 = object : MigrationSQLite(25, 26) {
                 )
             )
         )
+
+        val updateQuery = "UPDATE " + FSTripDao.TABLE +
+                " SET " + FSTripDao.START_DATE + " = " + FSTripDao.ORIGIN_DATE + ", " +
+                FSTripDao.UPDATE_REQUIRED + " = 1 " +
+                "WHERE " + FSTripDao.TRIP_STATUS + " NOT IN ('PENDING', 'DONE', 'CANCELLED') " +
+                "AND " + FSTripDao.START_DATE + " IS NULL";
+
+        db.execSQL(updateQuery);
+
     }
 }
 
