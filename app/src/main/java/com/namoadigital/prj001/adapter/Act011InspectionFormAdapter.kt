@@ -31,7 +31,7 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int, measureBottomSheetContext: MeasureBottomSheetContext?) -> Unit,
+    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int, measureBottomSheetContext: MeasureBottomSheetContext?, isOtherTicket: Boolean) -> Unit,
     private val onAlreadyOkItemSelected: (position: Int, item: InspectionCell) -> Unit,
     private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -80,7 +80,8 @@ class Act011InspectionFormAdapter(
                     position,
                     inspectionCell.itemCodeAndSeq,
                     inspectionCell.partitionedExecution,
-                    inspectionCell.measureItemData?.context
+                    inspectionCell.measureItemData?.context,
+                    inspectionCell.isReadOnlyDueToOtherTicket
                 )
             }
             binding.root.setOnClickListener(openItemListener)
@@ -231,8 +232,16 @@ class Act011InspectionFormAdapter(
                         || inspection.hideAlreadyOKBtn
                         || read_only
                         || measureItemData != null
+                        || inspection.isReadOnlyDueToOtherTicket
                     ) {
                         binding.tvAutoAlreadyOk.visibility = View.GONE
+                    }
+                    //
+                    if (inspection.isReadOnlyDueToOtherTicket) {
+                        binding.tvOtherTicketInfo.visibility = View.VISIBLE
+                        binding.tvOtherTicketInfo.text = inspection.getOtherTicketIdFormatted()
+                    } else {
+                        binding.tvOtherTicketInfo.visibility = View.GONE
                     }
                     //
                     if (partitionedExecution == 1 && !read_only) {
@@ -319,9 +328,29 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvInspectionVerificationAction.text =
                         hmAuxTrans.get("inspection_verify_action_lbl")
+
                     binding.tvAutoAlreadyOk.text =
                         hmAuxTrans.get("inspection_already_ok_action_lbl")
                 }
+
+                with(binding) {
+                    if (isReadOnlyDueToOtherTicket) {
+                        tvInspectionVerificationAction.apply {
+                            icon = ContextCompat.getDrawable(
+                                context,
+                                R.drawable.ic_baseline_read_more_24
+                            )
+                            text = hmAuxTrans.get("inspection_visualize_action_lbl")
+                            iconTint = tvAutoAlreadyOk.iconTint
+                            strokeColor = tvAutoAlreadyOk.strokeColor
+                            setTextColor(tvAutoAlreadyOk.currentTextColor)
+                            backgroundTintList = tvAutoAlreadyOk.backgroundTintList
+                            strokeWidth = tvAutoAlreadyOk.strokeWidth
+                        }
+                    }
+                }
+
+
                 //
                 if (isNewItem || dayCount == null) {
                     binding.tvDayCount.visibility = View.GONE

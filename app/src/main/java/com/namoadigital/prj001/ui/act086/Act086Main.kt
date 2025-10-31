@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
@@ -30,7 +31,7 @@ import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act011.Act011_Main
-import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheet
+import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -88,7 +89,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             deviceItem,
             dateStartUntilLastMinute,
             readOnly,
-            partition_execution == 1
+            partition_execution == 1,
+            isOtherTicket = isOtherTicket
         )
     }
 
@@ -125,6 +127,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     private var deviceDesc: String = ""
     private var trackingNumber: String? = null
     private var readOnly: Boolean = false
+    private var isOtherTicket: Boolean = false
     private var itemHist: ArrayList<Act086HistoricModel>? = null
     private val dateStartUntilLastMinute: String by lazy {
         mPresenter.getDateStartUntilLastMinute()
@@ -155,16 +158,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         deviceDesc = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC, "")
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
         isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
-        readOnly =
-            defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
+        isOtherTicket =
+            bundleDevice.getBoolean(OtherTicketInfo.Companion.DeviceItemOtherTicket)
+        readOnly = defineReadOnlyByStatus(
+            bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS),
+            isOtherTicket
+        )
         partition_execution =
             bundleDevice.getInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, 0)
     }
 
-    private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
-        if (formStatus == null || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) || formStatus.equals(
-                ConstantBaseApp.SYS_STATUS_WAITING_SYNC
-            )
+    private fun defineReadOnlyByStatus(formStatus: String?, isOtherTicket: Boolean): Boolean {
+        if (formStatus == null ||
+            formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) ||
+            formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC) ||
+            isOtherTicket
         ) {
             return true
         }
@@ -265,6 +273,16 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             }
             setItemCheckDesc()
             setAlertDateInfo()
+            setOtherTicketInfo()
+        }
+    }
+
+    fun setOtherTicketInfo() {
+        with(binding) {
+            act086TvOtherTicketInfo.isVisible = isOtherTicket
+            act086TvOtherTicketInfo.text =
+                "${hmAux_Trans[OtherTicketInfo.Companion.OtherTicketInfoLbl]} ${_deviceItem?.ticketFormatted}"
+
         }
     }
 

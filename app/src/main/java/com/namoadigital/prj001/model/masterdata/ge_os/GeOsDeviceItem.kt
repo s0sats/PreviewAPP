@@ -157,6 +157,8 @@ class GeOsDeviceItem(
     val isMeasureAlert = lastMeasureAlert != null && lastMeasureAlert == 1
     val containLastDate = lastMeasureDate != null
 
+    val ticketFormatted = "${ticket_prefix}.${ticket_code}"
+
     fun getGeOsDeviceItemCodeAndSeq(): String {
         return "${item_check_code}.${item_check_seq}"
     }

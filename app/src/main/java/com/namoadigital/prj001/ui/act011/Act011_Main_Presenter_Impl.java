@@ -131,6 +131,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.sql.transaction.ticket.TransactionSaveTicketStepCtrlAtForm;
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop;
+import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData;
@@ -925,6 +926,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
 //        GeOsDeviceItem
         List<GeOsDevice> devices = getDeviceList(geOs);
+
+        Integer currentFormTicketPrefix = customFormLocal.getTicket_prefix();
+        Integer currentFormTicketCode = customFormLocal.getTicket_code();
+
         for (GeOsDevice device : devices) {
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
@@ -938,54 +943,55 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             List<GeOsDeviceItem> deviceItem = getDeviceItem(device);
 
             for (GeOsDeviceItem item : deviceItem) {
-                if (isDeviceItemAllowed(item, customFormLocal.getTicket_prefix(), customFormLocal.getTicket_code())) {
-                    String itemDesc = new GetDeviceItemDescUseCase().invoke(
-                            new GetDeviceItemDescUseCase.Input(
-                                    item.getManual_desc(),
-                                    item.getStatus_modification_type(),
-                                    item.getItem_check_desc(),
-                                    item.getItem_check_desc_alt_vg(),
-                                    item.isNO_CYCLE()
-                            )
-                    );
-                    //
-                    boolean isReadOnly = !isInProcessing(customFormLocal);
-                    MeasureBottomSheetContext measureBottomSheetContext = getMeasureBottomSheetContext(item, isReadOnly);
-                    //
-                    //
-                    inspections.add(
-                            new InspectionCell(itemDesc,
-                                    getDayCount(geOs.getDate_start(), item),
-                                    getPhotoCount(item),
-                                    isRequiredPhoto(item),
-                                    getMaterialCount(item.getMaterialList()),
-                                    item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
-                                    item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
-                                    item.getRequire_justify_problem() == 1,
-                                    item.getItem_check_status(),
-                                    isHideAlreadyOKBtn(item),
-                                    item.is_visible() == 1,
-                                    Objects.requireNonNull(item.getColor_item()),
-                                    item.getCritical_item() == 1,
-                                    item.getStructure() == 0,
-                                    item.getStatus_answer(),
-                                    item.getExec_type(),
-                                    item.getGeOsDeviceItemCodeAndSeq(),
-                                    hmAux_Trans,
-                                    item.getChange_adjust(),
-                                    item.getPartitioned_execution(),
-                                    item.getRequire_photo_already_ok() == 1,
-                                    isReadOnly,
-                                    item.getHasMeasureActive() ? new MeasureItemData(
-                                            item.getLastMeasureValue(),
-                                            item.getLastMeasureUn(),
-                                            item.isMeasureAlert(),
-                                            item.getLastMeasureDate(),
-                                            measureBottomSheetContext
-                                    ) : null
-                            )
-                    );
-                }
+
+
+                String itemDesc = new GetDeviceItemDescUseCase().invoke(
+                        new GetDeviceItemDescUseCase.Input(
+                                item.getManual_desc(),
+                                item.getStatus_modification_type(),
+                                item.getItem_check_desc(),
+                                item.getItem_check_desc_alt_vg(),
+                                item.isNO_CYCLE()
+                        )
+                );
+
+                boolean isReadOnly = !isInProcessing(customFormLocal);
+                MeasureBottomSheetContext measureBottomSheetContext = getMeasureBottomSheetContext(item, isReadOnly);
+                OtherTicketInfo itemOtherTicketInfo = OtherTicketInfo.Companion.hasOtherTicketInfo(item, currentFormTicketPrefix, currentFormTicketCode);
+
+                inspections.add(
+                        new InspectionCell(itemDesc,
+                                getDayCount(geOs.getDate_start(), item),
+                                getPhotoCount(item),
+                                isRequiredPhoto(item),
+                                getMaterialCount(item.getMaterialList()),
+                                item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
+                                item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
+                                item.getRequire_justify_problem() == 1,
+                                item.getItem_check_status(),
+                                isHideAlreadyOKBtn(item),
+                                item.is_visible() == 1,
+                                Objects.requireNonNull(item.getColor_item()),
+                                item.getCritical_item() == 1,
+                                item.getStructure() == 0,
+                                item.getStatus_answer(),
+                                item.getExec_type(),
+                                item.getGeOsDeviceItemCodeAndSeq(),
+                                hmAux_Trans,
+                                item.getChange_adjust(),
+                                item.getPartitioned_execution(),
+                                item.getRequire_photo_already_ok() == 1,
+                                isReadOnly,
+                                item.getHasMeasureActive() ? new MeasureItemData(
+                                        item.getLastMeasureValue(),
+                                        item.getLastMeasureUn(),
+                                        item.isMeasureAlert(),
+                                        item.getLastMeasureDate(),
+                                        measureBottomSheetContext
+                                ) : null,
+                                itemOtherTicketInfo
+                        )
+                );
             }
             //
             if (!inspections.isEmpty() || device.getShow_empty() == 1) {
@@ -995,6 +1001,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         return acessoryFormViews;
     }
+
 
     private boolean isHideAlreadyOKBtn(GeOsDeviceItem item) {
         return !item.isNO_CYCLE()
@@ -2968,7 +2975,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         deviceItem.isNO_CYCLE()
                 )
         );
-
         //
         return new InspectionCell(
                 itemDesc,
@@ -2992,10 +2998,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getChange_adjust(),
                 deviceItem.getPartitioned_execution(),
                 false,
-                false,
-                null
+                false, null, null
         );
     }
+
 
     @Nullable
     private static MeasureBottomSheetContext getMeasureBottomSheetContext(

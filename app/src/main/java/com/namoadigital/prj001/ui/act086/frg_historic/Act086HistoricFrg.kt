@@ -426,7 +426,6 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             "with_problem_lbl",
             "last_vg_measure_lbl",
             "already_ok_lbl"
-
         )
 
         const val VG_LAST_VALUE = "VG_LAST_VALUE"

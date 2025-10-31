@@ -1534,7 +1534,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 TK_Ticket_Step tkTicketStep = tkTicket.getStep().get(stepIdx);
                 if (tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0) {
                     for (TK_Ticket_Ctrl tkTicketCtrl : tkTicketStep.getCtrl()) {
-                        if (stepIdx <= dbTicket.getStep().size() //Garante que não haja indexOutOfBound
+                        if (stepIdx < dbTicket.getStep().size() //Garante que não haja indexOutOfBound(agora garante)
                                 && tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
                                 && tkTicketCtrl.getAction() != null
                         ) {

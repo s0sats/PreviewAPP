@@ -416,6 +416,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inspection_empty_list_placeholder",
                 "inspection_empty_list_filtered",
                 "inspection_already_ok_action_lbl",
+                "inspection_visualize_action_lbl"
             )
         }
     }
@@ -535,70 +536,79 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         position: Int,
         itemPk: String,
         partitioned_execution: Int,
-        measureBottomSheetContext: MeasureBottomSheetContext? = null
+        measureBottomSheetContext: MeasureBottomSheetContext? = null,
+        isOtherTicket: Boolean = false
     ) {
-        binding.apply {
-            if (measureBottomSheetContext != null &&
-                measureBottomSheetContext.arguments.value == null &&
-                !measureBottomSheetContext.arguments.isReadOnly
-            ) {
-                MeasureItemBottomSheet(
-                    measureItemBottomSheet = measureBottomSheetContext,
-                    actions = object : MeasureItemBottomSheetActions {
-                        override fun onNavigateReadOnly() {
-                            mFrgListener.onInspectionSelected(
-                                acessoryFormView,
-                                false,
-                                position,
-                                edtInspectionFilter.text.toString(),
-                                chkNonForecastItem.isChecked,
-                                itemPk,
-                                partitioned_execution,
-                            )
-                        }
 
-                        override fun onSaveMeasurement(
-                            newMeasure: Double?,
-                            newID: String?,
-                            state: MeasureItemArguments.State
-                        ) {
-                            _mFrgListener?.onSaveInitialMeasurement(
-                                acessoryFormView.devicePkPrefix + "." + itemPk,
-                                newMeasure,
-                                newID
-                            )
-
-                            mFrgListener.onInspectionSelected(
-                                acessoryFormView,
-                                false,
-                                position,
-                                edtInspectionFilter.text.toString(),
-                                chkNonForecastItem.isChecked,
-                                itemPk,
-                                partitioned_execution
-                            )
-                        }
-
-                    }
-                ).show(
-                    this@Act011FrgInspection.requireActivity().supportFragmentManager,
-                    "MeasureItemBottomSheet"
-                )
-                return@apply
-            }
-
-
-
+        if (!isOtherTicket && (measureBottomSheetContext != null &&
+                    measureBottomSheetContext.arguments.value == null &&
+                    !measureBottomSheetContext.arguments.isReadOnly)
+        ) {
+            showMeasureItemBottomSheet(
+                measureBottomSheetContext,
+                position,
+                itemPk,
+                partitioned_execution
+            )
+        } else {
             mFrgListener.onInspectionSelected(
                 acessoryFormView,
                 false,
                 position,
-                edtInspectionFilter.text.toString(),
-                chkNonForecastItem.isChecked,
+                binding.edtInspectionFilter.text.toString(),
+                binding.chkNonForecastItem.isChecked,
                 itemPk,
-                partitioned_execution
+                partitioned_execution,
+                isOtherTicket
             )
         }
+    }
+
+    private fun showMeasureItemBottomSheet(
+        measureBottomSheetContext: MeasureBottomSheetContext,
+        position: Int,
+        itemPk: String,
+        partitioned_execution: Int
+    ) {
+        MeasureItemBottomSheet(
+            measureItemBottomSheet = measureBottomSheetContext,
+            actions = object : MeasureItemBottomSheetActions {
+                override fun onNavigateReadOnly() {
+                    mFrgListener.onInspectionSelected(
+                        acessoryFormView,
+                        false,
+                        position,
+                        binding.edtInspectionFilter.text.toString(),
+                        binding.chkNonForecastItem.isChecked,
+                        itemPk,
+                        partitioned_execution,
+                    )
+                }
+
+                override fun onSaveMeasurement(
+                    newMeasure: Double?,
+                    newID: String?,
+                    state: MeasureItemArguments.State
+                ) {
+                    _mFrgListener?.onSaveInitialMeasurement(
+                        acessoryFormView.devicePkPrefix + "." + itemPk,
+                        newMeasure,
+                        newID
+                    )
+
+                    mFrgListener.onInspectionSelected(
+                        acessoryFormView,
+                        false,
+                        position,
+                        binding.edtInspectionFilter.text.toString(),
+                        binding.chkNonForecastItem.isChecked,
+                        itemPk,
+                        partitioned_execution,
+                        false
+                    )
+                }
+            }
+        ).show(requireActivity().supportFragmentManager, "MeasureItemBottomSheet")
     }
 
     //

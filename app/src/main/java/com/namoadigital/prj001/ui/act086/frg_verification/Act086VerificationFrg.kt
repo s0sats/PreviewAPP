@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
     private val IN_READONLY = "IN_READONLY"
     private var isOsPartial = false
+    private var isOtherTicket = false
     private var dateStartUntilLastMinute: String? = null
 
     private val binding: Act086VerificationFrgBinding by lazy {
@@ -157,6 +158,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             inReadOnly = it.getBoolean(IN_READONLY, true)
             dateStartUntilLastMinute = it.getString(GeOsDao.DATE_START)
             isOsPartial = it.getBoolean(IS_OS_PARTIAL, false)
+            isOtherTicket = it.getBoolean(IS_OTHER_TICKET, false)
         }
     }
 
@@ -214,20 +216,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     val containsValue = callback.initialValueColor != null
 
                     // Radios e suas cores "ativas"
-                    val radios = listOf(
-                        act086VerificationFrgRdoAnswerAlreadyDone to R.color.namoa_os_form_verified_green,
-                        act086VerificationFrgRdoAnswerFixed to R.color.namoa_os_form_done_action_blue,
-                        act086VerificationFrgRdoAnswerAlert to R.color.namoa_os_form_problem_red
-                    )
-
-                    // Aplica estado padrão
-                    radios.forEach { (radio, activeColor) ->
-                        radio.isEnabled = containsValue
-                        applyDrawableStartColor(
-                            radio,
-                            if (containsValue) activeColor else R.color.namoa_pipeline_header_icon
-                        )
-                    }
+                    updateColorRadioGroup(containsValue)
 
                     // Ajustes específicos conforme cor inicial
                     when (callback.initialValueColor) {
@@ -336,8 +325,28 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
+    private fun Act086VerificationFrgBinding.updateColorRadioGroup(containsValue: Boolean) {
+        val radios = listOf(
+            act086VerificationFrgRdoAnswerAlreadyDone to R.color.namoa_os_form_verified_green,
+            act086VerificationFrgRdoAnswerFixed to R.color.namoa_os_form_done_action_blue,
+            act086VerificationFrgRdoAnswerAlert to R.color.namoa_os_form_problem_red
+        )
+
+        // Aplica estado padrão
+        radios.forEach { (radio, activeColor) ->
+            radio.isEnabled = containsValue
+            applyDrawableStartColor(
+                radio,
+                if (containsValue) activeColor else R.color.namoa_pipeline_header_icon
+            )
+        }
+    }
+
 
     private fun applyReadonlyUi() {
+        if (isOtherTicket) {
+            binding.updateColorRadioGroup(false)
+        }
         if (inReadOnly) {
             with(binding) {
                 act086VerificationFrgIvManualHandler.isEnabled = false
@@ -1873,6 +1882,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             dateStartUntilLastMinute: String,
             readOnly: Boolean,
             isOsPartial: Boolean,
+            isOtherTicket: Boolean,
         ) =
             Act086VerificationFrg().apply {
                 arguments = Bundle().apply {
@@ -1883,9 +1893,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     putBoolean(IN_READONLY, readOnly)
                     putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
                     putBoolean(IS_OS_PARTIAL, isOsPartial)
+                    putBoolean(IS_OTHER_TICKET, isOtherTicket)
                 }
             }
 
+        const val IS_OTHER_TICKET = "IS_OTHER_TICKET"
         private const val IS_OS_PARTIAL = "IS_OS_PARTIAL"
 
         fun getFragTranslationsVars(): List<String> {

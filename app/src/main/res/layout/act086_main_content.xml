@@ -80,6 +80,7 @@
                     app:layout_constraintHeight_default="wrap"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act086_tv_tracking_num" />
+
                 <TextView
                     android:id="@+id/act086_tv_item_check_desc"
                     android:layout_width="0dp"
@@ -121,19 +122,39 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                android:id="@+id/act086_tv_other_ticket_info"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:paddingStart="0dp"
+                app:layout_constraintBottom_toTopOf="@id/act086_tv_alert_date"
+                app:layout_constraintEnd_toStartOf="@+id/gd_middle"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act086_cl_header"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Ticket: 2023.232" />
+
+            <TextView
                 android:id="@+id/act086_tv_alert_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="40dp"
                 android:layout_marginEnd="4dp"
-                tools:text="Alerta Manual (5 dias)"
+                android:gravity="center_vertical"
+                android:minHeight="40dp"
                 android:textColor="@color/namoa_os_form_problem_red"
                 app:layout_constraintBottom_toBottomOf="@id/br_header"
                 app:layout_constraintEnd_toStartOf="@+id/gd_middle"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@id/act086_cl_header"
-                android:gravity="center_vertical"
-                />
+                app:layout_constraintTop_toBottomOf="@id/act086_tv_other_ticket_info"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Alerta Manual (5 dias)" />
 
             <TextView
                 android:id="@+id/act086_tv_consult"
@@ -156,8 +177,7 @@
                 app:layout_constraintStart_toEndOf="@id/gd_middle"
                 app:layout_constraintTop_toBottomOf="@id/act086_cl_header"
                 app:layout_constraintWidth_default="wrap"
-                android:visibility="visible"
-                />
+                android:visibility="visible" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/gd_middle"
@@ -171,8 +191,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="act086_tv_alert_date,act086_tv_consult"
-                />
+                app:constraint_referenced_ids="act086_tv_alert_date,act086_tv_consult" />
 
 
             <FrameLayout
@@ -183,10 +202,7 @@
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
                 app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="32dp"
-                />
-
-
+                android:layout_marginTop="32dp" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -211,7 +227,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
             android:id="@+id/iv_image_close"
@@ -223,8 +239,7 @@
             android:backgroundTint="@color/m3_namoa_onSurface"
             android:background="@drawable/ic_baseline_close_24"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

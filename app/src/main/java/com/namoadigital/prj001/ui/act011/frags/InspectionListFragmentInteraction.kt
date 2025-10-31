@@ -12,6 +12,7 @@ interface InspectionListFragmentInteraction {
         chkStatus: Boolean,
         itemCodeAndSeqPk: String,
         partition_execution: Int = 0,
+        isOtherTicket: Boolean = false
     )
 
     //

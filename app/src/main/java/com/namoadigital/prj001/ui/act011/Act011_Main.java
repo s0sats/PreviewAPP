@@ -158,6 +158,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgInspection;
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction;
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment;
+import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -611,6 +612,7 @@ public class Act011_Main extends Base_Activity
         transList.add("finish_os_tab_name");
         transList.add("act011_title_os");
         transList.addAll(VerificationGroupFragment.Companion.loadTranslation());
+        transList.add(OtherTicketInfo.Companion.getOtherTicketInfoLbl());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2998,7 +3000,9 @@ public class Act011_Main extends Base_Activity
             @NonNull String searchFilterValue,
             boolean chkStatus,
             @NonNull String itemCodeAndSeqPk,
-            int partition_execution) {
+            int partition_execution,
+            boolean isOtherTicket
+    ) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
         if (!isNewItem) {
             device_item_pk = acessoryFormView.getDevicePkPrefix() + "." + itemCodeAndSeqPk;
@@ -3017,6 +3021,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formData.getCustom_form_status());
         deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
         deviceBundle.putInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, partition_execution);
+        deviceBundle.putBoolean(OtherTicketInfo.Companion.getDeviceItemOtherTicket(), isOtherTicket);
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
