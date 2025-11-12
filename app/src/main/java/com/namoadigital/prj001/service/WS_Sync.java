@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -222,10 +223,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Created by neomatrix on 16/01/17.
  */
-
+@AndroidEntryPoint
 public class WS_Sync extends BaseWsIntentService {
 
     private EV_UserDao userDao;
@@ -235,7 +240,8 @@ public class WS_Sync extends BaseWsIntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_sync";
-
+    @Inject
+    CurrentTripPref currentTripPref;
     public WS_Sync() {
         super("WS_Sync", new BaseWsIntentService.IntentServiceMode.DOWNLOAD_DATA());
     }
@@ -1845,39 +1851,37 @@ public class WS_Sync extends BaseWsIntentService {
 
             File[] files_fs_trip = ToolBox_Inf.getListOfFiles_v2("fs_trip-");
             if (files_fs_trip == null || files_fs_trip.length == 0) {
-                fsTripPositionDao.remove(new FsTripPositionSqlTruncate().toSqlQuery());
-                fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
-            }
-            for (File _file : files_fs_trip) {
-                FSTrip fsTrips = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        FSTrip.class
-                );
-                //
-                if (fsTrips != null) {
-                    FSTrip dbTrip = fsTripDao.getByString(
-                            new GetSingleTrip(
-                                    fsTrips.getCustomerCode(),
-                                    fsTrips.getTripPrefix(),
-                                    fsTrips.getTripCode()
-                            ).toSqlQuery()
+                removeTripRegister(fsTripPositionDao, fsTripDao, fsTripDestinationActionDao, fsTripUserDao, fsTripEventDao, fsTripDestinationDao);
+                clearPreference();
+            } else {
+                for (File _file : files_fs_trip) {
+                    FSTrip fsTrips = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            FSTrip.class
                     );
                     //
-                    if (dbTrip == null
-                            || !dbTrip.getHasUpdateRequired()) {
+                    if (fsTrips != null) {
+                        FSTrip dbTrip = fsTripDao.getByString(
+                                new GetSingleTrip(
+                                        fsTrips.getCustomerCode(),
+                                        fsTrips.getTripPrefix(),
+                                        fsTrips.getTripCode()
+                                ).toSqlQuery()
+                        );
                         //
-                        fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
-                        fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
-                        fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
-                        fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
-                        //
-                        fsTrips.setPk();
-                        fsTripDao.syncTripFull(fsTrips);
+                        if (dbTrip == null) {
+                            removeTripRegister(fsTripPositionDao, fsTripDao, fsTripDestinationActionDao, fsTripUserDao, fsTripEventDao, fsTripDestinationDao);
+                            clearPreference();
+                        }
+                        if (dbTrip == null
+                                || !dbTrip.getHasUpdateRequired()) {
+                            fsTrips.setPk();
+                            fsTripDao.syncTripFull(fsTrips);
+                        }
                     }
                 }
-
             }
             //Libera pro GB
             files_fs_trip = null;
@@ -2306,6 +2310,24 @@ public class WS_Sync extends BaseWsIntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private void clearPreference() {
+        //try catch para ajuste rapido. NO projeto do historico da trip tratar o service de location de maneira adequada.
+        try {
+            currentTripPref.clear();
+        }catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
+
+    private void removeTripRegister(FsTripPositionDao fsTripPositionDao, FSTripDao fsTripDao, FsTripDestinationActionDao fsTripDestinationActionDao, FSTripUserDao fsTripUserDao, FSTripEventDao fsTripEventDao, FsTripDestinationDao fsTripDestinationDao) {
+        fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
+        fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
+        fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
+        fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
+        fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
+        fsTripPositionDao.remove(new FsTripPositionSqlTruncate().toSqlQuery());
     }
 
     private Integer getPreferenceSiteCodeForSync() {

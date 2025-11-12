@@ -1016,7 +1016,7 @@ public class ConstantBaseApp extends ConstantBase {
      * Consts de timeout especificos
      */
     public static final int TIMEOUT_FOR_SYNC_FULL = 300000;
-    public static final int TIMEOUT_FOR_SYNC_FORM = 180000;
+    public static final int TIMEOUT_FOR_SYNC_FORM = 300000;
 
     /*
      * Constante para Ordernação de produtos e grupos.
