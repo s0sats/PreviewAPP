@@ -253,7 +253,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_NAME_CHAT = "namoa_chat.db3";
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
     public static String DB_CHAT_STATUS_ERROR = "DB_CHAT_STATUS_ERROR";
-    public static int DB_VERSION_CHAT;
+    public static int DB_VERSION_CHAT;                                                                                                                                                                                                                       
 
     public static final String DB_MODE_MULTI = "MULTI";
     public static final String DB_MODE_SINGLE = "SINGLE";
@@ -586,6 +586,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CLIENT_TYPE_CLIENT = "CLIENT";
     public static final String CLIENT_TYPE_USER = "USER";
     public static final String PARAM_CHAT = "CHAT";
+    public static final String PARAM_USER_TIMELINE = "USER_TIMELINE";
 
     /**
      * Parametros EV_PROFILE

@@ -19,6 +19,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,6 +50,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -84,6 +86,7 @@ import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.WS_AP_Save;
@@ -137,6 +140,9 @@ import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act085.Act085Main;
 import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.EventManualUseCases;
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.ui.EventManualDialog;
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.ui.OnEventManualDialogInteract;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -157,6 +163,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 
@@ -165,7 +173,7 @@ import kotlin.Unit;
  */
 
 @AndroidEntryPoint
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction, OnFrgMainHomeInteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract, OnFrgTripInteract {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction, OnFrgMainHomeInteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract, OnFrgTripInteract, OnEventManualDialogInteract {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -267,8 +275,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private int sOProcessErrorAmount = 0;
     private int sOProcessAmount = 0;
     private int assetsProcessErrorAmount = 0;
-    private String move_planned[];
-    private String blinds[];
+    private String[] move_planned;
+    private String[] blinds;
     ArrayList<HMAux> inbound_items;
     int inboundItensTotal = 0;
     int outboundItensTotal = 0;
@@ -278,7 +286,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private AppUpdateManager appUpdateManager;
     private Fragment fragmentNav;
     private GpsStateReceiver gpsStateReceiver;
-    private int structurePendencyAmount=0;
+    private int structurePendencyAmount = 0;
+
+    @Inject
+    EventManualUseCases eventManualUseCases;
 
     private void routineCleaning() {
         CheckRoutineCleaningUseCase routineCleaningUseCase = new CheckRoutineCleaningUseCase(
@@ -299,7 +310,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //LUCHE - 06/07/2021 - Add chamada aqui, pois se tem arquivo de outro usr deve ser enviado
         ToolBox_Inf.scheduleUploadOtherUserImgWork(context);
         //
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentNav = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         //
@@ -375,9 +386,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private boolean hasFormLOcationPendecy() {
         if (!SV_LocationTracker.status && ToolBox_Inf.isUsrAppLogged(context)) {
             int pendencies = ToolBox_Inf.getLocationPendencies(context);
-            if (pendencies > 0) {
-                return true;
-            }
+            return pendencies > 0;
         }
         return false;
     }
@@ -890,8 +899,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         appUpdateManager = AppUpdateManagerFactory.create(this);
 
-        mDrawerLayout = (DrawerLayout)
-                findViewById(R.id.act005_drawer);
+        mDrawerLayout = findViewById(R.id.act005_drawer);
 
         recoverIntents();
 
@@ -930,7 +938,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                new CH_MessageDao(context)
+                new CH_MessageDao(context),
+                eventManualUseCases
         );
         //
         mPresenter.checkUpdateAvailable(appUpdateManager);
@@ -1796,6 +1805,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return 0;
     }
 
+
+    EventManualDialog eventDialog;
+
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
@@ -1804,6 +1816,52 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    private FrgMainHome getFrgMainHome() {
+        return (FrgMainHome) fragmentNav.getChildFragmentManager().getFragments().get(0);
+    }
+
+    private boolean isFrgMainHome() {
+        return fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof FrgMainHome;
+    }
+
+
+    private void showEvent(EventManual eventManual) {
+        Fragment existingDialog = fm.findFragmentByTag("EventManualDialog");
+
+        if (existingDialog instanceof DialogFragment) {
+            Dialog dialog = ((DialogFragment) existingDialog).getDialog();
+            if (dialog != null && dialog.isShowing()) {
+                return;
+            }
+        }
+
+        eventDialog = EventManualDialog.Companion.newInstance(eventManual);
+        eventDialog.show(fm, "EventManualDialog");
+    }
+
+    @Override
+    public void showProgressDialog(
+            @NonNull String title,
+            @NonNull String message
+    ) {
+        enableProgressDialog(
+                title,
+                message,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+
+        mPresenter.executeEventSave(false);
+    }
+
+    @Override
+    public void refreshEventCard() {
+        if (isFrgMainHome()) {
+            FrgMainHome currentFragment = getFrgMainHome();
+            currentFragment.refreshEventCard();
+        }
     }
 
     @Override
@@ -2143,7 +2201,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
                         if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
                             mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
-                        }else{
+                        } else {
                             progressDialog.dismiss();
                             setWsSoProcess("");
                             setWsProcess("");
@@ -2200,7 +2258,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     String productInfo = mPresenter.getProductInfo(Long.parseLong(pk[0]));
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+                    mHmAux.put("label", productInfo + " - " + pk[1]);
                     mHmAux.put("type", WS_RESULT_TYPE_SERIAL);
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
@@ -2297,12 +2355,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
                     HMAux aux = new HMAux();
                     String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
-                    ;
                     String status = item.getValue();
                     String soInfo = pk[0];
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", "" + soInfo + "  -  " + pk[2] + "\n" + pk[1]);
+                    mHmAux.put("label", soInfo + "  -  " + pk[2] + "\n" + pk[1]);
                     mHmAux.put("type", WS_RESULT_TYPE_SO_EXPRESS);
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", soInfo + " / " + status);
@@ -2332,12 +2389,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
             setWsSoProcess("");
 
-            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            String[] approval = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (approval.length > 0 && !approval[0].isEmpty()) {
                 sOProcessAmount += approval.length;
                 for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    String[] fields = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
@@ -2357,12 +2414,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
             setWsSoProcess("");
 
-            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            String[] approval = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (approval.length > 0 && !approval[0].isEmpty()) {
                 sOProcessAmount += approval.length;
                 for (int i = 0; i < approval.length; i++) {
-                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    String[] fields = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
@@ -2397,7 +2454,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
                 for (int i = 0; i < move_planned.length; i++) {
-                    String fields[] = move_planned[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    String[] fields = move_planned[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
@@ -2421,7 +2478,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             if (blinds.length > 0 && !blinds[0].isEmpty()) {
                 for (int i = 0; i < blinds.length; i++) {
-                    String fields[] = blinds[i].split(Constant.MAIN_CONCAT_STRING_2);
+                    String[] fields = blinds[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
                     HMAux mHmAux = new HMAux();
                     mHmAux.put("label", fields[0]);
@@ -2531,12 +2588,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             }
 
+            try {
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (mPresenter.hasEventUpdateRequired()) {
+                mPresenter.executeEventSave(true);
+                return;
+            }
+
             if (mPresenter.hasPositionUpdateRequired()) {
-                try {
-                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 mPresenter.executePositionSave();
                 return;
             }
@@ -2544,24 +2607,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //            mPresenter.getMenuItensV2(hmAux_Trans);
             refreshUiData();
             progressDialog.dismiss();
-            try {
-                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             if (sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
         } else if (wsSoProcess.equalsIgnoreCase(WsUserPosition.class.getName())) {
             boolean mLinkBoolean = mLink.equalsIgnoreCase("OK");
-            refreshUiData();
-            progressDialog.dismiss();
+
             try {
                 sendResumeDialog.updateResumeStatusWithPosition(mLinkBoolean);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+            refreshUiData();
+            progressDialog.dismiss();
             if (sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
@@ -2575,7 +2634,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             } else if (masterDataSyncFlow) {
                 mPresenter.syncFlow(mPresenter.hasUpdateRequired());
             } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                    mPresenter.executeSerialStructureUpdate(true);
+                mPresenter.executeSerialStructureUpdate(true);
             } else {
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
@@ -2610,13 +2669,36 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             setWsSoProcess("");
             setWsProcess("");
             refreshUiData();
+        } else if (wsProcess.equalsIgnoreCase(OnEventManualDialogInteract.SAVE_EVENT)) {
+            setWsProcess("");
+            progressDialog.dismiss();
+            eventDialog.dismiss();
+            refreshUiData();
+        } else if (wsProcess.equalsIgnoreCase(OnEventManualDialogInteract.CLOUD_SAVE_EVENT)) {
+            setWsSoProcess("");
+            setWsProcess("");
+
+            refreshUiData();
+
+            try {
+                sendResumeDialog.updateResumeEvents(true);
+            } catch (Exception ignored) {
+            }
+
+
+            if (mPresenter.hasPositionUpdateRequired()) {
+                mPresenter.executePositionSave();
+                return;
+            }
+
+            if (sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
         } else {
             if (sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
-            setWsSoProcess("");
-            refreshUiData();
-//            mPresenter.getMenuItensV2(hmAux_Trans);
+
             progressDialog.dismiss();
         }
     }
@@ -2739,6 +2821,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else {
             refreshTagList();
         }
+        refreshEventCard();
+
     }
 
     private void setAssetsResume() {
@@ -2855,9 +2939,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
 
         tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
@@ -3005,6 +3089,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if (SYNC_SOS.equalsIgnoreCase(wsProcess)) {
             progressDialog.dismiss();
         }
+
+        if (wsProcess.equalsIgnoreCase(OnEventManualDialogInteract.SAVE_EVENT)) {
+            setWsProcess("");
+            progressDialog.dismiss();
+            eventDialog.dismiss();
+            refreshUiData();
+
+            if (isFrgMainHome()) {
+                FrgMainHome currentFragment = getFrgMainHome();
+                currentFragment.showToastOffline();
+            }
+            return;
+        }
+
         if (wsProcess.startsWith(TripBaseFragment.WS_TRIP_PREFIX)) {
             progressDialog.dismiss();
             handleTripServices(mLink, true);
@@ -3012,6 +3110,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
             progressDialog.dismiss();
             setFragments();
+
         } else {
 
             setSyncAfterSave(false);
@@ -3064,21 +3163,50 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-        if (sendResumeDialog != null) {
-            sendResumeDialog.dismiss();
+        if (wsProcess.equals(OnEventManualDialogInteract.SAVE_EVENT)) {
+            setWsProcess("");
+            refreshUiData();
+            eventDialog.dismiss();
+            progressDialog.dismiss();
+            return;
         }
-        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-            processError_1(mLink, mRequired);
-        } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
-            changeCustomer();
-        } else if (wsProcess.contains(WS_TRIP_PREFIX)) {
-            progressDialog.dismiss();
-            handleTripServices(mLink, true);
-        } else if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
-            progressDialog.dismiss();
-            setFragments();
+
+        if (wsProcess.equals(OnEventManualDialogInteract.CLOUD_SAVE_EVENT)) {
+            setWsProcess("");
+
+            try {
+                sendResumeDialog.updateResumeEvents(false);
+            } catch (Exception ignored) {
+            }
+
+            refreshUiData();
+
+            if (mPresenter.hasPositionUpdateRequired()) {
+                mPresenter.executePositionSave();
+                return;
+            }
+
+            if (sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
         } else {
-            progressDialog.dismiss();
+            if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
+                processError_1(mLink, mRequired);
+            } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
+                changeCustomer();
+            } else if (wsProcess.contains(WS_TRIP_PREFIX)) {
+                progressDialog.dismiss();
+                handleTripServices(mLink, true);
+            } else if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+                progressDialog.dismiss();
+                setFragments();
+            } else {
+                progressDialog.dismiss();
+            }
+
+            if (sendResumeDialog != null) {
+                sendResumeDialog.dismiss();
+            }
         }
 
 //        else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_STATUS)) {
@@ -3320,6 +3448,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 hmAux_Trans,
                 mPresenter.hasPositionUpdateRequired(),
                 mPresenter.hasTripWithUpdateRequired() != null,
+                mPresenter.hasEventUpdateRequired(),
                 new SendResumeDialog.OnDialogClickListener() {
                     @Override
                     public void onConfirm() {
@@ -3343,7 +3472,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                     mPresenter.executeWSTicketDownload();
                                 } else if (mPresenter.hasTripSyncRequired()) {
                                     mPresenter.executeTripDownload();
-                                }else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                                } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
                                     mPresenter.executeSerialStructureUpdate(true);
                                 }
                             }
@@ -3430,7 +3559,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 checkSyncRequired()
         );
         //
-        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
+        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         //
@@ -4068,4 +4197,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             }
         }
     }
+
+    @Override
+    public void showEditEvent(EventManual eventManual) {
+        showEvent(eventManual);
+    }
+
 }

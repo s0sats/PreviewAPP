@@ -74,6 +74,14 @@
             android:id="@+id/act005_send_resume_position"
             layout="@layout/act005_send_resume_detail" />
 
+        <include
+            android:id="@+id/act005_send_resume_events_manual"
+            layout="@layout/act005_send_resume_detail" />
+
+        <include
+            android:id="@+id/act005_send_resume_events"
+            layout="@layout/act005_send_resume_detail" />
+
     </LinearLayout>
 
     <Button

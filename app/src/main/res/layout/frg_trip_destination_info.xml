@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
@@ -9,27 +8,16 @@
     <TextView
         android:id="@+id/tv_destination_lbl"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:textColor="@color/text_black"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:gravity="center_vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_destination_delete_btn"
-        app:layout_constraintEnd_toStartOf="@+id/iv_destination_delete_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_destination_delete_btn"
-        tools:text="Destino" />
-
-    <ImageView
-        android:id="@+id/iv_destination_delete_btn"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/my_action_toogle_default_inset"
-        android:padding="12dp"
-        android:src="@drawable/ic_trash_bin"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="wrap" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mcv_destination"
+        tools:text="Destino" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcv_destination"
@@ -42,7 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_destination_delete_btn">
+        app:layout_constraintTop_toBottomOf="@+id/tv_destination_lbl">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraint_layout"
@@ -83,8 +71,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/my_action_toogle_default_inset"
                 android:padding="12dp"
-                android:src="@drawable/outline_directions_24"
-
+                android:src="@drawable/baseline_call_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_max="wrap" />
@@ -187,6 +174,7 @@
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 app:layout_constraintBottom_toTopOf="@+id/serial_layout"
                 app:layout_constraintEnd_toStartOf="@+id/next_label"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/for_today_label"
                 app:layout_constraintTop_toBottomOf="@+id/late_value"
                 app:layout_constraintWidth_default="wrap"
@@ -246,6 +234,7 @@
                 app:layout_constraintWidth_default="wrap"
                 tools:text="Seriais" />
 
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/serial_layout"
                 android:layout_width="0dp"
@@ -254,7 +243,9 @@
                 android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/guideline9"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/late_label">
 
                 <TextView
                     android:id="@+id/serialId"
@@ -280,6 +271,12 @@
                     tools:text="SITE SERIAL" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/dashboard_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="urgent_value, urgent_label, for_today_value, for_today_label, late_value, late_label, serials_value, serials_label, next_value, next_label" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/gp_on_site_info"
@@ -329,7 +326,7 @@
                 android:layout_marginTop="20dp"
                 android:paddingVertical="1dp"
                 android:textColor="@color/m3_namoa_surface"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:icon="@drawable/ic_tag_black_24dp"
                 app:iconGravity="textStart"
                 app:iconTint="@color/m3_namoa_surface"
@@ -338,6 +335,26 @@
                 app:layout_constraintStart_toEndOf="@+id/btn_search_serial"
                 app:layout_constraintTop_toBottomOf="@+id/guideline9"
                 tools:text="Ver Tickets" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_destination_maps_info"
+                style="@style/NamoaTheme3.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
+                android:paddingVertical="1dp"
+                android:textColor="@color/m3_namoa_primary"
+                android:visibility="gone"
+                app:icon="@drawable/outline_directions_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/m3_namoa_primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/btn_search_serial"
+                app:layout_constraintTop_toBottomOf="@+id/tv_address_location"
+                app:layout_constraintWidth_max="wrap"
+                tools:text="Mapas" />
 
             <View
                 android:id="@+id/v_line"

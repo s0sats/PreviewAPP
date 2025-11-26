@@ -151,7 +151,7 @@ class FsTripDestinationDao @Inject constructor(
         try {
             db.execSQL(sQuery)
         } catch (e: java.lang.Exception) {
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
             daoObjReturn.setError(true)
         } finally {
         }
@@ -227,7 +227,7 @@ class FsTripDestinationDao @Inject constructor(
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             if (dbInstance == null) {
                 db.endTransaction()
@@ -713,6 +713,23 @@ class FsTripDestinationDao @Inject constructor(
 
     }
 
+    fun getLastDestination(
+        customerCode: Long,
+        prefix: Int,
+        code: Int,
+    ): FsTripDestination? {
+        val query = query("""
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+            AND $TRIP_PREFIX = '$prefix'
+            AND $TRIP_CODE = '$code'
+            ORDER BY $DESTINATION_SEQ DESC
+            LIMIT 1
+        """.trimIndent())
+
+        return query.firstOrNull()
+    }
+
     fun previousDestination(
         customerCode: Long,
         tripPrefix: Int,
@@ -754,7 +771,7 @@ class FsTripDestinationDao @Inject constructor(
         tripPrefix: Int,
         tripCode: Int,
         destinationSeq: Int?,
-        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType
+        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType,
     ): FsTripDestination? {
         val destinationFilter = destinationSeq?.let {
             "AND $DESTINATION_SEQ > '$destinationSeq'"
@@ -779,7 +796,7 @@ class FsTripDestinationDao @Inject constructor(
                   and $DESTINATION_STATUS not in ('${DestinationStatus.CANCELLED}','${DestinationStatus.PENDING}')
                   AND $DESTINATION_TYPE != '${FsTripDestination.OVER_NIGHT_DESTINATION_TYPE}'
                   $odometerFilter
-                  order by $DESTINATION_SEQ asc
+                  order by $DESTINATION_SEQ desc
                   limit 1
             """.trimIndent()
         )

@@ -6,7 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getStringOrNull
-import com.namoadigital.prj001.dao.util.BaseDaoWithReturn
+import com.namoadigital.prj001.core.database.base.BaseDaoWithReturn
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con

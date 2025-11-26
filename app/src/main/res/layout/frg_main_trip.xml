@@ -5,16 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.act005.Act005_Main"
-    >
+    tools:context=".ui.act005.Act005_Main">
 
     <include
         android:id="@+id/ll_header"
         layout="@layout/frg_main_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/ll_placeholder"
@@ -28,16 +26,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_new_trip"
-        android:layout_width="wrap_content"
+        style="@style/NamoaTheme3.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp"
         android:visibility="visible"
-        style="@style/NamoaMaterialButtonTrip"
         app:icon="@drawable/ic_add_plus"
-        tools:text="Nova Viagem"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toTopOf="@+id/ll_footer"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Nova Viagem" />
 
     <include
         android:id="@+id/ll_footer"
@@ -47,7 +48,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

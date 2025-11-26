@@ -126,6 +126,7 @@ object TripTranslate {
     const val DESTINATION_LATE_COUNTER_LBL = "destination_late_counter_lbl"
     const val DESTINATION_NEXT_COUNTER_LBL = "destination_next_counter_lbl"
     const val DESTINATION_SERIAL_COUNTER_LBL = "destination_serial_counter_lbl"
+    const val TRIP_DESTINATION_DELETE_BTN = "trip_destination_delete_btn"
 
     //WAITING_DESTINATION
     const val PLACEHOLDER_TRIP_WAITING_DESTINATION_TTL_LBL =

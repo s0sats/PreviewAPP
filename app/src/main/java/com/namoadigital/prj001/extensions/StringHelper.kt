@@ -60,8 +60,6 @@ fun String.parseDate(): String {
 
 fun String.parseFullDate(withSeconds: Boolean = true): String {
     return try {
-//        val simpleSeconds = SimpleDateFormat("ss", Locale.getDefault())
-//        val currentSeconds = simpleSeconds.format(Date())
         val dateFormat = if (withSeconds) "dd/MM/yy HH:mm:ss" else "dd/MM/yy HH:mm"
         val formatDate = "$this:00"
         val simpleDate = SimpleDateFormat(dateFormat, Locale.getDefault())

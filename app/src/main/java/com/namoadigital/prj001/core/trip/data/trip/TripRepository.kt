@@ -6,6 +6,7 @@ import com.namoadigital.prj001.model.location.Coordinates
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FSTripFullUpdateEnv
+import com.namoadigital.prj001.model.trip.FSTripUser
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.preference.CurrentTripPrefModel
 import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
@@ -33,6 +34,7 @@ interface TripRepository {
         destinationStatus: String?,
         nextDestinationSeq: Int?,
         nextDestinationStatus: String?,
+        endDate: String?,
     ): Flow<IResult<Unit>>
 
     fun getPositionDistanceMin(): Double
@@ -68,4 +70,10 @@ interface TripRepository {
     fun existsTripWithUpdateRequired(): Boolean
     fun isTripOnline(it: FSTrip): Boolean
     fun saveStartDateSet(date: String): Flow<IResult<Unit>>
+
+    fun getUsersCurrentTrip(
+        tripPrefix: Int,
+        tripCode: Int,
+    ): List<FSTripUser>
+
 }

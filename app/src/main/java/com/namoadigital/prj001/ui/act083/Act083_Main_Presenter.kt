@@ -11,28 +11,89 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckSiteInventoryUseCase
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
+import com.namoadigital.prj001.dao.MD_OperationDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.MdJustifyItemDao
+import com.namoadigital.prj001.dao.Sync_ChecklistDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
 import com.namoadigital.prj001.extensions.watchStatus
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.DataPackage
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MD_Operation
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MD_Site
+import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
-import com.namoadigital.prj001.receiver.*
-import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
+import com.namoadigital.prj001.model.Sync_Checklist
+import com.namoadigital.prj001.model.TK_Ticket
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl
+import com.namoadigital.prj001.model.TK_Ticket_Step
+import com.namoadigital.prj001.model.TSerial_Search_Rec
+import com.namoadigital.prj001.model.TkTicketCache
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
+import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
+import com.namoadigital.prj001.receiver.WBR_Serial_Search
+import com.namoadigital.prj001.receiver.WBR_Sync
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSiteInventory
 import com.namoadigital.prj001.service.trip.WsSelectDestination
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003
+import com.namoadigital.prj001.sql.MD_Operation_Sql_004
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
+import com.namoadigital.prj001.sql.MD_Product_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006
+import com.namoadigital.prj001.sql.MD_Site_Sql_003
+import com.namoadigital.prj001.sql.SqlAct083_001
+import com.namoadigital.prj001.sql.SqlAct083_002
+import com.namoadigital.prj001.sql.SqlAct083_003
+import com.namoadigital.prj001.sql.SqlAct083_004
+import com.namoadigital.prj001.sql.SqlAct083_005
+import com.namoadigital.prj001.sql.Sql_Act017_005
+import com.namoadigital.prj001.sql.Sql_Act020_002
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_010
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
-import com.namoadigital.prj001.ui.act092.Act092Presenter.Companion.ZONE_NOT_FOUND
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
@@ -41,12 +102,22 @@ import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTi
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main.Companion.SELECT_DESTINATION_MODEL
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
-import com.namoadigital.prj001.util.*
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.SAVE_TRIP_OFFLINE_TOAST
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ScheduleFormFatory
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 class Act083_Main_Presenter(
     private val context: Context,
@@ -67,7 +138,8 @@ class Act083_Main_Presenter(
     private val hmAux_Trans: HMAux?,
     private val useCase: SerialSiteInventoryUseCase,
     private val actionPrefUseCases: ActionPreferenceUseCases,
-    private val ticketAccessUseCase: FlowTicketAccessUseCase
+    private val ticketAccessUseCase: FlowTicketAccessUseCase,
+    private val getEventManualUseCase: GetEventManualUseCase
 ) : Act083_Main_Contract.I_Presenter {
 
     private lateinit var myActionFilterParam: MyActionFilterParam
@@ -413,7 +485,7 @@ class Act083_Main_Presenter(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 productCode.toLong()
             ).toSqlQuery()
-        );
+        )
     }
 
     private fun getSerial(productCode: Int, serialId: String): MD_Product_Serial? {
@@ -427,6 +499,17 @@ class Act083_Main_Presenter(
     }
 
     override fun processActionClick(myAction: MyActions) {
+
+        val ignoredList =
+            listOf(MyActions.MY_ACTION_TYPE_TICKET, MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+
+        if (!ignoredList.contains(myAction.actionType)) {
+            if (hasEventManual()) {
+                mView.showMsg(Act083_Main.EVENT_IN_EXECUTION, myAction)
+                return
+            }
+        }
+
         when (myAction.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> processCachedTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
@@ -620,7 +703,11 @@ class Act083_Main_Presenter(
                                 CoroutineScope(Dispatchers.Main).launch {
                                     when (message!!) {
                                         FlowTicketAccessError.SITE_NOT_ACCESS -> {
-                                            mView.showMsg(SITE_RESTRICTION_NO_ACCESS, action, downloadTicket)
+                                            mView.showMsg(
+                                                SITE_RESTRICTION_NO_ACCESS,
+                                                action,
+                                                downloadTicket
+                                            )
                                         }
 
                                         FlowTicketAccessError.SITE_ACCESS_CONFIRM -> {
@@ -1271,7 +1358,7 @@ class Act083_Main_Presenter(
                         ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
                         ToolBox_Con.setPreference_Zone_Code(context, -1)
                         //
-                        mView.updateFooterInfos();
+                        mView.updateFooterInfos()
                         //
                         checkScheduleFlow(item)
                     } else {
@@ -1405,7 +1492,7 @@ class Act083_Main_Presenter(
         nextTicketCode: Int,
         md_site: MD_Site,
         mdOperation: MD_Operation
-    ): TK_Ticket? {
+    ): TK_Ticket {
         val tkTicket = TK_Ticket()
         //
         tkTicket.customer_code = ToolBox_Con.getPreference_Customer_Code(context)
@@ -1450,7 +1537,7 @@ class Act083_Main_Presenter(
         return tkTicket
     }
 
-    private fun createStep(tkTicket: TK_Ticket): TK_Ticket_Step? {
+    private fun createStep(tkTicket: TK_Ticket): TK_Ticket_Step {
         val ticketStep = TK_Ticket_Step()
         ticketStep.step_code = 0
         ticketStep.step_order = 0
@@ -2581,8 +2668,8 @@ class Act083_Main_Presenter(
         val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
         dao.getTrip()?.let { trip ->
 
-            if (!ToolBox_Con.isOnline(context)) {
-                saveDestination(context = context, destination = selectionDestinationAvailable!!)
+            if (!ToolBox_Con.isOnline(context) || trip.hasUpdateRequired) {
+                saveDestination(context = context, destination = selectionDestinationAvailable!!, isOnline = false)
                 return
             }
 
@@ -2611,7 +2698,8 @@ class Act083_Main_Presenter(
     override fun saveDestination(
         context: Context,
         response: String?,
-        destination: SelectionDestinationAvailable
+        destination: SelectionDestinationAvailable,
+        isOnline: Boolean,
     ) {
         val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
         destinationUseCase.saveDestination?.let {
@@ -2623,6 +2711,9 @@ class Act083_Main_Presenter(
                 )
             )
             if (result) {
+                if(!isOnline){
+                    mView.showToast(hmAux_Trans?.textOf(SAVE_TRIP_OFFLINE_TOAST) ?: "")
+                }
                 mView.callAct005()
             } else {
                 mView.showAlertMsg(
@@ -2672,6 +2763,10 @@ class Act083_Main_Presenter(
         val fsTripDao = FSTripDao(context)
         //
         return fsTripDao.getTrip() != null
+    }
+
+    override fun hasEventManual(): Boolean {
+        return getEventManualUseCase(Unit) != null
     }
 
 }

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.sql.transaction.trip
 import android.content.Context
 import com.namoadigital.prj001.dao.BaseDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
+import com.namoadigital.prj001.dao.trip.FSTripUserDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FsTripDestination
@@ -18,6 +19,7 @@ class TransactionWsTripDestinationStatusChange(
     context: Context,
     val fsTripDao: FSTripDao,
     val fsTripDestinationDao: FsTripDestinationDao,
+    val userDao: FSTripUserDao? = null,
     mDB_NAME: String = ToolBox_Con.customDBPath(
         ToolBox_Con.getPreference_Customer_Code(
             context
@@ -45,7 +47,7 @@ class TransactionWsTripDestinationStatusChange(
                 status = statusChanged.tripStatus,
                 updateRequired = if (updateRequired) 1 else 0,
                 startDate = startDate,
-                doneDate = if (statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) statusChanged.date else null,
+                doneDate = if (statusChanged.date == null) null else statusChanged.date,
                 dbInstance = db
             )
 
@@ -119,6 +121,11 @@ class TransactionWsTripDestinationStatusChange(
                     }
                 }
             }
+
+            if (statusChanged.date != null && statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) {
+                userDao?.updateDoneUsers(statusChanged.date!!, db)
+            }
+
             //
             if (transactionResult) {
                 db.setTransactionSuccessful()

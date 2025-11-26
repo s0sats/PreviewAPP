@@ -3,18 +3,18 @@ package com.namoadigital.prj001.core.trip.domain.usecase.destination
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.model.trip.FsTripDestination
+import javax.inject.Inject
 
-class GetDestinationForThresholdValidationUseCase constructor(
+class GetDestinationForThresholdValidationUseCase @Inject constructor(
     private val repository: TripDestinationRepository
-): UseCaseWithoutFlow<GetDestinationForThresholdValidationUseCase.InputParam, GetDestinationForThresholdValidationUseCase.OutputParam> {
+) : UseCaseWithoutFlow<GetDestinationForThresholdValidationUseCase.InputParam, GetDestinationForThresholdValidationUseCase.OutputParam> {
 
     data class InputParam(
         val customerCode: Long,
         val tripPrefix: Int,
         val tripCode: Int,
         val destinationSeq: Int?,
-        val type: TripDestinationValidationType,
-
+        val type: TripDestinationValidationType
     )
 
     data class OutputParam(
@@ -22,22 +22,21 @@ class GetDestinationForThresholdValidationUseCase constructor(
         val nextDestination: FsTripDestination?,
     )
 
-    enum class TripDestinationValidationType{
+    enum class TripDestinationValidationType {
         PREVIOUS,
         NEXT,
         BOTH,
         ODOMETER_PREVIOUS,
         ODOMETER_NEXT,
         ODOMETER_BOTH,
-
     }
 
 
-    override fun invoke(input: InputParam):OutputParam {
-        when(input.type){
+    override fun invoke(input: InputParam): OutputParam {
+        when (input.type) {
             TripDestinationValidationType.PREVIOUS,
             TripDestinationValidationType.ODOMETER_PREVIOUS,
-            ->{
+                -> {
                 return OutputParam(
                     repository.getPreviousValidDestination(
                         input.customerCode,
@@ -49,9 +48,10 @@ class GetDestinationForThresholdValidationUseCase constructor(
                     null
                 )
             }
+
             TripDestinationValidationType.NEXT,
             TripDestinationValidationType.ODOMETER_NEXT
-            ->{
+                -> {
                 return OutputParam(
                     null,
                     repository.getNextValidDestination(
@@ -64,9 +64,10 @@ class GetDestinationForThresholdValidationUseCase constructor(
 
                 )
             }
+
             TripDestinationValidationType.BOTH,
             TripDestinationValidationType.ODOMETER_BOTH
-            ->{
+                -> {
                 return OutputParam(
                     repository.getPreviousValidDestination(
                         input.customerCode,

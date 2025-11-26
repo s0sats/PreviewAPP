@@ -29,6 +29,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,22 +38,25 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
+import kotlin.Unit;
+
+public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter {
 
 
-    private Act081_Main_Contract.I_View mView;
-    private MD_ProductDao productDao;
-    private Context context;
-    private HMAux hmAux_Trans;
+    private final Act081_Main_Contract.I_View mView;
+    private final MD_ProductDao productDao;
+    private final Context context;
+    private final HMAux hmAux_Trans;
     private MD_Product mdProduct;
     private String mProduct_id;
     private String mSerial_id;
     private String mTracking;
     private boolean mIsForm;
-    private MD_Product_SerialDao serialDao;
+    private final MD_Product_SerialDao serialDao;
 
+    private final GetEventManualUseCase getEventManualUseCase;
 
-    public Act081_Main_Presenter(Act081_Main_Contract.I_View mView, Context context, HMAux hmAux_Trans) {
+    public Act081_Main_Presenter(Act081_Main_Contract.I_View mView, Context context, HMAux hmAux_Trans, GetEventManualUseCase getEventManualUseCase) {
         this.mView = mView;
         this.context = context;
         this.hmAux_Trans = hmAux_Trans;
@@ -64,6 +68,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        this.getEventManualUseCase = getEventManualUseCase;
     }
 
     @Override
@@ -73,7 +78,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         mSerial_id = serial_id;
         mTracking = tracking;
         if (ToolBox_Con.isOnline(context)
-        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+                && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
         ) {
             mView.setWsProcess(WS_Serial_Search.class.getName());
             //
@@ -85,7 +90,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
             Intent mIntent = new Intent(context, WBR_Serial_Search.class);
             Bundle bundle = new Bundle();
             //
-            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct!= null ?  String.valueOf(mdProduct.getProduct_code()) : null );
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mdProduct != null ? String.valueOf(mdProduct.getProduct_code()) : null);
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
@@ -150,7 +155,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
 //                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
 //                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
 //            } else {
-            if (serial_list!= null && serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
+            if (serial_list != null && serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
                 bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             } else {
@@ -241,7 +246,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         if (serial_list.size() > 0) {
             defineSearchResultFlow(serial_list, true, serial_list.size(), serial_list.size());
         } else {
-            if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
+            if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1)) {
                 // mudar mensagem
                 ToolBox_Inf.showNoConnectionDialog(context);
             } else {
@@ -290,9 +295,10 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
 
         }
     }
+
     @Override
     public void callWsSave() {
-        if(ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Save.class.getName());
             //
             mView.showPD(
@@ -309,10 +315,11 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
+
     @Override
     public void executeTicketSaveProcess() {
         if (ToolBox_Con.isOnline(context)) {
@@ -341,7 +348,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
                 ).toSqlQuery()
         );
         //
-        return serial.size() > 0 ;
+        return serial.size() > 0;
     }
 
     @Override
@@ -368,6 +375,11 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
+    }
+
+    @Override
+    public boolean hasEventManual() {
+        return getEventManualUseCase.invoke(Unit.INSTANCE) != null;
     }
 
 }

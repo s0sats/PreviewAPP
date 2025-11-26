@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act005.trip.fragment.base
 
 import com.namoadigital.prj001.model.MainTagMenu
+import com.namoadigital.prj001.model.event.local.EventManual
 
 interface OnFrgMainHomeInteract {
     fun onSelectMenuTagItem(item: MainTagMenu)
@@ -29,5 +30,6 @@ interface OnFrgMainHomeInteract {
     fun isEnabledGps() : Boolean
     fun invalidateMenuOptions()
     fun sendTripUpdateRequired()
+    fun showEditEvent(eventManual: EventManual?)
 
 }

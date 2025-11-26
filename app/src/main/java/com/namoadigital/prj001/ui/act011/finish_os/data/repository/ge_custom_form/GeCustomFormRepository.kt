@@ -4,6 +4,7 @@ import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import kotlinx.coroutines.flow.Flow
 
 interface GeCustomFormRepository {
@@ -45,5 +46,15 @@ interface GeCustomFormRepository {
         formData: Long
     ): GE_Custom_Form_Data?
 
-    suspend fun saveFormOs(customFormData: GE_Custom_Form_Data, geOs: GeOs) : Flow<IResult<Unit>>
+    suspend fun saveFormOs(customFormData: GE_Custom_Form_Data, geOs: GeOs): Flow<IResult<Unit>>
+
+    fun getFormByStatus(
+        status: String
+    ): List<GE_Custom_Form_Local>
+
+    fun getFormConflict(
+        startDate: String,
+        endDate: String?
+    ): EventConflict?
+
 }

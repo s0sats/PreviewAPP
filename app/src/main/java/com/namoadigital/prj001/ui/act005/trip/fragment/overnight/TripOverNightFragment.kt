@@ -27,9 +27,6 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.cl
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.home.TripHomeFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -69,7 +66,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
             //
             binding.apply {
                 tripState.destination?.let {
-                    btnAddDestination.visibility = View.INVISIBLE
+                    btnAddDestination.visibility = View.GONE
                     cvNextDestinationPlaceholder.visibility = View.VISIBLE
                     cvNextDestinationPlaceholder.apply {
                         layoutNextDestinationPlaceholder.tvPlaceholderLbl.text =
@@ -85,20 +82,29 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
                             isEnabled = true
                             icon = context.getDrawableId(R.drawable.ic_baseline_directions_car_24)
                             text = hmAuxTranslate[TripTranslate.TRIP_RETURN_TO_TRANSIT_LBL]
-                            iconTint = ResourcesCompat.getColorStateList(context.resources, com.namoa_digital.namoa_library.R.color.padrao_WHITE, null)
+                            iconTint = ResourcesCompat.getColorStateList(
+                                context.resources,
+                                com.namoa_digital.namoa_library.R.color.padrao_WHITE,
+                                null
+                            )
                         }
                     }
                 } ?: run {
                     btnAddDestination.visibility = View.VISIBLE
-                    cvNextDestinationPlaceholder.visibility = View.INVISIBLE
+                    cvNextDestinationPlaceholder.visibility = View.GONE
                     llFooter.apply {
+                        btnFilledRightAction.visibility = View.GONE
                         root.visibility = View.VISIBLE
                         btnLeftAction.apply {
                             visibility = View.VISIBLE
                             isEnabled = true
                             text = hmAuxTranslate[TripTranslate.TRIP_TO_END_OVER_NIGHT_LBL]
                             icon = context.getDrawableId(R.drawable.baseline_home_repair_service_24)
-                            iconTint = ResourcesCompat.getColorStateList(context.resources, R.color.m3_namoa_primary, null)
+                            iconTint = ResourcesCompat.getColorStateList(
+                                context.resources,
+                                R.color.m3_namoa_primary,
+                                null
+                            )
                         }
                     }
                 }
@@ -151,8 +157,6 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
                 ivPlaceholder.setImageDrawable(drawable)
                 tvPlaceholderTtl.text =
                     hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_OVER_NIGHT_TTL]
-                tvPlaceholderSubTtl.text =
-                    hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_OVER_NIGHT_SUB_TTL]
             }
             //
             btnReport.text = hmAuxTranslate[TripTranslate.TRIP_REPORT_BTN]
@@ -161,7 +165,7 @@ class TripOverNightFragment : TripBaseFragment<FrgOverNightTripBinding>() {
         }
     }
 
-    private fun checkGpsOrChangeDestinationStatus(){
+    private fun checkGpsOrChangeDestinationStatus() {
         if (!requireContext().isGpsEnabled()) {
             requireContext().showMaterialAlert(
                 title = hmAuxTranslate[TripHomeFragment.TRIP_GPS_OFF_TTL]!!,

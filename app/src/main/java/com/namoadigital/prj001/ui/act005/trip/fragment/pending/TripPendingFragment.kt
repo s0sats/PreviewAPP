@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.drawable.DrawableCompat
+import androidx.annotation.ColorRes
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.namoa_digital.namoa_library.R.color
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.FrgPendingTripBinding
@@ -30,9 +33,6 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.sh
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -89,7 +89,9 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                     if (it.fleetLicencePlate.isNullOrBlank() && it.fleetStartOdometer == null) {
                         llTripFleet.root.visibility = View.INVISIBLE
                         btnEditTripFleet.visibility = View.VISIBLE
+                        styleButtonDestination(style = StyleDestination.OUTLINED)
                     } else {
+                        styleButtonDestination(style = StyleDestination.FILLED)
                         llTripFleet.root.visibility = View.VISIBLE
                         btnEditTripFleet.visibility = View.INVISIBLE
                         //
@@ -107,10 +109,11 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                 }
             }
             //
-            if(tripState.destination !=  null){
+            if (tripState.destination != null) {
                 binding.btnAddDestination.visibility = View.GONE
                 binding.llDestinationInfo.root.visibility = View.VISIBLE
-            }else{
+                binding.llDestinationInfo.dashboardLayout.isVisible = false
+            } else {
                 binding.btnAddDestination.visibility = View.VISIBLE
                 binding.llDestinationInfo.root.visibility = View.GONE
             }
@@ -158,14 +161,20 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                 root.visibility = View.VISIBLE
                 btnLeftAction.visibility = View.VISIBLE
                 btnLeftAction.text = hmAuxTranslate[TripTranslate.TRIP_CANCEL_LBL]
-                if(viewModel.state.value.destination !=  null) {
+                btnLeftAction.icon =
+                    requireContext().getDrawable(R.drawable.ic_close_circle_black_24dp)
+
+                btnFilledRightAction.icon =
+                    requireContext().getDrawable(R.drawable.ic_start_destination_trip)
+
+                btnRightAction.icon =
+                    requireContext().getDrawable(R.drawable.ic_start_destination_trip)
+
+                if (viewModel.state.value.destination != null) {
                     btnFilledRightAction.visibility = View.VISIBLE
-                    btnFilledRightAction.icon =
-                        requireContext().getDrawable(R.drawable.ic_start_destination_trip)
-                            ?.let { DrawableCompat.wrap(it) }
                     btnFilledRightAction.isEnabled = true
                     btnFilledRightAction.text = hmAuxTranslate[TripTranslate.TRIP_START_LBL]
-                }else{
+                } else {
                     btnRightAction.visibility = View.VISIBLE
                     btnRightAction.isEnabled = true
                     btnRightAction.text = hmAuxTranslate[TripTranslate.TRIP_START_LBL]
@@ -227,9 +236,10 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                         actionNeutralLbl = hmAuxTranslate[TripTranslate.ALERT_TRIP_ABORT_CANCEL_BTN]
                             ?: "",
                         actionPositive = { _, _ ->
-                            viewModel.state.value.trip?.let{
-                                if(!it.hasUpdateRequired
-                                    && ToolBox_Con.isOnline(context)) {
+                            viewModel.state.value.trip?.let {
+                                if (!it.hasUpdateRequired
+                                    && ToolBox_Con.isOnline(context)
+                                ) {
                                     viewModel.setTripStatus(
                                         TripStatus.CANCELLED,
                                         tripWsProgress = TripWsProgress(
@@ -238,7 +248,7 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                                             message = hmAuxTranslate[TripTranslate.PROGRESS_ABORT_PENDING_MSG]!!,
                                         )
                                     )
-                                }else{
+                                } else {
                                     ToolBox_Inf.showNoConnectionDialog(
                                         context,
                                     )
@@ -289,13 +299,13 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
             )
         ) {
             //
-           viewModel.setTripStatus(
+            viewModel.setTripStatus(
                 TripStatus.START,
-               tripWsProgress = TripWsProgress(
-                   process = WS_TRIP_START,
-                   title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_TTL]!!,
-                   message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_MSG]!!,
-               )
+                tripWsProgress = TripWsProgress(
+                    process = WS_TRIP_START,
+                    title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_TTL]!!,
+                    message = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_START_MSG]!!,
+                )
             )
             //
         } else {
@@ -307,6 +317,31 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                 0
             )
         }
+    }
+
+
+    private sealed class StyleDestination(
+        @ColorRes val background: Int,
+        @ColorRes val contentColor: Int
+    ) {
+        object OUTLINED : StyleDestination(
+            color.m3_namoa_surface,
+            R.color.m3_namoa_primary
+        )
+
+        object FILLED : StyleDestination(
+            R.color.m3_namoa_primary,
+            color.m3_namoa_surface
+        )
+    }
+
+    private fun styleButtonDestination(style: StyleDestination) = with(binding.btnAddDestination) {
+        val background = ResourcesCompat.getColorStateList(resources, style.background, null)
+        val content = ResourcesCompat.getColorStateList(resources, style.contentColor, null)
+
+        backgroundTintList = background
+        iconTint = content
+        setTextColor(content)
     }
 
     companion object {

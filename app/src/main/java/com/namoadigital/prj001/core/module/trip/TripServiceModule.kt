@@ -34,7 +34,6 @@ import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
 @InstallIn(ServiceComponent::class)
-
 object TripServiceModule {
 
     @ServiceScoped
@@ -79,24 +78,6 @@ object TripServiceModule {
         "current_trip",
         Base_Activity.MODE_PRIVATE
     ))
-
-    @ServiceScoped
-    @Provides
-    fun providesPositionDao(
-        @ApplicationContext app: Context
-    ) = FsTripPositionDao(app)
-
-    @ServiceScoped
-    @Provides
-    fun providesTripDao(
-        @ApplicationContext app: Context
-    ) = FSTripDao(app)
-
-    @ServiceScoped
-    @Provides
-    fun providesDestinationDao(
-        @ApplicationContext app: Context
-    ) = FsTripDestinationDao(app)
 
     @ServiceScoped
     @Provides

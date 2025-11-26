@@ -8,29 +8,20 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.FrgTransitTripBinding
-import com.namoadigital.prj001.extensions.callNavigationIntent
-import com.namoadigital.prj001.extensions.callPhoneIntent
-import com.namoadigital.prj001.extensions.getFormattedAddress
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_MSG
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
-import com.namoadigital.prj001.view.dialog.DestinationDetailDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
 
-    override lateinit var binding:FrgTransitTripBinding
+    override lateinit var binding: FrgTransitTripBinding
 
     override fun showGPSWarning(isVisible: Int) {
         binding.cardPositionAlert.root.visibility = isVisible
@@ -58,25 +49,11 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
                     tvTripLbl.text =
                         """${hmAuxTranslate[TripTranslate.TRIP_LBL]} ${it.tripPrefix}.${it.tripCode}"""
                     //
-                    tvTripStatusVal.text = hmAuxTranslate[TripTranslate.TRIP_TRANSIT_LBL]}
-                    //
+                    tvTripStatusVal.text = hmAuxTranslate[TripTranslate.TRIP_TRANSIT_LBL]
                 }
-            //
-            tripState.destination?.let {
-                binding.apply {
-                    btnDestinationCall.visibility = View.GONE
-                    btnMapNavigation.visibility = View.GONE
-                    if(it.containsContact()) {
-                        it.contactName?.let {
-                            btnDestinationCall.visibility = View.VISIBLE
-                        }
-                    }
-
-                    if (it.containsAddress()) {
-                        btnMapNavigation.visibility = View.VISIBLE
-                    }
-                }
+                //
             }
+            //
             binding.llDestinationInfo.root.visibility = View.VISIBLE
             //
             tripState.event?.let {
@@ -107,25 +84,6 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
             btnReport.setOnClickListener {
                 showBottomSheet()
             }
-            btnDestinationCall.setOnClickListener {
-                viewModel.state.value.destination?.let{ destination ->
-                    context?.callPhoneIntent(
-                        "tel:${destination.contactPhone}",
-                        hmAuxTranslate[DestinationDetailDialog.ALERT_NO_CONTACT_APP_FOUND_TTL]!!,
-                        hmAuxTranslate[DestinationDetailDialog.ALERT_NO_CONTACT_APP_FOUND_TTL]!!
-                    )
-                }
-            }
-            //
-            btnMapNavigation.setOnClickListener {
-                viewModel.state.value.destination?.let{ destination ->
-                    context?.callNavigationIntent(
-                        "geo:${destination.latitude},${destination.longitude}?q=${getFormattedAddress(destination.getAddress())}",
-                        hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_TTL]!!,
-                        hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_MSG]!!
-                    )
-                }
-            }
             //
             llFooter.btnFilledRightAction.setOnClickListener {
                 showConfirmDialog(
@@ -151,8 +109,6 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
                         ?.let { DrawableCompat.wrap(it) }
                 btnFilledRightAction.text = hmAuxTranslate[TripTranslate.TRIP_TO_ON_SITE_BTN]
             }
-            btnDestinationCall.text = hmAuxTranslate[TripTranslate.TRIP_CALL_LBL]
-            btnMapNavigation.text = hmAuxTranslate[TripTranslate.TRIP_MAP_LBL]
             //
             btnReport.text = hmAuxTranslate[TripTranslate.TRIP_REPORT_BTN]
         }

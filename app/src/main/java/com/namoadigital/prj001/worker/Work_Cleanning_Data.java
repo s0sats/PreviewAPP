@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.event.EventManualDao;
 import com.namoadigital.prj001.extensions.date.DateHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
@@ -66,13 +67,13 @@ import java.util.Date;
 public class Work_Cleanning_Data extends Worker {
     public static final String WORKER_TAG = "Work_Cleanning_Data";
 
-    private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
-    private int qtyDaysToSub = 10;
+    private final String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
+    private final int qtyDaysToSub = 10;
     /**
      * BARRIONUEVO - 26-10-2023
      * Criado exclusivo para forms.
      */
-    private int formQtyDaysToSub = 30;
+    private final int formQtyDaysToSub = 30;
     private long customer_code = -1L;
 
 
@@ -100,6 +101,7 @@ public class Work_Cleanning_Data extends Worker {
             deleteFormAP();
             deleteTickets();
             deleteSchedules();
+            deleteEventManual();
             //
             changeDateRoutineCleaningUseCase.invoke(DateHelperKt.getCurrentDateApi(false));
             return Result.success();
@@ -474,6 +476,11 @@ public class Work_Cleanning_Data extends Worker {
                         sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
                 ).toSqlQuery()
         );
+    }
+
+    private void deleteEventManual() throws Exception {
+        EventManualDao dao = new EventManualDao(getApplicationContext());
+        dao.removeEventByDays(qtyDaysToSub);
     }
 
     public String sDTFormat_Sub_Days(String sDTFormatS, int days_to_sub) {

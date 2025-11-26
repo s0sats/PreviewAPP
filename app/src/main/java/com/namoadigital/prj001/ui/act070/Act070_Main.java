@@ -56,6 +56,9 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.core.translate.TranslateBuild;
+import com.namoadigital.prj001.core.translate.TranslateBuildKt;
+import com.namoadigital.prj001.core.translate.di.EventTranslate;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MdJustifyItemDao;
@@ -104,6 +107,8 @@ import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
+import com.namoadigital.prj001.ui.act095.event_manual.translate.EventManualKey;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -115,8 +120,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class Act070_Main extends Base_Activity_Frag implements
         Act070_Main_Contract.I_View,
         Frg_Pipeline_Header.OnPipelineFragmentInteractionListener,
@@ -184,6 +195,15 @@ public class Act070_Main extends Base_Activity_Frag implements
     private boolean isCheckinFlow = false;
     private String wsSaveResult = "";
 
+    @Inject
+    GetEventManualUseCase getEventManualUseCase;
+
+    @EventTranslate
+    @Inject
+    TranslateBuild translateBuild;
+    Map<String, String> translateMap;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,6 +231,7 @@ public class Act070_Main extends Base_Activity_Frag implements
         );
         //
         loadTranslation();
+        translateMap = translateBuild.build();
         //22/04/2021 - Add flag SOFT_INPUT_ADJUST_PAN para evitar crash ao selecionar WG do item.
         //Por algum motivo, quando o
         getWindow().setSoftInputMode(
@@ -446,7 +467,8 @@ public class Act070_Main extends Base_Activity_Frag implements
                 context,
                 this,
                 hmAux_Trans,
-                getIntent().getExtras().getString(ConstantBaseApp.ACT092, "")
+                getIntent().getExtras().getString(ConstantBaseApp.ACT092, ""),
+                getEventManualUseCase
         );
         //
         setActivityData();
@@ -2497,5 +2519,13 @@ public class Act070_Main extends Base_Activity_Frag implements
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    public void showAlertEventInExecution() {
+        showAlert(
+                TranslateBuildKt.textOf(translateMap, EventManualKey.ErrorEventInExecutionTitle),
+                TranslateBuildKt.textOf(translateMap, EventManualKey.ErrorEventInExecutionMsg)
+        );
     }
 }

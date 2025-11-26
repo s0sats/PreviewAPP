@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.sqlite.transaction
-import com.namoadigital.prj001.dao.util.BaseDaoWithReturn
+import com.namoadigital.prj001.core.database.base.BaseDaoWithReturn
 import org.junit.Assert.assertTrue
 
 /**

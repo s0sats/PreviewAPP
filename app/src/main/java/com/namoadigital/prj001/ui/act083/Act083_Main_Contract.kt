@@ -131,8 +131,10 @@ interface Act083_Main_Contract {
         fun saveDestination(
             context: Context,
             response: String? = null,
-            destination: SelectionDestinationAvailable
+            destination: SelectionDestinationAvailable,
+            isOnline: Boolean = true
         )
+        fun hasEventManual(): Boolean
     }
 
 }

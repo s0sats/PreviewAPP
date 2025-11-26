@@ -7,7 +7,9 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.FrgMainTripBinding
 import com.namoadigital.prj001.extensions.sendCommandToServiceTripLocation
 import com.namoadigital.prj001.extensions.showMaterialAlert
@@ -22,7 +24,6 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.BTN_NEW_TRIP
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.CANCEL
-import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PLACEHOLDER_TRIP_SUB_TTL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PLACEHOLDER_TRIP_TTL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_CREATE_NEW_TRIP_GET_LOCATION_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.PROGRESS_CREATE_NEW_TRIP_MSG
@@ -62,6 +63,7 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
         //
         initVars()
         setActions()
+        //
     }
 
     private fun initVars() {
@@ -70,7 +72,17 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
             btnNewTrip.text = hmAuxTranslate[BTN_NEW_TRIP]
             llPlaceholder.apply {
                 tvPlaceholderTtl.text = hmAuxTranslate[PLACEHOLDER_TRIP_TTL_LBL]
-                tvPlaceholderSubTtl.text = hmAuxTranslate[PLACEHOLDER_TRIP_SUB_TTL_LBL]
+            }
+
+            this.btnNewTrip.apply {
+                val hasEventManual = homeViewModel.hasEventManual()
+                isEnabled = !hasEventManual
+
+                val color =
+                    if (hasEventManual) android.R.color.darker_gray else R.color.m3_namoa_primary
+
+                backgroundTintList = ResourcesCompat.getColorStateList(resources, color, null)
+
             }
         }
     }
@@ -97,16 +109,16 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
                     return@setOnClickListener
                 }
 
-                if(viewModel.hasTripWithUpdateRequired()){
+                if (viewModel.hasTripWithUpdateRequired()) {
                     requireContext().showMaterialAlert(
                         title = hmAuxTranslate[ALERT_HAS_TRIP_UPDATE_REQUIRED_TTL] ?: "",
                         msg = hmAuxTranslate[ALERT_HAS_TRIP_UPDATE_REQUIRED_MSG] ?: "",
                         actionPositiveLbl = hmAuxTranslate[SEND_BTN] ?: "",
                         actionNeutralLbl = hmAuxTranslate[CANCEL] ?: "",
                         actionPositive = { _, _ ->
-                            if(ToolBox_Con.isOnline(context)){
+                            if (ToolBox_Con.isOnline(context)) {
                                 listener?.sendTripUpdateRequired()
-                            }else{
+                            } else {
                                 ToolBox_Inf.showNoConnectionDialog(context)
                             }
                         },

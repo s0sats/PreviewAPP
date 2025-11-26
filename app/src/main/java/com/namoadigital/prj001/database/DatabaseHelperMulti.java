@@ -17,6 +17,7 @@ import com.namoadigital.prj001.database.scripts.multi.SmSoScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormCreateScriptsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormFieldsKt;
 import com.namoadigital.prj001.database.scripts.multi.custom_form.GeCustomFormLocalFieldsKt;
+import com.namoadigital.prj001.database.scripts.multi.event.EventManualScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.ge_os.GeOsDeviceItemScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.ge_os.GeOsScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScriptKt;
@@ -226,6 +227,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append(VerificationGroupKt.getMdVerificationGroupDatabaseTable());
             script.append(MDProductSerialVGScriptKt.getVGProductSerialScript());
             script.append(GEOsVgScriptKt.getGEOsVgScript());
+            script.append(EventManualScriptKt.getEventManualTable().generateCreateTableScript());
             //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
@@ -302,6 +304,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV24().migrate(db);
                 case 25:
                     MigrationsKt.getMigrationV25().migrate(db);
+                case 26:
+                    MigrationsKt.getMigrationV26().migrate(db);
                     break;
             }
 

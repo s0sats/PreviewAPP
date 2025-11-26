@@ -28,12 +28,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
+class TripTransferFragment : TripBaseFragment<FrgTransferTripBinding>() {
     override lateinit var binding: FrgTransferTripBinding
     protected var tripActionListener: OnFrgTripInteract? = null
     override fun showGPSWarning(isVisible: Int) {
         binding.cardPositionAlert.root.visibility = isVisible
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,7 +56,8 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
                     tvTripLbl.text =
                         """${hmAuxTranslate[TripTranslate.TRIP_LBL]} ${it.tripPrefix}.${it.tripCode}"""
                     //
-                    tvTripStatusVal.text = hmAuxTranslate[TripTranslate.TRIP_TRANSFER_STATUS_LBL]}
+                    tvTripStatusVal.text = hmAuxTranslate[TripTranslate.TRIP_TRANSFER_STATUS_LBL]
+                }
                 //
             }
             //
@@ -104,43 +106,46 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
             llPlaceholder.apply {
                 //
                 ivPlaceholder.setImageDrawable(drawable)
-                tvPlaceholderTtl.text = hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_TRANSFER_TTL_LBL]
-                tvPlaceholderSubTtl.text = hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_TRANSFER_SUB_TTL_LBL]
+                tvPlaceholderTtl.text =
+                    hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_TRANSFER_TTL_LBL]
             }
             //
             btnReport.text = hmAuxTranslate[TripTranslate.TRIP_REPORT_BTN]
-            btnAddDestination.backgroundTintList = requireContext().getColorStateListId(com.namoa_digital.namoa_library.R.color.padrao_TRANSPARENT)
-            btnAddDestination.strokeWidth = 1
-            btnAddDestination.strokeColor = requireContext().getColorStateListId(R.color.m3_namoa_primary)
-            btnAddDestination.iconTint = requireContext().getColorStateListId(R.color.m3_namoa_primary)
-            btnAddDestination.setTextColor(requireContext().getColorStateListId(R.color.m3_namoa_primary))
-            btnAddDestination.text = hmAuxTranslate[TripTranslate.TRIP_SELECT_DESTINATION_BTN]
+
             //
             llFooter.apply {
                 root.visibility = View.VISIBLE
+
+                btnRightAction.apply {
+                    visibility = View.VISIBLE
+                    iconTint = requireContext().getColorStateListId(R.color.m3_namoa_primary)
+                    icon = requireContext().getDrawable(R.drawable.ic_location_on_24)
+                    text = hmAuxTranslate[TripTranslate.TRIP_SELECT_DESTINATION_BTN]
+                    isEnabled = true
+                }
+
                 btnLeftAction.visibility = View.VISIBLE
                 btnLeftAction.isEnabled = true
                 btnLeftAction.icon =
                     requireContext().getDrawable(R.drawable.baseline_hotel_24)
                 btnLeftAction.text = hmAuxTranslate[TripTranslate.TRIP_TO_OVER_NIGHT_LBL]
                 //
-                btnRightAction.visibility = View.VISIBLE
-                btnRightAction.isEnabled = true
-                btnRightAction.icon =
+                btnFilledRightAction.visibility = View.VISIBLE
+                btnFilledRightAction.isEnabled = true
+                btnFilledRightAction.icon =
                     requireContext().getDrawable(R.drawable.ic_end_trip)
                         ?.let { DrawableCompat.wrap(it) }
-                btnRightAction.text = hmAuxTranslate[TripTranslate.TRIP_TO_END_LBL]
+                btnFilledRightAction.text = hmAuxTranslate[TripTranslate.TRIP_TO_END_LBL]
             }
         }
     }
+
     private fun setActions() {
         binding.apply {
             btnReport.setOnClickListener {
                 showBottomSheet()
             }
-            btnAddDestination.setOnClickListener {
-                tripActionListener?.addDestination()
-            }
+            //
             //
             llFooter.apply {
                 btnLeftAction.setOnClickListener {
@@ -154,15 +159,19 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
                 }
                 //
                 btnRightAction.setOnClickListener {
+                    tripActionListener?.addDestination()
+                }
+                //
+                btnFilledRightAction.setOnClickListener {
                     val state = viewModel.state.value
-                    if(state.containsEvent){
+                    if (state.containsEvent) {
                         showConfirmDialog(
                             hmAuxTranslate[ALERT_CONTAINS_EVENT_TTL],
                             hmAuxTranslate[ALERT_CONTAINS_EVENT_MSG],
                             0,
                             onConfirm = {}
                         )
-                    }else if (state.trip?.fleetEndOdometer != null){
+                    } else if (state.trip?.fleetEndOdometer != null) {
                         showConfirmDialog(
                             hmAuxTranslate[ALERT_CONFIRM_END_TRIP_TTL],
                             hmAuxTranslate[ALERT_CONFIRM_END_TRIP_MSG],
@@ -170,7 +179,7 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
                                 callEndTrip()
                             }
                         )
-                    }else {
+                    } else {
                         showDialogInfoFleet(TripTarget.END)
                     }
                 }
@@ -187,7 +196,7 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
                 hmAuxTranslate[PROGRESS_TRIP_OVER_NIGHT_TTL],
                 hmAuxTranslate[PROGRESS_TRIP_OVER_NIGHT_MSG],
             )
-        }else{
+        } else {
             ToolBox.alertMSG(
                 context,
                 hmAuxTranslate[ALERT_GPS_POSITION_NOT_FOUND_TTL],
@@ -202,6 +211,7 @@ class TripTransferFragment: TripBaseFragment<FrgTransferTripBinding>() {
         //
         viewModel.setTripStatus(
             TripStatus.DONE,
+            endDate = viewModel.state.value.endTripDate,
             tripWsProgress = TripWsProgress(
                 process = WS_TRIP_END,
                 title = hmAuxTranslate[TripTranslate.PROGRESS_TRIP_END_TTL]!!,

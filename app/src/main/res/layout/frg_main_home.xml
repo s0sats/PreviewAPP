@@ -9,10 +9,22 @@
     <include
         android:id="@+id/ll_header"
         layout="@layout/frg_main_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <include
+        android:id="@+id/event_card_warning"
+        layout="@layout/trip_card_notification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_header" />
 
 
     <TextView
@@ -33,7 +45,7 @@
         android:layout_marginEnd="20dp"
         android:src="@drawable/ic_baseline_filter_alt_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_header"
+        app:layout_constraintTop_toBottomOf="@+id/event_card_warning"
         app:tint="@color/namoa_color_dark_blue" />
 
     <TextView
@@ -49,18 +61,41 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_list_tag_lbl"
         tools:text="Nao há nada para voce" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tags"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:paddingBottom="60dp"
         android:clipToPadding="false"
+        android:paddingBottom="60dp"
         android:scrollbarStyle="outsideOverlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_list_tag_lbl" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_list_tag_lbl"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_report"
+        style="@style/NamoaTheme3.Button.Outlined"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        app:icon="@drawable/ic_add_plus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_search_by_serial"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintWidth_max="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:backgroundTint="@color/m3_namoa_background"
+        app:rippleColor="@color/m3_namoa_surface2"
+        android:gravity="start|center_vertical"
+        android:visibility="gone"
+        tools:text="Reportar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_search_by_serial"

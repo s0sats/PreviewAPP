@@ -6,13 +6,14 @@ import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.model.trip.TripStatus
 import kotlinx.coroutines.flow.Flow
 
-class TripStatusChangeUseCase constructor(
+class TripStatusChangeUseCase(
     private val repository: TripRepository,
     private val checkNextDestinationStatusTripUseCase: CheckNextDestinationStatusTripUseCase
 ) : UseCases<TripStatusChangeUseCase.Input, Unit> {
 
     data class Input(
         val tripStatus: TripStatus,
+        val endDate: String? = null,
     )
 
     override suspend fun invoke(
@@ -32,6 +33,7 @@ class TripStatusChangeUseCase constructor(
             invoke.destinationStatus,
             invoke.nextDestinationSeq,
             invoke.nextDestinationStatus,
+            endDate = input.endDate
         )
     }
 }

@@ -12,7 +12,6 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.trip.FSEventType
-import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -169,7 +168,7 @@ class FSEventTypeDao(
         try {
             db.execSQL(sQuery)
         } catch (e: java.lang.Exception) {
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
         closeDB()
@@ -180,7 +179,7 @@ class FSEventTypeDao(
         try {
             db.execSQL(sQuery)
         } catch (e: java.lang.Exception) {
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
         closeDB()
@@ -264,6 +263,19 @@ class FSEventTypeDao(
         """.trimIndent())
         return value.ifEmpty { emptyList<FSEventType>() }
     }
+
+
+    fun getEventTypeByCode(
+        customerCode: Long,
+        eventTypeCode: Int
+    ): FSEventType? {
+        return query("""
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+            AND $EVENT_TYPE_CODE = '$eventTypeCode'
+        """.trimIndent()).firstOrNull()
+    }
+
 
     fun getEventType(typeCode: Int): FSEventType? {
         return getByString(

@@ -122,6 +122,8 @@ public class Constant extends ConstantBaseApp {
     public static String WS_SEARCH_SERIAL_LIST;
     public static String WS_SERIAL_TMP_SET;
 
+    public static String USER_TIMELINE_MANUAL_EVENT_SET;
+
 
     public static String WS_HOST;
     public static int WS_PORT = 443;
@@ -234,5 +236,6 @@ public class Constant extends ConstantBaseApp {
         SET_LIST_USER = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_sm_so_reserved_user.ws";
         WS_SEARCH_SERIAL_LIST = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_search_serial_list.ws";
         WS_SERIAL_TMP_SET = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_ticket_serial_tmp_set.ws";
+        USER_TIMELINE_MANUAL_EVENT_SET = HTTPS + WS_HOST + PREFIX_PRJ001 + "/trip/user_timeline_manual_event_set.ws";
     }
 }

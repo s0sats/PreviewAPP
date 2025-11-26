@@ -7,9 +7,9 @@ import android.database.Cursor
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
+import com.namoadigital.prj001.core.database.base.BaseDaoWithReturn
 import com.namoadigital.prj001.dao.md.MDProductSerialVGDao
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
-import com.namoadigital.prj001.dao.util.BaseDaoWithReturn
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.FormVgs
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.util.Constant

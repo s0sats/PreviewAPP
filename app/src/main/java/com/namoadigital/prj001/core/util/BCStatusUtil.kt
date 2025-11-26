@@ -38,7 +38,7 @@ fun Context.sendBCStatus(type: WsTypeStatus) {
             ToolBox.sendBCStatus(
                 this,
                 type.type,
-                type.value,
+                type.message,
                 type.hmAux,
                 type.response,
                 type.required
@@ -102,7 +102,7 @@ sealed class WsTypeStatus(
         val message: String?,
         override val hmAux: HMAux = HMAux(),
         override val value: String = "",
-        override val required: String = ""
+        override val required: String = "",
     ) : WsTypeStatus("CUSTOM_ERROR", message, value, hmAux, required)
 
     data class FCMStatus(

@@ -18,6 +18,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.TripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveOverNightDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.trip.DestinationCounter
@@ -35,6 +36,7 @@ import com.namoadigital.prj001.model.trip.toTripStatus
 import com.namoadigital.prj001.service.location.FsTripLocationService
 import com.namoadigital.prj001.ui.act005.trip.di.enums.UserAction
 import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.end_trip.ValidateDateOnEndTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetEventTypeUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.TripEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.extract.ListExtractUseCase
@@ -80,6 +82,8 @@ class TripViewModel @Inject constructor(
     private val extractUseCase: ListExtractUseCase,
     private val validateDate: ValidateDateOnOriginUseCase,
     private val validateStartTrip: ValidateDateOnStartTripUseCase,
+    private val validateEndTrip: ValidateDateOnEndTripUseCase,
+    private val validateDateFromDestinationAndActionUseCase: ValidateDateFromDestinationAndActionUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TripState())
@@ -280,6 +284,7 @@ class TripViewModel @Inject constructor(
     }
 
     fun saveFleetData(
+        endDate: String? = null,
         odometer: Long?,
         changePhoto: Int,
         target: TripTarget,
@@ -290,6 +295,11 @@ class TripViewModel @Inject constructor(
         deletePhoto: Boolean = false,
     ) {
         viewModelScope.launch {
+
+            if (target == TripTarget.END) {
+                _state.update { it.copy(endTripDate = endDate) }
+            }
+
             useCase.saveFleet(
                 SaveFleetParams(
                     fleetPlate,
@@ -369,13 +379,15 @@ class TripViewModel @Inject constructor(
 
     fun setTripStatus(
         tripStatus: TripStatus,
-        tripWsProgress: TripWsProgress
+        tripWsProgress: TripWsProgress,
+        endDate: String? = null,
     ) {
         viewModelScope.launch {
             state.value.trip?.let {
                 useCase.statusChange(
                     TripStatusChangeUseCase.Input(
                         tripStatus,
+                        endDate
                     )
                 ).results(
                     success = {
@@ -595,7 +607,6 @@ class TripViewModel @Inject constructor(
         destination: FsTripDestination?,
         tripWsProgress: TripWsProgress
     ) {
-        var isOnlineMode = false
         viewModelScope.launch {
             destination?.let {
                 destinationUseCase.setDestinationStatusUseCase?.invoke(
@@ -750,6 +761,29 @@ class TripViewModel @Inject constructor(
         }
     }
 
+
+    fun validateDateFromDestination(
+        tripPrefix: Int,
+        tripCode: Int,
+        destinationSeq: Int?,
+        newStart: String,
+        newEnd: String?,
+        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType = GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.BOTH
+    ): ValidateDateFromDestinationAndActionUseCase.Output? {
+        return validateDateFromDestinationAndActionUseCase(
+            ValidateDateFromDestinationAndActionUseCase.Input(
+                prefix = tripPrefix,
+                code = tripCode,
+                seq = destinationSeq ?: -1,
+                newStart = newStart,
+                newEnd = newEnd,
+                destinationType = type
+            )
+        )
+
+    }
+
+
     fun getDestinationThresholds(
         customerCode: Long,
         tripPrefix: Int,
@@ -874,6 +908,21 @@ class TripViewModel @Inject constructor(
     ): Pair<String?, ExtractType> {
         return validateStartTrip(
             ValidateDateOnStartTripUseCase.InputParam(
+                customerCode = customerCode,
+                tripPrefix = tripPrefix,
+                tripCode = tripCode,
+                tripDate = date
+            )
+        )
+    }
+
+    fun validateEndTripDate(date: String): Pair<String, ExtractType>? {
+        val customerCode = _state.value.trip?.customerCode!!
+        val tripPrefix = _state.value.trip?.tripPrefix!!
+        val tripCode = _state.value.trip?.tripCode!!
+
+        return validateEndTrip(
+            input = ValidateDateOnEndTripUseCase.InputParam(
                 customerCode = customerCode,
                 tripPrefix = tripPrefix,
                 tripCode = tripCode,

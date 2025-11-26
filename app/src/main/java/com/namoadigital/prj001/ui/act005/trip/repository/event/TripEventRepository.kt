@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TripEventRepository {
 
-    fun getListEventType() : List<FSEventType>
+    fun getListEventType(): List<FSEventType>
     fun getEventType(customerCode: Long, eventTypeCode: Int): FSEventType?
 
     fun saveEvent(
@@ -26,7 +26,7 @@ interface TripEventRepository {
         dateEnd: String?
     ): Flow<IResult<Unit>>
 
-    fun getExtract(trip: FSTrip?) : List<Extract<FSTripEvent>>
+    fun getExtract(trip: FSTrip?): List<Extract<FSTripEvent>>
 
     fun checkRestrictionDate(
         startDateInMilis: Long,
@@ -34,5 +34,11 @@ interface TripEventRepository {
         event: FSTripEvent?,
         waiting: Boolean
     ): GetEventRestrictionDateUseCase.OutputParams
+
     fun getFirstEventOnTrip(customerCode: Long, tripPrefix: Int, tripCode: Int): FSTripEvent?
+
+    fun getAllEvents(
+        tripPrefix: Int,
+        tripCode: Int
+    ): List<FSTripEvent>
 }

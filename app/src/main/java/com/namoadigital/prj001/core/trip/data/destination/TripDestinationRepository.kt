@@ -96,4 +96,6 @@ interface TripDestinationRepository {
 
     fun getNextDestinationSeq(tripPrefix: Int, tripCode: Int): Int?
 
+    fun getLastDestination(prefix: Int, code: Int): FsTripDestination?
+
 }

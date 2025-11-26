@@ -3,13 +3,12 @@ package com.namoadigital.prj001.extensions
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 
 fun <DTO> IResult<DTO>.watchStatus(
     success: (data: DTO) -> Unit,
     error: (error: String?, throwable: Throwable?) -> Unit = { _, _ -> },
     failed: (throwable: Throwable) -> Unit = {},
-    loading: (isLoading: Boolean, message: String) -> Unit = { _, _ -> }
+    loading: (isLoading: Boolean, translateKey: String) -> Unit = { _, _ -> }
 ) {
     when (this) {
         is IResult.isSuccess -> success.invoke(this.response)

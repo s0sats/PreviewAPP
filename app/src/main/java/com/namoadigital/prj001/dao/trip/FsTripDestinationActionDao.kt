@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteException
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.core.trip.domain.model.ActionConflict
+import com.namoadigital.prj001.core.trip.domain.model.ActionConflictType
 import com.namoadigital.prj001.dao.BaseDao
 import com.namoadigital.prj001.dao.DaoWithReturn
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -342,6 +344,7 @@ class FsTripDestinationActionDao(
 
         return value.ifEmpty { emptyList() }
     }
+
     fun getAction(
         customerCode: Long,
         tripPrefix: Int,
@@ -392,7 +395,7 @@ class FsTripDestinationActionDao(
                     it[ACTION_SEQ]?.toInt(),
                     it[ACT_PDF_URL],
                     it[ACT_PDF_LOCAL],
-                    it[TripDownloadPDFSql001.FILE_LOCAL_NAME]?:"",
+                    it[TripDownloadPDFSql001.FILE_LOCAL_NAME] ?: "",
                 )
             )
         }
@@ -417,6 +420,53 @@ class FsTripDestinationActionDao(
         )
     }
 
+    fun getActionConflict(
+        customerCode: Long,
+        tripPrefix: Int,
+        tripCode: Int,
+        destinationSeq: Int,
+        newStart: String,
+        newEnd: String?,
+    ): ActionConflict? {
+
+        if (newEnd == null) {
+            // só valida "começou antes"
+            return query(
+                """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+              AND $TRIP_PREFIX = '$tripPrefix'
+              AND $TRIP_CODE = '$tripCode'
+              AND $DESTINATION_SEQ = '$destinationSeq'
+              AND strftime('%s', $DATE_START) < strftime('%s', '$newStart')
+            LIMIT 1
+            """.trimIndent()
+            ).firstOrNull()?.let {
+                ActionConflict(it.dateStart, it.dateEnd, ActionConflictType.START_OVERLAP)
+            }
+        }
+
+        val conflict = query(
+            """
+        SELECT * FROM $TABLE
+        WHERE $CUSTOMER_CODE = '$customerCode'
+          AND $TRIP_PREFIX = '$tripPrefix'
+          AND $TRIP_CODE = '$tripCode'
+          AND $DESTINATION_SEQ = '$destinationSeq'
+          AND (
+                strftime('%s', $DATE_START) < strftime('%s', '$newStart')
+             OR strftime('%s', $DATE_END)   > strftime('%s', '$newEnd')
+          )
+        LIMIT 1
+        """.trimIndent()
+        ).firstOrNull() ?: return null
+
+        return ActionConflict(
+            dateStart = conflict.dateStart,
+            dateEnd = conflict.dateEnd,
+            type = ActionConflictType.RANGE_OVERLAP
+        )
+    }
 
     class CursorToFsTripDestinationAction : Mapper<Cursor, FsTripDestinationAction> {
         @SuppressLint("Range")

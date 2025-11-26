@@ -64,6 +64,7 @@ import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_CREATE_SCRIP
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.multi.event.eventManualTable
 import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScript
 import com.namoadigital.prj001.database.scripts.multi.masterdata.MD_REGION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.masterdata.mdVerificationGroupDatabaseTable
@@ -1870,6 +1871,13 @@ val migrationV25 = object : MigrationSQLite(25, 26) {
         db.execSQL(updateQuery);
 
     }
+}
+
+val migrationV26 = object : MigrationSQLite(26, 27){
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(eventManualTable.generateCreateTableScript())
+    }
+
 }
 
 @Deprecated(message = "Use a função com objeto Column")

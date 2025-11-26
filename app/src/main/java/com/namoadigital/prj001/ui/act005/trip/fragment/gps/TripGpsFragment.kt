@@ -48,7 +48,6 @@ class TripGpsFragment : TripBaseFragment<TripGpsFragmentBinding>() {
             llPlaceholder.apply {
                 ivPlaceholder.setImageResource(R.drawable.location_not_found)
                 tvPlaceholderTtl.text = getPlaceholderTtl()
-                tvPlaceholderSubTtl.text = getPlaceholderSubTtl()
             }
         }
     }

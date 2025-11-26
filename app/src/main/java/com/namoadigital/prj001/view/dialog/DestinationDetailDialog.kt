@@ -1,17 +1,12 @@
 package com.namoadigital.prj001.view.dialog
 
-import android.app.AlertDialog
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.DestinationDialogInfoBinding
-import com.namoadigital.prj001.databinding.DialogUserEditBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
-import com.namoadigital.prj001.extensions.callNavigationIntent
 import com.namoadigital.prj001.extensions.callPhoneIntent
-import com.namoadigital.prj001.extensions.getFormattedAddress
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
 import com.namoadigital.prj001.ui.base.BaseDialog
@@ -30,14 +25,17 @@ class DestinationDetailDialog(
     var dialog: BaseDialog<DestinationDialogInfoBinding>
 
     init {
-        dialog = BaseDialog.Builder(context, DestinationDialogInfoBinding.inflate(LayoutInflater.from(context)))
-                .isCancelable(true)
-                .content { _, binding ->
-                    this.binding = binding
-                    loadTranslation()
-                    setLabels()
-                    setActions()
-                }.build()
+        dialog = BaseDialog.Builder(
+            context,
+            DestinationDialogInfoBinding.inflate(LayoutInflater.from(context))
+        )
+            .isCancelable(true)
+            .content { _, binding ->
+                this.binding = binding
+                loadTranslation()
+                setLabels()
+                setActions()
+            }.build()
     }
 
     private fun loadTranslation() {
@@ -80,7 +78,7 @@ class DestinationDetailDialog(
         with(binding) {
             val isTicket = item.destinationType == FsTripDestination.TICKET_DESTINATION_TYPE
             tvTitle.text = hmTranslation[DIALOG_DETAIL_TITLE]
-            tvSite.text = if(isTicket) hmTranslation[EXTERNAL_ADDRESS] else item.siteDesc
+            tvSite.text = if (isTicket) hmTranslation[EXTERNAL_ADDRESS] else item.siteDesc
 
             if (!item.street.isNullOrEmpty()) {
                 layoutAddress.visibility = View.VISIBLE
@@ -106,20 +104,11 @@ class DestinationDetailDialog(
                 layoutCity.visibility = View.VISIBLE
 
                 tvCity.text = hmTranslation[DIALOG_DETAIL_CITY]
-                val stateFormatted =  if(!item.state.isNullOrBlank()) """ - ${item.state}""" else ""
-                tvCityName.applyVisibilityIfTextExists(item.city + stateFormatted )
+                val stateFormatted = if (!item.state.isNullOrBlank()) """ - ${item.state}""" else ""
+                tvCityName.applyVisibilityIfTextExists(item.city + stateFormatted)
                 tvZipcode.applyVisibilityIfTextExists(item.zipCode)
             } else {
                 layoutCity.visibility = View.GONE
-            }
-
-            openMaps.apply {
-                if(item.street.isNullOrEmpty()){
-                    visibility = View.INVISIBLE
-                }else{
-                    visibility = View.VISIBLE
-                    text = hmTranslation[DIALOG_DETAIL_OPEN_MAPS]
-                }
             }
 
             if (!item.contactName.isNullOrEmpty()) {
@@ -150,22 +139,11 @@ class DestinationDetailDialog(
     private fun setActions() {
         binding.apply {
             callContact.setOnClickListener {
-                context.callPhoneIntent( "tel:${item.contactPhone}",
+                context.callPhoneIntent(
+                    "tel:${item.contactPhone}",
                     hmTranslation[ALERT_NO_CONTACT_APP_FOUND_TTL]!!,
                     hmTranslation[ALERT_NO_CONTACT_APP_FOUND_MSG]!!,
                 )
-            }
-            //
-            openMaps.apply {
-                setOnClickListener { _ ->
-                    val address = getFormattedAddress(item.getMapsAddress())
-
-                    context.callNavigationIntent(
-                        "geo:${item.lat},${item.lon}?q=$address",
-                        hmTranslation[ALERT_NO_NAVIGATION_APP_FOUND_TTL]!!,
-                        hmTranslation[ALERT_NO_NAVIGATION_APP_FOUND_MSG]!!
-                        )
-                }
             }
             //
             ivClose.setOnClickListener {

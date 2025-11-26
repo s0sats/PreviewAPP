@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import com.namoadigital.prj001.dao.util.BaseDaoWithReturn
+import com.namoadigital.prj001.core.database.base.BaseDaoWithReturn
 import com.namoadigital.prj001.model.region.MDRegion
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -29,9 +29,11 @@ class MDRegionDao(
 
     override fun getWherePkClause(item: MDRegion?): StringBuilder {
         item?.let {
-            return StringBuilder().append("" +
-                    "$CUSTOMER_CODE = '${item.customerCode}'" +
-                    " AND $REGION_ID = '${item.code}'")
+            return StringBuilder().append(
+                "" +
+                        "$CUSTOMER_CODE = '${item.customerCode}'" +
+                        " AND $REGION_ID = '${item.code}'"
+            )
         }
         throw Exception("NULL_OBJ_RECEIVED")
     }

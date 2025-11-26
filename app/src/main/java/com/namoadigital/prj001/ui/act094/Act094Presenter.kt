@@ -31,6 +31,7 @@ import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_NO_NAVEGATIO
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_NO_NAVEGATION_APP_FOUND_TTL
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_TRIP_NOT_FOUND_MSG
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_TRIP_NOT_FOUND_TTL
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.SAVE_TRIP_OFFLINE_TOAST
 import com.namoadigital.prj001.ui.act094.util.SelectDestinationUiEvent
 import com.namoadigital.prj001.ui.act094.util.SelectDestinationUiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -40,7 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class Act094Presenter constructor(
+class Act094Presenter(
     private val translateResource: TranslateResource,
     private val destinationsUseCase: DestinationUseCase,
     private val fsTripDao: FSTripDao,
@@ -75,7 +76,7 @@ class Act094Presenter constructor(
         selectionDestinationAvailable: SelectionDestinationAvailable
     ) {
         val trip = fsTripDao.getTrip()
-        val gson = GsonBuilder().serializeNulls().create()
+        GsonBuilder().serializeNulls().create()
         trip?.let {
             if (!ToolBox_Con.isOnline(context)
                 || it.hasUpdateRequired
@@ -231,6 +232,7 @@ class Act094Presenter constructor(
             ALERT_TRIP_NOT_FOUND_MSG,
             ALERT_DESTINATION_SAVE_ERROR_TTL,
             ALERT_DESTINATION_SAVE_ERROR_MSG,
+            SAVE_TRIP_OFFLINE_TOAST
         ).let { list ->
 
             return ToolBox_Inf.setLanguage(

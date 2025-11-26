@@ -9,6 +9,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
+
+//choice do passado que fez essa cagada e no futuro ainda culpou o luquinha, mdsss...
 @ViewModelScoped
 class ValidateDateOnStartTripUseCase @Inject constructor(
     private val tripDestinationRepository: TripDestinationRepository,

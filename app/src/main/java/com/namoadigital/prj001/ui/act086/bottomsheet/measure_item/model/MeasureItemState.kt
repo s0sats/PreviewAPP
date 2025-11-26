@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model
 
 import com.namoadigital.prj001.core.translate.TranslateMap
+import com.namoadigital.prj001.core.viewmodel.TranslateState
 
 data class MeasureItemState(
     val isLoading: Boolean = true,
-    val translate: TranslateMap = emptyMap(),
+    override val translate: TranslateMap = emptyMap(),
     val commonData: CommonData? = null,
-) {
+) : TranslateState {
     data class CommonData(
         val measure: String?,
         val unit: String? = null,

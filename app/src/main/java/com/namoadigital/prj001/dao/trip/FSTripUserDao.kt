@@ -137,7 +137,7 @@ class FSTripUserDao(
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             if (dbInstance == null) {
                 db.endTransaction()
@@ -426,6 +426,17 @@ class FSTripUserDao(
         return query("SELECT * FROM $TABLE WHERE $USER_CODE = $code")
     }
 
+    fun getListUserByTrip(
+        tripPrefix: Int,
+        tripCode: Int
+    ): List<FSTripUser> {
+        return query(
+            "SELECT * FROM $TABLE " +
+                    "WHERE $TRIP_PREFIX = $tripPrefix " +
+                    "AND $TRIP_CODE = $tripCode"
+        )
+    }
+
     fun getListUserByCodeInTrip(
         tripPrefix: Int,
         tripCode: Int,
@@ -451,9 +462,20 @@ class FSTripUserDao(
         )
 
         value?.let {
-            return if(value.hasConsistentValue(USER_SEQ)) value[USER_SEQ]!!.toInt() else 1
+            return if (value.hasConsistentValue(USER_SEQ)) value[USER_SEQ]!!.toInt() else 1
         }
         return 1
+    }
+
+    @Throws(Exception::class)
+    fun updateDoneUsers(endDate: String, db: SQLiteDatabase) {
+        val sql = """
+        UPDATE $TABLE
+        SET $DATE_END = '$endDate'
+        WHERE $DATE_END IS NULL
+        """.trimIndent()
+
+        db.execSQL(sql)
     }
 
     class CursorToFSTripUser : Mapper<Cursor, FSTripUser> {

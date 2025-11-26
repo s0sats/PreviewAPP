@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.core.trip.data.destination.action
 
 import com.namoadigital.prj001.adapter.trip.model.Extract
+import com.namoadigital.prj001.core.trip.domain.model.ActionConflict
 import com.namoadigital.prj001.core.trip.domain.model.TripSiteExtract
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
 import com.namoadigital.prj001.model.trip.FSTrip
@@ -29,4 +30,14 @@ interface TripDestinationActionRepository {
         tripCode: Int,
         destinationSeq: Int
     ): List<TripSiteExtract<FsTripDestinationAction>>
+
+    fun checkDateConflict(
+        tripPrefix: Int,
+        tripCode: Int,
+        destinationSeq: Int?,
+        newStart: String,
+        newEnd: String?
+    ): ActionConflict?
+
+
 }

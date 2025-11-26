@@ -3,7 +3,7 @@ package com.namoadigital.prj001.dao.md
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import com.namoadigital.prj001.dao.util.BaseDaoWithReturn
+import com.namoadigital.prj001.core.database.base.BaseDaoWithReturn
 import com.namoadigital.prj001.model.MDVerificationGroup
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con

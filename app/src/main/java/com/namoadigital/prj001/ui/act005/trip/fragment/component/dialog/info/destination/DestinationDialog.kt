@@ -6,10 +6,12 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationConflict
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase
 import com.namoadigital.prj001.databinding.TripDialogInfoEditBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
 import com.namoadigital.prj001.extensions.date.FormatDateType
@@ -37,17 +39,19 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.uti
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.util.OpenCamera
 import com.namoadigital.prj001.ui.base.BaseDialog
 import com.namoadigital.prj001.util.TextWatcherHelper
+import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class DestinationDialog constructor(
+class DestinationDialog(
     private val context: Context,
     private val trip: FSTrip,
     private val destination: FsTripDestination,
     private val onSave: (SaveDestinationEdit) -> Unit,
+    private val validateDateFromDestination: (prefix: Int, code: Int, destinationSeq: Int?, startDate: String, endDate: String, type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> ValidateDateFromDestinationAndActionUseCase.Output?,
     getDestinationThresholds: (Long, Int, Int, Int?, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
     private val onOpenCamera: OpenCamera
 ) : BaseTripDialog<TripDialogInfoEditBinding>(trip, getDestinationThresholds) {
@@ -207,24 +211,20 @@ class DestinationDialog constructor(
 
         etStartDate.setDelegatePickerChange {
             binding.isValidStartDate()
-            binding.isValidEndDate(false)
 
         }
 
         etStartHour.setDelegatePickerChange {
             binding.isValidStartDate()
-            binding.isValidEndDate(false)
         }
 
         etEndDate.setDelegatePickerChange {
             binding.isValidEndDate()
-            binding.isValidStartDate(false)
 
         }
 
         etEndHour.setDelegatePickerChange {
             binding.isValidEndDate()
-            binding.isValidStartDate(false)
         }
 
         etOdometer.addTextChangedListener(TextWatcherHelper(object :
@@ -441,7 +441,7 @@ class DestinationDialog constructor(
         ivPhoto.apply {
             if (bitmap == null) {
                 visibility = View.GONE
-                if(isUpdatePhoto && !trip.isRequireDestinationFleetData && etOdometer.text.isNullOrEmpty()){
+                if (isUpdatePhoto && !trip.isRequireDestinationFleetData && etOdometer.text.isNullOrEmpty()) {
                     edittextOdometerLayout.hint = getOdometerPhotoLabel(
                         false,
                         hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
@@ -450,7 +450,7 @@ class DestinationDialog constructor(
             } else {
                 visibility = View.VISIBLE
                 setImageBitmap(bitmap)
-                if(isUpdatePhoto && !trip.isRequireDestinationFleetData){
+                if (isUpdatePhoto && !trip.isRequireDestinationFleetData) {
                     edittextOdometerLayout.hint = getOdometerPhotoLabel(
                         true,
                         hmAuxTranslate[TranslateInfoDialogs.DIALOG_ODOMETER_HINT]!!
@@ -517,29 +517,64 @@ class DestinationDialog constructor(
                     btnSave.isEnabled = false
                     isSuccess = false
                 } else {
-                    getDestinationThresholds?.let { invoke ->
-                        val (previousDestination, nextDestination) = invoke(
-                            destination.customerCode,
-                            destination.tripPrefix,
-                            destination.tripCode,
-                            destination.destinationSeq,
-                            GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.PREVIOUS
-                        )
-                        val previousEndDate = previousDestination?.departedDate ?: trip.startDate
-                        previousEndDate?.let {
-                            if (isDateBeforeAndEquals(
-                                    "$dateStart $hourStart",
-                                    previousEndDate.parseDate()
-                                )
-                            ) {
-                                setStartDateError()
-                                tvDateStartInvalid.text =
-                                    "${hmAuxTranslate[DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL]} ${previousEndDate.parseDate()}"
-                                isSuccess = false
-                            }
+
+
+                    val validateDestination = validateDateFromDestination(
+                        destination.tripPrefix,
+                        destination.tripCode,
+                        destination.destinationSeq,
+                        "${etStartDate.text} ${etStartHour.text}".parseFullDate(),
+                        "${etEndDate.text} ${etEndHour.text}".parseFullDate(),
+                        GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.PREVIOUS
+                    )
+
+                    if (validateDestination == null) {
+                        setStartDateLayoutSuccess()
+                        setEndLayoutSuccess()
+                        if (stateButtonValid) updateButtonState()
+                        return@with
+                    }
+
+
+                    val (dateStart, dateEnd, conflict) = validateDestination
+                    val dateStartParsed = dateStart?.parseDate()
+                    val dateEndParsed = dateEnd?.parseDate()
+
+                    when (conflict) {
+                        DestinationConflict.START_OVERLAP -> {
+                            setStartDateError()
+                            tvDateStartInvalid.text =
+                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateStartParsed"
+                            isSuccess = false
                         }
 
+                        DestinationConflict.END_OVERLAP -> {
+                            setEndDateError()
+                            tvDateEndInvalid.text =
+                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
+                            isSuccess = false
+                        }
 
+                        DestinationConflict.RANGE_OVERLAP -> {
+                            setStartDateError()
+                            tvDateStartInvalid.text =
+                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
+                            isSuccess = false
+                        }
+
+                        DestinationConflict.START_DESTINATION_OVERLAP -> {
+                            setStartDateError()
+                            tvDateStartInvalid.text =
+                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
+                            isSuccess = false
+                        }
+
+                        DestinationConflict.END_DESTINATION_OVERLAP -> {
+                            setEndDateError()
+                            tvDateEndInvalid.text =
+                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateStartParsed"
+                            isSuccess = false
+                        }
                     }
                 }
             }
@@ -596,30 +631,85 @@ class DestinationDialog constructor(
 
         with(binding) {
 
+            val startDateFormatted = "${etStartDate.text} ${etStartHour.text}".parseFullDate()
+            val endDateFormatted = "${etEndDate.text} ${etEndHour.text}".parseFullDate()
+
             if (dateIsFuture("$dateEnd $hourEnd")) {
                 setEndDateError()
                 tvDateEndInvalid.text = hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE]
-                btnSave.isEnabled = false
                 return false
             }
 
-            getDestinationThresholds?.let { invoke ->
-                val (previousDestination, nextDestination) = invoke(
-                    destination.customerCode,
-                    destination.tripPrefix,
-                    destination.tripCode,
-                    destination.destinationSeq,
-                    GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.NEXT
+            if (ToolBox_Inf.dateToMilliseconds(startDateFormatted) > ToolBox_Inf.dateToMilliseconds(
+                    endDateFormatted
                 )
-                val startDate = nextDestination?.arrivedDate
-                startDate?.let { startDate ->
-                    if (isDateBeforeAndEquals(startDate.parseDate(), "$dateEnd $hourEnd")) {
-                        setEndDateError()
-                        tvDateEndInvalid.text =
-                            "${hmAuxTranslate[DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL]} ${startDate.parseDate()}"
-                        return false
-                    }
+            ) {
+                setEndDateError()
+                tvDateEndInvalid.text =
+                    hmAuxTranslate[DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL]
+                return false
+            }
+
+            val validateDestination = validateDateFromDestination(
+                destination.tripPrefix,
+                destination.tripCode,
+                destination.destinationSeq,
+                startDateFormatted,
+                endDateFormatted,
+                GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.NEXT
+            )
+
+            if (validateDestination == null) {
+                setStartDateLayoutSuccess()
+                setEndLayoutSuccess()
+                if (stateButtonValid) updateButtonState()
+                return true
+            }
+
+
+            val (dateStart, dateEnd, conflict) = validateDestination
+            val dateStartParsed = dateStart?.parseDate()
+            val dateEndParsed = dateEnd?.parseDate()
+
+            when (conflict) {
+                DestinationConflict.START_OVERLAP -> {
+                    setStartDateError()
+                    tvDateStartInvalid.text =
+                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
+                    return false
                 }
+
+                DestinationConflict.END_OVERLAP -> {
+                    setEndDateError()
+                    tvDateEndInvalid.text =
+                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateEndParsed"
+                    return false
+                }
+
+                DestinationConflict.RANGE_OVERLAP -> {
+                    setEndDateError()
+                    tvDateEndInvalid.text =
+                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
+                    return false
+                }
+
+                DestinationConflict.END_DESTINATION_OVERLAP -> {
+                    setEndDateError()
+                    tvDateEndInvalid.text =
+                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
+                    return false
+                }
+
+                DestinationConflict.START_DESTINATION_OVERLAP -> {
+                    setStartDateError()
+                    tvDateStartInvalid.text =
+                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateEndParsed"
+                    return false
+                }
+
+
+                else -> {}
+
             }
 
             compareDates(
@@ -636,14 +726,18 @@ class DestinationDialog constructor(
                 }
             }
 
-            etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_theme)
-            etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_theme)
-            etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_theme)
-            etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_theme)
-            layoutDateEndInvalid.visibility = View.GONE
             if (stateButtonValid) updateButtonState()
-            return true
         }
+
+        return true
+    }
+
+    private fun TripDialogInfoEditBinding.setEndLayoutSuccess() {
+        etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+        etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+        etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_theme)
+        etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_theme)
+        layoutDateEndInvalid.visibility = View.GONE
     }
 
     private fun TripDialogInfoEditBinding.setEndDateError() {

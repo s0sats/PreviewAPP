@@ -81,6 +81,7 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW
@@ -97,13 +98,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class Act092Presenter constructor(
+class Act092Presenter(
     private var myActionFilterParam: MyActionFilterParam,
     private val originFlow: String?,
     private val iconColor: String,
     private val actionUseCases: ActionUseCases,
     private val translateResource: TranslateResource,
     private val showProductOnFilter: Boolean,
+    private val getEventManualUseCase: GetEventManualUseCase,
 ) : Act092_Contract.Presenter {
 
     var actionSelectedPosition: Int = -1
@@ -317,6 +319,17 @@ class Act092Presenter constructor(
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
+
+        val ignoredList =
+            listOf(MyActions.MY_ACTION_TYPE_TICKET, MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+
+        if (!ignoredList.contains(action.actionType)) {
+            if (hasEventManual()) {
+                view.showAlertEventInExecution()
+                return
+            }
+        }
+
         actionSelected = action
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
@@ -791,16 +804,17 @@ class Act092Presenter constructor(
                 }
 
                 MODULE_TICKET_EXEC_CONFIRM -> {
-                    view.onEvent(Act092UiEvent.OpenDialog(
-                        DialogType.ACTION(
-                            title = Act092Translate.ALERT_TICKET_ACTION_START_TTL,
-                            message = Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM,
-                            { dialog, i ->
-                                checkTicketFlow(item)
+                    view.onEvent(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.ACTION(
+                                title = Act092Translate.ALERT_TICKET_ACTION_START_TTL,
+                                message = Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM,
+                                { dialog, i ->
+                                    checkTicketFlow(item)
 
-                            }
-                        )
-                    ))
+                                }
+                            )
+                        ))
                 }
 
                 MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
@@ -1750,6 +1764,9 @@ class Act092Presenter constructor(
         }
     }
 
+    override fun hasEventManual(): Boolean {
+        return getEventManualUseCase(Unit) != null
+    }
 
     companion object {
         const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR =
@@ -1758,4 +1775,5 @@ class Act092Presenter constructor(
         const val ZONE_NOT_FOUND = "ZONE_NOT_FOUND"
         const val SITE_NOT_FOUND = "SITE_NOT_FOUND"
     }
+
 }

@@ -46,8 +46,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class TripEventRepositoryImp constructor(
+class TripEventRepositoryImp @Inject constructor(
     private val context: Context,
     private val dao: FSEventTypeDao,
     private val eventDao: FSTripEventDao,
@@ -418,6 +419,17 @@ class TripEventRepositoryImp constructor(
         } else {
             null
         }
+    }
+
+    override fun getAllEvents(
+        tripPrefix: Int,
+        tripCode: Int
+    ): List<FSTripEvent> {
+        return eventDao.getAllEventsByTrip(
+            customerCode = context.getCustomerCode(),
+            tripPrefix = tripPrefix,
+            tripCode = tripCode,
+        )
     }
 
 }

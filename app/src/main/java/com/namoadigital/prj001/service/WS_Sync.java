@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.util.FileProcessor;
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
@@ -68,6 +69,7 @@ import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
 import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
 import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
+import com.namoadigital.prj001.dao.event.EventManualDao;
 import com.namoadigital.prj001.dao.md.MDRegionDao;
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao;
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
@@ -144,6 +146,8 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
+import com.namoadigital.prj001.model.event.local.EventManual;
+import com.namoadigital.prj001.model.event.remote.EventManualSync;
 import com.namoadigital.prj001.model.region.MDRegion;
 import com.namoadigital.prj001.model.trip.FSEventType;
 import com.namoadigital.prj001.model.trip.FSTrip;
@@ -216,6 +220,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -237,7 +242,7 @@ public class WS_Sync extends BaseWsIntentService {
     private EV_User_CustomerDao ev_user_customerDao;
     //
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private final String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_sync";
     @Inject
@@ -289,8 +294,8 @@ public class WS_Sync extends BaseWsIntentService {
         try {
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
-            if(dataPackageType!= null
-            && dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+            if (dataPackageType != null
+                    && dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
                 WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
             }
 //            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
@@ -716,6 +721,8 @@ public class WS_Sync extends BaseWsIntentService {
             FsTripPositionDao fsTripPositionDao = new FsTripPositionDao(getApplicationContext());
             MDRegionDao mdRegionDao = new MDRegionDao(getApplicationContext());
             MDVerificationGroupDao mdVerificationGroupdao = new MDVerificationGroupDao(getApplicationContext());
+            EventManualDao eventManualDao = new EventManualDao(getApplicationContext());
+            //
 
             //
             //Apaga dados das tabelas
@@ -757,6 +764,9 @@ public class WS_Sync extends BaseWsIntentService {
             fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
             mdRegionDao.remove(RegionScriptKt.REMOVE_TABLE);
             mdVerificationGroupdao.deleteAll();
+            eventManualDao.deleteAll();
+            //
+
             //
             // Processamento Operation
             //
@@ -981,6 +991,20 @@ public class WS_Sync extends BaseWsIntentService {
                 );
                 mdVerificationGroupdao.addUpdate(mdVerificationGroup, false);
             }
+
+
+            FileProcessor.INSTANCE.processJsonFiles(
+                    "fs_event_manual_by_user-",
+                    new File(ConstantBaseApp.ZIP_PATH),
+                    EventManualSync.class,
+                    dataList -> {
+                        List<EventManual> entities = new ArrayList<>();
+                        for (EventManualSync sync : dataList) {
+                            entities.add(sync.toEntity());
+                        }
+                        eventManualDao.addUpdate(entities, false);
+                    }
+            );
 
             //Libera pro GB
             files_product_group = null;

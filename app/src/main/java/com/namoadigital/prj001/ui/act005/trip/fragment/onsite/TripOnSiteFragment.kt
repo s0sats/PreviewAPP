@@ -22,7 +22,6 @@ import com.namoadigital.prj001.core.data.domain.model.SiteInventory
 import com.namoadigital.prj001.core.trip.domain.model.FormStatus
 import com.namoadigital.prj001.core.trip.domain.model.TripSiteExtract
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
 import com.namoadigital.prj001.dao.MD_ProductDao
@@ -55,9 +54,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -103,10 +99,13 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                     //
                     cvNextDestinationPlaceholder.visibility = View.GONE
                     //
-                    llFooter.btnLeftAction.visibility = View.VISIBLE
-                    llFooter.btnLeftAction.isEnabled = true
-                    llFooter.btnLeftAction.text =
-                        hmAuxTranslate[TripTranslate.TRIP_NEXT_DESTINATION_LBL]
+                    llFooter.btnLeftAction.apply {
+                        visibility = View.VISIBLE
+                        isEnabled = true
+                        text = hmAuxTranslate[TripTranslate.TRIP_NEXT_DESTINATION_LBL]
+                        icon = requireContext().getDrawable(R.drawable.ic_location_on_24)
+                    }
+
                     nextDestination?.let {
                         cvNextDestinationPlaceholder.visibility = View.VISIBLE
                         cvNextDestinationPlaceholder.apply {
@@ -127,7 +126,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                             viewModel.state.value.trip?.isRequireDestinationFleetData == true
                         )
                     ) {
-                        llFooter.btnOutlinedRightAction.isEnabled = false
+                        llFooter.btnRightAction.isEnabled = false
                         //
                         cardOdometer.root.visibility = View.VISIBLE
                         cardOdometer.cardEvent.setCardBackgroundColor(
@@ -239,7 +238,11 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                                 llDestinationActions.removeAllViews()
                                 destinationActionList.forEachIndexed { index, tripSiteExtract ->
                                     llDestinationActions.addView(
-                                        getActionItemView(tripSiteExtract, destinationActionList.size, index == destinationActionList.size - 1)
+                                        getActionItemView(
+                                            tripSiteExtract,
+                                            destinationActionList.size,
+                                            index == destinationActionList.size - 1
+                                        )
                                     )
                                 }
                             }
@@ -275,7 +278,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
         destinationAction: TripSiteExtract<*>,
         listSize: Int,
         isLastItem: Boolean,
-    ): View? {
+    ): View {
         val actionView = CardDestinationActionOnsiteBinding.inflate(LayoutInflater.from(context))
         val model = destinationAction.model
         actionView.apply {
@@ -283,11 +286,11 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                 vLine.visibility = View.GONE
             }
 
-            if(isLastItem){
+            if (isLastItem) {
                 vLine.visibility = View.GONE
             }
 
-            btnOpenFormOs.text = hmAuxTranslate[TripTranslate.TRIP_ACTION_FORM_OS_BTN]
+            btnOpenFormOs.text = hmAuxTranslate[TRIP_ACTION_FORM_OS_BTN]
             btnOpenTicket.text = hmAuxTranslate[TripTranslate.TRIP_ACTION_TICKET_BTN]
 
             val containsTicketPK: (Int?, Int?) -> Boolean = { prefix, code ->
@@ -385,7 +388,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
 
                     if (!containsTicketPK(model.ticket_prefix, model.ticket_code)) {
                         btnOpenTicket.visibility = View.GONE
-                    }else{
+                    } else {
                         btnOpenTicket.setOnClickListener {
                             ticketFlow(model.ticket_prefix, model.ticket_code!!)
                         }
@@ -401,11 +404,12 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                     btnSaveToStyleFilled(this)
 
                     btnOpenFormOs.apply {
-                        text = if(model.custom_form_status == ConstantBase.SYS_STATUS_WAITING_SYNC){
-                            hmAuxTranslate[TRIP_ACTION_FORM_OS_BTN]
-                        }else{
-                            hmAuxTranslate[BTN_CONTINUE_OS]
-                        }
+                        text =
+                            if (model.custom_form_status == ConstantBase.SYS_STATUS_WAITING_SYNC) {
+                                hmAuxTranslate[TRIP_ACTION_FORM_OS_BTN]
+                            } else {
+                                hmAuxTranslate[BTN_CONTINUE_OS]
+                            }
                         setOnClickListener {
                             tripActionListener?.callActivityOs(makeBundleForm(model))
                         }
@@ -442,8 +446,9 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
             )
 
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, form.site_code.toString())
-            if(form.ticket_prefix != null
-                && form.ticket_code != null) {
+            if (form.ticket_prefix != null
+                && form.ticket_code != null
+            ) {
                 bundle.putInt(TK_Ticket_CtrlDao.TICKET_PREFIX, form.ticket_prefix)
                 bundle.putInt(TK_Ticket_CtrlDao.TICKET_CODE, form.ticket_code)
                 bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, form.ticket_seq)
@@ -491,12 +496,12 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
         binding.apply {
             //
             llFooter.apply {
-                llFooter.btnOutlinedRightAction.visibility = View.VISIBLE
-                llFooter.btnOutlinedRightAction.isEnabled = true
-                llFooter.btnOutlinedRightAction.icon =
+                llFooter.btnRightAction.visibility = View.VISIBLE
+                llFooter.btnRightAction.isEnabled = true
+                llFooter.btnRightAction.icon =
                     requireContext().getDrawable(R.drawable.ic_site_departed)
                         ?.let { DrawableCompat.wrap(it) }
-                llFooter.btnOutlinedRightAction.text =
+                llFooter.btnRightAction.text =
                     hmAuxTranslate[TripTranslate.TRIP_DEPARTED_LBL]
             }
             //
@@ -517,7 +522,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                     tripActionListener?.addDestination()
                 }
                 //
-                btnOutlinedRightAction.setOnClickListener {
+                btnRightAction.setOnClickListener {
                     showConfirmDialog(
                         hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_TTL],
                         hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_MSG],
@@ -635,7 +640,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                 viewModel.state.value.trip?.isRequireDestinationFleetData == true
             )
         ) {
-            binding.llFooter.btnOutlinedRightAction.isEnabled = !formInProcess
+            binding.llFooter.btnRightAction.isEnabled = !formInProcess
             binding.cardOdometer.root.visibility = View.GONE
         }
     }

@@ -20,6 +20,8 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.TranslateBuild
+import com.namoadigital.prj001.core.translate.di.EventTranslate
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MdJustifyItemDao
@@ -53,23 +55,36 @@ import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act092.utils.FilterFocusUser
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase
+import com.namoadigital.prj001.ui.act095.event_manual.translate.EventManualKey
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class Act092_Main : BaseActivityMvp
 <Act092_Contract.Presenter,
         Act092MainBinding>(),
     Act092_Contract.View {
     override lateinit var bundle: Bundle
     var clearDueToOtherActionBtn = false
+
+    @Inject
+    lateinit var getEventManualUseCase: GetEventManualUseCase
+
+    @EventTranslate
+    @Inject
+    lateinit var translateBuild: TranslateBuild
+
     override fun showPD(ttl: String?, msg: String?) {
         enableProgressDialog(
             ttl,
@@ -123,7 +138,8 @@ class Act092_Main : BaseActivityMvp
                 mModule_Code,
                 mResource_Code
             ),
-            showProductOnFilter = bundle.getBoolean(ConstantBaseApp.SHOW_PRODUCT_IN_ACT006, false)
+            showProductOnFilter = bundle.getBoolean(ConstantBaseApp.SHOW_PRODUCT_IN_ACT006, false),
+            getEventManualUseCase
         )
     }
 
@@ -329,6 +345,7 @@ class Act092_Main : BaseActivityMvp
 
     override fun initTrans() {
         hmAux_Trans = presenter.getTranslation()
+        hmAux_Trans.putAll(translateBuild.build())
     }
 
     private fun updateList() {
@@ -410,7 +427,7 @@ class Act092_Main : BaseActivityMvp
 
             btnOtherSerial.setOnClickListener {
                 _focusState.value = focusState.value.copy(
-                    mainUser = if (context.isCurrentTrip()) true else false,
+                    mainUser = context.isCurrentTrip(),
                     userFocus = !focusState.value.userFocus
                 )
 
@@ -430,6 +447,10 @@ class Act092_Main : BaseActivityMvp
 
             }
             btnCreateAction.setOnClickListener {
+                if (presenter.hasEventManual()) {
+                    showAlertEventInExecution()
+                    return@setOnClickListener
+                }
                 presenter.processNewFormClick(context)
             }
 
@@ -446,6 +467,17 @@ class Act092_Main : BaseActivityMvp
                 }
             })
         }
+    }
+
+    override fun showAlertEventInExecution() {
+        onEvent(
+            OpenDialog(
+                dialogType = DialogType.DEFAULT_OK(
+                    title = EventManualKey.ErrorEventInExecutionTitle.key,
+                    message = EventManualKey.ErrorEventInExecutionMsg.key
+                )
+            )
+        )
     }
 
     /*
@@ -697,7 +729,8 @@ class Act092_Main : BaseActivityMvp
                 act070IvJustifyPhotoBtn.visibility = View.GONE
 
                 setLabel(myAction)
-                setActions(myAction,
+                setActions(
+                    myAction,
                     closeDialog = {
                         dialog.hide()
                     }

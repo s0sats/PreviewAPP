@@ -1,13 +1,12 @@
 package com.namoadigital.prj001.dao;
 
-import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_IN_PROCESSING;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -17,7 +16,10 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_Get_Last_Date;
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict;
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -115,36 +117,34 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         this.toGE_Custom_Form_DataMapper = new GE_Custom_Form_DataMapper();
     }
 
-    public void addUpdate(GE_Custom_Form_Data custom_form_data, SQLiteDatabase dbInstance){
-        if(dbInstance == null) {
+    public void addUpdate(GE_Custom_Form_Data custom_form_data, SQLiteDatabase dbInstance) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
         try {
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+                String sbWhere = CUSTOMER_CODE + " = '" + custom_form_data.getCustomer_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_TYPE + " = '" + custom_form_data.getCustom_form_type() + "'" +
+                        " and " +
+                        CUSTOM_FORM_CODE + " = '" + custom_form_data.getCustom_form_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_VERSION + " = '" + custom_form_data.getCustom_form_version() + "'" +
+                        " and " +
+                        CUSTOM_FORM_DATA + " = '" + custom_form_data.getCustom_form_data() + "'";
 
-                db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+                db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere, null);
             }
 
         } catch (Exception e) {
             Log.d("GE_UPDATE", e.getMessage());
-        } finally {
         }
 
-        if(dbInstance == null) closeDB();
+        if (dbInstance == null) closeDB();
     }
 
     @Override
@@ -169,18 +169,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         try {
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+                String sbWhere = CUSTOMER_CODE + " = '" + custom_form_data.getCustomer_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_TYPE + " = '" + custom_form_data.getCustom_form_type() + "'" +
+                        " and " +
+                        CUSTOM_FORM_CODE + " = '" + custom_form_data.getCustom_form_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_VERSION + " = '" + custom_form_data.getCustom_form_version() + "'" +
+                        " and " +
+                        CUSTOM_FORM_DATA + " = '" + custom_form_data.getCustom_form_data() + "'";
 
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere, null);
             }
 
         } catch (Exception e) {
@@ -217,18 +216,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             for (GE_Custom_Form_Data custom_form_data : custom_form_datas) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
-                    StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+                    String sbWhere = CUSTOMER_CODE + " = '" + custom_form_data.getCustomer_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_TYPE + " = '" + custom_form_data.getCustom_form_type() + "'" +
+                            " and " +
+                            CUSTOM_FORM_CODE + " = '" + custom_form_data.getCustom_form_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_VERSION + " = '" + custom_form_data.getCustom_form_version() + "'" +
+                            " and " +
+                            CUSTOM_FORM_DATA + " = '" + custom_form_data.getCustom_form_data() + "'";
 
-                    db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+                    db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere, null);
                 }
             }
 
@@ -257,18 +255,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             for (GE_Custom_Form_Data custom_form_data : custom_form_datas) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
-                    StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+                    String sbWhere = CUSTOMER_CODE + " = '" + custom_form_data.getCustomer_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_TYPE + " = '" + custom_form_data.getCustom_form_type() + "'" +
+                            " and " +
+                            CUSTOM_FORM_CODE + " = '" + custom_form_data.getCustom_form_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_VERSION + " = '" + custom_form_data.getCustom_form_version() + "'" +
+                            " and " +
+                            CUSTOM_FORM_DATA + " = '" + custom_form_data.getCustom_form_data() + "'";
 
-                    db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+                    db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere, null);
                 }
             }
 
@@ -294,7 +291,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             db.execSQL(s_query);
 
         } catch (Exception e) {
-        } finally {
         }
 
         closeDB();
@@ -310,7 +306,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -361,7 +356,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-        } finally {
         }
 
         closeDB();
@@ -390,7 +384,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             //
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-        } finally {
         }
 
         if (dbInstance == null) {
@@ -417,7 +410,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -443,7 +435,6 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -467,13 +458,83 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
 
         return custom_form_datas;
     }
+
+    public EventConflict getConflictingForm(long customerCode, @NonNull String startDate, @Nullable String endDate) {
+
+        // Conflito de início
+        List<GE_Custom_Form_Data> startConflict = query(
+                "SELECT * FROM " + TABLE +
+                        " WHERE " + CUSTOMER_CODE + " = " + customerCode +
+                        " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+                        ConstantBaseApp.SYS_STATUS_DONE + "', '" +
+                        ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
+                        " AND " + DATE_START + " <= '" + startDate + "'" +
+                        " AND (" + DATE_END + " IS NULL OR " + DATE_END + " >= '" + startDate + "')" +
+                        " ORDER BY " + DATE_START + " ASC LIMIT 1"
+        );
+
+        if (!startConflict.isEmpty()) {
+            GE_Custom_Form_Data form = startConflict.get(0);
+            return new EventConflict(
+                    form.getDate_start(),
+                    form.getDate_end(),
+                    EventConflictType.START_OVERLAP
+            );
+        }
+
+        //  Conflito de término
+        if (endDate != null) {
+            List<GE_Custom_Form_Data> endConflict = query(
+                    "SELECT * FROM " + TABLE +
+                            " WHERE " + CUSTOMER_CODE + " = " + customerCode +
+                            " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+                            ConstantBaseApp.SYS_STATUS_DONE + "', '" +
+                            ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
+                            " AND " + DATE_START + " <= '" + endDate + "'" +
+                            " AND (" + DATE_END + " IS NULL OR " + DATE_END + " >= '" + endDate + "')" +
+                            " ORDER BY " + DATE_START + " ASC LIMIT 1"
+            );
+
+            if (!endConflict.isEmpty()) {
+                GE_Custom_Form_Data form = endConflict.get(0);
+                return new EventConflict(
+                        form.getDate_start(),
+                        form.getDate_end(),
+                        EventConflictType.END_OVERLAP
+                );
+            }
+
+            //  O formulário atual engloba completamente outro
+            List<GE_Custom_Form_Data> rangeConflict = query(
+                    "SELECT * FROM " + TABLE +
+                            " WHERE " + CUSTOMER_CODE + " = " + customerCode +
+                            " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+                            ConstantBaseApp.SYS_STATUS_DONE + "', '" +
+                            ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
+                            " AND " + DATE_START + " >= '" + startDate + "'" +
+                            " AND (" + DATE_END + " IS NULL OR " + DATE_END + " <= '" + endDate + "')" +
+                            " ORDER BY " + DATE_START + " ASC LIMIT 1"
+            );
+
+            if (!rangeConflict.isEmpty()) {
+                GE_Custom_Form_Data form = rangeConflict.get(0);
+                return new EventConflict(
+                        form.getDate_start(),
+                        form.getDate_end(),
+                        EventConflictType.RANGE_OVERLAP
+                );
+            }
+        }
+
+        return null;
+    }
+
 
     private class GE_Custom_Form_DataMapper implements Mapper<Cursor, GE_Custom_Form_Data> {
         @Override
@@ -899,7 +960,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             Integer code,
             Integer version,
             Long data
-    ){
+    ) {
         return getByString(
                 new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
                         customerCode.toString(),

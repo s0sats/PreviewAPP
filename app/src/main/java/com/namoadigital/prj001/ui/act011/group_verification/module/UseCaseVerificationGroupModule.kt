@@ -46,10 +46,4 @@ object UseCaseVerificationGroupModule {
         repository: GeOsRepository,
     ): UpdateGroupActiveUseCase = UpdateGroupActiveUseCase(repository)
 
-    @ViewModelScoped
-    @Provides
-    fun providesGeOsVgDao(
-        @ApplicationContext app: Context
-    ) = GeOsVgDao(app)
-
 }

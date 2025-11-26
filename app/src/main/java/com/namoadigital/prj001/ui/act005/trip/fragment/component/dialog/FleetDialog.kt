@@ -13,9 +13,16 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.adapter.trip.model.ExtractType
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.databinding.TripDialogFleetBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
+import com.namoadigital.prj001.extensions.date.FormatDateType
+import com.namoadigital.prj001.extensions.date.formatDate
+import com.namoadigital.prj001.extensions.date.getCurrentDateApi
+import com.namoadigital.prj001.extensions.parseDatePair
+import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.setBoxStrokeColorState
 import com.namoadigital.prj001.extensions.setHintTextColor
 import com.namoadigital.prj001.extensions.watchStatus
@@ -39,6 +46,12 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ODOMET
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE_END_TRIP_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.PhotoUpdate
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_END_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_HINT
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_START_EXCEEDED_TRIP_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_DATE_END_TRIP_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_HOUR_HINT
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.util.OpenCamera
 import com.namoadigital.prj001.ui.base.BaseDialog
 import com.namoadigital.prj001.util.TextWatcherHelper
@@ -49,15 +62,16 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
-class FleetDialog constructor(
+class FleetDialog(
     private val context: Context,
     private val hmAuxTranslate: HMAux,
     private val trip: FSTrip,
     private val destination: FsTripDestination?,
     private val target: TripTarget,
+    private val onSave: (endDate: String, fleetPlate: String, odometer: Long?, photoUpdate: PhotoUpdate) -> Unit,
+    private val validateDate: (String) -> Pair<String, ExtractType>?,
+    private val onOpenCamera: OpenCamera,
     getDestinationThresholds: (Long, Int, Int, Int, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
-    private val onSave: (fleetPlate: String, odometer: Long?, photoUpdate: PhotoUpdate) -> Unit,
-    private val onOpenCamera: OpenCamera
 ) : BaseTripDialog<TripDialogFleetBinding>(trip, getDestinationThresholds) {
 
     private val isRequiredFields = trip.isRequiredFleetData
@@ -215,9 +229,9 @@ class FleetDialog constructor(
             //
             btnCancel.text = hmAuxTranslate[CANCEL]
             btnSave.apply {
-                text = if(target == TripTarget.END){
+                text = if (target == TripTarget.END) {
                     hmAuxTranslate[SAVE_END_TRIP_BTN]
-                }else{
+                } else {
                     hmAuxTranslate[SAVE]
                 }
             }
@@ -225,13 +239,15 @@ class FleetDialog constructor(
             buttonOdometerPhoto.visibility = View.VISIBLE
             if (checkDataRequired()) {
                 setRequiredOdometerPhotoButton()
-            }else{
-                if(target == TripTarget.END) {
+            } else {
+                if (target == TripTarget.END) {
                     btnSave.isEnabled = true
                 }
             }
             setEditTextListeners()
         }
+        finalizeTripDate()
+
     }
 
     private fun TripDialogFleetBinding.setRequiredOdometerPhotoButton() {
@@ -278,7 +294,8 @@ class FleetDialog constructor(
             android.R.color.transparent,
             null
         )
-        buttonOdometerPhoto.text = getOdometerPhotoLabel(false, hmAuxTranslate[FLEET_DIALOG_PHOTO]!!)
+        buttonOdometerPhoto.text =
+            getOdometerPhotoLabel(false, hmAuxTranslate[FLEET_DIALOG_PHOTO]!!)
         edittextOdometerLayout.apply {
             hint = hmAuxTranslate[FLEET_DIALOG_ODOMETER]
             setBoxStrokeColorState(context, R.drawable.edittext_theme_outlined)
@@ -447,7 +464,7 @@ class FleetDialog constructor(
             val visiblePhoto = ivPhoto.isVisible
             val fleetPlateVisible = edittextFleetPlateLayout.isVisible
 
-            val shouldShowBothErrors = (fleetPlateVisible && !isValidFleetPlate )&& !isValidOdometer
+            val shouldShowBothErrors = (fleetPlateVisible && !isValidFleetPlate) && !isValidOdometer
 
             val shouldShowFleetPlateError = fleetPlateVisible && !isValidFleetPlate
 
@@ -459,24 +476,40 @@ class FleetDialog constructor(
 
             if (!isValidOdometer && isOdometerTouched) {
                 showOdometerError()
-            }else{
+            } else {
                 layoutOdometerInvalid.visibility = View.GONE
             }
             //
             val odometerRestrictionValid = checkOdometerRestriction()
             //
             when {
+
+                dateEditLayout.isVisible && !isValidEndDate() -> {
+                    changeEnabledSave(false)
+                }
+
                 isValidOdometer && visiblePhoto.not() -> changeEnabledSave(false)
                 visiblePhoto && isValidOdometer.not() -> changeEnabledSave(false)
-                fleetPlateVisible.not() && visiblePhoto.not() && isValidOdometer.not() -> changeEnabledSave(false)
+                fleetPlateVisible.not() && visiblePhoto.not() && isValidOdometer.not() -> changeEnabledSave(
+                    false
+                )
+
                 shouldShowBothErrors -> showBothErrors()
                 isEqualsFields() -> changeEnabledSave(false)
-                !shouldShowFleetPlateError && (visiblePhoto.not() || isValidOdometer.not()) -> changeEnabledSave(false)
-                shouldShowFleetPlateError && (visiblePhoto || isValidOdometer) -> changeEnabledSave(false)
-                odometerRestrictionValid.not() -> {
+                !shouldShowFleetPlateError && (visiblePhoto.not() || isValidOdometer.not()) -> changeEnabledSave(
+                    false
+                )
+
+                shouldShowFleetPlateError && (visiblePhoto || isValidOdometer) -> changeEnabledSave(
+                    false
+                )
+
+                edittextOdometerLayout.isVisible && odometerRestrictionValid.not() -> {
                     setRequiredOdometerPhotoButton()
                     changeEnabledSave(false)
                 }
+
+
                 else -> changeEnabledSave(true)
             }
         }
@@ -484,8 +517,9 @@ class FleetDialog constructor(
 
     private fun TripDialogFleetBinding.checkOdometerRestriction(): Boolean {
 
-        if(!etOdometer.text.isNullOrEmpty()
-            && trip.tripStatus.toTripStatus() != TripStatus.PENDING){
+        if (!etOdometer.text.isNullOrEmpty()
+            && trip.tripStatus.toTripStatus() != TripStatus.PENDING
+        ) {
 
             val inputOdometerValidErrorMsg =
                 isInputOdometerValid(
@@ -522,6 +556,7 @@ class FleetDialog constructor(
                     setRequiredOdometerPhotoButton()
                     changeEnabledSave(false)
                 }
+
                 visiblePhoto && !isValidOdometer -> {
                     setRequiredOdometerPhotoButton()
                     setOdometerErrorLayout(
@@ -534,6 +569,7 @@ class FleetDialog constructor(
                     )
                     changeEnabledSave(false)
                 }
+
                 isEqualsFields() -> {
                     setOdometerErrorLayout(
                         context,
@@ -546,6 +582,7 @@ class FleetDialog constructor(
                     setOptionalOdometerPhotoButton()
                     changeEnabledSave(false)
                 }
+
                 else -> {
                     setOdometerErrorLayout(
                         context,
@@ -555,9 +592,9 @@ class FleetDialog constructor(
                         hmAuxTranslate[ODOMETER_EDITTEXT_ERROR] ?: "",
                         View.GONE
                     )
-                    if(!isRequiredFields && isValidOdometer){
-                       setRequiredOdometerPhotoButton()
-                    }else{
+                    if (!isRequiredFields && isValidOdometer) {
+                        setRequiredOdometerPhotoButton()
+                    } else {
                         setOptionalOdometerPhotoButton()
                     }
                     changeEnabledSave(true)
@@ -623,8 +660,14 @@ class FleetDialog constructor(
         val fleetPlate = etFleetPlate.text.toString()
         val odometer = etOdometer.text.toString()
 
+        val date = etEndDate.text.toString()
+        val hour = etEndHour.text.toString()
+        val fullDate = "$date $hour".parseFullDate(false)
+
+
         saveImage()
         onSave(
+            fullDate,
             fleetPlate,
             odometer.takeIf { it.isNotEmpty() }?.toLong(),
             PhotoUpdate(
@@ -664,4 +707,96 @@ class FleetDialog constructor(
             TripTarget.END -> handlePhoto(context, endImage, newPathFile)
         }
     }
+
+    private fun finalizeTripDate() = with(binding) {
+        if (target != TripTarget.END) {
+            dateEditLayout.isVisible = false
+            return@with
+        }
+
+        dateEditLayout.isVisible = true
+
+        val currentDateApi = getCurrentDateApi(false)
+        val (date, hour) = currentDateApi.parseDatePair()
+
+
+        etLayoutEndDate.hint = hmAuxTranslate.textOf(DIALOG_DATE_HINT)
+        etLayoutEndHour.hint = hmAuxTranslate.textOf(DIALOG_HOUR_HINT)
+        tvEndDate.text = hmAuxTranslate.textOf(DIALOG_DATE_END_LBL)
+
+
+        etEndDate.setText(date)
+        etEndHour.setText(hour)
+
+        etEndDate.setDelegatePickerChange {
+            handleRequiredFields()
+        }
+
+        etEndHour.setDelegatePickerChange {
+            handleRequiredFields()
+        }
+    }
+
+    private fun isValidEndDate(): Boolean = with(binding) {
+        val date = etEndDate.text.toString()
+        val hour = etEndHour.text.toString()
+        val fullDate = "$date $hour"
+
+        val parsedDate = fullDate.parseFullDate(false)
+
+        if (dateIsFuture(fullDate)) {
+            showDateEndError(
+                hmAuxTranslate.textOf(DIALOG_ERROR_FUTURE_DATE)
+            )
+            return false
+        }
+
+        val validationResult = validateDate(parsedDate)
+
+        if (validationResult == null) {
+            clearDateEndError()
+            return true
+        }
+
+        val (invalidDate, type) = validationResult
+        if(type == ExtractType.START_TRIP){
+            showDateEndError(
+                hmAuxTranslate.textOf(DIALOG_DATE_START_EXCEEDED_TRIP_LBL)
+            )
+        }else{
+            val formattedDate = context.formatDate(FormatDateType.DateAndHour(invalidDate))
+            showDateEndError(
+                "${hmAuxTranslate.textOf(DIALOG_ERROR_DATE_END_TRIP_LBL)} $formattedDate"
+            )
+        }
+        return false
+    }
+
+    private fun showDateEndError(message: String) = with(binding) {
+        setStartDateError()
+        tvDateEndInvalid.text = message
+        layoutDateEndInvalid.isVisible = true
+        tvDateEndInvalid.isVisible = true
+    }
+
+    private fun clearDateEndError() = with(binding) {
+        resetStartDate()
+        layoutDateEndInvalid.isVisible = false
+        tvDateEndInvalid.isVisible = false
+    }
+
+    private fun resetStartDate() = with(binding) {
+        etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+        etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_theme)
+        etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_theme)
+        etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_theme)
+    }
+
+    fun setStartDateError() = with(binding) {
+        etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_error)
+        etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_error)
+        etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_error)
+        etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_error)
+    }
+
 }

@@ -3,30 +3,56 @@ package com.namoadigital.prj001.ui.act084
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.event.EventManualDao
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.TK_Ticket
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006
+import com.namoadigital.prj001.sql.SqlAct084_001
+import com.namoadigital.prj001.sql.SqlAct084_002
+import com.namoadigital.prj001.sql.SqlAct084_003
+import com.namoadigital.prj001.sql.SqlAct084_004
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.historic.domain.EventHistoricToMyActionsBase
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Act084MainPresenter(
-        private val context: Context,
-        private val mView: Act084Main,
-        private val bundle: Bundle,
-        private val mModule_Code: String,
-        private val mResource_Code: String,
-        private val ticketDao: TK_TicketDao,
-        private val scheduleDao: MD_Schedule_ExecDao,
-        private val formApDao: GE_Custom_Form_ApDao,
-        private val formLocalDao: GE_Custom_Form_LocalDao
+    private val context: Context,
+    private val mView: Act084Main,
+    private val bundle: Bundle,
+    private val mModule_Code: String,
+    private val mResource_Code: String,
+    private val ticketDao: TK_TicketDao,
+    private val scheduleDao: MD_Schedule_ExecDao,
+    private val formApDao: GE_Custom_Form_ApDao,
+    private val formLocalDao: GE_Custom_Form_LocalDao
 ) : Act084MainContract.I_Presenter {
     private lateinit var myActionFilterParam: MyActionFilterParam
-    private var launch : Job? = null
+    private var launch: Job? = null
     private var _myActionsList = mutableListOf<MyActionsBase>()
-    val myActionsList : MutableList<MyActionsBase>
+    val myActionsList: MutableList<MyActionsBase>
         get() {
             return _myActionsList
         }
@@ -34,40 +60,40 @@ class Act084MainPresenter(
         loadTranslation()
     }
     private val originFlow = ConstantBaseApp.ACT084
-    private var initialTabToLoad : Int = 1
-    private var initialTextFilter : String? = null
-    private var initialNcFilter : Boolean = false
-    private var _lastSelectedActionPk : String? = null
-    private var _lastSelectedActionType : String? = null
-    val lastSelectedActionPk :String?
+    private var initialTabToLoad: Int = 1
+    private var initialTextFilter: String? = null
+    private var initialNcFilter: Boolean = false
+    private var _lastSelectedActionPk: String? = null
+    private var _lastSelectedActionType: String? = null
+    val lastSelectedActionPk: String?
         get() = _lastSelectedActionPk
-    val lastSelectedActionType :String?
+    val lastSelectedActionType: String?
         get() = _lastSelectedActionType
 
 
     init {
         recoverIntentsInfo()
         setViewFiltersParam()
-        generateMyActionList(initialTabToLoad,initialNcFilter)
+        generateMyActionList(initialTabToLoad, initialNcFilter)
     }
 
     private fun recoverIntentsInfo() {
         myActionFilterParam =
-                (bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?)
+            (bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?)
                 ?: MyActionFilterParam()
-       // originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
+        // originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         initialTextFilter = myActionFilterParam.paramTextFilter
         initialTabToLoad = myActionFilterParam.paramItemSelectedTab ?: 1
         _lastSelectedActionPk = myActionFilterParam.paramItemSelectedPk
         _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
-        initialNcFilter = myActionFilterParam.paramNcFilter?: false
+        initialNcFilter = myActionFilterParam.paramNcFilter ?: false
     }
 
     private fun setViewFiltersParam() {
         mView.setViewFiltersParam(
-                initialTextFilter,
-                initialTabToLoad,
-                initialNcFilter
+            initialTextFilter,
+            initialTabToLoad,
+            initialNcFilter
         )
     }
 
@@ -94,15 +120,15 @@ class Act084MainPresenter(
         //
         return ToolBox_Inf.setLanguage(
             context,
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(context),
+            transList
         )
     }
 
     override fun updateMyActionList(userFocusFilter: Int, ncFilterOn: Boolean) {
-        generateMyActionList(userFocusFilter,ncFilterOn)
+        generateMyActionList(userFocusFilter, ncFilterOn)
     }
 
     private fun generateMyActionList(tabDone: Int, orignalNcFilterOn: Boolean) {
@@ -110,59 +136,62 @@ class Act084MainPresenter(
         _myActionsList.clear()
         //Cancela a coroutine em execução caso ainda exista.
         launch?.let {
-            if(it.isActive){
+            if (it.isActive) {
                 it.cancel()
             }
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
             //Antes de gerar lista exibida, calcula o contador da outra aba o.O
-            val otherCounter :Int = getOtherTabCounter(tabDone,ncFilterOn)
+            val otherCounter: Int = getOtherTabCounter(tabDone, ncFilterOn)
             //LUCHE - 11/06/2021
             //A pedido do andre se aba descartado, não aplica filtro de NC
-            if(tabDone == 0){
+            if (tabDone == 0) {
                 ncFilterOn = false
             }
             /*
             * Como somente agendamento de form e form possuem nc, somente busca ticket e form ap se
             * filtro ncFilterOn desativado
             * */
-            if(!ncFilterOn) {
+            if (!ncFilterOn) {
                 _myActionsList.addAll(
-                        getLocalTickets(tabDone).map {
-                            val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
-                            TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
-                        }
+                    getLocalTickets(tabDone).map {
+                        val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                        TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+                    }
                 )
             }
             //
             _myActionsList.addAll(
-                    getSchedules(tabDone, ncFilterOn).map {
-                        val lastScheduleSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
-                        it.toMyActionsObj(context,lastScheduleSelected)
-                    }
+                getSchedules(tabDone, ncFilterOn).map {
+                    val lastScheduleSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
+                    it.toMyActionsObj(context, lastScheduleSelected)
+                }
             )
             //
-            if(!ncFilterOn) {
+            if (!ncFilterOn) {
                 _myActionsList.addAll(
-                        getFormAp(tabDone).map {
-                            val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
-                            it.toMyActionsObj(context, lastFormApSelected)
-                        }
+                    getFormAp(tabDone).map {
+                        val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
+                        it.toMyActionsObj(context, lastFormApSelected)
+                    }
                 )
             }
 
             myActionsList.addAll(
-                    getLocalForms(tabDone,ncFilterOn).map {
-                        val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
-                        GE_Custom_Form_Local.toMyActionsObj(context, it,lastFormSelected, true)
-                    }
+                getLocalForms(tabDone, ncFilterOn).map {
+                    val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
+                    GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected, true)
+                }
             )
+
+            _myActionsList.addAll(getManualEvents())
             //
             _myActionsList.sortByDescending {
                 when (it) {
                     is MyActions -> it.orderBy
                     is MyActionsFormButton -> it.orderBy
+                    is EventHistoricToMyActionsBase -> it.date
                     else -> "190001010000"
                 }
             }
@@ -183,19 +212,24 @@ class Act084MainPresenter(
      * retornada
      */
     private fun getOtherTabCounter(tabUserFocusFilter: Int, originalNcFilterOn: Boolean): Int {
-        val otherTab = if(tabUserFocusFilter == 1) 0 else 1
+        val otherTab = if (tabUserFocusFilter == 1) 0 else 1
         //Quando otherTab  == 0 , desconsidera o filtro por NC
-        val ncFilterOn = if(otherTab == 0) false else originalNcFilterOn
+        val ncFilterOn = if (otherTab == 0) false else originalNcFilterOn
         var counter = 0
         //
-        if(!ncFilterOn) {
+        if (!ncFilterOn) {
             counter += getLocalTickets(otherTab).size
             counter += getFormAp(otherTab).size
         }
-        counter += getSchedules(otherTab,ncFilterOn).size
-        counter += getLocalForms(otherTab,ncFilterOn).size
+        counter += getSchedules(otherTab, ncFilterOn).size
+        counter += getLocalForms(otherTab, ncFilterOn).size
         //
         return counter
+    }
+
+    private fun getManualEvents(): List<EventHistoricToMyActionsBase> {
+        val eventDao = EventManualDao(context)
+        return eventDao.getEventsToHistoric()
     }
 
     /**
@@ -204,38 +238,38 @@ class Act084MainPresenter(
      * Usado para passar a pk somente para a lista de acton do memso tipo da navegada
      */
     private fun getLastSelectedPk(myActionType: String) =
-            if (_lastSelectedActionType == myActionType) {
-                _lastSelectedActionPk
-            } else {
-                null
-            }
+        if (_lastSelectedActionType == myActionType) {
+            _lastSelectedActionPk
+        } else {
+            null
+        }
 
     private fun getLocalTickets(tabDone: Int): MutableList<HMAux> {
         return ticketDao.query_HM(
-                SqlAct084_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        tabDone,
-                        hmAuxTrans["other_steps_available_lbl"]
-                ).toSqlQuery()
+            SqlAct084_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                tabDone,
+                hmAuxTrans["other_steps_available_lbl"]
+            ).toSqlQuery()
         )
     }
 
     private fun getSchedules(tabDone: Int, ncFilterOn: Boolean): MutableList<MD_Schedule_Exec> {
         return scheduleDao.query(
-                SqlAct084_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ncFilterOn,
-                        tabDone
-                ).toSqlQuery()
+            SqlAct084_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ncFilterOn,
+                tabDone
+            ).toSqlQuery()
         )
     }
 
-    private fun getFormAp(tabDone: Int):  MutableList<GE_Custom_Form_Ap> {
+    private fun getFormAp(tabDone: Int): MutableList<GE_Custom_Form_Ap> {
         return formApDao.query(
-                SqlAct084_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        tabDone
-                ).toSqlQuery()
+            SqlAct084_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                tabDone
+            ).toSqlQuery()
         )
     }
 
@@ -243,16 +277,16 @@ class Act084MainPresenter(
 //        val lbl = hmAuxTrans["form_lbl"] ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
-                SqlAct084_004(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ncFilterOn,
-                        tabDone
-                ).toSqlQuery()
+            SqlAct084_004(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ncFilterOn,
+                tabDone
+            ).toSqlQuery()
         )
     }
 
     override fun processActionClick(myAction: MyActions) {
-        when(myAction.actionType){
+        when (myAction.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_SCHEDULE -> checkScheduleFlow(myAction)
             MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
@@ -263,9 +297,9 @@ class Act084MainPresenter(
 
     private fun processLocalTicketClick(myAction: MyActions) {
         mView.callAct070(
-                getLocalTicket(
-                        myAction
-                )
+            getLocalTicket(
+                myAction
+            )
         )
     }
 
@@ -278,21 +312,25 @@ class Act084MainPresenter(
     private fun checkScheduleFlow(myAction: MyActions) {
         val scheduleExec = getScheduleFromMyAction(myAction)
         //
-        if(scheduleExec != null) {
+        if (scheduleExec != null) {
             when (scheduleExec.schedule_type) {
-                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM -> processScheduleTypeForm(myAction, scheduleExec)
-                else -> processScheduleTypeTicket(myAction,scheduleExec)
+                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM -> processScheduleTypeForm(
+                    myAction,
+                    scheduleExec
+                )
+
+                else -> processScheduleTypeTicket(myAction, scheduleExec)
             }
         }
     }
 
     private fun processScheduleTypeForm(myAction: MyActions, scheduleExec: MD_Schedule_Exec) {
         if (isStatusPossibleToOpen(scheduleExec)) {
-            prepareOpenForm(myAction,scheduleExec)
+            prepareOpenForm(myAction, scheduleExec)
         } else {
             mView.showMsg(
-                    ttl = hmAuxTrans["alert_schedule_status_prevents_to_open_ttl"],
-                    msg = hmAuxTrans["alert_schedule_status_prevents_to_open_msg"]
+                ttl = hmAuxTrans["alert_schedule_status_prevents_to_open_ttl"],
+                msg = hmAuxTrans["alert_schedule_status_prevents_to_open_msg"]
             )
         }
     }
@@ -300,14 +338,14 @@ class Act084MainPresenter(
     private fun prepareOpenForm(myAction: MyActions, scheduleExec: MD_Schedule_Exec) {
         val formLocal = getFormLocalInfo(scheduleExec)
         //
-        if(formLocal != null){
+        if (formLocal != null) {
             //Seta dados da action selecionado no filterParam
             setSeletedActionInfosIntoFilterParam(myAction)
             mView.callAct011(getFormBundle(formLocal))
-        }else{
+        } else {
             mView.showMsg(
-                    ttl = hmAuxTrans["alert_schedule_form_not_found_ttl"],
-                    msg = hmAuxTrans["alert_schedule_form_not_found_msg"]
+                ttl = hmAuxTrans["alert_schedule_form_not_found_ttl"],
+                msg = hmAuxTrans["alert_schedule_form_not_found_msg"]
             )
         }
 
@@ -315,23 +353,27 @@ class Act084MainPresenter(
 
     private fun getFormLocalInfo(scheduleExec: MD_Schedule_Exec): GE_Custom_Form_Local? {
         return formLocalDao.getByString(
-                MD_Schedule_Exec_Sql_006(
-                        scheduleExec.customer_code.toString(),
-                        scheduleExec.schedule_prefix.toString(),
-                        scheduleExec.schedule_code.toString(),
-                        scheduleExec.schedule_exec.toString()
-                ).toSqlQuery()
+            MD_Schedule_Exec_Sql_006(
+                scheduleExec.customer_code.toString(),
+                scheduleExec.schedule_prefix.toString(),
+                scheduleExec.schedule_code.toString(),
+                scheduleExec.schedule_exec.toString()
+            ).toSqlQuery()
         )
     }
 
-    private fun getTicketBySchedule(schedule_prefix: Int, schedule_code: Int, schedule_exec: Int): TK_Ticket? {
+    private fun getTicketBySchedule(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int
+    ): TK_Ticket? {
         return ticketDao.getByString(
-                TK_Ticket_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
+            TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
         )
     }
 
@@ -348,30 +390,34 @@ class Act084MainPresenter(
             prepareOpenTicket(myAction, scheduleExec)
         } else {
             mView.showMsg(
-                    ttl = hmAuxTrans["alert_schedule_status_prevents_to_open_ttl"],
-                    msg = hmAuxTrans["alert_schedule_status_prevents_to_open_msg"]
+                ttl = hmAuxTrans["alert_schedule_status_prevents_to_open_ttl"],
+                msg = hmAuxTrans["alert_schedule_status_prevents_to_open_msg"]
             )
         }
     }
 
     private fun prepareOpenTicket(myAction: MyActions, scheduleExec: MD_Schedule_Exec) {
-        val scheduleTicket = getTicketBySchedule(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec)
-        if(scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)){
+        val scheduleTicket = getTicketBySchedule(
+            scheduleExec.schedule_prefix,
+            scheduleExec.schedule_code,
+            scheduleExec.schedule_exec
+        )
+        if (scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)) {
             //Seta dados da action selecionado no filterParam
             setSeletedActionInfosIntoFilterParam(myAction)
             //
             mView.callAct070(
-                    ticketBundle(myAction, scheduleTicket.ticket_prefix, scheduleTicket.ticket_code)
+                ticketBundle(myAction, scheduleTicket.ticket_prefix, scheduleTicket.ticket_code)
             )
-        }else{
+        } else {
             mView.showMsg(
-                    ttl = hmAuxTrans["alert_schedule_ticket_not_found_ttl"],
-                    msg = hmAuxTrans["alert_schedule_ticket_not_found_msg"]
+                ttl = hmAuxTrans["alert_schedule_ticket_not_found_ttl"],
+                msg = hmAuxTrans["alert_schedule_ticket_not_found_msg"]
             )
         }
     }
 
-    private fun getScheduleFromMyAction(myAction: MyActions):  MD_Schedule_Exec? {
+    private fun getScheduleFromMyAction(myAction: MyActions): MD_Schedule_Exec? {
         val splippedPk = myAction.getSplippedPk()
         //
         val schedule_prefix = splippedPk.get(0).toInt()
@@ -379,12 +425,12 @@ class Act084MainPresenter(
         val schedule_exec = splippedPk.get(2).toInt()
         //
         val scheduleExec: MD_Schedule_Exec? = scheduleDao.getByString(
-                MD_Schedule_Exec_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
         )
         //
         return scheduleExec
@@ -407,7 +453,10 @@ class Act084MainPresenter(
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT084)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
+        bundle.putString(
+            GE_Custom_Form_ApDao.CUSTOMER_CODE,
+            ToolBox_Con.getPreference_Customer_Code(context).toString()
+        )
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, splippedPk[2])
@@ -445,16 +494,25 @@ class Act084MainPresenter(
         bundle.putString(MD_ProductDao.PRODUCT_CODE, formLocal.custom_product_code.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.custom_product_desc)
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.serial_id)
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formLocal.custom_form_type.toString())
+        bundle.putString(
+            GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+            formLocal.custom_form_type.toString()
+        )
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, formLocal.custom_form_code.toString())
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formLocal.custom_form_version.toString())
+        bundle.putString(
+            GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+            formLocal.custom_form_version.toString()
+        )
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.custom_form_desc)
-        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formLocal.custom_form_data.toString())
+        bundle.putString(
+            GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+            formLocal.custom_form_data.toString()
+        )
         //
         return bundle
     }
 
-    private fun ticketBundle(myAction: MyActions,ticketPrefix: Int, ticketCode: Int): Bundle {
+    private fun ticketBundle(myAction: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
         setSeletedActionInfosIntoFilterParam(myAction)
@@ -468,14 +526,14 @@ class Act084MainPresenter(
     }
 
 
-    fun setSeletedActionInfosIntoFilterParam(myAction: MyActions){
-        if(myActionFilterParam != null){
+    fun setSeletedActionInfosIntoFilterParam(myAction: MyActions) {
+        if (myActionFilterParam != null) {
             myActionFilterParam.setSelectedItemParams(
-                    mView.getMketFilter(),
-                    mView.getCurrentTab(),
-                    myAction.actionType,
-                    myAction.processPk,
-                    mView.getNcFilterStatus()
+                mView.getMketFilter(),
+                mView.getCurrentTab(),
+                myAction.actionType,
+                myAction.processPk,
+                mView.getNcFilterStatus()
             )
             //
             myActionFilterParam

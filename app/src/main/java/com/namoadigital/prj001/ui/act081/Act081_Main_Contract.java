@@ -44,5 +44,7 @@ public interface Act081_Main_Contract {
         boolean hasSerialStructureOutdate();
 
         void updateSerialStrucutreAfterWsSave();
+
+        boolean hasEventManual();
     }
 }

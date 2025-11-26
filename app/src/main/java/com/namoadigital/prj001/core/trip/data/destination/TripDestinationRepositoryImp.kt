@@ -52,6 +52,7 @@ import com.namoadigital.prj001.ui.act094.destination.local.preference.Destinatio
 import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -61,7 +62,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class TripDestinationRepositoryImp @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val dao: FsTripDestinationDao,
     private val tripDao: FSTripDao? = null,
 ) : TripDestinationRepository, BaseTripRepository(context) {
@@ -334,7 +335,7 @@ class TripDestinationRepositoryImp @Inject constructor(
             scn = remoteDestination.scn,
             tripStatus = remoteDestination.tripStatus,
             isOnline = if (isOnlineFLow) 0 else 1
-        ) ?: false
+        ) == true
         //
     }
 
@@ -367,7 +368,7 @@ class TripDestinationRepositoryImp @Inject constructor(
             scn = remoteDestination.scn,
             tripStatus = remoteDestination.tripStatus,
             isOnline = if (ToolBox_Con.isOnline(context)) 0 else 1
-        ) ?: false
+        ) == true
         //
     }
 
@@ -659,6 +660,17 @@ class TripDestinationRepositoryImp @Inject constructor(
         )
     }
 
+    override fun getLastDestination(
+        prefix: Int,
+        code: Int,
+    ): FsTripDestination? {
+        return dao.getLastDestination(
+            customerCode = context.getCustomerCode(),
+            prefix = prefix,
+            code = code
+        )
+    }
+
     override fun getPreviousValidDestination(
         customerCode: Long,
         tripPrefix: Int,
@@ -680,7 +692,8 @@ class TripDestinationRepositoryImp @Inject constructor(
         tripPrefix: Int,
         tripCode: Int,
         destinationSeq: Int?,
-        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType
+        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType,
+
     ): FsTripDestination? {
         return dao.nextDestination(
             customerCode,

@@ -26,6 +26,7 @@ interface Act092_Contract {
         fun disablePD()
         fun setItemAsDownloaded(position: Int, myActions: MyActions)
         fun getContext(): Context
+        fun showAlertEventInExecution()
     }
 
     interface Presenter : BasePresenter<View> {
@@ -63,5 +64,6 @@ interface Act092_Contract {
         fun getJustifyItems(justifyGroupCode: Int, context: Context): ArrayList<HMAux>
         fun hasSerialStructureOutdate(context: Context): Boolean
         fun updateSerialStrucutreAfterWsSave(context: Context)
+        fun hasEventManual(): Boolean
     }
 }

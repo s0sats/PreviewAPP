@@ -5,3 +5,4 @@ fun Int?.isZeroOrNull() = this == null || this == 0
 fun Int?.ifZero(block: () -> Int){
     if (!this.isZeroOrNull()) block()
 }
+fun Int?.toBoolean() = this == 1

@@ -203,24 +203,6 @@
             app:strokeColor="@color/m3_namoa_outline"
             tools:text="Call" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_maps"
-            style="@style/NamoaTheme3.ButtonIcon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/m3_namoa_primary"
-            android:textColor="@color/m3_namoa_onPrimary"
-            app:icon="@drawable/outline_directions_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/call_contact"
-            app:layout_constraintTop_toBottomOf="@+id/layout_contact"
-            app:layout_constraintWidth_default="wrap"
-            app:strokeColor="@color/m3_namoa_outline"
-            tools:text="Mapas" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

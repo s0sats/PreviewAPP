@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.dao.util
+package com.namoadigital.prj001.core.database.base
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -162,16 +162,10 @@ abstract class BaseDaoWithReturn<T>(
         }
         try {
             db.execSQL(sQuery)
-            if (dbInstance == null) {
-                db.setTransactionSuccessful()
-            }
         } catch (e: java.lang.Exception) {
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
             daoObjReturn.setError(true)
         } finally {
-            if (dbInstance == null) {
-                db.endTransaction()
-            }
         }
 
         if (dbInstance == null) {
@@ -432,6 +426,24 @@ abstract class BaseDaoWithReturn<T>(
         return model
     }
 
+    fun <R> query(sQuery: String, mapper: (Cursor) -> R): MutableList<R> {
+        val result = mutableListOf<R>()
+        openDB()
+
+        try {
+            val cursor = db.rawQuery(sQuery, null)
+            while (cursor.moveToNext()) {
+                result.add(mapper(cursor))
+            }
+            cursor.close()
+        } catch (e: Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            closeDB()
+        }
+        return result
+    }
+
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
         val model: MutableList<HMAux> = ArrayList()
         openDB()
@@ -469,7 +481,7 @@ abstract class BaseDaoWithReturn<T>(
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             if (dbInstance == null) {
                 db.endTransaction()

@@ -55,14 +55,6 @@ object Module {
         return GetTicketCacheActionUseCase( repositoryCache)
     }
 
-    @Provides
-    @ActivityScoped
-    fun providesTripDao(@ApplicationContext app: Context) = FSTripDao(app)
-
-
-    @Provides
-    @ActivityScoped
-    fun providesTripDestinationDao(@ApplicationContext app: Context) = FsTripDestinationDao(app)
 
     @Provides
     @ActivityScoped

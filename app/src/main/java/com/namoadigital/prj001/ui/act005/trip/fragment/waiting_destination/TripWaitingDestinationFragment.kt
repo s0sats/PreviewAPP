@@ -1,13 +1,13 @@
 package com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination
 
 import android.content.Context
-import com.namoadigital.prj001.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.FrgWaitingDestinationTripBinding
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract
@@ -18,9 +18,6 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.Tr
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -108,8 +105,6 @@ class TripWaitingDestinationFragment : TripBaseFragment<FrgWaitingDestinationTri
                 ivPlaceholder.setImageDrawable(drawable)
                 tvPlaceholderTtl.text =
                     hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_WAITING_DESTINATION_TTL_LBL]
-                tvPlaceholderSubTtl.text =
-                    hmAuxTranslate[TripTranslate.PLACEHOLDER_TRIP_WAITING_DESTINATION_SUB_TTL_LBL]
             }
             //
             btnReport.text = hmAuxTranslate[TripTranslate.TRIP_REPORT_BTN]

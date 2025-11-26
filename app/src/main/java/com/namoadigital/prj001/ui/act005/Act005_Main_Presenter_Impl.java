@@ -7,6 +7,7 @@ import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_DOWNLOAD;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
@@ -101,6 +102,7 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.receiver.event.WBREventManualSave;
 import com.namoadigital.prj001.receiver.trip.WBR_UserPosition;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_AP_Save;
@@ -146,6 +148,8 @@ import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.EventManualUseCases;
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.ui.OnEventManualDialogInteract;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -183,26 +187,26 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public static final String SYNC_SOS = "SYNC_SOS";
     public static final String SYNC_SERIAL_STRUCTURE = "SYNC_SERIAL_STRUCTURE";
 
-    private Context context;
-    private Act005_Main_View mView;
-    private GE_Custom_Form_LocalDao customFormLocalDao;
+    private final Context context;
+    private final Act005_Main_View mView;
+    private final GE_Custom_Form_LocalDao customFormLocalDao;
     private HMAux hmAux_Trans = new HMAux();
-    private EV_User_CustomerDao userCustomerDao;
-    private FCMMessageDao fcmMessageDao;
-    private SM_SODao soDao;
-    private IO_MoveDao assetMoveDao;
-    private IO_Inbound_ItemDao assetInboundDao;
-    private IO_Outbound_ItemDao assetOutboundDao;
-    private GE_Custom_Form_ApDao customFormApDao;
-    private TK_TicketDao tk_ticketDao;
-    private MD_ProductDao mdProductDao;
-    private CH_MessageDao chMessageDao;
-    private SerialSiteInventoryUseCase serialSiteUseCase;
-    private MD_SiteDao siteDao;
-    private MD_Schedule_ExecDao scheduleExecDao;
-    private TkTicketCacheDao tkTicketCacheDao;
+    private final EV_User_CustomerDao userCustomerDao;
+    private final FCMMessageDao fcmMessageDao;
+    private final SM_SODao soDao;
+    private final IO_MoveDao assetMoveDao;
+    private final IO_Inbound_ItemDao assetInboundDao;
+    private final IO_Outbound_ItemDao assetOutboundDao;
+    private final GE_Custom_Form_ApDao customFormApDao;
+    private final TK_TicketDao tk_ticketDao;
+    private final MD_ProductDao mdProductDao;
+    private final CH_MessageDao chMessageDao;
+    private final SerialSiteInventoryUseCase serialSiteUseCase;
+    private final MD_SiteDao siteDao;
+    private final MD_Schedule_ExecDao scheduleExecDao;
+    private final TkTicketCacheDao tkTicketCacheDao;
 
-    private SO_Pack_Express_LocalDao soPackExpressLocalDao;
+    private final SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
     private String logoutList = "";
     private transient Dialog logoutDialog;
@@ -210,11 +214,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private ListView lv_customer;
     private List<HMAux> customer_list;
     //
-    private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
+    private final ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
     //
     private int customFormPendentAmount = 0;
 
-    private SerialSiteInventoryUseCase serialSiteInventoryUseCase;
+    private final SerialSiteInventoryUseCase serialSiteInventoryUseCase;
+
+    private final EventManualUseCases eventManualUseCases;
+
 
     public Act005_Main_Presenter_Impl(
             Context context,
@@ -227,7 +234,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             GE_Custom_Form_ApDao customFormApDao,
             SO_Pack_Express_LocalDao soPackExpressLocalDao,
             MD_ProductDao mdProductDao,
-            CH_MessageDao chMessageDao) {
+            CH_MessageDao chMessageDao, EventManualUseCases eventManualUseCases) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -239,6 +246,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         this.soPackExpressLocalDao = soPackExpressLocalDao;
         this.mdProductDao = mdProductDao;
         this.chMessageDao = chMessageDao;
+        this.eventManualUseCases = eventManualUseCases;
+
         this.siteDao = new MD_SiteDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -459,6 +468,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         String qtyAP;
         String qtySerial;
         String qtyPosition = null;
+        int qtyEvents = 0;
         try {
             qty = customFormLocalDao.getByStringHM(
                     new Sql_Act005_002(
@@ -529,6 +539,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             tripHasTripUpdate = 1;
         }
 
+        if (hasEventUpdateRequired()) {
+            qtyEvents = getCountEventToUpdate();
+        }
+
         qtySerial = String.valueOf(Integer.valueOf(qtySerial) + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
         String qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
@@ -543,6 +557,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         totalPendency += ToolBox_Inf.convertStringToInt(qtyTicket);
         totalPendency += ToolBox_Inf.convertStringToInt(qtyPosition);
         totalPendency += tripHasTripUpdate;
+        totalPendency += qtyEvents;
         return totalPendency > 0;
     }
 
@@ -1776,14 +1791,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                     case Act005_Main.MENU_ID_SEND_DATA:
                         if (ToolBox_Con.isOnline(context)) {
-                            mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                            mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-                            mView.showPD();
-                            mView.cleanUpResults();
-                            //executeSaveProcess();
-                            if (hasTripInProgress() && hasTripUpdateRequired()) {
-                                executeTripSave();
+                            if (hasTripWithUpdateRequired() != null) {
+                                sendTripUpdateRequired();
                             } else {
+                                mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                                mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                                mView.showPD();
+                                mView.cleanUpResults();
                                 executeSerialSave();
                             }
                         } else {
@@ -1817,6 +1831,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void sendTripUpdateRequired() {
+        mView.setWsProcess(WS_TRIP_SEND_UPDATE);
+        mView.showPD();
+        mView.cleanUpResults();
+        executeTripSave();
     }
 
     @Override
@@ -1919,18 +1940,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
          * Ini Vars
          */
 
-        TextView tv_customer_selection = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_customer_select);
+        TextView tv_customer_selection = view.findViewById(R.id.act005_dialog_logout_tv_customer_select);
         tv_customer_selection.setText(hmAux_Trans.get("logout_dialog_customer_select"));
 
-        CheckBox chk_all = (CheckBox) view.findViewById(R.id.act005_dialog_logout_chk_all);
+        CheckBox chk_all = view.findViewById(R.id.act005_dialog_logout_chk_all);
         chk_all.setText(hmAux_Trans.get("logout_dialog_check_all"));
         //
-        TextView tv_logout_title = (TextView) view.findViewById(R.id.act005_dialog_logout_tv_logout_lbl);
+        TextView tv_logout_title = view.findViewById(R.id.act005_dialog_logout_tv_logout_lbl);
         tv_logout_title.setText(hmAux_Trans.get("logout_dialog_ttl"));
         //
-        lv_customer = (ListView) view.findViewById(R.id.act005_dialog_logout_lv_customer);
+        lv_customer = view.findViewById(R.id.act005_dialog_logout_lv_customer);
         //
-        Button btn_logout = (Button) view.findViewById(R.id.act005_dialog_logout_btn_logout);
+        Button btn_logout = view.findViewById(R.id.act005_dialog_logout_btn_logout);
         btn_logout.setText(hmAux_Trans.get("logout_dialog_btn"));
 
         /**
@@ -2323,10 +2344,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         ).toSqlQuery()
                 );
 
-        if (sessionsOn != null && sessionsOn.size() != 0) {
-            return true;
-        }
-        return false;
+        return sessionsOn != null && sessionsOn.size() != 0;
     }
 
     @Override
@@ -2390,10 +2408,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if (mdSite != null && mdSite.getIo_control() == 1) {
-            return true;
-        }
-        return false;
+        return mdSite != null && mdSite.getIo_control() == 1;
     }
 
     @Override
@@ -2659,7 +2674,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         SendTripFullUseCase useCase = new SendTripFullUseCase(
                 new TripRepositoryImp(context)
         );
-        if(!useCase.invoke(Unit.INSTANCE)){
+        if (!useCase.invoke(Unit.INSTANCE)) {
             mView.showAlertMsg();
         }
 
@@ -2670,4 +2685,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         List<TkTicketToSync> list = tkTicketCacheDao.getSyncTicket(ToolBox_Con.getPreference_User_Code(context));
         return !list.isEmpty();
     }
+
+    @Override
+    public boolean hasEventUpdateRequired() {
+        int events = getCountEventToUpdate();
+        return events > 0;
+    }
+
+    private int getCountEventToUpdate() {
+        return eventManualUseCases.getGetCountPendency().invoke(Unit.INSTANCE).size();
+    }
+
+    @Override
+    public void executeEventSave(boolean isCloudFlow) {
+        String process;
+        if (isCloudFlow) {
+            process = OnEventManualDialogInteract.CLOUD_SAVE_EVENT;
+        } else {
+            process = OnEventManualDialogInteract.SAVE_EVENT;
+        }
+        mView.setWsProcess(process);
+
+        Intent mIntent = new Intent(context, WBREventManualSave.class);
+        context.sendBroadcast(mIntent);
+    }
+
 }

@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -28,9 +29,11 @@ import com.namoadigital.prj001.databinding.FrgTripDestinationInfoBinding
 import com.namoadigital.prj001.databinding.TripCardWarningBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
 import com.namoadigital.prj001.extensions.callCameraAct
+import com.namoadigital.prj001.extensions.callNavigationIntent
 import com.namoadigital.prj001.extensions.date.FormatDateType
 import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.extensions.getColorStateListId
+import com.namoadigital.prj001.extensions.getFormattedAddress
 import com.namoadigital.prj001.extensions.hasLocationPermission
 import com.namoadigital.prj001.extensions.highlightItem
 import com.namoadigital.prj001.extensions.isGpsEnabled
@@ -65,6 +68,8 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_LATLON_ERROR_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_LATLON_ERROR_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NEW_TRIP_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_MSG
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_PDF_NOT_FOUND_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_PDF_NOT_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.ALERT_POSITION_NOT_FOUND_MSG
@@ -152,6 +157,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_C
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_CREATE_AT_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DEPARTED_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_ARRIVED_DATE_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_DELETE_BTN
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_MY_TICKETS_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_SEARCH_SERIAL_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_DESTINATION_TICKETS_BTN
@@ -195,6 +201,13 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.ori
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.OriginDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.util.OriginOption
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_END_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_HINT
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_START_EXCEEDED_TRIP_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_DATE_END_TRIP_FUTURE_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_DATE_END_TRIP_LBL
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_HOUR_HINT
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_TITLE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.ReportBottomSheet
@@ -360,7 +373,15 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                         if (tripState.tripStatus != TripStatus.ON_SITE) {
                             it.tvAddressLocation.applyVisibilityIfTextExists(destination.getFullAddress())
                             it.tvHeaderDestination.applyVisibilityIfTextExists(destination.destinationRegionDesc)
+                            it.dashboardLayout.isVisible = false
+                            it.btnDestinationMapsInfo.apply {
+                                text = hmAuxTranslate[TRIP_MAP_LBL]
+                                isVisible = destination.containsAddress()
+
+                            }
                         } else {
+                            it.dashboardLayout.isVisible = true
+                            it.btnDestinationMapsInfo.isVisible = false
                             it.tvHeaderDestination.applyVisibilityIfTextExists(
                                 requireContext().formatDate(
                                     FormatDateType.DateAndHour(destination.arrivedDate!!)
@@ -375,15 +396,12 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                         //
                         it.serialsLabel.text = hmAuxTranslate[DESTINATION_SERIAL_COUNTER_LBL]
                         //
-                        if (destination.destinationType == TICKET_DESTINATION_TYPE) {
-                            it.serialsLabel.visibility = View.INVISIBLE
-                        } else {
-                            it.serialsLabel.visibility = View.VISIBLE
-                            it.serialsValue.visibility = View.VISIBLE
-                        }
                         it.serialsValue.apply {
                             text = destination.serialCnt.toString()
-                            if (destination.serialCnt > 0) {
+                            if (destination.serialCnt > 0
+                                && tripState.tripStatus == TripStatus.ON_SITE &&
+                                destination.destinationType != TICKET_DESTINATION_TYPE
+                            ) {
                                 this.highlightItem(
                                     destination.serialCnt,
                                     R.color.m3_namoa_onSurfaceVariant
@@ -392,13 +410,17 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                                     destination.serialCnt,
                                     R.color.m3_namoa_onSurfaceVariant
                                 )
+                                isVisible = true
+                                it.serialsLabel.visibility = View.VISIBLE
                             }
+                            it.serialsLabel.visibility = View.GONE
+                            isVisible = false
                         }
 
                         //
                         it.root.visibility = View.VISIBLE
                         it.tvDestinationLbl.visibility = View.VISIBLE
-                        it.ivDestinationDeleteBtn.visibility = View.VISIBLE
+                        footerBinding?.btnOutlinedRightAction?.visibility = View.VISIBLE
                         it.btnSearchSerial.visibility = View.GONE
                         it.btnDestinationTicket.visibility = View.GONE
                         //
@@ -406,7 +428,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                             if (status.toDestinationStatus() == DestinationStatus.ARRIVED) {
                                 it.gpOnSiteActions.visibility = View.GONE
                                 it.tvDestinationLbl.visibility = View.GONE
-                                it.ivDestinationDeleteBtn.visibility = View.GONE
+                                footerBinding?.btnOutlinedRightAction?.visibility = View.GONE
                                 //
                                 val arrivedDate = requireContext().formatDate(
                                     FormatDateType.DateAndHour(destination.arrivedDate!!)
@@ -429,6 +451,25 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                             } else {
                                 it.gpOnSiteInfo.visibility = View.GONE
                                 it.gpOnSiteActions.visibility = View.GONE
+                                footerBinding?.btnOutlinedRightAction?.apply {
+                                    text = hmAuxTranslate[TRIP_DESTINATION_DELETE_BTN]
+                                    icon =
+                                        requireContext().getDrawable(com.namoa_digital.namoa_library.R.drawable.ic_delete)
+                                    iconTint =
+                                        requireContext().getColorStateList(com.namoa_digital.namoa_library.R.color.m3_namoa_primary)
+                                    setOnClickListener {
+                                        ToolBox.alertMSG(
+                                            requireContext(),
+                                            hmAuxTranslate[ALERT_TRIP_DESTINATION_DELETE_TTL],
+                                            hmAuxTranslate[ALERT_TRIP_DESTINATION_DELETE_MSG],
+                                            { dialogInterface, i ->
+                                                callDestinationChangeStatus(DestinationStatus.CANCELLED)
+                                                dialogInterface.dismiss()
+                                            },
+                                            1
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -588,9 +629,12 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 context = requireContext(),
                 hmAuxTranslate = hmAuxTranslate,
                 trip = trip,
-                viewModel.state.value.destination,
+                destination = viewModel.state.value.destination,
                 target = target,
-                onSave = { fleetPlate, odometer, photoUpdate ->
+                validateDate = { date ->
+                    viewModel.validateEndTripDate(date = date)
+                },
+                onSave = { endDate, fleetPlate, odometer, photoUpdate ->
                     val wsProcess = if (target == TripTarget.END) {
                         WS_TRIP_SAVE_FLEET_END_TRIP
                     } else {
@@ -598,6 +642,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                     }
 
                     viewModel.saveFleetData(
+                        endDate = endDate,
                         fleetPlate = fleetPlate,
                         odometer = odometer,
                         path = photoUpdate.path,
@@ -1016,6 +1061,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         }
         //
         destinationBinding?.apply {
+            val state = viewModel.state.value
             ivDestinationInfoBtn.setOnClickListener {
                 viewModel.state.value.destination?.toDestinationDetailDialog()
                     ?.let { destinationDetail ->
@@ -1028,18 +1074,31 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                         //
                     }
             }
-            ivDestinationDeleteBtn.setOnClickListener {
-                ToolBox.alertMSG(
-                    requireContext(),
-                    hmAuxTranslate[ALERT_TRIP_DESTINATION_DELETE_TTL],
-                    hmAuxTranslate[ALERT_TRIP_DESTINATION_DELETE_MSG],
-                    { dialogInterface, i ->
-                        callDestinationChangeStatus(DestinationStatus.CANCELLED)
-                        dialogInterface.dismiss()
-                    },
-                    1
+
+            btnDestinationMapsInfo.setOnClickListener {
+                val item = state.destination
+                if (item == null) {
+                    ToolBox.alertMSG(
+                        requireContext(),
+                        hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_TTL]!!,
+                        hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_MSG]!!,
+                        { dialogInterface, i ->
+                            dialogInterface.dismiss()
+                        },
+                        0
+                    )
+                    return@setOnClickListener
+                }
+
+                val address = getFormattedAddress(item.getAddress())
+
+                context?.callNavigationIntent(
+                    "geo:${item.latitude},${item.longitude}?q=${address}",
+                    hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_TTL]!!,
+                    hmAuxTranslate[ALERT_NO_NAVIGATION_APP_FOUND_MSG]!!
                 )
             }
+
         }
         //
     }
@@ -1182,7 +1241,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
     private fun onObserverLoadingState() {
         viewModel.state.onEach { trip ->
-            listener?.invalidateMenuOptions();
+            listener?.invalidateMenuOptions()
             when (val state = trip.progressState) {
                 is ProgressState.Online -> {
                     listener?.callTripWS(
@@ -1351,8 +1410,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             TRIP_RETURN_TO_TRANSIT_LBL,
             PROGRESS_TRIP_ERROR_SYNC_APP_TTL,
             PROGRESS_TRIP_ERROR_SYNC_APP_MSG,
-            TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_TTL,
-            TripTranslate.ALERT_NO_NAVIGATION_APP_FOUND_MSG,
+            ALERT_NO_NAVIGATION_APP_FOUND_TTL,
+            ALERT_NO_NAVIGATION_APP_FOUND_MSG,
             TripTranslate.ALERT_NO_CONTACT_APP_FOUND_TTL,
             TripTranslate.ALERT_NO_CONTACT_APP_FOUND_MSG,
             TRIP_DEPARTED_LBL,
@@ -1426,6 +1485,14 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             ERROR_ADD_USER_MSG,
             PROCESS_DIALOG_START_DATE_TITLE,
             PROCESS_DIALOG_START_DATE_MSG,
+            DIALOG_DATE_END_LBL,
+            DIALOG_ERROR_DATE_END_TRIP_LBL,
+            DIALOG_ERROR_DATE_END_TRIP_FUTURE_LBL,
+            DIALOG_DATE_HINT,
+            DIALOG_HOUR_HINT,
+            DIALOG_ERROR_FUTURE_DATE,
+            DIALOG_DATE_START_EXCEEDED_TRIP_LBL,
+            TRIP_DESTINATION_DELETE_BTN
         ).let { list ->
             return TranslateResource(
                 requireContext(),

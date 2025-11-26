@@ -18,7 +18,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.BaseTripDialog
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs
 import com.namoadigital.prj001.ui.base.BaseDialog
 
-class EditStartTripDialog constructor(
+class EditStartTripDialog(
     private val context: Context,
     private val trip: FSTrip,
     private val validateStartDate: (Long, Int, Int, String) -> Pair<String?, ExtractType>,
@@ -42,7 +42,7 @@ class EditStartTripDialog constructor(
             contentView = TripDialogEditStartBinding.inflate(LayoutInflater.from(context))
         ).content { _, binding ->
             with(binding) {
-                this@EditStartTripDialog.binding = this;
+                this@EditStartTripDialog.binding = this
                 initializeViews()
                 initializeListeners()
             }
@@ -102,7 +102,7 @@ class EditStartTripDialog constructor(
                     trip.customerCode,
                     trip.tripPrefix,
                     trip.tripCode,
-                    "$dateStart $hourStart".parseFullDate()
+                    "$dateStart $hourStart".parseFullDate(false)
                 )
                 val (dateError, type) = error
                 //
@@ -204,8 +204,8 @@ class EditStartTripDialog constructor(
     private fun save() {
         with(binding) {
             val (date, hour) = trip.originDate!!.parseDatePair()
-            val isEqualsDate = etStartDate.text.toString() == date
-            val isEqualsHour = etStartHour.text.toString() == hour
+            etStartDate.text.toString() == date
+            etStartHour.text.toString() == hour
 
             onSave("${etStartDate.text} ${etStartHour.text}".parseFullDate())
         }

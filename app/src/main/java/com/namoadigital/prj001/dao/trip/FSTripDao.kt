@@ -461,7 +461,7 @@ class FSTripDao @Inject constructor(
         try {
             db.execSQL(sQuery)
         } catch (e: java.lang.Exception) {
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
             daoObjReturn.setError(true)
         } finally {
         }
@@ -501,7 +501,7 @@ class FSTripDao @Inject constructor(
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             if (dbInstance == null) {
                 db.endTransaction()
@@ -594,7 +594,7 @@ class FSTripDao @Inject constructor(
     }
 
 
-    private inner class FSTripToContentValuesMapper :
+    private class FSTripToContentValuesMapper :
         Mapper<FSTrip, ContentValues> {
         override fun map(data: FSTrip?): ContentValues {
             val contentValues = ContentValues()
@@ -660,7 +660,7 @@ class FSTripDao @Inject constructor(
         }
     }
 
-    private inner class CursorToFSTripMapper : Mapper<Cursor, FSTrip> {
+    private class CursorToFSTripMapper : Mapper<Cursor, FSTrip> {
         @SuppressLint("Range")
         override fun map(cursor: Cursor?): FSTrip? {
             cursor?.let {
@@ -823,6 +823,7 @@ class FSTripDao @Inject constructor(
                 ""
             }
         }
+
 
         addUpdate(
             """
@@ -1008,7 +1009,7 @@ class FSTripDao @Inject constructor(
 
     @Throws(SQLiteException::class)
     fun setSyncRequired() {
-        val trip = getTrip();
+        val trip = getTrip()
         trip?.let {
             if (it.updateRequired == 0) {
                 it.syncRequired = 1

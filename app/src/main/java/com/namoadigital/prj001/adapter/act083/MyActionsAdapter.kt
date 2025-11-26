@@ -16,11 +16,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.TranslateMap
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.databinding.EventHistoricItemBinding
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.databinding.MySerialSiteItemBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
+import com.namoadigital.prj001.extensions.date.FormatDateType
+import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.extensions.serial.showMeasureSuffixAndDate
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
@@ -28,10 +33,12 @@ import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.model.SerialSiteInventory.Companion
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.historic.domain.EventHistoricToMyActionsBase
+import com.namoadigital.prj001.ui.act095.event_manual.translate.EventManualKey
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MyActionsAdapter constructor(
+class MyActionsAdapter(
     private val myActions: List<MyActionsBase>,
     private val hmAuxTrans: HMAux,
     val tagDesc: String?,
@@ -41,11 +48,13 @@ class MyActionsAdapter constructor(
     private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit,
     private val cancelSerialSchedule: ((myActions: MyActions) -> Unit)? = null,
-    private val onClickFromSerialSite: ((typeClick: Companion.OnClickType) -> Unit)? = null
+    private val onClickFromSerialSite: ((typeClick: Companion.OnClickType) -> Unit)? = null,
+    private val onClickFromEvent: ((event: EventHistoricToMyActionsBase) -> Unit)? = null,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
     private val VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY = 2
+    private val VIEW_TYPE_EVENT_MANUAL = 3
     private var myFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
     var userMainFilterOn: Boolean = false
@@ -75,6 +84,16 @@ class MyActionsAdapter constructor(
                 )
             }
 
+            VIEW_TYPE_EVENT_MANUAL -> {
+                EventManualVh(
+                    hmAuxTrans, EventHistoricItemBinding.inflate(
+                        LayoutInflater.from(
+                            parent.context
+                        ), parent, false
+                    )
+                )
+            }
+
             else -> MyActionFormButtonVh(
                 MyActionsFormButtonItemBinding.inflate(
                     LayoutInflater.from(
@@ -95,6 +114,10 @@ class MyActionsAdapter constructor(
                 onBinding(myFilteredAction[position] as SerialSiteInventory, position)
             }
 
+            VIEW_TYPE_EVENT_MANUAL -> with(holder as EventManualVh) {
+                bind(myFilteredAction[position] as EventHistoricToMyActionsBase)
+            }
+
             else -> with(holder as MyActionFormButtonVh) {
                 onBinding(myFilteredAction[position] as MyActionsFormButton)
             }
@@ -109,6 +132,7 @@ class MyActionsAdapter constructor(
         return when (myFilteredAction[position]) {
             is MyActions -> VIEW_TYPE_MY_ACTION
             is SerialSiteInventory -> VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY
+            is EventHistoricToMyActionsBase -> VIEW_TYPE_EVENT_MANUAL
             else -> VIEW_TYPE_MY_ACTION_FORM_BUTTON
         }
     }
@@ -125,6 +149,31 @@ class MyActionsAdapter constructor(
             return myFilteredAction[position] as SerialSiteInventory
         }
         return null
+    }
+
+
+    inner class EventManualVh(
+        private val translateMap: TranslateMap,
+        private val binding: EventHistoricItemBinding
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: EventHistoricToMyActionsBase) {
+            with(binding) {
+                eventCardTitle.text = translateMap.textOf(EventManualKey.EventHistoricCardTitle)
+
+                eventQuantityLbl.text = translateMap.textOf(
+                    EventManualKey.EventHistoricCardQuantity,
+                    listOf(item.quantity.toString())
+                )
+
+                eventDate.text = root.context.formatDate(FormatDateType.OnlyDate(item.date))
+
+                eventCard.setOnClickListener {
+                    onClickFromEvent?.invoke(item)
+                }
+            }
+        }
     }
 
 
@@ -161,13 +210,14 @@ class MyActionsAdapter constructor(
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
                 //
                 if (item.measureDate.isNullOrEmpty()
-                    && item.suggestedDate.isNullOrEmpty()) {
+                    && item.suggestedDate.isNullOrEmpty()
+                ) {
                     serialSiteItemTvLastMeasureVal.visibility = View.GONE
                     serialSiteItemTvLastMeasureLbl.visibility = View.GONE
                     serialSiteItemTvSuggestVal.visibility = View.GONE
                     serialSiteItemTvSuggestLbl.visibility = View.GONE
                     serialSiteItemTvSuggestDesc.visibility = View.GONE
-                }else {
+                } else {
                     if (!item.measureDate.isNullOrEmpty()) {
                         serialSiteItemTvLastMeasureVal.showMeasureSuffixAndDate(
                             context,
@@ -217,7 +267,7 @@ class MyActionsAdapter constructor(
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
                 tvItemForecastVal.checkVisible("${item.totExp ?: 0}")
 
-                if(!isReadOnly) {
+                if (!isReadOnly) {
                     serialSiteItemCard.apply {
                         setOnClickListener { _ ->
                             onClickFromSerialSite?.invoke(
@@ -251,7 +301,7 @@ class MyActionsAdapter constructor(
                         )
                     }
 
-                    myActionSelectSerial.visibility = if(isReadOnly) View.GONE else View.VISIBLE
+                    myActionSelectSerial.visibility = if (isReadOnly) View.GONE else View.VISIBLE
 
                 }
 
@@ -267,7 +317,6 @@ class MyActionsAdapter constructor(
                 this.text = text
             }
         }
-
 
 
         fun String?.formatString() =
@@ -289,7 +338,7 @@ class MyActionsAdapter constructor(
                 myActionClickListener(myAction)
             }
 
-            if(!isReadOnly) {
+            if (!isReadOnly) {
                 binding.myActionsItemClInfos.setOnClickListener {
                     myActionClickListener(myAction)
                 }
@@ -394,11 +443,11 @@ class MyActionsAdapter constructor(
                     if (checkIfTitleThemeEqualsLabelCardTheme(myAction.tagOperationDesc).isNullOrEmpty() && myAction.classId.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
 
-            binding.bottomButtonsLayout.visibility = if(isReadOnly) View.GONE else View.VISIBLE
+            binding.bottomButtonsLayout.visibility = if (isReadOnly) View.GONE else View.VISIBLE
         }
 
         private fun setVisibilityEdiID(myAction: MyActions) {
-            if(myAction.ticketEdiID.isNullOrEmpty()){
+            if (myAction.ticketEdiID.isNullOrEmpty()) {
                 binding.myActionsItemTvEdiId.visibility = View.GONE
                 return
             }
@@ -412,10 +461,10 @@ class MyActionsAdapter constructor(
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
                     this.setTextColor(
-                        context.getResources().getColor(R.color.m3_namoa_extended_verdeDone_seed)
+                        context.resources.getColor(R.color.m3_namoa_extended_verdeDone_seed)
                     )
                 } else {
-                    this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
+                    this.setTextColor(context.resources.getColor(R.color.namoa_color_gray_8))
                 }
             }
         }
@@ -578,12 +627,12 @@ class MyActionsAdapter constructor(
         private fun configTvOriginView(myAction: MyActions) {
             binding.myActionsItemTvOrigin.apply {
                 applyVisibilityIfTextExists(myAction.originDescriptor)
-                 if (isTicketOriginManulOrBarcode(myAction)) {
-                     isSingleLine = true
-                     ellipsize = TextUtils.TruncateAt.START
+                if (isTicketOriginManulOrBarcode(myAction)) {
+                    isSingleLine = true
+                    ellipsize = TextUtils.TruncateAt.START
                 } else {
-                     isSingleLine = false
-                     ellipsize = null
+                    isSingleLine = false
+                    ellipsize = null
                 }
             }
         }
@@ -627,9 +676,10 @@ class MyActionsAdapter constructor(
         if (processType == TypeSerial.SERIAL_SITE_ACTION_BASE) {
             myFilteredAction.forEachIndexed { index, myActionsBase ->
                 if (myActionsBase is SerialSiteInventory
-                    && !processPk.isNullOrEmpty()) {
+                    && !processPk.isNullOrEmpty()
+                ) {
                     val pk = processPk.split(".")
-                    if ( pk.isNotEmpty()
+                    if (pk.isNotEmpty()
                         && myActionsBase.productCode == pk[0].toInt()
                         && myActionsBase.serialCode == pk[1].toInt()
                     ) {
@@ -638,7 +688,7 @@ class MyActionsAdapter constructor(
                 }
             }
             return -1
-        }else {
+        } else {
             if (processType.isNullOrEmpty() || processPk.isNullOrEmpty()) {
                 return -1
             }

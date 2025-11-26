@@ -121,42 +121,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_report" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_destination_call"
-                style="@style/NamoaTheme3.Button.Outlined"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="24dp"
-                android:padding="2dp"
-                android:textColor="@color/namoa_color_cone_item"
-                app:icon="@drawable/baseline_call_24"
-                app:iconGravity="textStart"
-                app:iconTint="@color/namoa_color_cone_item"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_destination_info"
-                tools:text="Ligar"
-                tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_map_navigation"
-                style="@style/NamoaTheme3.Button.Outlined"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="24dp"
-                android:padding="2dp"
-                android:textColor="@color/namoa_color_cone_item"
-                app:icon="@drawable/outline_directions_24"
-                app:iconGravity="textStart"
-                app:iconTint="@color/namoa_color_cone_item"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_destination_call"
-                tools:text="Abrir Navegador"
-                tools:visibility="visible" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

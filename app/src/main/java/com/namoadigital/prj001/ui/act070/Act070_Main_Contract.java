@@ -92,6 +92,8 @@ public interface Act070_Main_Contract {
         boolean getIsCheckinFlow();
 
         void processSerialSearch(List<BaseSerialSearchItem> list, Integer lineCount);
+
+        void showAlertEventInExecution();
     }
 
     interface I_Presenter{
@@ -207,5 +209,7 @@ public interface Act070_Main_Contract {
         void setTicketDownloadSingleton(int mTkPrefix, int mTkCode);
 
         void executeConfirmSerial(int ticketPrefix, int ticketCode, int productCode, int serialCode);
+
+        boolean hasEventManual();
     }
 }

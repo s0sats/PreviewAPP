@@ -1,13 +1,8 @@
 package com.namoadigital.prj001.ui.act070;
 
-import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.DIALOG_LABEL_EXCEEDED_FOUNDS_SERIAL_SEARCH;
-import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.DIALOG_LABEL_EXCEEDED_LIMIT_SERIAL_SEARCH;
-import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.DIALOG_LABEL_LIST_EXCEEDED_SERIAL_SEARCH;
 import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.MSG_SERVICE_EMPTY_LIST_SERIAL_SEARCH;
-import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.MSG_SERVICE_ERROR_SERIAL_SEARCH;
 import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.MSG_SERVICE_PROCESS_CONFIRM_SERIAL_SEARCH;
 import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.TITLE_SERVICE_EMPTY_LIST_SERIAL_SEARCH;
-import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.TITLE_SERVICE_ERROR_SERIAL_SEARCH;
 import static com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment.TITLE_SERVICE_PROCESS_CONFIRM_SERIAL_SEARCH;
 
 import android.content.ActivityNotFoundException;
@@ -120,6 +115,7 @@ import com.namoadigital.prj001.ui.act070.model.StepNotExecuted;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act070.view.dialog.DialogSerialSearchFragment;
 import com.namoadigital.prj001.ui.act087.Act087Main;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -135,28 +131,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import kotlin.Unit;
+
 public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
-    private Context context;
-    private Act070_Main_Contract.I_View mView;
-    private HMAux hmAux_Trans;
-    private TK_TicketDao ticketDao;
-    private TK_Ticket_StepDao ticketStepDao;
-    private TK_Ticket_CtrlDao ticketCtrlDao;
-    private GE_Custom_FormDao geCustomFormDao;
-    private GE_Custom_Form_LocalDao geCustomFormLocalDao;
-    private GE_Custom_Form_DataDao formDataDao;
-    private MD_Product_SerialDao mdProductSerialDao;
-    private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
-    private MdJustifyItemDao mdJustifyItemDao;
+    private final Context context;
+    private final Act070_Main_Contract.I_View mView;
+    private final HMAux hmAux_Trans;
+    private final TK_TicketDao ticketDao;
+    private final TK_Ticket_StepDao ticketStepDao;
+    private final TK_Ticket_CtrlDao ticketCtrlDao;
+    private final GE_Custom_FormDao geCustomFormDao;
+    private final GE_Custom_Form_LocalDao geCustomFormLocalDao;
+    private final GE_Custom_Form_DataDao formDataDao;
+    private final MD_Product_SerialDao mdProductSerialDao;
+    private final MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
+    private final MdJustifyItemDao mdJustifyItemDao;
     private ArrayList<HMAux> workgroupOptionList;
-    private String actRequest;
+    private final String actRequest;
+    private final GetEventManualUseCase getEventManualUseCase;
 
-
-    public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans, String actRequest) {
+    public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans, String actRequest, GetEventManualUseCase getEventManualUseCase) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.actRequest = actRequest;
+        this.getEventManualUseCase = getEventManualUseCase;
         //
         this.ticketDao = new TK_TicketDao(
                 context,
@@ -478,10 +477,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         TK_Ticket_Form form = ticketCtrl.getForm();
         if (form != null) {
             if (form.getIs_so() == 1) {
-                if (ToolBox_Inf.hasFormProductSerialWithoutStructure(context, mTicket.getTicket_prefix(), mTicket.getTicket_code()) != null) {
-                    return false;
-                }
-                return true;
+                return ToolBox_Inf.hasFormProductSerialWithoutStructure(context, mTicket.getTicket_prefix(), mTicket.getTicket_code()) == null;
             }
             return true;
         }
@@ -687,7 +683,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
         ApiCollection<TkSerialSearchListResponse> response = gson.fromJson(
                 serializedGson,
-                new TypeToken<ApiCollection<TkSerialSearchListResponse>>() {}.getType()
+                new TypeToken<ApiCollection<TkSerialSearchListResponse>>() {
+                }.getType()
         );
 
         processSerialSearch(response);
@@ -712,7 +709,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             ));
         }
         Integer lineCount = null;
-        if(response.getPagination()!= null){
+        if (response.getPagination() != null) {
             lineCount = response.getPagination().getLineCount();
         }
         mView.processSerialSearch(list, lineCount);
@@ -849,10 +846,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      */
     private boolean hasSyncRequiredByFcmScn(int ticket_prefix, int ticket_code) {
         TK_Ticket dbTicket = getTicketObj(ticket_prefix, ticket_code);
-        if (dbTicket != null && dbTicket.getSync_required() == 1 && dbTicket.getFcm_scn() > dbTicket.getScn()) {
-            return true;
-        }
-        return false;
+        return dbTicket != null && dbTicket.getSync_required() == 1 && dbTicket.getFcm_scn() > dbTicket.getScn();
     }
 
     @Override
@@ -1358,14 +1352,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     @Override
     public boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code) {
         TK_Ticket aux = getTicketObj(ticket_prefix, ticket_code);
-        if (aux != null
+        return aux != null
                 && aux.getTicket_prefix() == ticket_prefix
                 && aux.getTicket_code() == ticket_code
-                && aux.getSync_required() == 1
-        ) {
-            return true;
-        }
-        return false;
+                && aux.getSync_required() == 1;
     }
 
     public Bundle getAct071ActionBundle(TK_Ticket mTicket, int stepCode, int processTkSeq, int processTkSeqTmp, boolean currentStep, boolean actionCreation) {
@@ -1399,6 +1389,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public void defineProcessBtnFlow(final TK_Ticket mTicket, final StepProcessBtn stepProcessBtn) {
+
         switch (stepProcessBtn.getProcessType()) {
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN:
                 mView.showAlert(
@@ -1649,6 +1640,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public void defineFormFlow(final TK_Ticket mTicket, StepForm stepForm) {
+        if (checkHasEventManual()) return;
+
         final TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getStepCode());
         final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getProcessTkSeq(), stepForm.getProcessTkSeqTmp(), stepForm.getStepCode());
         //
@@ -1792,6 +1785,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    private boolean checkHasEventManual() {
+        if (hasEventManual()) {
+            mView.showAlertEventInExecution();
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Metodo que verifica se é um form normal, ou se é um form os que tem has_item_check = 1
      * e se o serial possui estrutura local.
@@ -1808,15 +1809,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             return true;
         }
 
-        if (customFormFromCtrl != null
+        return customFormFromCtrl != null
                 && customFormFromCtrl.getIs_so() == 1
                 && ticketCtrl.getHas_item_check() != null
                 && ticketCtrl.getHas_item_check() == 1
-                && serialHasStructure(ticketCtrl)
-        ) {
-            return true;
-        }
-        return false;
+                && serialHasStructure(ticketCtrl);
     }
 
     private GE_Custom_Form getCustomFormFromCtrl(TK_Ticket_Form tkForm) {
@@ -2210,7 +2207,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         ticketCtrl.getTicket_seq(),
                         ticketCtrl.getTicket_seq_tmp(),
                         ticketCtrl.getStep_code()
-                ).toSqlQuery().toString().toLowerCase()
+                ).toSqlQuery().toLowerCase()
         );
         return customFormLocal;
     }
@@ -2246,10 +2243,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         MD_Product md_product = null;
         md_product = getMdProduct(open_product_code);
         //
-        if (ToolBox_Inf.isValidProduct(md_product)) {
-            return true;
-        }
-        return false;
+        return ToolBox_Inf.isValidProduct(md_product);
     }
 
     private MD_Product getMdProduct(int product_code) {
@@ -2679,6 +2673,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public void defineActionFlow(final TK_Ticket mTicket, final StepAction stepAction) {
+
         TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepAction.getStepCode());
         TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepAction.getProcessTkSeq(), stepAction.getStepCode());
         if (ticketStep != null && ticketCtrl != null) {
@@ -3649,4 +3644,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 scn_item_check
         );
     }
+
+    @Override
+    public boolean hasEventManual() {
+        return getEventManualUseCase.invoke(Unit.INSTANCE) != null;
+    }
+
 }

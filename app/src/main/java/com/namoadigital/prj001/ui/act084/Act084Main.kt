@@ -10,6 +10,8 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
+import com.namoadigital.prj001.core.translate.TranslateBuild
+import com.namoadigital.prj001.core.translate.di.EventTranslate
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
@@ -22,11 +24,17 @@ import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.historic.EventHistoryActivity
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.historic.domain.EventHistoricToMyActionsBase
+import com.namoadigital.prj001.ui.act095.event_manual.translate.EventManualKey
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class Act084Main : Base_Activity(), Act084MainContract.I_View {
     private lateinit var binding: Act084MainContentBinding
     private lateinit var mAdapter: MyActionsAdapter
@@ -44,25 +52,30 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             TK_TicketDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_Schedule_ExecDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_ApDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                )
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Schedule_ExecDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GE_Custom_Form_ApDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            )
         )
     }
+
+    @EventTranslate
+    @Inject
+    lateinit var translateBuild: TranslateBuild
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,22 +93,30 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
-        bundle = (savedInstanceState?: intent.extras?: Bundle()) as Bundle
+        bundle = (savedInstanceState ?: intent.extras ?: Bundle()) as Bundle
     }
 
     private fun iniSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                ConstantBaseApp.ACT084
+            context,
+            mModule_Code,
+            ConstantBaseApp.ACT084
         )
         //10/06/2021 - Add recolhimento do teclado
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        )
     }
 
     private fun iniTrans() {
         hmAux_Trans = mPresenter.hmAuxTrans
+        translateBuild.build().let { translate ->
+            hmAux_Trans[EventManualKey.EventHistoricCardTitle.key] =
+                translate[EventManualKey.EventHistoricCardTitle.key]
+            hmAux_Trans[EventManualKey.EventHistoricCardQuantity.key] =
+                translate[EventManualKey.EventHistoricCardQuantity.key]
+        }
     }
 
     private fun initVars() {
@@ -119,15 +140,20 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
      * Fun chamada pelo presenter para atualizar o label da tab com o contador.
      */
     override fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int) {
-        with(binding){
-            when(act084Tabs.checkedRadioButtonId){
+        with(binding) {
+            when (act084Tabs.checkedRadioButtonId) {
                 act084TabMyActions.id -> {
-                    act084TabMyActions.text = hmAux_Trans["tab_done_lbl"].plus(" ($selectedTabCounter)")
-                    act084TabOtherActions.text = hmAux_Trans["tab_discard_lbl"].plus(" ($otherTabCounter)")
+                    act084TabMyActions.text =
+                        hmAux_Trans["tab_done_lbl"].plus(" ($selectedTabCounter)")
+                    act084TabOtherActions.text =
+                        hmAux_Trans["tab_discard_lbl"].plus(" ($otherTabCounter)")
                 }
+
                 else -> {
-                    act084TabMyActions.text = hmAux_Trans["tab_done_lbl"].plus(" ($otherTabCounter)")
-                    act084TabOtherActions.text = hmAux_Trans["tab_discard_lbl"].plus(" ($selectedTabCounter)")
+                    act084TabMyActions.text =
+                        hmAux_Trans["tab_done_lbl"].plus(" ($otherTabCounter)")
+                    act084TabOtherActions.text =
+                        hmAux_Trans["tab_discard_lbl"].plus(" ($selectedTabCounter)")
                 }
             }
         }
@@ -136,7 +162,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
 
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
-        if(myActionsList.size > 0) {
+        if (myActionsList.size > 0) {
             binding.act084RvActionsList.visibility = View.GONE
             //
             mAdapter = MyActionsAdapter(
@@ -146,7 +172,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 false,
                 this::onMyActionClick,
                 this::onFormButtonClick,
-                notifyFilterApplied = this::onAdapterFilterApplied
+                notifyFilterApplied = this::onAdapterFilterApplied,
+                onClickFromEvent = this::onCLickEventManual
             )
             //
             with(binding.act084RvActionsList) {
@@ -155,13 +182,13 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 visibility = View.VISIBLE
             }
             //
-            if(!binding.act084MketFilter.text.isNullOrEmpty()){
+            if (!binding.act084MketFilter.text.isNullOrEmpty()) {
                 applyTextFilter(binding.act084MketFilter.text.toString())
-            }else{
+            } else {
                 scrollToLastSelectedItem()
             }
-        }else{
-            with(binding){
+        } else {
+            with(binding) {
                 act084TvNoResult.visibility = View.VISIBLE
                 act084RvActionsList.visibility = View.INVISIBLE
             }
@@ -169,21 +196,25 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
 
-
-    fun onMyActionClick(myAction: MyActions){
+    fun onMyActionClick(myAction: MyActions) {
         mPresenter.processActionClick(myAction)
     }
+
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
-     //   mPresenter.processActionFormButtonClick(myActionsFormButton)
+        //   mPresenter.processActionFormButtonClick(myActionsFormButton)
     }
 
     /**
      * Fun acionada pelo adapter como callback após finalizar a filtragem
      */
-    private fun onAdapterFilterApplied(qtyItensFiltered: Int){
-        if(qtyItensFiltered > 0){
+    private fun onAdapterFilterApplied(qtyItensFiltered: Int) {
+        if (qtyItensFiltered > 0) {
             scrollToLastSelectedItem()
         }
+    }
+
+    private fun onCLickEventManual(eventManual: EventHistoricToMyActionsBase) {
+        callAct095(eventManual.eventDay)
     }
 
     /**
@@ -195,18 +226,19 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         if (firstScroll) {
             firstScroll = false
             val actionPkPosition = mAdapter.getActionPkPosition(
-                    mPresenter.lastSelectedActionType,
-                    mPresenter.lastSelectedActionPk
+                mPresenter.lastSelectedActionType,
+                mPresenter.lastSelectedActionPk
             )
             if (actionPkPosition >= 0) {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
                 try {
-                    val linearLayoutManager = binding.act084RvActionsList.layoutManager as LinearLayoutManager
-                    val offset = ToolBox.dbToPixel(context,50)
-                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition,offset)
-                }catch (e: Exception){
+                    val linearLayoutManager =
+                        binding.act084RvActionsList.layoutManager as LinearLayoutManager
+                    val offset = ToolBox.dbToPixel(context, 50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
+                } catch (e: Exception) {
                     binding.act084RvActionsList.scrollToPosition(
-                            actionPkPosition
+                        actionPkPosition
                     )
                 }
             }
@@ -214,7 +246,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     private fun applyTextFilter(text: String?) {
-        if(::mAdapter.isInitialized){
+        if (::mAdapter.isInitialized) {
             mAdapter.filter.filter(text)
         }
 
@@ -243,7 +275,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     private fun initActions() {
-        binding.act084MketFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+        binding.act084MketFilter.setOnReportTextChangeListner(object :
+            MKEditTextNM.IMKEditTextChangeText {
             override fun reportTextChange(text: String?) {
             }
 
@@ -253,7 +286,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             }
         })
         binding.act084Tabs.setOnCheckedChangeListener { _, checkedId ->
-            binding.act084RvActionsList.stopScroll();
+            binding.act084RvActionsList.stopScroll()
             with(binding) {
                 when (checkedId) {
                     act084TabMyActions.id -> updateReportAction(1, isReportClick)
@@ -303,8 +336,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     override fun changeProgressBarVisility(show: Boolean) {
-        with(binding.act084PbLoad){
-            visibility = if(show) View.VISIBLE else View.GONE
+        with(binding.act084PbLoad) {
+            visibility = if (show) View.VISIBLE else View.GONE
         }
         //
         toggleTabEnableStatus(!show)
@@ -324,21 +357,21 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     override fun getMketFilter(): String? {
         val textFilter = binding.act084MketFilter.text.toString()
         //
-        return if(textFilter.isBlank() || textFilter.isEmpty()){
+        return if (textFilter.isBlank() || textFilter.isEmpty()) {
             null
-        }else{
+        } else {
             textFilter
         }
     }
 
     override fun getCurrentTab(): Int {
-        return when (binding.act084Tabs.checkedRadioButtonId){
+        return when (binding.act084Tabs.checkedRadioButtonId) {
             binding.act084TabMyActions.id -> 1
             else -> 0
         }
     }
 
-    override fun getNcFilterStatus() : Boolean{
+    override fun getNcFilterStatus(): Boolean {
         return isReportClick
     }
 
@@ -348,11 +381,11 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
 
     override fun setViewFiltersParam(mketFilter: String?, tabToLoad: Int, ncFilter: Boolean) {
         binding.act084MketFilter.setText(mketFilter)
-        if(tabToLoad == 0){
+        if (tabToLoad == 0) {
             binding.act084TabOtherActions.performClick()
         }
         //
-        if(ncFilter){
+        if (ncFilter) {
             isReportClick = ncFilter
         }
     }
@@ -360,11 +393,11 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
 
     override fun showMsg(ttl: String?, msg: String?) {
         ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                null,
-                0
+            context,
+            ttl,
+            msg,
+            null,
+            0
         )
     }
 
@@ -372,6 +405,17 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         //super.onBackPressed()
         callAct005()
 
+    }
+
+    private fun callAct095(eventDay: Int) {
+        Intent(context, EventHistoryActivity::class.java).apply {
+            putExtras(
+                Bundle().apply {
+                    putInt(EventHistoryActivity.ARG_EVENT_DAY, eventDay)
+                }
+            )
+            startActivity(this)
+        }
     }
 
     private fun callAct005() {

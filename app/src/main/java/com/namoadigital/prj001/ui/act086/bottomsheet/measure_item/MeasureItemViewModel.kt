@@ -10,28 +10,20 @@ import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureI
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemKey
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MeasureItemViewModel @Inject constructor(
-    private val translateBuild: TranslateBuild
-) : BaseViewModel<MeasureItemState, MeasureItemEvent>(MeasureItemState()) {
+    private val translateBuild: TranslateBuild,
+) : BaseViewModel<MeasureItemState, MeasureItemEvent>(
+    initialState = MeasureItemState(),
+    translateBuild = translateBuild,
+    applyTranslation = { state, translate -> state.copy(translate = translate) }
+) {
 
     companion object {
         const val MEASURE_ITEM_RESOURCE = "measure_item_resource"
-    }
-
-    init {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    isLoading = true,
-                    translate = loadTranslation()
-                )
-            }
-        }
     }
 
     override fun onEvent(event: MeasureItemEvent) {
@@ -154,7 +146,7 @@ class MeasureItemViewModel @Inject constructor(
     }
 
 
-    private fun loadTranslation(): TranslateMap {
+    override suspend fun loadTranslation(): TranslateMap {
         return translateBuild
             .resource(MEASURE_ITEM_RESOURCE)
             .listVars { MeasureItemKey.entries.map { it.key } }

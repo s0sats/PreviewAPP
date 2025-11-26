@@ -31,12 +31,12 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
-class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DATA()){
+class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DATA()) {
 
 
     lateinit var dao: FSTripDao
     lateinit var destinationDao: FsTripDestinationDao
-    private  val hmAuxTranslate by lazy { loadNetworkTranslate() }
+    private val hmAuxTranslate by lazy { loadNetworkTranslate() }
 
     override fun onHandleIntent(intent: Intent?) {
 
@@ -44,7 +44,7 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
             dao = FSTripDao(applicationContext)
             destinationDao = FsTripDestinationDao(applicationContext)
             val extras = intent?.extras
-            val request =  Gson().fromJson(
+            val request = Gson().fromJson(
                 extras?.getString(TripFleetSetEnv.WS_BUNDLE_KEY),
                 TripFleetSetEnv::class.java
             )
@@ -65,8 +65,8 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
         val modelEnv = ApiRequest(
             token = token,
             parameters = request.copy(
-                imageKey = if(deletePhoto) null else request.imageKey,
-                imageChanged = if(deletePhoto) 1 else request.imageChanged
+                imageKey = if (deletePhoto) null else request.imageKey,
+                imageChanged = if (deletePhoto) 1 else request.imageChanged
             )
         ).apply {
             session_app = getUserSessionAPP()
@@ -89,12 +89,12 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
                     response.data?.let { data ->
                         DatabaseTransactionManager(this).executeTransaction { db ->
                             dao.updateScn(data.tripPrefix, data.tripCode, data.scn, db)
-                            val image = if(!request.deletePhoto){
+                            val image = if (!request.deletePhoto) {
                                 request.imageKey
-                            }else {
+                            } else {
                                 ""
                             }
-                            when(request.target.toTripTarget()){
+                            when (request.target.toTripTarget()) {
                                 TripTarget.DESTINATION -> {
                                     destinationDao.updateArrivedFleet(
                                         tripPrefix = data.tripPrefix,
@@ -106,6 +106,7 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
                                         db = db
                                     )
                                 }
+
                                 else -> {
                                     dao.updateFleet(
                                         data.tripPrefix,
@@ -120,14 +121,14 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
                                 }
                             }
                         }.success {
-                            if(deletePhoto){
+                            if (deletePhoto) {
                                 try {
                                     val file =
                                         File("${ConstantBase.CACHE_PATH_PHOTO}/${request.imageKey}")
                                     if (file.exists()) {
                                         file.delete()
                                     }
-                                }catch (exception:Exception){
+                                } catch (exception: Exception) {
                                     ToolBox.registerException(
                                         javaClass.name,
                                         exception

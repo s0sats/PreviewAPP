@@ -41,6 +41,7 @@ import com.namoadigital.prj001.model.trip.FSTripOriginEnv
 import com.namoadigital.prj001.model.trip.FSTripOriginRec
 import com.namoadigital.prj001.model.trip.FSTripStartEnv
 import com.namoadigital.prj001.model.trip.FSTripStartRec
+import com.namoadigital.prj001.model.trip.FSTripUser
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripDestinationStatusChangeRec
 import com.namoadigital.prj001.model.trip.TripFleetSetEnv
@@ -117,6 +118,7 @@ class TripRepositoryImp @Inject constructor(
         destinationStatus: String?,
         nextDestinationSeq: Int?,
         nextDestinationStatus: String?,
+        endDate: String?,
     ): Flow<IResult<Unit>> {
         return flow {
             val trip = getTrip()
@@ -125,7 +127,7 @@ class TripRepositoryImp @Inject constructor(
                 emit(loading(tripOnline))
                 var doneDate: String? = null
                 if (tripStatus == TripStatus.DONE) {
-                    doneDate = getCurrentDateApi(true)
+                    doneDate = endDate
                 }
 
                 var startDate: String? = null
@@ -176,7 +178,7 @@ class TripRepositoryImp @Inject constructor(
                                     modelEnv.parameters?.let {
                                         if (transaction.save(
                                                 statusChanged,
-                                                startDate = startDate
+                                                startDate = startDate,
                                             )
                                         ) {
                                             ToolBox.sendBCStatus(
@@ -264,7 +266,8 @@ class TripRepositoryImp @Inject constructor(
         val transaction = TransactionWsTripDestinationStatusChange(
             context = context,
             FSTripDao(context),
-            FsTripDestinationDao(context)
+            FsTripDestinationDao(context),
+            userDao = FSTripUserDao(context)
         )
         //
         it.updateRequired = 1
@@ -296,7 +299,7 @@ class TripRepositoryImp @Inject constructor(
                 nextDestinationStatus = nextDestination?.destinationStatus
             ),
             startDate = it.startDate,
-            updateRequired = true
+            updateRequired = true,
         )
 
         if (saveReturn) {
@@ -421,13 +424,13 @@ class TripRepositoryImp @Inject constructor(
 
             if (!isOnlineMode) {
                 saveOffline(
-                    model,
-                    trip,
-                    destinationSeq,
-                    odometer,
-                    imageKey,
-                    licensePlate,
-                    deletePhoto
+                    model = model,
+                    trip = trip,
+                    destinationSeq = destinationSeq,
+                    odometer = odometer,
+                    imageKey = imageKey,
+                    licensePlate = licensePlate,
+                    deletePhoto = deletePhoto
                 )
                 return@flow
             }
@@ -523,14 +526,14 @@ class TripRepositoryImp @Inject constructor(
                     },
                     failed = { throwable ->
                         saveOffline(
-                            model,
-                            trip,
-                            destinationSeq,
-                            odometer,
-                            imageKey,
-                            licensePlate,
-                            deletePhoto,
-                            throwable
+                            model = model,
+                            trip = trip,
+                            destinationSeq = destinationSeq,
+                            odometer = odometer,
+                            imageKey = imageKey,
+                            licensePlate = licensePlate,
+                            deletePhoto = deletePhoto,
+                            networkError = throwable
                         )
                     }
                 )
@@ -581,6 +584,7 @@ class TripRepositoryImp @Inject constructor(
                     } else {
                         if (trip.fleetEndPhotoChanged == 1) 1 else model.photoChanged
                     }
+
                     dao.updateFleet(
                         tripPrefix = model.tripPrefix,
                         tripCode = model.tripCode,
@@ -994,5 +998,16 @@ class TripRepositoryImp @Inject constructor(
                 }
             }
         }.flowOn(Dispatchers.IO)
+    }
+
+
+    override fun getUsersCurrentTrip(
+        tripPrefix: Int,
+        tripCode: Int,
+    ): List<FSTripUser> {
+        return userDao?.getListUserByTrip(
+            tripPrefix = tripPrefix,
+            tripCode = tripCode
+        ) ?: emptyList()
     }
 }

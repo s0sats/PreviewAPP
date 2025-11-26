@@ -187,6 +187,7 @@ fun DateTimePicker(
             CalendarTextField(
                 text = dateText,
                 isError = isError,
+                placeHolder = dateHint,
                 isEnabled = isDateEnabled,
                 icon = Icons.Outlined.Event,
                 modifier = Modifier
@@ -213,6 +214,7 @@ fun DateTimePicker(
                 text = timeText,
                 isError = isError,
                 isEnabled = isTimeEnabled,
+                placeHolder = timeHint,
                 icon = Icons.Default.Schedule,
                 modifier = Modifier
                     .addClickableInTime()
@@ -252,6 +254,7 @@ private fun CalendarTextField(
     modifier: Modifier = Modifier,
     text: String,
     icon: ImageVector,
+    placeHolder: String,
     isEnabled: Boolean = true,
     isError: Boolean = false,
     onClick: () -> Unit
@@ -263,6 +266,7 @@ private fun CalendarTextField(
         singleLine = true,
         enabled = isEnabled,
         modifier = modifier.padding(horizontal = NamoaTheme.spacing.small),
+        label = { Text(placeHolder) },
         leadingIcon = {
             if (isEnabled) {
                 IconButton(onClick = onClick) {

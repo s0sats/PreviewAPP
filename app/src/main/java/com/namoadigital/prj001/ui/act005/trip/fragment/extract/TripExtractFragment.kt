@@ -365,6 +365,16 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
             context = requireContext(),
             trip = viewModel.state.value.trip!!,
             destination = item,
+            validateDateFromDestination = { prefix, code, destinationSeq, newStart, newEnd, type ->
+                viewModel.validateDateFromDestination(
+                    tripPrefix = prefix,
+                    tripCode = code,
+                    destinationSeq = destinationSeq,
+                    type = type,
+                    newStart = newStart,
+                    newEnd = newEnd
+                )
+            },
             getDestinationThresholds = { customerCode, tripPrefix, tripCode, destinationSeq, type ->
                 viewModel.getDestinationThresholds(
                     customerCode,

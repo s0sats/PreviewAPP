@@ -13,7 +13,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
@@ -157,18 +156,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
-            StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+            String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                    " and " +
+                    CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                    " and " +
+                    CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                    " and " +
+                    CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                    " and " +
+                    CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
@@ -225,18 +223,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                        " and " +
+                        CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                        " and " +
+                        CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
                 //
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0) {
                     curAction = DaoObjReturn.INSERT;
@@ -299,18 +296,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         try {
             curAction = DaoObjReturn.UPDATE;
             //Where para update
-            StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-            sbWhere.append(" and ");
-            sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+            String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                    " and " +
+                    CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                    " and " +
+                    CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                    " and " +
+                    CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                    " and " +
+                    CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0) {
                 curAction = DaoObjReturn.INSERT;
@@ -380,18 +376,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                        " and " +
+                        CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                        " and " +
+                        CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
                 //
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0) {
                     curAction = DaoObjReturn.INSERT;
@@ -460,7 +455,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         if (dbInstance == null) {
@@ -479,24 +473,22 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         try {
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_local)) == -1) {
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                        " and " +
+                        CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                        " and " +
+                        CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                        " and " +
+                        CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
 
 
-                db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
             }
 
 
         } catch (Exception e) {
-        } finally {
         }
 
         closeDB();
@@ -516,18 +508,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
 
             for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
                 if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_local)) == -1) {
-                    StringBuilder sbWhere = new StringBuilder();
-                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-                    sbWhere.append(" and ");
-                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                    String sbWhere = CUSTOMER_CODE + " = '" + custom_form_local.getCustomer_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_TYPE + " = '" + custom_form_local.getCustom_form_type() + "'" +
+                            " and " +
+                            CUSTOM_FORM_CODE + " = '" + custom_form_local.getCustom_form_code() + "'" +
+                            " and " +
+                            CUSTOM_FORM_VERSION + " = '" + custom_form_local.getCustom_form_version() + "'" +
+                            " and " +
+                            CUSTOM_FORM_DATA + " = '" + custom_form_local.getCustom_form_data() + "'";
 
-                    db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                    db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere, null);
                 }
             }
 
@@ -550,7 +541,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             db.execSQL(s_query);
 
         } catch (Exception e) {
-        } finally {
         }
 
         closeDB();
@@ -565,7 +555,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             db.execSQL(s_query);
 
         } catch (Exception e) {
-        } finally {
         }
 
         closeDB();
@@ -588,7 +577,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-        } finally {
         }
 
         closeDB();
@@ -612,7 +600,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -638,7 +625,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -662,7 +648,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
         }
 
         closeDB();
@@ -1142,5 +1127,16 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         );
     }
 
+    public List<GE_Custom_Form_Local> getFormDataByStatus(
+            Long customerCode,
+            String status
+    ) {
+        String query = "SELECT * " +
+                "FROM " + TABLE + " " +
+                "WHERE " +
+                CUSTOMER_CODE + " = " + customerCode + " AND " +
+                CUSTOM_FORM_STATUS + " = '" + status + "' ";
 
+        return query(query);
+    }
 }

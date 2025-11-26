@@ -185,4 +185,8 @@ public interface Act005_Main_Presenter {
     void executeTripSave();
 
     boolean hasTicketForDownload();
+
+    void executeEventSave(boolean isCloudFlow);
+
+    boolean hasEventUpdateRequired();
 }

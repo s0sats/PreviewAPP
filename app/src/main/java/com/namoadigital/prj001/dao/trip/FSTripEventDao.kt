@@ -193,7 +193,7 @@ class FSTripEventDao(
             }
         } catch (e: java.lang.Exception) {
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            ToolBox_Inf.registerException(javaClass.name, e);
+            ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             if (dbInstance == null) {
                 db.endTransaction()
@@ -642,6 +642,17 @@ class FSTripEventDao(
         )
 
         return if (value.isEmpty()) null else value[0]
+    }
+
+    fun getAllEventsByTrip(customerCode: Long, tripPrefix: Int, tripCode: Int): List<FSTripEvent> {
+        return query(
+            """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode' 
+            AND $TRIP_PREFIX = '$tripPrefix' 
+            AND $TRIP_CODE = '$tripCode'
+        """.trimIndent()
+        )
     }
 
     companion object {

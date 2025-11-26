@@ -28,6 +28,10 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.SelectDestinationAdapter.Companion.BTN_SELECT_DESTINATION
 import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
+import com.namoadigital.prj001.core.translate.TranslateBuild
+import com.namoadigital.prj001.core.translate.TranslateMap
+import com.namoadigital.prj001.core.translate.di.EventTranslate
+import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.core.trip.domain.usecase.CheckStatusForReadOnlyUseCase
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
@@ -70,17 +74,16 @@ import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterP
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
-import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase
-import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.Companion
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
-import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
-import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
 import com.namoadigital.prj001.ui.act094.util.Act094Translate.ALERT_DESTINATION_SELECTED_MSG
+import com.namoadigital.prj001.ui.act094.util.Act094Translate.SAVE_TRIP_OFFLINE_TOAST
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase
+import com.namoadigital.prj001.ui.act095.event_manual.translate.EventManualKey
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -110,6 +113,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         const val FREE_EXECUTION_BLOCKED = "free_execution_blocked"
         const val WS_SCHEDULE_NOT_EXECUTED = "WS_SCHEDULE_NOT_EXECUTED"
         const val SITE_RESTRICTION_NO_ACCESS = "SITE_RESTRICTION_NO_ACCESS"
+        const val EVENT_IN_EXECUTION = "event_in_execution"
     }
 
     private var hasConnectionFail: Boolean = false
@@ -127,6 +131,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     //
     private var isReadOnly = false
+
+    @Inject
+    lateinit var getEventManualUseCase: GetEventManualUseCase
+
+    @EventTranslate
+    @Inject
+    lateinit var translateBuild: TranslateBuild
+    private lateinit var translateMap: TranslateMap
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
@@ -180,7 +192,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             hmAux_Trans,
             SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase(),
             ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build(),
-            FlowTicketAccessUseCase.Companion.Factory(context).build()
+            FlowTicketAccessUseCase.Companion.Factory(context).build(),
+            getEventManualUseCase
         )
     }
 
@@ -229,6 +242,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun iniTrans() {
         hmAux_Trans = loadTranslation()
+        translateMap = translateBuild.build()
     }
 
     private fun iniSetup() {
@@ -264,8 +278,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 footerMain.visibility = View.VISIBLE
                 btnFilledRightAction.apply {
                     text = hmAux_Trans[BTN_SELECT_DESTINATION]
-                    icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_add_location_alt_24, null)
-                    iconTint = ResourcesCompat.getColorStateList(resources, R.color.m3_namoa_surface, null)
+                    icon = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.baseline_add_location_alt_24,
+                        null
+                    )
+                    iconTint =
+                        ResourcesCompat.getColorStateList(resources, R.color.m3_namoa_surface, null)
                     visibility = View.VISIBLE
                     setOnClickListener {
                         mPresenter.selectDestination()
@@ -273,7 +292,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 }
             }
             binding.act083MainContent.include.visibility = View.GONE
-        }else{
+        } else {
             binding.act083MainContent.include.visibility = View.VISIBLE
             binding.act083MainContent.llFooter.footerMain.visibility = View.GONE
         }
@@ -412,7 +431,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 act070IvJustifyPhotoBtn.visibility = View.GONE
 
                 setLabel(myAction)
-                setActions(myAction,
+                setActions(
+                    myAction,
                     closeDialog = {
                         dialog.hide()
                     }
@@ -916,7 +936,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WsSelectDestination.NAME -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                Toast.makeText(context, hmAux_Trans[Act094Translate.ALERT_DESTINATION_SELECTED_MSG] ?: "", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG] ?: "",
+                    Toast.LENGTH_SHORT
+                ).show()
                 mPresenter.selectionDestinationAvailable?.let {
                     mPresenter.saveDestination(context, mLink, it)
                 }
@@ -1406,6 +1430,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 msg = hmAux_Trans["alert_free_execution_blocked_msg"]
                 btnNegative = 0
             }
+
+            EVENT_IN_EXECUTION -> {
+                title = translateMap.textOf(EventManualKey.ErrorEventInExecutionTitle)
+                msg = translateMap.textOf(EventManualKey.ErrorEventInExecutionMsg)
+                listener = DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.dismiss()
+                }
+                btnNegative = 0
+            }
         }
 
         if (btnNegative != null) {
@@ -1563,11 +1596,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             when (typeSerial) {
 
                 is TypeSerial.MORE_ACTIONS -> {
-                        ToolBox_Inf.showNoConnectionDialog(context)
+                    ToolBox_Inf.showNoConnectionDialog(context)
                 }
 
                 is TypeSerial.INFO_SERIAL -> {
-                        ToolBox_Inf.showNoConnectionDialog(context)
+                    ToolBox_Inf.showNoConnectionDialog(context)
                 }
 
                 else -> {
@@ -1730,12 +1763,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("dialog_serial_outdate_ttl")
         transList.add("dialog_serial_outdate_msg")
         //
-        transList.add(Act094Translate.ALERT_DESTINATION_SELECTED_MSG)
+        transList.add(ALERT_DESTINATION_SELECTED_MSG)
         transList.add(Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE)
         transList.add(Act094Translate.PROCESS_SELECTION_DESTINATION_MSG)
         transList.add(Act094Translate.ALERT_TRIP_NOT_FOUND_TTL)
         transList.add(Act094Translate.ALERT_TRIP_NOT_FOUND_MSG)
         transList.add(BTN_SELECT_DESTINATION)
+        transList.add(SAVE_TRIP_OFFLINE_TOAST)
         return ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

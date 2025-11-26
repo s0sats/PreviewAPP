@@ -19,7 +19,7 @@ fun getCurrentDateApi(resetSeconds: Boolean = false): String {
         calendar.set(Calendar.MILLISECOND, 0)
     }
     val date: Date? = calendar.getTime()
-    val sdf = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT, Locale.getDefault())
+    val sdf = SimpleDateFormat(FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault())
     return sdf.format(date)
 }
 
@@ -56,8 +56,8 @@ fun String.convertToDate(inputFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT): Da
 }
 
 
-fun String.toFormattedDateAndTime(): Date? {
-    val format = SimpleDateFormat("dd/MM/yy HH:mm", Locale.getDefault())
+fun String.toFormattedDateAndTime(formatted: String = "dd/MM/yy HH:mm"): Date? {
+    val format = SimpleDateFormat(formatted, Locale.getDefault())
     return try {
         format.parse(this)
     } catch (e: ParseException) {
@@ -67,7 +67,7 @@ fun String.toFormattedDateAndTime(): Date? {
 }
 
 fun Date?.toFormattedString(): String {
-    val format = SimpleDateFormat(FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault())
+    val format = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT, Locale.getDefault())
     return this?.let { format.format(it) } ?: ""
 }
 
@@ -120,8 +120,8 @@ fun calculateMinutesBetweenDates(
 fun compareDates(
     startDate: String,
     endDate: String,
-    startDateFormat: String = ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
-    endDateFormat: String = ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT,
+    startDateFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT,
+    endDateFormat: String = FULL_TIMESTAMP_TZ_FORMAT_GMT,
     comparator: (Date, Date) -> Boolean
 ): Boolean {
     val startDateFormat = SimpleDateFormat(startDateFormat, Locale.getDefault())
@@ -198,3 +198,14 @@ fun isDateEquals(startDate: String, endDate: String?): Boolean {
 fun String.getDateDiferenceInMinutes(secoundDate: String): Long {
     return (ToolBox_Inf.getDateDiferenceInMilliseconds(this, secoundDate) / 60000).absoluteValue
 }
+
+fun Context.formatRange(dateStart: String?, dateEnd: String?): String =
+    buildString {
+        if (dateStart != null) {
+            append(this@formatRange.formatDate(FormatDateType.DateAndHour(dateStart)))
+            if (dateEnd != null) {
+                append(" - ")
+                append(this@formatRange.formatDate(FormatDateType.DateAndHour(dateEnd)))
+            }
+        }
+    }

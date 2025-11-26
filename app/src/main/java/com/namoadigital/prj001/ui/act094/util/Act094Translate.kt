@@ -46,4 +46,6 @@ object Act094Translate {
     const val ALERT_DESTINATION_SAVE_ERROR_TTL = "alert_destination_save_error_ttl"
     const val ALERT_DESTINATION_SAVE_ERROR_MSG = "alert_destination_save_error_msg"
 
+    const val SAVE_TRIP_OFFLINE_TOAST = "save_trip_offline_toast"
+
 }

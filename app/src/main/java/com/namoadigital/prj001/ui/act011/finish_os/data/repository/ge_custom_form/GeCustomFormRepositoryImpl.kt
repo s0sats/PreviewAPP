@@ -16,12 +16,14 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.model.GE_Custom_Form_Local
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GeCustomFormRepositoryImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val localDao: GE_Custom_Form_LocalDao,
     private val dataDao: GE_Custom_Form_DataDao,
     private val geOsDao: GeOsDao,
@@ -97,7 +99,7 @@ class GeCustomFormRepositoryImpl @Inject constructor(
         formCode: Int,
         formVersionCode: Int,
         formData: Long,
-    ) : Flow<IResult<GE_Custom_Form_Data?>> {
+    ): Flow<IResult<GE_Custom_Form_Data?>> {
         return flow {
             emit(loading())
 
@@ -119,7 +121,7 @@ class GeCustomFormRepositoryImpl @Inject constructor(
         formCode: Int,
         formVersionCode: Int,
         formData: Long
-        ): GE_Custom_Form_Data? {
+    ): GE_Custom_Form_Data? {
         return dataDao.getFormDataById(
             context.getCustomerCode(),
             formTypeCode,
@@ -136,9 +138,10 @@ class GeCustomFormRepositoryImpl @Inject constructor(
     ): Flow<IResult<Unit>> {
         return flow {
             DatabaseTransactionManager(context).executeTransactionDaoObjReturn { db ->
-                var daoObjReturn = dataDao.addUpdateWithReturnAndSharedDbInstance(customFormData, db)
+                var daoObjReturn =
+                    dataDao.addUpdateWithReturnAndSharedDbInstance(customFormData, db)
 
-                if(!daoObjReturn.hasError()){
+                if (!daoObjReturn.hasError()) {
                     daoObjReturn = geOsDao.addUpdate(geOs, db)
                 }
 
@@ -153,4 +156,27 @@ class GeCustomFormRepositoryImpl @Inject constructor(
             )
         }
     }
+
+    override fun getFormByStatus(
+        status: String
+    ): List<GE_Custom_Form_Local> {
+        return localDao.getFormDataByStatus(
+            context.getCustomerCode(),
+            status
+        )
+    }
+
+    override fun getFormConflict(
+        startDate: String,
+        endDate: String?
+    ): EventConflict? {
+        val customerCode = context.getCustomerCode()
+        return dataDao.getConflictingForm(
+            customerCode,
+            startDate,
+            endDate
+        )
+    }
+
+
 }

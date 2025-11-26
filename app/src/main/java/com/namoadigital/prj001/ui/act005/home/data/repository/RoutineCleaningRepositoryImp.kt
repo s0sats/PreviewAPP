@@ -12,7 +12,7 @@ import com.namoadigital.prj001.worker.Work_Cleanning_Data
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-class RoutineCleaningRepositoryImp constructor(
+class RoutineCleaningRepositoryImp(
     private val context: Context,
     private val pref: RoutineCleaningPreference = RoutineCleaningPreference(context)
 ) : RoutineCleaningRepository {
@@ -29,7 +29,7 @@ class RoutineCleaningRepositoryImp constructor(
             val currentDate = dateFormat.parse(getCurrentDateApi())
 
             val diff = (currentDate?.time ?: 0L) - (beforeDate?.time ?: 0L)
-            val diffHours = diff / TIME_DIFF
+            var diffHours = diff / TIME_DIFF
 
             if (diffHours >= 12) {
                 runWork()
@@ -43,12 +43,13 @@ class RoutineCleaningRepositoryImp constructor(
     }
 
 
-    private fun runWork(){
+    private fun runWork() {
         val routineCleanWork = OneTimeWorkRequest.Builder(Work_Cleanning_Data::class.java)
             .setBackoffCriteria(
                 BackoffPolicy.LINEAR,
                 1,
-                TimeUnit.HOURS)
+                TimeUnit.HOURS
+            )
             .build()
 
         WorkManager.getInstance(context).enqueue(routineCleanWork)
