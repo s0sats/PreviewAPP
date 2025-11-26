@@ -284,7 +284,7 @@ public class WS_GetCustomer extends BaseWsIntentService {
                 );
             }
             //
-            ev_userDao.addUpdate(users, true);
+            ev_userDao.addUpdate(users, false);
             //Atualiza contador
             forIdx++;
         }
@@ -353,7 +353,7 @@ public class WS_GetCustomer extends BaseWsIntentService {
                 }
             }
             //
-            ev_user_customerDao.addUpdate(customers, true);
+            ev_user_customerDao.addUpdate(customers, false);
         }
 
         ev_user_customerParamDao.remove(new Ev_User_Customer_Parameter_Sql_Truncate().toSqlQuery());
@@ -370,7 +370,7 @@ public class WS_GetCustomer extends BaseWsIntentService {
                     }.getType()
             );
 
-            ev_user_customerParamDao.addUpdate(customer_params,true);
+            ev_user_customerParamDao.addUpdate(customer_params,false);
         }
 
         if(!getLastUserCode().equals(userInfo.getUser_code())){

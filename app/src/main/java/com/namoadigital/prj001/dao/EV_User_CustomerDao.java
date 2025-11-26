@@ -101,11 +101,12 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         openDB();
 
         try {
+
+            if (!ismIgnoreCounter()) {
+                db.beginTransaction();
+            }
+            //
             if (status) {
-                if (!ismIgnoreCounter()) {
-                    db.beginTransaction();
-                }
-                //
                 db.delete(TABLE, null, null);
             }
 
