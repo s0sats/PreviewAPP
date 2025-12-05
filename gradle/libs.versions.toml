@@ -19,8 +19,8 @@ legacySupportV4 = "1.0.0"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
-dagger = "2.48"
-dagger-viewModel = "1.2.0"
+hilt = "2.48"
+hiltExt = "1.2.0"
 lifecycleViewmodelKtx = "2.8.3"
 materialDefault = "1.5.0"
 materialIconsExtended = "1.6.8"
@@ -45,7 +45,7 @@ firebaseCrashlytics = "2.9.2"
 lifecycleExtensions = "2.2.0"
 gson = "2.10.1"
 turbine = "0.7.0"
-workRuntime = "2.7.1"
+workRuntime = "2.10.5"
 namoaLib = "2.11.0"
 safeArgs = "2.7.7"
 activity = "1.7.0"
@@ -87,11 +87,11 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material2 = { group = "com.google.android.material", name = "material", version.ref = "materialDefault" }
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "dagger-viewModel" }
-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "dagger-viewModel" }
-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "dagger-viewModel" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltExt" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
@@ -126,12 +126,13 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 
 guava-free = { group = "com.google.guava", name = "guava", version.ref = "guavaVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 firebase = { id = "com.google.gms.google-services", version.ref = "firebase" }
-hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
+hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 firebase-crashlytics-gradle = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 safe-args-gradle = { id = "androidx.navigation.safeargs", version.ref = "safeArgs" }
 

@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.fcm.WsFirebaseIDReport;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.model.TSession_Env;
@@ -22,6 +23,8 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import kotlin.Unit;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -164,6 +167,11 @@ public class WS_Session extends BaseWsIntentService {
         ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), userCustomer.getTracking());
         ToolBox_Con.setPreference_Customer_TMZ(getApplicationContext(), userCustomer.getTimezone());
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
+        WsFirebaseIDReport wsFirebaseIDReport = new WsFirebaseIDReport(getApplicationContext());
+        wsFirebaseIDReport.sendGcmId(() -> {
+            ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
+            return Unit.INSTANCE;
+        });
+        //
     }
 }

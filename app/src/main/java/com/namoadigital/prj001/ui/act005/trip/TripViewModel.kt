@@ -319,7 +319,8 @@ class TripViewModel @Inject constructor(
                                 process = progressTranslate.process,
                                 title = progressTranslate.title,
                                 message = progressTranslate.message
-                            )
+                            ),
+                            endDate
                         )
                         return@results
                     }

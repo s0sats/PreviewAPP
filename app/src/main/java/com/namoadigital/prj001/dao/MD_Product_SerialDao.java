@@ -134,6 +134,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String MEASURE_BLOCK_INPUT_TIME = "measure_block_input_time";
     public static final String MEASURE_ALERT_INPUT_TIME = "measure_alert_input_time";
     public static final String UNAVAILABILITY_REASON_OPTION = "unavailability_reason_option";
+    public static final String SYNC_STRUCTURE = "sync_structure";
+    public static final String SYNC_BIG_FILE = "sync_big_file";
 
     public static final String NOT_FOUND_ERROR = "not_found_error";
 
@@ -147,7 +149,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
             EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE, HORIMETER, HORIMETER_DATE, HORIMETER_SUPPLIER_UID, HORIMETER_SUPPLIER_DESC, MEASURE_BLOCK_INPUT_TIME,
-            MEASURE_ALERT_INPUT_TIME, UNAVAILABILITY_REASON_OPTION
+            MEASURE_ALERT_INPUT_TIME, UNAVAILABILITY_REASON_OPTION, SYNC_STRUCTURE, SYNC_BIG_FILE
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -707,9 +709,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                         ).toSqlQuery(), db);
                 //
                 md_product_serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+                if (md_product_serial.getScn_item_check() != null
+                && md_product_serial.getScn_item_check() == 0) {
+                    md_product_serial.setSyncBigFile(1);
+                }
                 if (dbSerial != null && dbSerial.getSerial_code() > 0) {
                     md_product_serial.setSerial_tmp(dbSerial.getSerial_tmp());
                     md_product_serial.setSync_process(1);
+                    md_product_serial.setScn_item_check(dbSerial.getScn_item_check());
                     //
                     this.addUpdate(md_product_serial, db);
                     //LUCHE - 10/11/2021 - Tratativa para seriais com estrutura
@@ -1609,6 +1617,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }
 
             md_product_serial.setUnavailability_reason_option(cursor.getInt(cursor.getColumnIndex(UNAVAILABILITY_REASON_OPTION)));
+            md_product_serial.setSyncStructure(cursor.getInt(cursor.getColumnIndex(SYNC_STRUCTURE)));
+            md_product_serial.setSyncBigFile(cursor.getInt(cursor.getColumnIndex(SYNC_BIG_FILE)));
             //
             return md_product_serial;
         }
@@ -1735,7 +1745,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if (md_product_serial.getUnavailability_reason_option() > -1) {
                 contentValues.put(UNAVAILABILITY_REASON_OPTION, md_product_serial.getUnavailability_reason_option());
             }
-
+            //
+            if (md_product_serial.getSyncStructure() > -1) {
+                contentValues.put(SYNC_STRUCTURE, md_product_serial.getSyncStructure());
+            }
+            //
+            if (md_product_serial.getSyncBigFile() > -1) {
+                contentValues.put(SYNC_BIG_FILE, md_product_serial.getSyncBigFile());
+            }
+            //
             return contentValues;
         }
     }
@@ -1764,4 +1782,19 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         //
         return serial.size();
     }
+
+    public boolean serialStructureSyncRequired(
+            long customerCode,
+            long productCode,
+            int serialCode
+    ) {
+        MD_Product_Serial serial =  getSerial(
+                        customerCode,
+                        productCode,
+                        serialCode);
+
+        return serial != null && serial.getSyncStructure() == 1;
+    }
+
+
 }

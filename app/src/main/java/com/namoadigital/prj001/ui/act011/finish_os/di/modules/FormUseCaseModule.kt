@@ -10,6 +10,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_os.GeOsRep
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.measure_tp.MeasureTpRepository
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.BackupMachineSaveUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.BackupMachineSearchUseCase
+import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.CombineGeOsWithMeasureTpUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.FinishOSUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.GetFinishOsDataUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.SaveFormOsUseCase
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_custom.GetCusto
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GeOsUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetGeOsByIdUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetMissingForecastAnswersUseCase
+import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetRequiredByTicketMissingAnswer
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.measure.GetMeasureTpByCode
 import dagger.Module
 import dagger.Provides
@@ -62,16 +64,19 @@ object FormUseCaseModule {
         geOsRepository: GeOsRepository,
         ticketRepository: TicketRepository,
         productSerialRepository: ProductSerialRepository,
+        getMeasureTpByCode: GetMeasureTpByCode,
         geOSUseCase: GeOsUseCase,
     ): FinishOSUseCase {
         return FinishOSUseCase(
             getFinishOsData = GetFinishOsDataUseCase(
                 getFormDataById = useCase.getFormDataById,
                 getMissingForecastAnswersUseCase = geOSUseCase.getMissingForecastAnswersUseCase,
-                geOsByIdUseCase = geOSUseCase.getGeOsById,
+                combineGeOsWithMeasureTpUseCase = CombineGeOsWithMeasureTpUseCase(geOSUseCase.getGeOsById, getMeasureTpByCode),
                 ticketByIdUseCase = GetTicketByIdUseCase(ticketRepository),
                 ticketFormByIdUseCase = GetTicketFormByIdUseCase(ticketRepository),
-                productSerialByIdUseCase = GetProductSerialByIdUseCase(productSerialRepository)
+                productSerialByIdUseCase = GetProductSerialByIdUseCase(productSerialRepository),
+                getRequiredByTicketMissingAnswer = GetRequiredByTicketMissingAnswer(geOsRepository)
+
             ),
             saveOs = SaveFormOsUseCase(repository, geOsRepository),
             backupMachineSearch = BackupMachineSearchUseCase(productSerialRepository),

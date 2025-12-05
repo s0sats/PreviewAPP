@@ -206,5 +206,7 @@
     <string name="lib_recording_video_lbl">Gravar vídeo</string>
     <string name="location_pendency_ttl">Ação obrigatória</string>
     <string name="location_pendency_msg">Acesse o app para restaurar os serviços de localização.</string>
+    <string name="alert_notification_denied_permission_ttl">Notificações bloqueadas</string>
+    <string name="alert_notification_denied_permission_msg">A permissão para exibir notificações foi negada!</string>
 
 </resources>

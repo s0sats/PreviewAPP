@@ -210,6 +210,8 @@ public interface Act070_Main_Contract {
 
         void executeConfirmSerial(int ticketPrefix, int ticketCode, int productCode, int serialCode);
 
+        void executeTicketSaveProcess(boolean allowOffline);
+
         boolean hasEventManual();
     }
 }

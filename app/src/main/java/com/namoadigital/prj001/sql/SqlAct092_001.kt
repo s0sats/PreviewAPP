@@ -75,7 +75,8 @@ class SqlAct092_001 (
                      c.able_to_done,
                      c.preventive,
                      c.is_priority,
-                     c.automatic_ticket_download
+                     c.automatic_ticket_download,
+                     c.sync_big_file
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE

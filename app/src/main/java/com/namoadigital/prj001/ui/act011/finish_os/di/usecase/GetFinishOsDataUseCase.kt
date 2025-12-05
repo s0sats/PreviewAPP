@@ -14,6 +14,7 @@ import com.namoadigital.prj001.extensions.isZeroOrNull
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.extensions.suspendResults
 import com.namoadigital.prj001.model.GE_Custom_Form_Data
+import com.namoadigital.prj001.model.MeMeasureTp
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.TK_Ticket_Form
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
@@ -24,6 +25,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_custom.GetCustomFormDataByIdUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetGeOsByIdUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetMissingForecastAnswersUseCase
+import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetRequiredByTicketMissingAnswer
 import com.namoadigital.prj001.util.ConstantBaseApp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -35,8 +37,9 @@ import javax.inject.Inject
 class GetFinishOsDataUseCase @Inject constructor(
     private val getFormDataById: GetCustomFormDataByIdUseCase,
     private val getMissingForecastAnswersUseCase: GetMissingForecastAnswersUseCase,
-    private val geOsByIdUseCase: GetGeOsByIdUseCase,
+    private val combineGeOsWithMeasureTpUseCase: CombineGeOsWithMeasureTpUseCase,
     private val ticketByIdUseCase: GetTicketByIdUseCase,
+    private val getRequiredByTicketMissingAnswer: GetRequiredByTicketMissingAnswer,
     private val ticketFormByIdUseCase: GetTicketFormByIdUseCase,
     private val productSerialByIdUseCase: GetProductSerialByIdUseCase
 ) : UseCases<GetFinishOsDataUseCase.Param, FinishOsData?> {
@@ -48,6 +51,7 @@ class GetFinishOsDataUseCase @Inject constructor(
             var formData: GE_Custom_Form_Data? = null
             var missingAnswers = false
             var geOs: GeOs? = null
+            var meMeasureTp: MeMeasureTp? = null
 
             val formDataFlow = getFormDataById(
                 GetCustomFormDataByIdUseCase.Param(
@@ -67,8 +71,8 @@ class GetFinishOsDataUseCase @Inject constructor(
                 )
             )
 
-            val geOsFlow = geOsByIdUseCase(
-                GetGeOsByIdUseCase.Param(
+            val geOsFlow = combineGeOsWithMeasureTpUseCase(
+                CombineGeOsWithMeasureTpUseCase.Input(
                     formType = input.formTypeCode,
                     formCode = input.formCode,
                     formVersion = input.formVersionCode,
@@ -79,7 +83,7 @@ class GetFinishOsDataUseCase @Inject constructor(
             combine(
                 formDataFlow,
                 missingAnswersFlow,
-                geOsFlow
+                geOsFlow,
             ) { form, answers, geOsResponse ->
                 form.results(
                     success = { response ->
@@ -92,7 +96,8 @@ class GetFinishOsDataUseCase @Inject constructor(
 
                 geOsResponse.results(
                     success = { response ->
-                        geOs = response
+                        geOs = response.geos
+                        meMeasureTp = response.measureTp
                     },
                     failed = {
                         this@flow.emit(failed(it))
@@ -146,12 +151,26 @@ class GetFinishOsDataUseCase @Inject constructor(
                                 lastMeasureDate = geOs?.last_measure_date
                             )
 
+                            val requiredByTicketLeft = getRequiredByTicketMissingAnswer.invoke(
+                                GetRequiredByTicketMissingAnswer.Input(
+                                    data.custom_form_type,
+                                    data.custom_form_code,
+                                    data.custom_form_version,
+                                    data.custom_form_data,
+                                    data.ticket_prefix,
+                                    data.ticket_code
+                                )
+                            )
+
                             val (machineOsInitial, machineOsFinal) = parseMachinesOs(data, ticket)
                             val service = formData?.finalized_service
                             val finishOs = FinishOsData(
-                                showBalloonVerify = missingAnswers,
-                                showOptionsStopped = productSerial?.unavailability_reason_option == 1,
-                                showBkupMachine = geOs?.so_allow_backup == 1,
+                                showBalloonVerify = missingAnswers && requiredByTicketLeft<=0,
+                                requiredByTicketLeft = requiredByTicketLeft,
+                                showOptionsStopped = productSerial?.unavailability_reason_option == 1 && meMeasureTp?.without_measure == 0,
+                                showBkupMachine = geOs?.so_allow_backup == 1 && meMeasureTp?.without_measure == 0,
+                                showInitialStateMachine = meMeasureTp?.without_measure == 0,
+                                showFinalStateMachine = meMeasureTp?.without_measure == 0,
                                 infoOs = infoOs,
                                 machineOsInitial = machineOsInitial,
                                 machineOsFinal = machineOsFinal,

@@ -29,6 +29,8 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.preferences.BigFilePreferenceManager
+import com.namoadigital.prj001.worker.big_file.utils.BigFileStatus
 
 fun Context.showAlertWithYesOrNot(
     title: SpannableString,
@@ -273,4 +275,23 @@ fun Context.isAppInForeground(): Boolean {
         processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
                 processInfo.processName == packageName
     }
+}
+
+fun Context.hasBigFileProcessActive(): Boolean {
+    val structureBigFilePreferenceManager = BigFilePreferenceManager(
+        this,
+        BigFilePreferenceManager.FILE_TYPE_SERIAL_STRUCTURE
+    )
+    //
+    val ticketBigFilePreferenceManager =
+        BigFilePreferenceManager(
+            this,
+            BigFilePreferenceManager.FILE_TYPE_TICKET
+        )
+    //
+    val structurebigFile = structureBigFilePreferenceManager.getBigFile()
+    val ticketbigFile = ticketBigFilePreferenceManager.getBigFile()
+    //
+    return (structurebigFile.fileStatus != BigFileStatus.NO_VALUE.name || ticketbigFile.fileStatus != BigFileStatus.NO_VALUE.name)
+
 }

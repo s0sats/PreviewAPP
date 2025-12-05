@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011.frags
 
 import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo
 
 interface InspectionListFragmentInteraction {
     fun onInspectionSelected(
@@ -12,7 +13,7 @@ interface InspectionListFragmentInteraction {
         chkStatus: Boolean,
         itemCodeAndSeqPk: String,
         partition_execution: Int = 0,
-        isOtherTicket: Boolean = false
+        ticketFormType: FormTicketInfo.TicketFormType = FormTicketInfo.TicketFormType.NO_TICKET
     )
 
     //

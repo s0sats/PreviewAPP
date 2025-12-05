@@ -207,4 +207,6 @@
     <string name="lib_recording_video_lbl">Video aufnehmen</string>
     <string name="location_pendency_ttl">Maßnahme erforderlich</string>
     <string name="location_pendency_msg">Bitte die App öffnen, um die Standort-Funktion neuzustarten</string>
+    <string name="alert_notification_denied_permission_ttl">Benachrichtigungen verhindert</string>
+    <string name="alert_notification_denied_permission_msg">Benachrichtigungen sind derzeit nicht erlaubt.</string>
 </resources>

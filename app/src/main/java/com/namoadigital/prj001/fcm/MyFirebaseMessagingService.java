@@ -2,7 +2,6 @@ package com.namoadigital.prj001.fcm;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -38,6 +37,9 @@ import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TkTicketCache;
+import com.namoadigital.prj001.model.big_file.BigFile;
+import com.namoadigital.prj001.model.big_file.create_file.BigFileContentRec;
+import com.namoadigital.prj001.model.big_file.create_file.BigFileRec;
 import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.model.trip.fcm.FSTripFCM;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
@@ -54,12 +56,12 @@ import com.namoadigital.prj001.sql.TKTicketCacheSql001;
 import com.namoadigital.prj001.sql.TKTicketCacheSql002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
-import com.namoadigital.prj001.ui.act018.Act018_Main;
-import com.namoadigital.prj001.ui.act019.Act019_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.preferences.BigFilePreferenceManager;
+import com.namoadigital.prj001.worker.big_file.utils.BigFileStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -176,7 +178,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             fcmMessage.setCancellable(remoteMessage.getData().get("cancellable"));
-//            Log.d("TRIP_FCM", "Message data payload: " + sb.toString());
+//            Log.d("BIG_FILE_PROCESS", "Message data payload: " + sb.toString());
 
 
             //Se FCM não é o que esta usr logado, aborta FCM
@@ -322,6 +324,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     //
                     sendFCMStatus(fcmMessage.getModule());
+                } else if(ConstantBaseApp.FCM_ACTION_SYNC_BIG_FILE.equals(fcmMessage.getTitle())){
+                    Context context = this;
+                    //
+                    Gson gson = new GsonBuilder().serializeNulls().create();
+
+
+                    BigFileRec result = gson.fromJson(fcmMessage.getMsg_long(), BigFileRec.class);
+                    BigFileContentRec remoteBigFile = result.getFile();
+                    BigFilePreferenceManager bigPreferenceFileManager = new BigFilePreferenceManager(context, remoteBigFile.getFileType());
+                    BigFile bigFile = bigPreferenceFileManager.getBigFile();
+                    //
+                    if (!BigFileStatus.NO_VALUE.name().equalsIgnoreCase(bigFile.getFileStatus())) {
+                        if(bigFile.getFileCode() != null &&
+                                bigFile.getFileCode().equals(remoteBigFile.getFileCode())) {
+                            setRemoteBigFile(bigPreferenceFileManager, remoteBigFile, bigFile);
+                            if (ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+                                ToolBox_Con.callBigFileService(context, bigFile);
+                            }
+                        }
+                    } else {
+                        setRemoteBigFile(bigPreferenceFileManager, remoteBigFile, bigFile);
+                    }
                 }
             } else if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.FCM_MODULE_FIELD_SERVICE)) {
                 Gson gson = new GsonBuilder().serializeNulls().create();
@@ -392,6 +416,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+    private void setRemoteBigFile(BigFilePreferenceManager bigFileManager, BigFileContentRec remoteBigFile, BigFile bigFile) {
+        //
+        if (!BigFileStatus.DONE.name().equalsIgnoreCase(bigFile.getFileStatus())
+                && !BigFileStatus.PENDING.name().equalsIgnoreCase(bigFile.getFileStatus())) {
+            bigFile.setFileUrl(remoteBigFile.getFile_url());
+            String fileStatus = remoteBigFile.getFileStatus();
+            if (BigFileStatus.DONE.name().equalsIgnoreCase(fileStatus)) {
+                bigFile.setFileStatus(BigFileStatus.DOWNLOAD.name());
+            }
+            bigFile.setFileMd5(remoteBigFile.getFile_md5());
+            bigFile.setFileCode(remoteBigFile.getFileCode());
+            //
+            bigFileManager.saveBigFile(bigFile);
+        }
     }
 
     /**

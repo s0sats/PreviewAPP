@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act002;
 
-import static com.namoadigital.prj001.service.WS_Product_Serial_Structure.AMOUNT_TOTAL;
 import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
 import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_SEND_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
@@ -625,7 +624,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     @Override
     public void scheduleTicketCacheDownload() {
-         WorkerHelperKt.scheduleDownloadTicket(context.getApplicationContext());
+//         WorkerHelperKt.scheduleDownloadTicket(context.getApplicationContext());
     }
 
     private String getTicketConcatList(TK_TicketDao tk_ticketDao) {
@@ -661,7 +660,6 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
         bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
-        bundle.putInt(AMOUNT_TOTAL, total);
         //
         mIntent.putExtras(bundle);
         //

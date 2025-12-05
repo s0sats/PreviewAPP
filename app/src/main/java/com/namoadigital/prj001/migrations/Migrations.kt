@@ -1880,6 +1880,90 @@ val migrationV26 = object : MigrationSQLite(26, 27){
 
 }
 
+val migrationV27 = object : MigrationSQLite(27, 28) {
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        db.addMissingColumns(
+            tableName = MD_Product_SerialDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = MD_Product_SerialDao.SYNC_STRUCTURE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                ),
+                Column(
+                    name = MD_Product_SerialDao.SYNC_BIG_FILE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = TK_TicketDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = TK_TicketDao.SYNC_BIG_FILE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = TkTicketCacheDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = TkTicketCacheDao.SYNC_BIG_FILE,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "0"
+                )
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GE_Custom_Form_DataDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = GE_Custom_Form_DataDao.ALLOW_FORM_IN_THE_PAST,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                )
+            )
+        )
+        //
+        db.execSQL(
+            """
+                UPDATE ${GE_Custom_Form_DataDao.TABLE}
+                SET ${GE_Custom_Form_DataDao.ALLOW_FORM_IN_THE_PAST} = (
+                    SELECT  os.${GeOsDao.ALLOW_FORM_IN_THE_PAST} 
+                      FROM ${GeOsDao.TABLE} os
+                      WHERE os.${GeOsDao.CUSTOMER_CODE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOMER_CODE}
+                        AND os.${GeOsDao.CUSTOM_FORM_TYPE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE}
+                        AND os.${GeOsDao.CUSTOM_FORM_CODE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE}
+                        AND os.${GeOsDao.CUSTOM_FORM_VERSION} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION}
+                        AND os.${GeOsDao.CUSTOM_FORM_DATA} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA}
+                )
+                WHERE  EXISTS (
+                    SELECT 1
+                    FROM ${GeOsDao.TABLE} os
+                      WHERE os.${GeOsDao.CUSTOMER_CODE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOMER_CODE}
+                        AND os.${GeOsDao.CUSTOM_FORM_TYPE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE}
+                        AND os.${GeOsDao.CUSTOM_FORM_CODE} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE}
+                        AND os.${GeOsDao.CUSTOM_FORM_VERSION} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION}
+                        AND os.${GeOsDao.CUSTOM_FORM_DATA} = ${GE_Custom_Form_DataDao.TABLE}.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA}
+                );
+            """.trimIndent()
+        )
+        //
+    }
+
+}
+
 @Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(
     tableName: String,

@@ -95,6 +95,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String INITIAL_UNAVAILABILITY_REASON = "initial_unavailability_reason";
     public static final String FINAL_IS_SERIAL_STOPPED = "final_is_serial_stopped";
     public static final String FINAL_UNAVAILABILITY_REASON = "final_unavailability_reason";
+    public static final String ALLOW_FORM_IN_THE_PAST = "allow_form_in_the_past";
 
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
@@ -803,7 +804,14 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             } else {
                 custom_form_data.setFinal_unavailability_reason(cursor.getString(cursor.getColumnIndex(FINAL_UNAVAILABILITY_REASON)));
             }
+            //
+             if (cursor.isNull(cursor.getColumnIndex(ALLOW_FORM_IN_THE_PAST))) {
+                 custom_form_data.setAllow_form_in_the_past(null);
+            } else {
+                 custom_form_data.setAllow_form_in_the_past(cursor.getInt(cursor.getColumnIndex(ALLOW_FORM_IN_THE_PAST)));
+            }
 
+            //
             return custom_form_data;
         }
     }
@@ -936,7 +944,8 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(INITIAL_UNAVAILABILITY_REASON, custom_form_data.getInitial_unavailability_reason());
             contentValues.put(FINAL_IS_SERIAL_STOPPED, custom_form_data.getFinal_is_serial_stopped());
             contentValues.put(FINAL_UNAVAILABILITY_REASON, custom_form_data.getFinal_unavailability_reason());
-
+            contentValues.put(ALLOW_FORM_IN_THE_PAST, custom_form_data.getAllow_form_in_the_past());
+            //
             return contentValues;
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import androidx.core.view.ViewCompat
@@ -24,6 +25,7 @@ import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheet
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.MeasureItemBottomSheetActions
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext
@@ -40,15 +42,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     private lateinit var mLayoutManager: LinearLayoutManager
     private var tabItemSelectedIndex: Int = -1
-    private val mAdapter by lazy {
-        Act011InspectionFormAdapter(
-            acessoryFormView,
-            hmAuxTrans,
-            ::onItemSelected,
-            ::onAlreadyOkItemSelected,
-            ::onAdapterFilterApplied
-        )
-    }
+    private lateinit var mAdapter: Act011InspectionFormAdapter
     private var acessoryFormViewIdx = -1
     lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
@@ -68,6 +62,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("Form_Refresh", "--------------onCreate-------------------")
         arguments?.let {
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
@@ -81,11 +76,20 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("Form_Refresh", "--------------onViewCreated-------------------")
         super.onViewCreated(view, savedInstanceState)
         //Caso seja um recuperação do frg, chama interface que resgata acessoryFormView da act.
         savedInstanceState?.let {
             acessoryFormView = mFrgListener.getObjectView(acessoryFormViewIdx)
         }
+        Log.d("Form_Refresh", "acessoryName: ${acessoryFormView.acessoryName}")
+        mAdapter =  Act011InspectionFormAdapter(
+            acessoryFormView,
+            hmAuxTrans,
+            ::onItemSelected,
+            ::onAlreadyOkItemSelected,
+            ::onAdapterFilterApplied
+        )
         //
         setLabels()
         //
@@ -97,6 +101,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         //
         setVisibility()
         //
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("Form_Refresh", "--------------onSaveInstanceState-------------------")
+        outState.putInt(ARG_ACESSORY_FORM_VIEW_IDX, acessoryFormViewIdx)
     }
 
     private fun setChkHideNonForecast() {
@@ -161,7 +171,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     acessoryFormView.inspections.size,
                     edtInspectionFilter.text.toString(),
                     chkNonForecastItem.isChecked,
-                    ""
+                    "",
                 )
             }
         }
@@ -456,7 +466,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
-    override fun getTabObj(skipFieldValidation: Boolean, validHighlight: Boolean): Act011FormTab {
+    override fun getTabObj(skipFieldValidation: Boolean, validHighLight: Boolean): Act011FormTab {
         val colorCounts = acessoryFormView.inspections
             .asSequence()
             .groupBy { it.statusColor }
@@ -466,7 +476,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     items.count { (it.isVisible && !it.isPartitioned()) || (it.isPartitioned() && it.isDone) }
                 if (done < total) Act011FormCounter(done, total) else null
             }
-
+        val requiredByTicket = acessoryFormView.inspections.count {
+            it.ticketFormType == FormTicketInfo.TicketFormType.SAME_TICKET
+                    && !it.isDone
+        }
         //
         return Act011FormTab(
             page = tabIndex,
@@ -477,8 +490,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             forecastCount = colorCounts[GeOsDeviceItemStatusColor.BLUE],
             criticalForecastCount = colorCounts[GeOsDeviceItemStatusColor.YELLOW],
             nonForecastCount = colorCounts[GeOsDeviceItemStatusColor.GRAY],
+            requiredByTicketCount = requiredByTicket,
             status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(
-                validHighlight
+                validHighLight
             )
         )
     }
@@ -513,6 +527,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun onDetach() {
         super.onDetach()
+        Log.d("Form_Refresh", "--------------onDetach-------------------")
         _mFrgListener = null
     }
 
@@ -537,10 +552,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         itemPk: String,
         partitioned_execution: Int,
         measureBottomSheetContext: MeasureBottomSheetContext? = null,
-        isOtherTicket: Boolean = false
+        ticketFormType: FormTicketInfo.TicketFormType = FormTicketInfo.TicketFormType.NO_TICKET
     ) {
 
-        if (!isOtherTicket && (measureBottomSheetContext != null &&
+        if (ticketFormType != FormTicketInfo.TicketFormType.OTHER_TICKET  && (measureBottomSheetContext != null &&
                     measureBottomSheetContext.arguments.value == null &&
                     !measureBottomSheetContext.arguments.isReadOnly)
         ) {
@@ -548,7 +563,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 measureBottomSheetContext,
                 position,
                 itemPk,
-                partitioned_execution
+                partitioned_execution,
+                ticketFormType
             )
         } else {
             mFrgListener.onInspectionSelected(
@@ -559,7 +575,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 binding.chkNonForecastItem.isChecked,
                 itemPk,
                 partitioned_execution,
-                isOtherTicket
+                ticketFormType
             )
         }
     }
@@ -568,7 +584,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         measureBottomSheetContext: MeasureBottomSheetContext,
         position: Int,
         itemPk: String,
-        partitioned_execution: Int
+        partitioned_execution: Int,
+        ticketFormType: FormTicketInfo.TicketFormType
     ) {
         MeasureItemBottomSheet(
             measureItemBottomSheet = measureBottomSheetContext,
@@ -582,6 +599,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                         binding.chkNonForecastItem.isChecked,
                         itemPk,
                         partitioned_execution,
+                        ticketFormType
                     )
                 }
 
@@ -604,7 +622,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                         binding.chkNonForecastItem.isChecked,
                         itemPk,
                         partitioned_execution,
-                        false
+                        ticketFormType
                     )
                 }
             }
@@ -632,6 +650,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 position,
                 item.itemCodeAndSeq,
                 item.partitionedExecution,
+                null,
+                item.ticketFormType
             )
         } else {
             updateNonForecastCounter()
@@ -673,11 +693,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     }
 
     fun refreshInspection(acessoryFormView: AcessoryFormView) {
+        Log.d("Form_Refresh", "--------------refreshInspection-------------------")
         this.acessoryFormView = acessoryFormView
         CoroutineScope(Dispatchers.Main).launch {
             mAdapter.refreshList(acessoryFormView)
             mAdapter.applyNonForecastFilter(acessoryFormView.forecastFilter)
-            mAdapter.notifyDataSetChanged()
+            binding.rvInspections.post {
+                mAdapter.notifyDataSetChanged()
+            }
         }
     }
 

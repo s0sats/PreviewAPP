@@ -32,4 +32,13 @@ interface GeOsRepository {
         serialCode: Long,
         deviceTpCode: Int
     ) : Flow<IResult<List<GeOsDeviceItem>>>
+
+    fun getDeviceItemRequiredByTicketMissingAnswer(
+        formType: Int,
+        formCode: Int,
+        formVersion: Int,
+        formData: Long,
+        ticketPrefix: Int,
+        ticketCode: Int,
+    ): Int
 }

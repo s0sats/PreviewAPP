@@ -1317,6 +1317,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service
             android:name=".service.event.WsEventManualSave"
             android:foregroundServiceType="dataSync" />
+        <service android:name="com.namoadigital.prj001.service.bigfile.BigFileForegroundService"
+            android:foregroundServiceType="dataSync"/>
 
 
         <!--Broadcast-->

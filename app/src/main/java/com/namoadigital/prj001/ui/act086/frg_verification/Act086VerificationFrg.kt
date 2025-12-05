@@ -345,7 +345,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun applyReadonlyUi() {
         if (isOtherTicket) {
-            binding.updateColorRadioGroup(false)
+            binding.apply{
+                updateColorRadioGroup(false)
+                act086VerificationFrgRdoAnswerNotVerified.isEnabled = false
+                applyDrawableStartColor(
+                    act086VerificationFrgRdoAnswerNotVerified,
+                    R.color.namoa_pipeline_header_icon
+                )
+            }
+
         }
         if (inReadOnly) {
             with(binding) {

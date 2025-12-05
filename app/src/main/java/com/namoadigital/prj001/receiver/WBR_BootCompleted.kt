@@ -6,9 +6,11 @@ import android.content.Intent
 import android.os.Build
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.generatePendingIntent
+import com.namoadigital.prj001.extensions.hasBigFileProcessActive
 import com.namoadigital.prj001.extensions.isAppInForeground
 import com.namoadigital.prj001.service.SV_LocationTracker
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.worker.big_file.utils.BigFileManager
 
 class WBR_BootCompleted : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -38,6 +40,11 @@ class WBR_BootCompleted : BroadcastReceiver() {
                         }
                     }
                 }
+            }
+            //
+            if (context.hasBigFileProcessActive()) {
+                val bigFileManager = BigFileManager(context)
+                bigFileManager.getWorkCheckBigFileRequest()
             }
         }
     }

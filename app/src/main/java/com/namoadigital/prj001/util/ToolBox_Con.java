@@ -5,8 +5,10 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
+import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -25,6 +27,9 @@ import com.namoadigital.prj001.core.data.domain.model.BarCodeFlow;
 import com.namoadigital.prj001.core.data.domain.model.BarCodeTypeFlow;
 import com.namoadigital.prj001.core.data.local.preferences.barcode_settings.BarCodeFlowPref;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.big_file.BigFile;
+import com.namoadigital.prj001.service.bigfile.BigFileForegroundService;
+import com.namoadigital.prj001.util.preferences.BigFilePreferenceManager;
 import com.namoadigital.prj001.worker.WorkDownloadTicket;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
@@ -38,6 +43,7 @@ import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
 import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
+import com.namoadigital.prj001.worker.big_file.WorkCheckBigFile;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1404,6 +1410,7 @@ public class ToolBox_Con {
         //Cancela notificações e workers
         cancelAllNotifications(context);
         cancelAllWorkers(context);
+        ToolBox_Con.stopBigFileService(context);
     }
 
     /**
@@ -1433,6 +1440,7 @@ public class ToolBox_Con {
         workManager.cancelUniqueWork(Work_DownLoad_Picture.WORKER_TAG);
         workManager.cancelUniqueWork(Work_DownLoad_PDF.WORKER_TAG);
         workManager.cancelUniqueWork(WorkDownloadTicket.Companion.getWORKER_TAG());
+        workManager.cancelUniqueWork(WorkCheckBigFile.Companion.getWORKER_TAG());
         //Workers de upload
         workManager.cancelUniqueWork(Work_Upload_Img.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Upload_Img_Chat.WORKER_TAG);
@@ -1717,6 +1725,32 @@ public class ToolBox_Con {
             }
         }
         return false;
+    }
+
+    public static void callBigFileService(Context context, BigFile bigFile) throws ForegroundServiceStartNotAllowedException {
+        Intent serviceIntent = new Intent(context, BigFileForegroundService.class);
+        if (BigFilePreferenceManager.FILE_TYPE_SERIAL_STRUCTURE.equalsIgnoreCase(bigFile.getFileType())) {
+            serviceIntent.setAction(BigFileForegroundService.ACTION_START_STRUCTURE);
+        } else {
+            serviceIntent.setAction(BigFileForegroundService.ACTION_START_TICKET);
+        }
+        //
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
+        }
+    }
+
+    public static void stopBigFileService(Context context) throws ForegroundServiceStartNotAllowedException {
+        Intent serviceIntent = new Intent(context, BigFileForegroundService.class);
+        serviceIntent.setAction(BigFileForegroundService.ACTION_STOP_BIG_FILE);
+        //
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
+        }
     }
 
 }

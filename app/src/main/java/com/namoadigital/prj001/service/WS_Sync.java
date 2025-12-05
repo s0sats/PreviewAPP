@@ -11,8 +11,8 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.core.util.FileProcessor;
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref;
+import com.namoadigital.prj001.core.util.FileProcessor;
 import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -80,8 +80,11 @@ import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.RegionScriptKt;
+import com.namoadigital.prj001.extensions.ContextKt;
 import com.namoadigital.prj001.extensions.ListHelperKt;
 import com.namoadigital.prj001.extensions.WorkerHelperKt;
+import com.namoadigital.prj001.extensions.dao.ticket_cache.TKTicketCacheDaoQueriesKt;
+import com.namoadigital.prj001.extensions.util.DebugFunctionsKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -146,6 +149,7 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
+import com.namoadigital.prj001.model.big_file.BigFile;
 import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.model.event.remote.EventManualSync;
 import com.namoadigital.prj001.model.region.MDRegion;
@@ -216,16 +220,19 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.preferences.BigFilePreferenceManager;
+import com.namoadigital.prj001.worker.big_file.utils.BigFileManager;
+import com.namoadigital.prj001.worker.big_file.utils.BigFileStatus;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -297,6 +304,7 @@ public class WS_Sync extends BaseWsIntentService {
             if (dataPackageType != null
                     && dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
                 WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
+                ToolBox_Con.stopBigFileService(this);
             }
 //            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             /**
@@ -468,14 +476,15 @@ public class WS_Sync extends BaseWsIntentService {
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
             ArrayList<T_DataPackage_TK_Ticket_Env> TICKET = getDatapackageTicketObjList(ticketDao);
             dataPackage.setTICKET(TICKET);
-        }
-        //}
         //LUCHE - 10/11/2021 - Inventario do serial
-        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
             ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL = getDatapackageSerialStructureObjList(serialDao);
-            dataPackage.setSERIAL(SERIAL);
+            dataPackage.setSERIAL(SERIAL);//
+        //reset de bigfile
+            BigFilePreferenceManager structureManager = new BigFilePreferenceManager(getApplicationContext(), BigFilePreferenceManager.FILE_TYPE_SERIAL_STRUCTURE);
+            structureManager.clearAll();
+            BigFilePreferenceManager ticketManager = new BigFilePreferenceManager(getApplicationContext(),BigFilePreferenceManager.FILE_TYPE_TICKET);
+            ticketManager.clearAll();
         }
-
         TSync_Env env = new TSync_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
@@ -1187,7 +1196,6 @@ public class WS_Sync extends BaseWsIntentService {
              */
             serialDao.processSerialConsiliation();
             //FIM DO PROCESSAMENTO DO SERIAL
-
             //region Tracking
             //
             // Processamento Tracking do serial
@@ -1680,6 +1688,11 @@ public class WS_Sync extends BaseWsIntentService {
                 );
                 //
                 tkTicketCacheDao.addUpdate(ticketCaches, false);
+                //
+                TKTicketCacheDaoQueriesKt.setSyncBigFile(tkTicketCacheDao,
+                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                );
+                //
             }
             //Libera pro GB
             files_ticket_cache = null;
@@ -1915,7 +1928,24 @@ public class WS_Sync extends BaseWsIntentService {
                     && rec.getFiles_waiting()) {
                 handleFilesWaiting();
             }
+            //
+            File[] files_big_file = ToolBox_Inf.getListOfFiles_v2("big_file-");
 
+            for (File _file : files_big_file) {
+                ArrayList<BigFile> big_file = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<BigFile>>() {
+                        }.getType()
+                );
+                //
+                handleBigFileProcess(big_file);
+            }
+
+            if(ContextKt.hasBigFileProcessActive(getApplicationContext())){
+                callBigFileWorkerCheck();
+            }
         }
 
         //endregion
@@ -2334,6 +2364,50 @@ public class WS_Sync extends BaseWsIntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private boolean hasBigFileProcessActive() {
+        BigFilePreferenceManager structureBigFilePreferenceManager = new BigFilePreferenceManager(getApplicationContext(), BigFilePreferenceManager.FILE_TYPE_SERIAL_STRUCTURE);
+        BigFile structurebigFile = structureBigFilePreferenceManager.getBigFile();
+        BigFilePreferenceManager ticketBigFilePreferenceManager = new BigFilePreferenceManager(getApplicationContext(), BigFilePreferenceManager.FILE_TYPE_TICKET);
+        BigFile ticketbigFile = ticketBigFilePreferenceManager.getBigFile();
+        //
+        return (!Objects.equals(structurebigFile.getFileStatus(), BigFileStatus.NO_VALUE.name())
+        || !Objects.equals(ticketbigFile.getFileStatus(), BigFileStatus.NO_VALUE.name()));
+
+    }
+
+    private void handleBigFileProcess(ArrayList<BigFile> bigFiles) {
+        DebugFunctionsKt.debugBigFile("WS_Sync", null);
+
+//        try {
+//            Thread.sleep(240000);
+//            Log.d("BIG_FILE_PROCESS", "saiu do sleep");
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+        for (BigFile remoteBigFile : bigFiles) {
+            DebugFunctionsKt.debugBigFile("WS_Sync", remoteBigFile);
+            BigFilePreferenceManager bigFilePreferenceManager = new BigFilePreferenceManager(getApplicationContext(), remoteBigFile.getFileType());
+            BigFile localBigFile = bigFilePreferenceManager.getBigFile();
+            if(localBigFile.getFileCode() != null
+                    && localBigFile.getFileCode().equals(remoteBigFile.getFileCode())){
+                if(!BigFileStatus.DOWNLOAD.name().equalsIgnoreCase(localBigFile.getFileStatus())){
+                    bigFilePreferenceManager.initializeBigFileProcess();
+                    bigFilePreferenceManager.saveBigFile(remoteBigFile);
+                }else{
+                    ToolBox_Con.callBigFileService(this, localBigFile);
+                }
+            }else{
+                bigFilePreferenceManager.initializeBigFileProcess();
+                bigFilePreferenceManager.saveBigFile(remoteBigFile);
+            }
+        }
+    }
+
+    private void callBigFileWorkerCheck() {
+        BigFileManager bigFileManager = new BigFileManager(getApplicationContext());
+        bigFileManager.getWorkCheckBigFileRequest();
     }
 
     private void clearPreference() {

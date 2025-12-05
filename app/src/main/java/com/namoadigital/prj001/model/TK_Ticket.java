@@ -369,6 +369,8 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     @SerializedName("is_tmp")
     private int isTmp;
+    @SerializedName("sync_big_file")
+    private int syncBigFile;
 
     public void setPK() {
 
@@ -2175,5 +2177,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setIsTmp(int isTmp) {
         this.isTmp = isTmp;
+    }
+
+
+    public int getSyncBigFile() {
+        return syncBigFile;
+    }
+
+    public void setSyncBigFile(int syncBigFile) {
+        this.syncBigFile = syncBigFile;
     }
 }

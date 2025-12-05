@@ -914,7 +914,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return ToolBox_Con.getPreference_Customer_Code(context) + "|" + ticket_prefix + "|" + ticket_code + "|" + scn;
     }
 
-    private void executeTicketSaveProcess(boolean allowOffline) {
+    @Override
+    public void executeTicketSaveProcess(boolean allowOffline) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
             //

@@ -82,6 +82,8 @@ const val PRODUCT_SERIAL_CREATE_SCRIPT =
             [measure_block_input_time] int,
             [measure_alert_input_time] int,
             [unavailability_reason_option] int not null default 0,
+            [sync_structure] int not null default 0,
+            [sync_big_file] int not null default 0,
             constraint [pk_md_product_serials] primary key
             (
                 [customer_code],

@@ -167,7 +167,10 @@ public interface Act011_Main_Presenter {
 
     List<String> getSiteEmailList(int site_code);
 
-    void executeStructureUpdate();
+    void executeStructureUpdate(Long customerCode,
+                                Long productCode,
+                                Long serialCode,
+                                int scnItemCheck);
 
     boolean isTripInUpdateRequired();
 
@@ -175,7 +178,7 @@ public interface Act011_Main_Presenter {
 
     boolean isUserOnSyncRequiredTrip();
 
-    boolean hasSerialStructurePending();
+    boolean hasSerialStructurePending(MD_Product_Serial serialInfo);
 
     void clearTicketDownloadSingleton();
 

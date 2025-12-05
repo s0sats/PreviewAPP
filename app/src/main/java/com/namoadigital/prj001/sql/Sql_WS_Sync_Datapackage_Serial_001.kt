@@ -15,7 +15,7 @@ class Sql_WS_Sync_Datapackage_Serial_001(
                      s.${MD_Product_SerialDao.CUSTOMER_CODE},
                      s.${MD_Product_SerialDao.PRODUCT_CODE},
                      s.${MD_Product_SerialDao.SERIAL_CODE},
-                     s.${MD_Product_SerialDao.SCN_ITEM_CHECK}
+                     CASE WHEN s.${MD_Product_SerialDao.SYNC_BIG_FILE} = 1 then 0 else s.${MD_Product_SerialDao.SCN_ITEM_CHECK} end ${MD_Product_SerialDao.SCN_ITEM_CHECK}
                     FROM
                      ${MD_Product_SerialDao.TABLE} s
                     WHERE                    

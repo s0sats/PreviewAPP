@@ -33,4 +33,6 @@ public interface Act001_Main_View {
     void call_Act003_Main(Context context);
 
     void setSplashScreen(boolean showIcon);
+
+    void requestNotificationPermission();
 }

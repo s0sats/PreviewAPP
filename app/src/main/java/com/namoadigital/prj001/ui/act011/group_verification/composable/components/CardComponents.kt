@@ -27,6 +27,7 @@ import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFra
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.GROUP_PREDICTED_DATE_VERIFICATION_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.ITEM_USER_VERIFICATION_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.ITEM_WITH_TICKET_VERIFICATION_GROUP_LBL
+import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.REQUIRED_BY_TICKET_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroup
 import com.namoadigital.prj001.util.ConstantBaseApp.MAX_DATE_VALUE
 
@@ -100,6 +101,13 @@ fun VerificationGroupCard(
                     style = NamoaTheme.typography.labelMedium
                 )
             }
+            if(group.requiredByTickets != null && group.requiredByTickets > 0){
+               Spacer(Modifier.height(NamoaTheme.spacing.small))
+               Text(
+                   translateMap.textOf(key = REQUIRED_BY_TICKET_LBL) + " " + group.requiredByTickets,
+                   style = NamoaTheme.typography.titleSmall
+               )
+           }
         }
 
         ApplicationSwitch(

@@ -227,6 +227,21 @@ public class WS_Upload_Support extends BaseWsIntentService {
              ToolBox_Inf.writeIn(ret.toString().concat("\n"),preference_list);
         }
 
+
+        String sBigFile = getFilesDir().getParent().concat("/shared_prefs");  //.getPath().replace("/files","/shared_prefs");
+        sBigFile += "/SERIAL_STRUCTURE_big_file_prefs.xml" ;
+        File preference_structure_path = new File(sBigFile);
+        if(preference_structure_path.exists() &&  preference_structure_path.isFile()){
+            ToolBox_Inf.copyFile(preference_structure_path, dest);
+        }
+
+        sBigFile = getFilesDir().getParent().concat("/shared_prefs");  //.getPath().replace("/files","/shared_prefs");
+        sBigFile += "/TICKET_big_file_prefs.xml" ;
+        File preference_ticket_path = new File(sBigFile);
+        if(preference_ticket_path.exists() &&  preference_ticket_path.isFile()){
+            ToolBox_Inf.copyFile(preference_ticket_path, dest);
+        }
+
         //Arquivos de token
 
         //Copia arquivos para o diretorio de support

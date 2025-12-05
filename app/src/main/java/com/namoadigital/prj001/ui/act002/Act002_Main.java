@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -125,6 +126,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         lv_customers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 mPresenter.defineClickFlow(item);
             }
@@ -331,6 +333,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         Intent mIntent = new Intent(context, Act003_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        mIntent.putExtra("FROM_LOGIN", true);
         startActivity(mIntent);
         finish();
     }
@@ -519,18 +522,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             progressDialog.dismiss();
             mPresenter.getAllCustomers(false);
         }else if (wsProcess.equals(PROCESS_WS_SYNC)) {
-            structureSyncRequiredTotal = mPresenter.serialStructureSyncRequiredTotal();
-            if (structureSyncRequiredTotal > 0) {
-                progressDialog.dismiss();
-                showPD(
-                        getString(R.string.act002_ws_structure_sync_ttl),
-                        context.getString(R.string.act002_ws_structure_sync_msg) + "0/" + structureSyncRequiredTotal,
-                        getString(R.string.generic_msg_cancel),
-                        getString(R.string.generic_msg_ok));
-                callSyncSerialStructure(structureSyncRequiredTotal);
-            }else {
-                syncResultFLow();
-            }
+            syncResultFLow();
         } else if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
             progressDialog.dismiss();
             processLogin();
@@ -560,11 +552,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
         }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
-            if(mPresenter.serialStructureSyncRequiredTotal() > 0){
-                callSyncSerialStructure(structureSyncRequiredTotal);
-            }else{
-                syncResultFLow();
-            }
+            syncResultFLow();
         } else {
             progressDialog.dismiss();
         }
@@ -600,6 +588,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         progressDialog.dismiss();
     }
 
@@ -607,6 +596,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if(WS_TK_Ticket_Download.class.getName().equals(wsProcess)){
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();

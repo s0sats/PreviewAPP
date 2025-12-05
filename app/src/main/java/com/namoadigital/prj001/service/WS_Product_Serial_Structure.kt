@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.service
 
 import android.content.Intent
+import com.google.common.reflect.TypeToken
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -8,14 +9,17 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
 import com.namoadigital.prj001.dao.md.MDProductSerialVGDao
-import com.namoadigital.prj001.extensions.cancelTicketDownloadWorker
-import com.namoadigital.prj001.extensions.scheduleDownloadTicket
+import com.namoadigital.prj001.extensions.serial.executeDbTransaction
+import com.namoadigital.prj001.extensions.serial.refreshStructureHeader
+import com.namoadigital.prj001.extensions.serial.setStructuresPK
 import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Product_Serial_Structure
+import com.namoadigital.prj001.model.TMDProductSerialStructureObj
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Rec
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Worker_Rec
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.MDProductSerialSql018
@@ -88,7 +92,7 @@ class WS_Product_Serial_Structure :
         val bundle = intent!!.extras
         //
         try {
-            cancelTicketDownloadWorker(applicationContext)
+//            cancelTicketDownloadWorker(applicationContext)
             val customerCode = bundle!!.getLong(MD_Product_SerialDao.CUSTOMER_CODE, -1)
             val productCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE, -1)
             val serialCode = bundle.getLong(MD_Product_SerialDao.SERIAL_CODE, -1)
@@ -117,7 +121,7 @@ class WS_Product_Serial_Structure :
                 )
             }
         } finally {
-            scheduleDownloadTicket(applicationContext)
+//            scheduleDownloadTicket(applicationContext)
             WBR_Product_Serial_Structure.completeWakefulIntent(intent)
         }
     }
@@ -133,10 +137,12 @@ class WS_Product_Serial_Structure :
         //
         val env = T_MD_Product_Serial_Structure()
         //
+        env.setZipMode(0)
         val timeout:Int? = if (customerCode == -1L) {
             env.setSearch(
                 getSerialStructureOutdated()
             )
+            env.setZipMode(1)
             ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL
         } else {
             env.getSearch().add(
@@ -153,7 +159,7 @@ class WS_Product_Serial_Structure :
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
-            hmAux_Trans["generic_sending_data_msg"] + getProgressInfo(getSyncStructureRemains, amountTotal),
+            hmAux_Trans["generic_sending_data_msg"],
             "",
             "0"
         )
@@ -162,6 +168,7 @@ class WS_Product_Serial_Structure :
         env.session_app = ToolBox_Con.getPreference_Session_App(applicationContext)
         env.app_type = Constant.PKG_APP_TYPE_DEFAULT
         //
+
         val resultado = ToolBox_Con.connWebService(
             Constant.WS_PRODUCT_SERIAL_STRUCTURE_SEARCH,
             gson.toJson(env),
@@ -171,34 +178,72 @@ class WS_Product_Serial_Structure :
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
-            hmAux_Trans["generic_receiving_data_msg"] + getProgressInfo(getSyncStructureRemains,amountTotal),
+            hmAux_Trans["generic_receiving_data_msg"],
             "",
             "0"
         )
         //
+        val structures =  mutableListOf<MD_Product_Serial_Structure>()
         //
-        val rec = gson.fromJson(
-            resultado,
-            T_MD_Product_Serial_Structure_Rec::class.java
-        )
-        //
-        //
-        if (!ToolBox_Inf.processWSCheckValidation(
-                applicationContext,
-                rec.validation,
-                rec.error_msg,
-                rec.link_url,
-                1,
-                1
+        if(customerCode == -1L){
+            //
+            val rec = gson.fromJson(
+                resultado,
+                T_MD_Product_Serial_Structure_Worker_Rec::class.java
             )
-            ||
-            !ToolBox_Inf.processoOthersError(
-                applicationContext,
-                resources.getString(R.string.generic_error_lbl),
-                rec.error_msg
+            //
+            if (rec.url == null) {
+                ToolBox.registerException(javaClass.name, Exception("Url preenchida como nulo"))
+                return
+            }
+            //
+            ToolBox_Inf.downloadZip(rec.url, Constant.ZIP_NAME_FULL)
+            //
+            ToolBox_Inf.unpackZip("", Constant.ZIP_NAME)
+            //
+            val listoffilesV2 =
+                ToolBox_Inf.getListOfFiles_v2("product_serial_structure")
+            ////
+            val structureObj = gson.fromJson<TMDProductSerialStructureObj>(
+                ToolBox.jsonFromOracle(
+                    ToolBox_Inf.getContents(listoffilesV2[0])
+                ),
+                object : TypeToken<TMDProductSerialStructureObj>() {}.type
             )
-        ) {
-            return
+            //
+            ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH)
+            //
+            if (!structureObj.structure.isNullOrEmpty()) {
+                structures.addAll(structureObj.structure)
+            }
+        } else {
+            val rec = gson.fromJson(
+                resultado,
+                T_MD_Product_Serial_Structure_Rec::class.java
+            )
+            //
+            if (!ToolBox_Inf.processWSCheckValidation(
+                    applicationContext,
+                    rec.validation,
+                    rec.error_msg,
+                    rec.link_url,
+                    1,
+                    1
+                )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                    applicationContext,
+                    resources.getString(R.string.generic_error_lbl),
+                    rec.error_msg
+                )
+            ) {
+                return
+            }
+            rec.structure?.let{
+                structures.addAll(it)
+            }?:run{
+                return
+            }
         }
         //
         ToolBox.sendBCStatus(
@@ -209,9 +254,8 @@ class WS_Product_Serial_Structure :
             "0"
         )
         //
-        //
-        if (rec.structure != null) {
-            processSerialStructureReturn(rec.structure, customerCode)
+        if (structures.isNotEmpty()) {
+            processSerialStructureReturn(structures, customerCode)
         } else {
             ToolBox.sendBCStatus(
                 applicationContext,
@@ -253,7 +297,7 @@ class WS_Product_Serial_Structure :
                     it.customer_code,
                     it.product_code,
                     it.serial_code,
-                    0
+                    it.scn_item_check
                 )
             )
         }
@@ -290,53 +334,40 @@ class WS_Product_Serial_Structure :
             //
             var dbResult: Boolean = true
             for (structure in structures) {
-                val serial = serialUpdateInfo(structure)
+                //
+                val serial = serialDao.getByString(
+                    MD_Product_Serial_Sql_009(
+                        structure.customer_code,
+                        structure.product_code,
+                        structure.serial_code
+                    ).toSqlQuery()
+                )
+                serial.refreshStructureHeader(structure)
+                //
                 if (serial != null) {
-                    structure.device_tp.forEach {
-                        it.setPk(serial)
-                    }
-
-                    structure.verificationGroup?.forEach {
-                        it.updatePk(serial)
-                    }
-
-                    DatabaseTransactionManager(applicationContext).executeTransactionDaoObjReturn { database ->
-                        var daoObjReturn = serialDao.removeFullStructure(serial)
-
-                        if(!daoObjReturn.hasError()){
-                            daoObjReturn = tpDeviceDao.addUpdate(
-                                structure.device_tp,
-                                false,
-                                database
-                            )
-                        }
-
-                        if(!daoObjReturn.hasError()){
-                            daoObjReturn = productSerialVGDao.addUpdate(
-                                structure.verificationGroup,
-                                false,
-                                database
-                            )
-                        }
-                        syncStructureRemains++
-                        //
-                        if(syncStructureRemains  % 20 == 0){
-                            ToolBox.sendBCStatus(
-                                applicationContext,
-                                "STATUS",
-                                hmAux_Trans["generic_processing_data"] + getProgressInfo(syncStructureRemains, amountTotal),
-                                "",
-                                "0"
-                            )
-                        }
-                        daoObjReturn
-                    }.watchStatus(
-                        success = {
-                            dbResult = true
-                        },
-                        failed = {
-                            dbResult = false
-                        }
+                    //
+                    serial.setStructuresPK(structure)
+                    //
+                    dbResult = serial.executeDbTransaction(
+                        applicationContext,
+                        serialDao,
+                        tpDeviceDao,
+                        productSerialVGDao,
+                        structure
+                    )
+                }
+                //
+                if(dbResult) {
+                    syncStructureRemains++
+                }
+                //
+                if(syncStructureRemains  % 20 == 0){
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "STATUS",
+                        hmAux_Trans["generic_processing_data"] + getProgressInfo(syncStructureRemains, amountTotal),
+                        "",
+                        "0"
                     )
                 }
             }
@@ -366,58 +397,43 @@ class WS_Product_Serial_Structure :
 
         } else {
             val serialStructure = structures[0]
-
-            val serialUpdateInfo = serialUpdateInfo(serialStructure)
+            //
+            val serialUpdateInfo = serialDao.getByString(
+                MD_Product_Serial_Sql_009(
+                    serialStructure.customer_code,
+                    serialStructure.product_code,
+                    serialStructure.serial_code
+                ).toSqlQuery()
+            )
+            //
+            serialUpdateInfo.refreshStructureHeader(serialStructure)
             if (serialUpdateInfo != null) {
-                serialStructure.device_tp.forEach {
-                    it.setPk(serialUpdateInfo)
-                }
-
-                serialStructure.verificationGroup?.forEach {
-                    it.updatePk(serialUpdateInfo)
-                }
-
-                DatabaseTransactionManager(applicationContext).executeTransactionDaoObjReturn { database ->
-                    var daoObjReturn = serialDao.removeFullStructure(serialUpdateInfo)
-
-                    if(!daoObjReturn.hasError()){
-                        daoObjReturn = tpDeviceDao.addUpdate(
-                            serialStructure.device_tp,
-                            false,
-                            database
-                        )
-                    }
-
-                    if(!daoObjReturn.hasError()){
-                        daoObjReturn = productSerialVGDao.addUpdate(
-                            serialStructure.verificationGroup,
-                            false,
-                            database
-                        )
-                    }
-
-                    daoObjReturn
-                }.watchStatus(
-                    success = {
-                        val result = gson.toJson(serialUpdateInfo)
-                        ToolBox.sendBCStatus(
-                            applicationContext,
-                            "CLOSE_ACT",
-                            hmAux_Trans["generic_process_finalized_msg"],
-                            result,
-                            "0"
-                        )
-                    },
-                    failed = {
-                        ToolBox.sendBCStatus(
-                            applicationContext,
-                            "ERROR_1",
-                            hmAux_Trans["msg_error_on_serial_structure"],
-                            "",
-                            "0"
-                        )
-                    }
+                serialUpdateInfo.setStructuresPK(serialStructure)
+                val result = serialUpdateInfo.executeDbTransaction(
+                    applicationContext,
+                    serialDao,
+                    tpDeviceDao,
+                    productSerialVGDao,
+                    serialStructure
                 )
+                if(result){
+                    val result = gson.toJson(serialUpdateInfo)
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "CLOSE_ACT",
+                        hmAux_Trans["generic_process_finalized_msg"],
+                        result,
+                        "0"
+                    )
+                }else{
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "ERROR_1",
+                        hmAux_Trans["msg_error_on_serial_structure"],
+                        "",
+                        "0"
+                    )
+                }
             } else {
                 ToolBox.sendBCStatus(
                     applicationContext,
@@ -431,36 +447,42 @@ class WS_Product_Serial_Structure :
 
     }
 
-    private fun serialUpdateInfo(serialStructure: MD_Product_Serial_Structure): MD_Product_Serial? {
-        val serial = serialDao.getByString(
-            MD_Product_Serial_Sql_009(
-                serialStructure.customer_code,
-                serialStructure.product_code,
-                serialStructure.serial_code
-            ).toSqlQuery()
+    private fun executeDbTransaction(
+        serial: MD_Product_Serial,
+        structure: MD_Product_Serial_Structure,
+        dbResult: Boolean
+    ): Boolean {
+        var dbResult1 = dbResult
+        DatabaseTransactionManager(applicationContext).executeTransactionDaoObjReturn { database ->
+            serialDao.addUpdate(serial)
+            var daoObjReturn = serialDao.removeFullStructure(serial)
+
+            if (!daoObjReturn.hasError()) {
+                daoObjReturn = tpDeviceDao.addUpdate(
+                    structure.device_tp,
+                    false,
+                    database
+                )
+            }
+
+            if (!daoObjReturn.hasError()) {
+                daoObjReturn = productSerialVGDao.addUpdate(
+                    structure.verificationGroup,
+                    false,
+                    database
+                )
+            }
+
+            daoObjReturn
+        }.watchStatus(
+            success = {
+                dbResult1 = true
+            },
+            failed = {
+                dbResult1 = false
+            }
         )
-        //
-        serial?.let {
-            it.has_item_check = serialStructure.has_item_check
-            it.scn_item_check = serialStructure.scn_item_check
-            it.measure_tp_code = serialStructure.measure_tp_code
-            it.last_measure_value = serialStructure.last_measure_value
-            it.last_measure_date = serialStructure.last_measure_date
-            it.last_cycle_value = serialStructure.last_cycle_value
-            it.last_cycle_date = serialStructure.last_cycle_date
-            it.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-            it.horimeter = serialStructure.horimeter
-            it.horimeter_date = serialStructure.horimeter_date
-            it.horimeter_supplier_uid = serialStructure.horimeter_supplier_uid
-            it.horimeter_supplier_desc = serialStructure.horimeter_supplier_desc
-            it.measure_block_input_time = serialStructure.measure_block_input_time
-            it.measure_alert_input_time = serialStructure.measure_alert_input_time
-            it.unavailability_reason_option = serialStructure.unavailability_reason_option
-            //
-            serialDao.addUpdate(it)
-        }
-        //
-        return serial
+        return dbResult1
     }
 
     companion object {

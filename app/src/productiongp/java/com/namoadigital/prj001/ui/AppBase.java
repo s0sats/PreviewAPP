@@ -42,6 +42,11 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.BIG_FILE_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_STRUCTURE_NAME;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_STRUCTURE_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_TICKET_NAME;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_TICKET_NAME_FULL;
 
 import android.app.Application;
 import android.app.NotificationManager;
@@ -70,6 +75,7 @@ public class AppBase extends Application {
     public static final String CHAT_DIR = "/chat";
     public static final String UNSENT_IMGS_DIR = "/unsentImgs";
     public static final String TICKET_DIR = "/ticket";
+    public static final String BIG_FILE_JSON_DIR = "/big_file";
     public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
     public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
@@ -105,11 +111,17 @@ public class AppBase extends Application {
         TICKET_JSON_PATH = DB_PATH + "/ticket";
         SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
         OTHER_ACTIONS_JSON_PATH = DB_PATH + "/otherActions";
+        BIG_FILE_JSON_PATH = DB_PATH + BIG_FILE_JSON_DIR;
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
         SERIAL_SITE_INV_JSON_PATH = DB_PATH + "/siteInventory";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
+
+        ZIP_STRUCTURE_NAME = "structure.zip";
+        ZIP_STRUCTURE_NAME_FULL = BIG_FILE_JSON_PATH + "/" + ZIP_STRUCTURE_NAME;
+        ZIP_TICKET_NAME = "ticket.zip";
+        ZIP_TICKET_NAME_FULL = BIG_FILE_JSON_PATH + "/" + ZIP_TICKET_NAME;
 
         SUPPORT_NAME = "support.zip";
         SUPPORT_NAME_FULL = SUPPORT_PATH + "/" + SUPPORT_NAME;
@@ -139,7 +151,7 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 27;
+        DB_VERSION_CUSTOM = 28;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

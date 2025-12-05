@@ -40,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -51,6 +52,8 @@ import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act011.finish_os.FinishOSViewModel
+import com.namoadigital.prj001.ui.act011.finish_os.di.model.FinishOsData
+import com.namoadigital.prj001.ui.act011.finish_os.di.model.NewServiceChoose
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop.NO_STOPPED
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.FinishAppBar
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.verticalScrollBar
@@ -65,6 +68,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_BTN_CANCEL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_BTN_SAVE
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL
+import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_REQUIRED_BY_TICKET_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishScreenArguments
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishState
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishValidation
@@ -221,7 +225,7 @@ private fun ContentScreen(
 
         AnimatedContent(
             modifier = Modifier.animateContentSize(),
-            targetState = uiState.isLoading,
+            targetState = uiState.isLoading || uiState.data == null,
             transitionSpec = {
                 slideInHorizontally(
                     animationSpec = tween(1000)
@@ -259,12 +263,13 @@ private fun ContentScreen(
 @Composable
 fun ShowBallon(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    backgroundColor: Color = NamoaTheme.colors.error
 ) {
     Surface(
         modifier = modifier.animateContentSize(),
         shape = RoundedCornerShape(NamoaTheme.spacing.small),
-        color = NamoaTheme.colors.error.copy(
+        color = backgroundColor.copy(
             alpha = 0.34f
         )
     ) {
@@ -328,30 +333,36 @@ fun FinishScreen(
     Column(
         modifier = modifier,
     ) {
-        if (uiState.data?.showBalloonVerify == true && !isReadOnly) {
+        if (uiState.data!!.showBalloonVerify == true && !isReadOnly) {
             ShowBallon(
                 modifier = Modifier.padding(NamoaTheme.spacing.medium),
                 text = uiState.translateMap.textOf(DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL)
             )
         }
+        if (uiState.data.requiredByTicketLeft > 0 && !isReadOnly) {
+            ShowBallon(
+                modifier = Modifier.padding(NamoaTheme.spacing.medium),
+                text = "${uiState.translateMap.textOf(DIALOG_FINALIZE_OS_REQUIRED_BY_TICKET_LBL)}: ${uiState.data.requiredByTicketLeft} ",
+            )
+        }
+        if (uiState.data.showInitialStateMachine) {
+            MachineInitialComponent(
+                modifier = Modifier.fillMaxWidth(),
+                showOptionsWhenMachineStopped = uiState.data.showOptionsStopped,
+                isVersionMachineStopped = uiState.data.machineOsInitial.isSerialStopped ?: false,
+                initialDate = uiState.data.machineOsInitial.date ?: "",
+                responsibleStop = uiState.data.machineOsInitial.responsibleStop ?: NO_STOPPED,
+                translateMap = uiState.translateMap,
+                componentError = if (componentError.containsKey(FinishValidation.Component.InitialMachine)) componentError[FinishValidation.Component.InitialMachine] else null,
+                translateLib = translateLib,
+                isReadOnly = isReadOnly,
+                onOptionSelected = { machineStatus ->
+                    finishValid = finishValid.copy(initialMachineStatus = machineStatus)
+                }
+            )
 
-        MachineInitialComponent(
-            modifier = Modifier.fillMaxWidth(),
-            showOptionsWhenMachineStopped = uiState.data?.showOptionsStopped ?: false,
-            isVersionMachineStopped = uiState.data?.machineOsInitial!!.isSerialStopped ?: false,
-            initialDate = uiState.data.machineOsInitial.date ?: "",
-            responsibleStop = uiState.data.machineOsInitial.responsibleStop ?: NO_STOPPED,
-            translateMap = uiState.translateMap,
-            componentError = if (componentError.containsKey(FinishValidation.Component.InitialMachine)) componentError[FinishValidation.Component.InitialMachine] else null,
-            translateLib = translateLib,
-            isReadOnly = isReadOnly,
-            onOptionSelected = { machineStatus ->
-                finishValid = finishValid.copy(initialMachineStatus = machineStatus)
-            }
-        )
-
-        Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
-
+            Spacer(modifier = Modifier.height(NamoaTheme.spacing.medium))
+        }
         if (uiState.data.showBkupMachine) {
             BackupMachineSerialComponent(
                 modifier = Modifier.fillMaxWidth(),
@@ -421,6 +432,7 @@ fun FinishScreen(
             machineStateFinal = uiState.data.machineOsFinal,
             newServiceState = uiState.data.hasNewService,
             showResponsibleOptions = uiState.data.showOptionsStopped,
+            showFinalStateMachine = uiState.data.showFinalStateMachine,
             verticalScrollState = verticalScrollState,
             componentError = if (componentError.containsKey(FinishValidation.Component.ScheduleReturnForm)) componentError[FinishValidation.Component.ScheduleReturnForm] else null,
             onMachineStopped = { finishValid = finishValid.copy(finalMachineStopped = it) },
@@ -435,7 +447,9 @@ fun FinishScreen(
             ButtonFinishComponent(
                 modifier = Modifier.fillMaxWidth(),
                 translateMap = uiState.translateMap,
-                isEnabled = state.isValidForm.isValid,
+                isEnabled = state.isValidForm.isValid
+                        && checkRequiredItems(uiState.data, finishValid)
+                ,
                 onDone = {
                     scope.launch {
                         finishValid = finishValid.copy(
@@ -472,6 +486,20 @@ fun FinishScreen(
         }
     }
 }
+
+@Composable
+private fun checkRequiredItems(
+    data: FinishOsData,
+    finishValid: FinishValidation
+): Boolean = (data.requiredByTicketLeft <= 0
+        || (
+            finishValid.hasNewService != null
+            && (
+                    finishValid.hasNewService is NewServiceChoose.PLANNING
+                    || finishValid.hasNewService is NewServiceChoose.RETURN
+                )
+            )
+        )
 
 
 @Composable

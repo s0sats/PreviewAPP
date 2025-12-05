@@ -25,6 +25,7 @@ import com.google.android.gms.location.Priority
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.di.services.qualifiers.GeneralNotification
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.extensions.getCustomerCode
@@ -56,6 +57,7 @@ class FsTripLocationService : LifecycleService() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @Inject
+    @GeneralNotification
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
     @Inject

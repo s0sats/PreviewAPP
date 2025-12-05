@@ -15,6 +15,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_for
 import com.namoadigital.prj001.ui.act011.group_verification.composable.components.badge.model.NamoaBadges
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroup
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroupState
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -104,7 +105,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
     ): List<VerificationGroup> {
 
         val itemsByVgCode = items.groupBy { it.vg_code }
-
+        val formTicketInfo = FormTicketInfo(ticketPrefix, ticketCode)
         val verificationGroups = vgs.map { vg ->
             val itemList = itemsByVgCode[vg.vgCode].orEmpty()
 
@@ -121,35 +122,41 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                 }.sortedBy {
                     GeOsDeviceItemStatusColor.colorPriority[it.color]
                 }
+                var requiredByTickets = 0
+                itemList.forEach { item ->
+                    if (formTicketInfo.getTicketFormType(item) == FormTicketInfo.TicketFormType.SAME_TICKET) {
+                        requiredByTickets++
+                    }
+                }
+                with(vg) {
 
-            with(vg) {
+                    val sameTicket = isSameTicket(
+                        prefix = ticketPrefix,
+                        code = ticketCode,
+                    )
 
-                val sameTicket = isSameTicket(
-                    prefix = ticketPrefix,
-                    code = ticketCode,
-                )
+                    val inPartitionExecution = hasPartition()
 
-                val inPartitionExecution = hasPartition()
+                    VerificationGroup(
+                        vgCode = vgCode,
+                        title = vgDesc,
+                        expired = isExpired(),
+                        predictedDate = targetDate,
+                        inExecution = inPartitionExecution && !sameTicket,
+                        ticket = if (inPartitionExecution && !sameTicket) ticket else null,
+                        user = if (inPartitionExecution && !sameTicket) partitionedUser else null,
+                        alerts = alerts,
+                        requiredByTickets = requiredByTickets,
+                        isActive = vg.isActive(),
+                        canToggle = checkCanToggleSwitch(
+                                    inPartitionExecution,
+                                    hasProcessVg,
+                                    isPreventiveType,
+                                    isReadOnly
+                                )
+                    )
 
-                VerificationGroup(
-                    vgCode = vgCode,
-                    title = vgDesc,
-                    expired = isExpired(),
-                    predictedDate = targetDate,
-                    inExecution = inPartitionExecution && !sameTicket,
-                    ticket = if (inPartitionExecution && !sameTicket) ticket else null,
-                    user = if (inPartitionExecution && !sameTicket) partitionedUser else null,
-                    alerts = alerts,
-                    isActive = vg.isActive(),
-                    canToggle = checkCanToggleSwitch(
-                                inPartitionExecution,
-                                hasProcessVg,
-                                isPreventiveType,
-                                isReadOnly
-                            )
-                )
-
-            }
+                }
         }.toMutableList()
 
         val noVgItems = items.filter { it.vg_code == null }
@@ -166,12 +173,18 @@ class MapToVerificationGroupsUseCase @Inject constructor(
                         count = count
                     )
                 }
-
+            var requiredByTickets = 0
+            noVgItems.forEach { item ->
+                if (formTicketInfo.getTicketFormType(item) == FormTicketInfo.TicketFormType.SAME_TICKET) {
+                    requiredByTickets++
+                }
+            }
             verificationGroups.add(
                 VerificationGroup(
                     vgCode = null,
                     alerts = alerts,
-                    isActive = true
+                    isActive = true,
+                    requiredByTickets = requiredByTickets
                 )
             )
         }

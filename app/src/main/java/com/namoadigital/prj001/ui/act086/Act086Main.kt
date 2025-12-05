@@ -31,7 +31,7 @@ import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.ui.act011.Act011_Main
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -127,6 +127,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     private var deviceDesc: String = ""
     private var trackingNumber: String? = null
     private var readOnly: Boolean = false
+    private var ticketFormType: FormTicketInfo.TicketFormType = FormTicketInfo.TicketFormType.NO_TICKET
     private var isOtherTicket: Boolean = false
     private var itemHist: ArrayList<Act086HistoricModel>? = null
     private val dateStartUntilLastMinute: String by lazy {
@@ -158,21 +159,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         deviceDesc = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC, "")
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
         isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
-        isOtherTicket =
-            bundleDevice.getBoolean(OtherTicketInfo.Companion.DeviceItemOtherTicket)
+        ticketFormType =
+            bundleDevice.getSerializable(FormTicketInfo.Companion.DEVICE_ITEM_TICKET_INFO) as FormTicketInfo.TicketFormType
+        isOtherTicket = ticketFormType == FormTicketInfo.TicketFormType.OTHER_TICKET
         readOnly = defineReadOnlyByStatus(
-            bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS),
-            isOtherTicket
+            bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS)
         )
         partition_execution =
             bundleDevice.getInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, 0)
     }
 
-    private fun defineReadOnlyByStatus(formStatus: String?, isOtherTicket: Boolean): Boolean {
+    private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
         if (formStatus == null ||
             formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) ||
             formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC) ||
-            isOtherTicket
+            ticketFormType == FormTicketInfo.TicketFormType.OTHER_TICKET
         ) {
             return true
         }
@@ -273,16 +274,27 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             }
             setItemCheckDesc()
             setAlertDateInfo()
-            setOtherTicketInfo()
+            setTicketInfo()
         }
     }
 
-    fun setOtherTicketInfo() {
+    fun setTicketInfo() {
         with(binding) {
-            act086TvOtherTicketInfo.isVisible = isOtherTicket
-            act086TvOtherTicketInfo.text =
-                "${hmAux_Trans[OtherTicketInfo.Companion.OtherTicketInfoLbl]} ${_deviceItem?.ticketFormatted}"
+            act086TvTicketInfo.isVisible = ticketFormType != FormTicketInfo.TicketFormType.NO_TICKET
 
+            act086TvTicketInfo.text = when (ticketFormType) {
+                FormTicketInfo.TicketFormType.OTHER_TICKET -> {
+                    "${hmAux_Trans["other_ticket_info_lbl"]} ${_deviceItem?.ticketFormatted}"
+                }
+
+                FormTicketInfo.TicketFormType.SAME_TICKET -> {
+                    "${hmAux_Trans["required_by_ticket_lbl"]}"
+                }
+
+                else -> {
+                    _deviceItem?.ticketFormatted
+                }
+            }
         }
     }
 

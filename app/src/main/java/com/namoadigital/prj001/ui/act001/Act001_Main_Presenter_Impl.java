@@ -113,6 +113,7 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             }
         } else {
             mView.setSplashScreen(false);
+            mView.requestNotificationPermission();
         }
     }
 

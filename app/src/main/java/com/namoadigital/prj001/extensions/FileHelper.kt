@@ -7,6 +7,8 @@ import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
+import java.io.FileInputStream
+import java.security.MessageDigest
 
 fun Context.copyAndCheckFile(originalFileName: String, copiedFileName: String): Boolean {
     try {
@@ -48,4 +50,21 @@ fun hasFileForFileName(filename: String?): Boolean {
         }
     }
     return false
+}
+
+fun File.getMd5(): String {
+    val buffer = ByteArray(1024 * 8) // 8 KB de buffer
+    val digest = MessageDigest.getInstance("MD5")
+
+    FileInputStream(this).use { fis ->
+        var bytesRead: Int
+        while (fis.read(buffer).also { bytesRead = it } != -1) {
+            digest.update(buffer, 0, bytesRead)
+        }
+    }
+
+    val hashBytes = digest.digest()
+
+    // Converter para string hexadecimal
+    return hashBytes.joinToString("") { "%02x".format(it) }
 }

@@ -485,8 +485,10 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                     if (mdProductSerialTpDeviceItemHist.exec_type != null) {
                         put(EXEC_TYPE, mdProductSerialTpDeviceItemHist.exec_type)
                     }
-                    if (mdProductSerialTpDeviceItemHist.exec_value > -1) {
+                    if (mdProductSerialTpDeviceItemHist.exec_value != (-1).toDouble()) {
                         put(EXEC_VALUE, mdProductSerialTpDeviceItemHist.exec_value)
+                    }else{
+                        put(EXEC_VALUE, 0.0)
                     }
                     if (mdProductSerialTpDeviceItemHist.exec_date != null) {
                         put(EXEC_DATE, mdProductSerialTpDeviceItemHist.exec_date)

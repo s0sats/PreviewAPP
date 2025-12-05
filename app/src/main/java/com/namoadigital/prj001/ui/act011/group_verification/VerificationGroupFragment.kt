@@ -46,6 +46,7 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
         forecastCount = null,
         criticalForecastCount = null,
         nonForecastCount = null,
+        requiredByTicketCount = null,
         status = Act011FormTabStatus.OK
     )
 
@@ -123,6 +124,7 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
         const val TAB_VERIFICATION_GROUP_LBL = "tab_verification_group_lbl"
         const val SECTION_SELECT_VERIFICATION_GROUP_LBL = "section_select_verification_group_lbl"
         const val SECTION_ITEM_WITHOUT_GROUP_LBL = "section_item_without_group_lbl"
+        const val REQUIRED_BY_TICKET_LBL = "required_by_ticket_lbl"
         const val TOAST_SUCCESS_UPDATE_INSPECTION_LIST = "toast_success_update_inspection_list"
         const val TOAST_ERROR_UPDATE_INSPECTION_LIST = "toast_error_update_inspection_list"
         const val TITLE_ERROR_GET_LIST_VERIFICATION_GROUP =
@@ -147,6 +149,7 @@ class VerificationGroupFragment : Act011BaseFrg<FragmentVerificationGroupBinding
                 TAB_VERIFICATION_GROUP_LBL,
                 SECTION_SELECT_VERIFICATION_GROUP_LBL,
                 SECTION_ITEM_WITHOUT_GROUP_LBL,
+                REQUIRED_BY_TICKET_LBL,
                 TOAST_SUCCESS_UPDATE_INSPECTION_LIST,
                 TOAST_ERROR_UPDATE_INSPECTION_LIST,
                 TITLE_ERROR_GET_LIST_VERIFICATION_GROUP,

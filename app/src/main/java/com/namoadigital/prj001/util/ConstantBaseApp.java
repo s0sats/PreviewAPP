@@ -274,10 +274,15 @@ public class ConstantBaseApp extends ConstantBase {
     public static String SO_EXPRESS_JSON_PATH;
     public static String SERIAL_SITE_INV_JSON_PATH;
     public static String OTHER_ACTIONS_JSON_PATH;
+    public static String BIG_FILE_JSON_PATH;
     public static String CUSTOMER_SITE_LICENSE_JSON_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
+    public static String ZIP_STRUCTURE_NAME;
+    public static String ZIP_STRUCTURE_NAME_FULL;
+    public static String ZIP_TICKET_NAME;
+    public static String ZIP_TICKET_NAME_FULL;
 
     public static String SUPPORT_NAME;
     public static String SUPPORT_NAME_FULL;
@@ -723,6 +728,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_ACTION_TICKET_REMOVE_UPDATE = "<TICKET_REMOVE>";
     //LUCHE - 28/06/2021 - Sync require para setar todos os ticket como SYNC_REQUIRED
     public static final String FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE = "<SYNC_REQUIRED_FULL>";
+    public static final String FCM_ACTION_SYNC_BIG_FILE = "<SYNC_BIG_FILE>";
 
     public static final String FCM_TYPE_WARNING = "WARNING";
     public static final String FCM_TYPE_SILENT = "SILENT";

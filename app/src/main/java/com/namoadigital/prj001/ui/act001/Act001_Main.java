@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act001;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.SpannableString;
@@ -31,6 +33,7 @@ import androidx.core.content.ContextCompat;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
+import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.core.data.domain.model.EnvironmentType;
@@ -109,6 +112,83 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             recoverIntentsInfo();
 
             mPresenter.checkLogin();
+
+        }
+    }
+
+    public void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                    Act001_Main.this,
+                    NamoaPermissionRequest.SINGLE_PERMISSION_REQUEST,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    new NamoaPermissionRequest() {
+                        @Override
+                        public void accessGranted() {
+
+                        }
+
+                        @Override
+                        public void accessDenied(String[] strings) {
+                            String alertTtl = getString(R.string.alert_notification_denied_permission_ttl);
+                            String alertMsg = getString(R.string.alert_notification_denied_permission_msg);
+
+
+                            showPermissionRationaleDialog(
+                                    Act001_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+
+                        }
+
+                        @Override
+                        public void requestPermissionRationale(String[] strings) {
+                            String alertTtl = getString(R.string.alert_notification_denied_permission_ttl);
+                            String alertMsg = getString(R.string.alert_notification_denied_permission_msg);
+
+
+                            showPermissionRationaleDialog(
+                                    Act001_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void accessDeniedNeverAskAgain(String[] strings) {
+                            String alertTtl = getString(R.string.alert_notification_denied_permission_ttl);
+                            String alertMsg = getString(R.string.alert_notification_denied_permission_msg);
+
+                            showPermissionNeverAskAgainDialog(
+                                    R.drawable.ic_notifications_active_black_24dp,
+                                    alertTtl,
+                                    alertMsg,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        }
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void informAppDetailSettingsReturn() {
+                            callRequestPermission(SINGLE_PERMISSION_REQUEST, new String[]{Manifest.permission.POST_NOTIFICATIONS});
+                        }
+                    }
+            );
         }
     }
 

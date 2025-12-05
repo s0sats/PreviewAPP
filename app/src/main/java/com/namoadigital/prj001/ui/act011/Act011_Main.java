@@ -33,6 +33,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -158,7 +159,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgInspection;
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction;
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment;
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo;
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -174,6 +175,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.WarningFormPending;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -449,7 +451,6 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_require_signature_msg");
         transList.add("alert_optional_signature_msg");
         transList.add("dialog_signature_title_lbl");
-        transList.add("drawer_automatic_lbl");
         transList.add("qty_automatic_answer_msg");
         transList.add("dialog_info_product_code_lbl");
         transList.add("dialog_info_product_id_lbl");
@@ -608,11 +609,13 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_bkp_machine_search_ttl");
         transList.add("dialog_bkp_machine_search_msg");
         //
+        transList.addAll(Act011FfOption.Companion.getFragTranslationsVars());
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         transList.add("finish_os_tab_name");
         transList.add("act011_title_os");
         transList.addAll(VerificationGroupFragment.Companion.loadTranslation());
-        transList.add(OtherTicketInfo.Companion.getOtherTicketInfoLbl());
+        transList.add("other_ticket_info_lbl");
+        transList.add("required_by_ticket_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2223,6 +2226,8 @@ public class Act011_Main extends Base_Activity
      */
     @Override
     protected void onPause() {
+        Log.d("Error_Sup", "--------------onPause-------------------");
+        Log.d("Error_Sup", "canSave: " + canSave);
         super.onPause();
         if (canSave) {
             saveV2(false);
@@ -3001,7 +3006,7 @@ public class Act011_Main extends Base_Activity
             boolean chkStatus,
             @NonNull String itemCodeAndSeqPk,
             int partition_execution,
-            boolean isOtherTicket
+            FormTicketInfo.@NotNull TicketFormType ticketFormType
     ) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
         if (!isNewItem) {
@@ -3021,7 +3026,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formData.getCustom_form_status());
         deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
         deviceBundle.putInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, partition_execution);
-        deviceBundle.putBoolean(OtherTicketInfo.Companion.getDeviceItemOtherTicket(), isOtherTicket);
+        deviceBundle.putSerializable(FormTicketInfo.DEVICE_ITEM_TICKET_INFO, ticketFormType);
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -3372,6 +3377,8 @@ public class Act011_Main extends Base_Activity
     public void defineFinalizeFlow() {
         if (ToolBox_Con.isOnline(context)
                 && !mPresenter.isTripInUpdateRequired()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            canSave = false;
             enableProgressDialog(
                     hmAux_Trans.get("alert_send_finish_ttl"),
                     hmAux_Trans.get("alert_send_finish_msg"),
@@ -3450,6 +3457,8 @@ public class Act011_Main extends Base_Activity
         }
         //
         mPresenter.clearTicketDownloadSingleton();
+        //
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
@@ -4903,7 +4912,10 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
+        Log.d("Error_Sup", "--------------processCustom_error-------------------");
+        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         //
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
                 || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
         ) {
@@ -4943,6 +4955,10 @@ public class Act011_Main extends Base_Activity
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        Log.d("Error_Sup", "--------------processError_1-------------------");
+        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
+        //
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (bypassSendDataErrorAlert()) {
             flowControl();
         } else {
@@ -4976,7 +4992,8 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-
+        Log.d("Error_Sup", "--------------processCloseACT 3 -------------------");
+        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             //
@@ -5054,11 +5071,12 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-
+        Log.d("Error_Sup", "--------------processCloseACT 2 -------------------");
+        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
-
-            if (mPresenter.hasSerialStructurePending()) {
+            MD_Product_Serial serialInfo = getSerialInfo();
+            if (mPresenter.hasSerialStructurePending(serialInfo)) {
 
                 progressDialog.dismiss();
                 enableProgressDialog(
@@ -5068,7 +5086,13 @@ public class Act011_Main extends Base_Activity
                         hmAux_Trans.get("sys_alert_btn_ok")
                 );
                 setWsSoProcess(WS_Product_Serial_Structure.class.getSimpleName());
-                mPresenter.executeStructureUpdate();
+                //
+                mPresenter.executeStructureUpdate(
+                        serialInfo.getCustomer_code(),
+                        serialInfo.getProduct_code(),
+                        serialInfo.getSerial_code(),
+                        serialInfo.getScn_item_check()
+                );
             } else {
                 if (mPresenter.isUserOnSyncRequiredTrip()) {
                     setWsSoProcess(WsGetTripFull.class.getSimpleName());

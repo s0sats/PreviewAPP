@@ -171,6 +171,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String STOPPED_DATE = "stopped_date";
     public static final String DESIRED_DATE = "desired_date";
     public static final String IS_TMP = "is_tmp";
+    public static final String SYNC_BIG_FILE = "sync_big_file";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -1281,6 +1282,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setOpenDesiredDate(cursor.getString(cursor.getColumnIndex(OPEN_DESIRED_DATE)));
             tk_ticket.setIsSerialStopped(cursor.getInt(cursor.getColumnIndex(IS_SERIAL_STOPPED)));
             tk_ticket.setIsTmp(cursor.getInt(cursor.getColumnIndex(IS_TMP)));
+            tk_ticket.setSyncBigFile(cursor.getInt(cursor.getColumnIndex(SYNC_BIG_FILE)));
 
 
             int columnIndexStopped = cursor.getColumnIndex(STOPPED_DATE);
@@ -1536,6 +1538,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
 
             contentValues.put(IS_TMP, tk_ticket.getIsTmp());
+            contentValues.put(SYNC_BIG_FILE, tk_ticket.getSyncBigFile());
             contentValues.put(STOPPED_DATE, tk_ticket.getStoppedDate());
             contentValues.put(DESIRED_DATE, tk_ticket.getDesiredDate());
             //

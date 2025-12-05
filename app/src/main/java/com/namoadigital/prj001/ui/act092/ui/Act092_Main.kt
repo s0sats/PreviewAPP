@@ -239,8 +239,10 @@ class Act092_Main : BaseActivityMvp
                 wsProcess.value = ""
                 progressDialog.dismiss()
                 //
-                if (presenter.hasSerialStructureOutdate(context)) {
-                    presenter.updateSerialStrucutreAfterWsSave(context)
+                val localSerial = presenter.getLocalSerial(context)
+                if (presenter.hasSerialStructureOutdate(localSerial)
+                    && localSerial != null) {
+                    presenter.updateSerialStrucutreAfterWsSave(context, localSerial)
                 } else {
                     presenter.otherActionFlow(context)
                 }

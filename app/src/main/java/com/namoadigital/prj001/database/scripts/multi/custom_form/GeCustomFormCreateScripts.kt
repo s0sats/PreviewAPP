@@ -63,6 +63,7 @@ const val GE_CUSTOM_FORM_FORM_CREATE_SCRIPT =
         [initial_unavailability_reason] text collate nocase,
         [final_is_serial_stopped] int,                                   
         [final_unavailability_reason] text collate nocase,                                   
+        [allow_form_in_the_past] int,                                   
         CONSTRAINT [pk_form_datas] 
         PRIMARY KEY(
             [customer_code], 

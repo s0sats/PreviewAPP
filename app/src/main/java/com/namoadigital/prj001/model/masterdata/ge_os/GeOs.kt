@@ -46,7 +46,7 @@ class GeOs(
     @SerializedName("initial_unavailability_reason") var initial_unavailability_reason: String? = null,
     @SerializedName("final_is_serial_stopped") var final_is_serial_stopped: Int? = null,
     @SerializedName("final_unavailability_reason") var final_unavailability_reason: String? = null,
-    var allowFormInThePast: Int? = 0,
+    @SerializedName("allow_form_in_the_past") var allowFormInThePast: Int = 0,
 ) : Serializable {
 
 //    val hasForcedExpiredVg = force_exe_expired_vg == 1

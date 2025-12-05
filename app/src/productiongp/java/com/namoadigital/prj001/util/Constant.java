@@ -23,6 +23,9 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_LOGOUT = "https://portal.namoadigital.com/ws/prj001/server_logout.ws";
     public static final String WS_SERIAL_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_serial.ws";
     public static final String WS_PRODUCT_SERIAL_STRUCTURE_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_product_serial_structure.ws";
+    public static final String WS_PRODUCT_SERIAL_STRUCTURE_SEARCH_SYNC = "https://portal.namoadigital.com/ws/prj001/server_product_serial_structure_sync.ws";
+    public static final String WS_BIG_FILE_STATUS = "https://portal.namoadigital.com/inc/ws/big_file_status.ws";
+    public static final String WS_BIG_FILE_DONE_DOWNLOAD = "https://portal.namoadigital.com/inc/ws/big_file_done_download.ws";
     public static final String WS_PRODUCT_SERIAL_BACKUP = "https://portal.namoadigital.com/ws/prj001/server_product_serial_backup.ws";
 
     public static final String WS_SO_SEARCH = "https://portal.namoadigital.com/ws/prj001/server_so.ws";
@@ -61,6 +64,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_IO_OUTBOUND_ITEM_SAVE = "https://portal.namoadigital.com/ws/prj001/io/server_outbound_item_save.ws";
     public static final String WS_IO_TRANSPORT_ORDER_OUT_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_transport_order_out_search.ws";
     //TICKET
+    public static final String WS_TICKET_DOWNLOAD_SYNC = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_sync.ws";
     public static final String WS_TICKET_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket.ws";
     public static final String WS_TICKET_DOWNLOAD_SERIAL = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_serial.ws";
     public static final String WS_TICKET_CHECKIN = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_checkin.ws";

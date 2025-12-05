@@ -10,12 +10,12 @@ class MDProductSerialSql019 (
     override fun toSqlQuery(): String {
 
         return """
-                        SELECT *
-                        FROM  ${MD_Product_SerialDao.TABLE} p
-                        WHERE p.customer_code = $customerCode
-                          AND p.has_item_check = 1
-                          AND p.scn_item_check = 0
-                          LIMIT 500
+                       SELECT *
+                         FROM  ${MD_Product_SerialDao.TABLE} p
+                        WHERE p.${MD_Product_SerialDao.CUSTOMER_CODE} = $customerCode
+                          AND p.${MD_Product_SerialDao.HAS_ITEM_CHECK} = 1
+                          AND p.${MD_Product_SerialDao.SYNC_STRUCTURE} = 1
+                        LIMIT 500
             """.trimIndent()
     }
 }

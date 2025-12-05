@@ -208,6 +208,8 @@
     <string name="lib_recording_video_lbl">Record video</string>
     <string name="location_pendency_ttl">Action Required</string>
     <string name="location_pendency_msg">Access the app to restart location services</string>
+    <string name="alert_notification_denied_permission_ttl">Notifications blocked</string>
+    <string name="alert_notification_denied_permission_msg">Notifications are currently not allowed.</string>
 
 
 </resources>

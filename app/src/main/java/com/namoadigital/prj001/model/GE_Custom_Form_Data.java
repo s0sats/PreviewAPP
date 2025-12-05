@@ -236,6 +236,9 @@ public class GE_Custom_Form_Data {
     @Nullable
     @SerializedName("final_unavailability_reason") private String final_unavailability_reason;
 
+    @Expose
+    @SerializedName("allow_form_in_the_past") private Integer allow_form_in_the_past;
+
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -775,5 +778,13 @@ public class GE_Custom_Form_Data {
 
     public void setFinal_unavailability_reason(@Nullable String final_unavailability_reason) {
         this.final_unavailability_reason = final_unavailability_reason;
+    }
+
+    public Integer getAllow_form_in_the_past() {
+        return allow_form_in_the_past;
+    }
+
+    public void setAllow_form_in_the_past(Integer allow_form_in_the_past) {
+        this.allow_form_in_the_past = allow_form_in_the_past;
     }
 }

@@ -6,8 +6,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 data class FinishOsData(
     val showBalloonVerify: Boolean = false,
+    val requiredByTicketLeft: Int = 0,
     val showOptionsStopped: Boolean = false,
     val showBkupMachine: Boolean = false,
+    val showInitialStateMachine: Boolean = false,
+    val showFinalStateMachine: Boolean = false,
     val infoOs: FinishFormField.ExpectedTimeOS? = null,
     val machineOsInitial: FinishFormField.MachineOSInitial = FinishFormField.MachineOSInitial(),
     val machineOsFinal: FinishFormField.MachineOSFinal = FinishFormField.MachineOSFinal(),

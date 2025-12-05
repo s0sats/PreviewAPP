@@ -47,6 +47,7 @@ class FinishOSFragment constructor(
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
+            requiredByTicketCount = null,
             status = Act011FormTabStatus.OK
         )
 

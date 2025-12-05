@@ -25,10 +25,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.databinding.BackupSerialSearchListDialogBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
 import com.namoadigital.prj001.databinding.FormSupplierDialogBinding
-import com.namoadigital.prj001.databinding.BackupSerialSearchListDialogBinding
 import com.namoadigital.prj001.databinding.IncSerialInitialStateBinding
 import com.namoadigital.prj001.extensions.date.getDateDiferenceInMinutes
 import com.namoadigital.prj001.extensions.date.isDateBefore
@@ -38,10 +38,10 @@ import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.model.BaseSerialSearchItem
-import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
 import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.ui.act011.FormOsHeaderFrgMeasureInteraction
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
@@ -151,6 +151,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_empty_bkp_machine_error_msg",
                 "alert_same_serial_bkp_machine_error_msg",
                 "alert_invalid_star_date_error_msg",
+                "alert_invalid_start_date_future_error_msg",
                 "alert_invalid_measure_value_error_msg",
                 "alert_invalid_measure_zero_cycle_error_msg",
                 "alert_invalid_measure_cycle_error_msg",
@@ -879,6 +880,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             clMainMeasure.visibility = View.GONE
             tvOsMainMeasureLbl.visibility = View.GONE
             mketOsMainMeasureVal.visibility = View.GONE
+            clSerialInitialState.root.visibility = View.GONE
         }
     }
 
@@ -942,7 +944,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
             val isMachineTheSame =
                 (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
-            val isStartDateInvalid = if (!bypassMinValidation()) isValidStartDate().not() else false
+            val isStartDateInvalid = isValidStartDate().not()
             val isContinuousFormStartDateInvalid =
                 if (isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
@@ -1085,18 +1087,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     /**
-     * Valida se data iniicio informada é valida, não é no futuro e é maior que a data da ultima medição.
+     * Valida se data inicio informada é valida, não é no futuro e é maior que a data da ultima medição.
      */
     private fun isValidStartDate(): Boolean {
         return with(binding) {
-            (mkdtStartDate.isValid
-                    && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+            (bypassMinValidation()
+                || (mkdtStartDate.isValid
                     && (formOsHeader.last_measure_date == null
-                    || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(
-                mkdtStartDate.getmValue()
-            )
+                        || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
+                        )
                     )
-                    )
+            ) && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
         }
     }
 
@@ -1656,6 +1657,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
+            requiredByTicketCount = null,
             status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(validHighLight)
         )
 
@@ -1746,7 +1748,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             tvStarDateInvalidMsg.apply {
                 visibility = if (startDateInvalid) View.VISIBLE else View.GONE
-                text = hmAuxTrans["alert_invalid_star_date_error_msg"]
+                text = if(bypassMinValidation()){
+                    hmAuxTrans["alert_invalid_start_date_future_error_msg"]
+                }else{
+                    hmAuxTrans["alert_invalid_star_date_error_msg"]
+                }
+
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvContinuosFormStarDateInvalidMsg.apply {

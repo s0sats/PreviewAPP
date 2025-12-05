@@ -53,6 +53,7 @@ fun AfterFinishOSComponent(
     translateMap: TranslateMap,
     translateLib: TranslateMap,
     showResponsibleOptions: Boolean = false,
+    showFinalStateMachine: Boolean = false,
     isReadOnly: Boolean = false,
     machineStateFinal: FinishFormField.MachineOSFinal,
     newServiceState: FinishFormField.HasNewService,
@@ -81,18 +82,18 @@ fun AfterFinishOSComponent(
     ) {
 
         TitleSection(text = translateMap.textOf(DIALOG_FINALIZE_OS_AFTER_TITLE_LBL))
-
-        MachineFinalSwitch(
-            modifier = Modifier.fillMaxWidth(),
-            translateMap = translateMap,
-            isReadOnly = isReadOnly,
-            machineStateFinal = machineStateFinal,
-            showResponsibleOptions = showResponsibleOptions,
-            onOptionSelected = {
-                onMachineStopped(it)
-            }
-        )
-
+        if(showFinalStateMachine) {
+            MachineFinalSwitch(
+                modifier = Modifier.fillMaxWidth(),
+                translateMap = translateMap,
+                isReadOnly = isReadOnly,
+                machineStateFinal = machineStateFinal,
+                showResponsibleOptions = showResponsibleOptions,
+                onOptionSelected = {
+                    onMachineStopped(it)
+                }
+            )
+        }
         ScheduleFinishSwitch(
             modifier = Modifier
                 .padding(top = NamoaTheme.spacing.mediumSmall)

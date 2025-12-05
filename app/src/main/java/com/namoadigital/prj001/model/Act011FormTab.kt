@@ -11,6 +11,7 @@ class Act011FormTab (
     val forecastCount: Act011FormCounter?,
     val criticalForecastCount: Act011FormCounter?,
     val nonForecastCount: Act011FormCounter?,
+    val requiredByTicketCount: Int? = null,
     val status: Act011FormTabStatus,
     val countInteract: Int? = null,
 ): Serializable {

@@ -5,8 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo.Companion.OtherTicketInfoLbl
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo.TicketFormType
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData
 import com.namoadigital.prj001.util.ConstantBaseApp
 import java.io.Serializable
@@ -35,7 +34,7 @@ data class InspectionCell(
     val requirePhotoAlreadyOk: Boolean = false,
     val read_only: Boolean = false,
     val measureItemData: MeasureItemData? = null,
-    val otherTicketInfo: OtherTicketInfo? = null
+    val ticketFormType: TicketFormType = TicketFormType.NO_TICKET,
 ) : Serializable {
     var isDone: Boolean = false
 
@@ -43,9 +42,6 @@ data class InspectionCell(
     var tagColor: Int = 0
     var statusTransalted: String = ""
     var execTypeTranslated: String = ""
-
-    val isReadOnlyDueToOtherTicket: Boolean
-        get() = otherTicketInfo != null
 
     init {
         initViewVars()
@@ -126,7 +122,11 @@ data class InspectionCell(
     }
 
     fun getOtherTicketIdFormatted(): String {
-        return hmAuxTrans[OtherTicketInfoLbl] + " " + otherTicketInfo?.formattedTicketId
+        return hmAuxTrans["other_ticket_info_lbl"]!!
+    }
+
+    fun getSameTicketItemRequired(): String {
+        return hmAuxTrans["required_by_ticket_lbl"]!!
     }
 
     fun getAllFieldForFilter(): String {

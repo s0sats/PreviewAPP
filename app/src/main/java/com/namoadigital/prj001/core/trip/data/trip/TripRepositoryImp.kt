@@ -177,7 +177,9 @@ class TripRepositoryImp @Inject constructor(
                                     //
                                     modelEnv.parameters?.let {
                                         if (transaction.save(
-                                                statusChanged,
+                                                statusChanged = statusChanged.copy(
+                                                    date = if(statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) doneDate else statusChanged.date
+                                                ),
                                                 startDate = startDate,
                                             )
                                         ) {

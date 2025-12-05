@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.extensions
 
 import android.content.Context
-import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -12,7 +11,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.worker.WorkDownloadTicket
-import com.namoadigital.prj001.worker.WorkDownloadTicket.Companion.WORKER_TAG
+import com.namoadigital.prj001.worker.big_file.WorkCheckBigFile
 import java.util.concurrent.TimeUnit
 
 fun scheduleDownloadTicket(context: Context?) {
@@ -45,7 +44,7 @@ fun scheduleDownloadTicket(context: Context?) {
 
             WorkManager.getInstance(it)
                 .enqueueUniqueWork(
-                    WORKER_TAG,
+                    WorkDownloadTicket.WORKER_TAG,
                     ExistingWorkPolicy.KEEP,
                     workDownloadTickets
                 )
@@ -57,7 +56,8 @@ fun cancelTicketDownloadWorker(context: Context?){
     context?.let{
 //        Log.d("SYNC_STRUCTURE", "------------------cancelUniqueWork--------------------")
         val workManager = WorkManager.getInstance(context)
-        workManager.cancelUniqueWork(WORKER_TAG)
+        workManager.cancelUniqueWork(WorkDownloadTicket.WORKER_TAG)
+        workManager.cancelUniqueWork(WorkCheckBigFile.Companion.WORKER_TAG)
     }
 
 }

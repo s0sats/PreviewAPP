@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -114,7 +113,6 @@ import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
-import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
@@ -131,7 +129,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.sql.transaction.ticket.TransactionSaveTicketStepCtrlAtForm;
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop;
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo;
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData;
@@ -246,14 +244,19 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void executeStructureUpdate() {
+    public void executeStructureUpdate(
+            Long customerCode,
+            Long productCode,
+            Long serialCode,
+            int scnItemCheck)
+    {
         //
         Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
-        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
-        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
-        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, customerCode);
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productCode);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serialCode);
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, scnItemCheck);
         //
         mIntent.putExtras(bundle);
         //
@@ -290,13 +293,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public boolean hasSerialStructurePending() {
-        List<MD_Product_Serial> serial = md_product_serialDao.query(
-                new MDProductSerialSql018(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-        return serial.size() > 0;
+    public boolean hasSerialStructurePending(MD_Product_Serial serialInfo) {
+        return serialInfo.getHas_item_check() == 1
+                && serialInfo.getSyncStructure() == 1;
     }
 
     @Override
@@ -926,10 +925,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
 //        GeOsDeviceItem
         List<GeOsDevice> devices = getDeviceList(geOs);
-
-        Integer currentFormTicketPrefix = customFormLocal.getTicket_prefix();
-        Integer currentFormTicketCode = customFormLocal.getTicket_code();
-
+        FormTicketInfo itemOtherTicketInfo = new FormTicketInfo(
+                customFormLocal.getTicket_prefix(),
+                customFormLocal.getTicket_code()
+        );
         for (GeOsDevice device : devices) {
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
@@ -941,9 +940,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
             List<InspectionCell> inspections = acessoryFormView.getInspections();
             List<GeOsDeviceItem> deviceItem = getDeviceItem(device);
-
             for (GeOsDeviceItem item : deviceItem) {
-
 
                 String itemDesc = new GetDeviceItemDescUseCase().invoke(
                         new GetDeviceItemDescUseCase.Input(
@@ -957,7 +954,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
                 boolean isReadOnly = !isInProcessing(customFormLocal);
                 MeasureBottomSheetContext measureBottomSheetContext = getMeasureBottomSheetContext(item, isReadOnly);
-                OtherTicketInfo itemOtherTicketInfo = OtherTicketInfo.Companion.hasOtherTicketInfo(item, currentFormTicketPrefix, currentFormTicketCode);
 
                 inspections.add(
                         new InspectionCell(itemDesc,
@@ -989,7 +985,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                         item.getLastMeasureDate(),
                                         measureBottomSheetContext
                                 ) : null,
-                                itemOtherTicketInfo
+                                itemOtherTicketInfo.getTicketFormType(item)
                         )
                 );
             }
@@ -1761,6 +1757,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 form_data.setDevice_tp_code(geOs.getDevice_tp_code_main());
                 form_data.setMeasure_tp_code(geOs.getMeasure_tp_code());
                 form_data.setMeasure_value(geOs.getMeasure_value());
+                form_data.setAllow_form_in_the_past(geOs.getAllowFormInThePast());
                 //Se o tipo da o.s for preventiva ciclica seta o valor do cycle
                 if (geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PROCESS_TYPE_PREVENTIVE)
                         && geOs.getValue_cycle_size() != null
@@ -2998,7 +2995,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getChange_adjust(),
                 deviceItem.getPartitioned_execution(),
                 false,
-                false, null, null
+                false,
+                null,
+                FormTicketInfo.TicketFormType.NO_TICKET
         );
     }
 
@@ -3189,41 +3188,41 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         for (GE_Custom_Form_Data_Field dataField : formData.getDataFields()) {
 
-            Log.d("deleteHiddenPhotos", "Field is Active: " + dataField.isActive());
+//            Log.d("deleteHiddenPhotos", "Field is Active: " + dataField.isActive());
 
             if (dataField.isActive()) continue;
 
 
-            Log.d("deleteHiddenPhotos", "Field Value: " + dataField.getValue());
+//            Log.d("deleteHiddenPhotos", "Field Value: " + dataField.getValue());
             String value = dataField.getValue();
-            Log.d("deleteHiddenPhotos", "Field Value Extra: " + dataField.getValue_extra());
+//            Log.d("deleteHiddenPhotos", "Field Value Extra: " + dataField.getValue_extra());
             String valueExtra = dataField.getValue_extra();
 
             GeCustomFormDataFieldExtras extras = getGeCustomFormDataFieldExtras(valueExtra);
             GeCustomFormDataFieldExtras.GeCustomFormDataFieldExtrasContent content = extras.getContent().get(0);
 
             if (FileHelperKt.hasFileForFileName(value)) {
-                Log.d("deleteHiddenPhotos", "add field: " + value);
+//                Log.d("deleteHiddenPhotos", "add field: " + value);
                 filesToDelete.add(value);
             }
 
             if (FileHelperKt.hasFileForFileName(content.getPhoto1())) {
-                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto1());
+//                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto1());
                 filesToDelete.add(content.getPhoto1());
             }
 
             if (FileHelperKt.hasFileForFileName(content.getPhoto2())) {
-                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto2());
+//                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto2());
                 filesToDelete.add(content.getPhoto2());
             }
 
             if (FileHelperKt.hasFileForFileName(content.getPhoto3())) {
-                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto3());
+//                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto3());
                 filesToDelete.add(content.getPhoto3());
             }
 
             if (FileHelperKt.hasFileForFileName(content.getPhoto4())) {
-                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto4());
+//                Log.d("deleteHiddenPhotos", "add field extra: " + content.getPhoto4());
                 filesToDelete.add(content.getPhoto4());
             }
 

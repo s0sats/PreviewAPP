@@ -187,6 +187,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(), Act011FrgFFScroll {
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
+            requiredByTicketCount = null,
             status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus(
                 validHighlight
             )

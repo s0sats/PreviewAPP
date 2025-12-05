@@ -74,7 +74,7 @@ class TransactionWsSave(
                     if (serial.has_item_check == 1
                         && it.order_type_code != null
                     ) {
-                        serial.scn_item_check = 0
+                        serial.syncStructure = 1
                         val serialResult = serialDao.addUpdateWithDaoObjReturn(serial, db)
 
                         if (serialResult.hasError()) {

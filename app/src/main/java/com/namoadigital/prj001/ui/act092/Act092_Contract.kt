@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act092
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
@@ -62,8 +63,9 @@ interface Act092_Contract {
         )
 
         fun getJustifyItems(justifyGroupCode: Int, context: Context): ArrayList<HMAux>
-        fun hasSerialStructureOutdate(context: Context): Boolean
-        fun updateSerialStrucutreAfterWsSave(context: Context)
+        fun hasSerialStructureOutdate(serial: MD_Product_Serial?): Boolean
+        fun updateSerialStrucutreAfterWsSave(context: Context, serial: MD_Product_Serial)
+        fun getLocalSerial(context: Context): MD_Product_Serial?
         fun hasEventManual(): Boolean
     }
 }

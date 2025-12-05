@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.E
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
+import com.namoadigital.prj001.ui.act011.model.FormTicketInfo
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext
 import java.util.Objects
 import kotlin.math.abs
@@ -31,7 +32,7 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int, measureBottomSheetContext: MeasureBottomSheetContext?, isOtherTicket: Boolean) -> Unit,
+    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int, measureBottomSheetContext: MeasureBottomSheetContext?, ticketFormType: FormTicketInfo.TicketFormType) -> Unit,
     private val onAlreadyOkItemSelected: (position: Int, item: InspectionCell) -> Unit,
     private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -81,7 +82,7 @@ class Act011InspectionFormAdapter(
                     inspectionCell.itemCodeAndSeq,
                     inspectionCell.partitionedExecution,
                     inspectionCell.measureItemData?.context,
-                    inspectionCell.isReadOnlyDueToOtherTicket
+                    inspectionCell.ticketFormType
                 )
             }
             binding.root.setOnClickListener(openItemListener)
@@ -232,16 +233,34 @@ class Act011InspectionFormAdapter(
                         || inspection.hideAlreadyOKBtn
                         || read_only
                         || measureItemData != null
-                        || inspection.isReadOnlyDueToOtherTicket
+                        || inspection.ticketFormType == FormTicketInfo.TicketFormType.OTHER_TICKET
                     ) {
                         binding.tvAutoAlreadyOk.visibility = View.GONE
                     }
                     //
-                    if (inspection.isReadOnlyDueToOtherTicket) {
-                        binding.tvOtherTicketInfo.visibility = View.VISIBLE
-                        binding.tvOtherTicketInfo.text = inspection.getOtherTicketIdFormatted()
-                    } else {
-                        binding.tvOtherTicketInfo.visibility = View.GONE
+                    when(inspection.ticketFormType){
+                        FormTicketInfo.TicketFormType.OTHER_TICKET ->
+                        {
+                            binding.tvTicketInfo.visibility = View.VISIBLE
+                            binding.tvTicketInfo.text = inspection.getOtherTicketIdFormatted()
+                            binding.tvInspectionVerificationAction.apply {
+                                icon = ContextCompat.getDrawable(
+                                    context,
+                                    R.drawable.ic_baseline_read_more_24
+                                )
+                                text = hmAuxTrans.get("inspection_visualize_action_lbl")
+                                iconTint =binding.tvAutoAlreadyOk.iconTint
+                                strokeColor =binding.tvAutoAlreadyOk.strokeColor
+                                setTextColor(binding.tvAutoAlreadyOk.currentTextColor)
+                                backgroundTintList =binding.tvAutoAlreadyOk.backgroundTintList
+                                strokeWidth =binding.tvAutoAlreadyOk.strokeWidth
+                            }
+                        }
+                        FormTicketInfo.TicketFormType.SAME_TICKET -> {
+                            binding.tvTicketInfo.visibility = View.VISIBLE
+                            binding.tvTicketInfo.text = inspection.getSameTicketItemRequired()
+                        }
+                        else -> binding.tvTicketInfo.visibility = View.GONE
                     }
                     //
                     if (partitionedExecution == 1 && !read_only) {
@@ -332,24 +351,6 @@ class Act011InspectionFormAdapter(
                     binding.tvAutoAlreadyOk.text =
                         hmAuxTrans.get("inspection_already_ok_action_lbl")
                 }
-
-                with(binding) {
-                    if (isReadOnlyDueToOtherTicket) {
-                        tvInspectionVerificationAction.apply {
-                            icon = ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_baseline_read_more_24
-                            )
-                            text = hmAuxTrans.get("inspection_visualize_action_lbl")
-                            iconTint = tvAutoAlreadyOk.iconTint
-                            strokeColor = tvAutoAlreadyOk.strokeColor
-                            setTextColor(tvAutoAlreadyOk.currentTextColor)
-                            backgroundTintList = tvAutoAlreadyOk.backgroundTintList
-                            strokeWidth = tvAutoAlreadyOk.strokeWidth
-                        }
-                    }
-                }
-
 
                 //
                 if (isNewItem || dayCount == null) {

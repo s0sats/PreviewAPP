@@ -534,6 +534,30 @@ class GeOsDeviceItemDao(
 
     }
 
+    fun getListDeviceItemRequiredByTicket(
+        customerCode: Long,
+        formType: Int,
+        formCode: Int,
+        formVersion: Int,
+        formData: Long,
+        ticketPrefix: Int,
+        ticketCode: Int,
+    ): List<GeOsDeviceItem> {
+        return query(
+            sQuery = """
+                            SELECT * FROM $TABLE
+                            WHERE ${CUSTOMER_CODE} = $customerCode
+                            AND $CUSTOM_FORM_TYPE = $formType
+                            AND $CUSTOM_FORM_CODE = $formCode
+                            AND $CUSTOM_FORM_VERSION = $formVersion
+                            AND $CUSTOM_FORM_DATA = $formData
+                            AND $TICKET_PREFIX = $ticketPrefix
+                            AND $TICKET_CODE = $ticketCode
+                            AND $EXEC_TYPE is null 
+                        """.trimIndent()
+        )
+    }
+
     fun getListDeviceItemByForm(
         customerCode: Long,
         formType: Int,

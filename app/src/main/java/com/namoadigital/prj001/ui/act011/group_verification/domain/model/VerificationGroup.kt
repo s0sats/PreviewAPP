@@ -11,6 +11,7 @@ data class VerificationGroup(
     val ticket: String? = null, // Ticket ID.CODE
     val user: String? = null, // USER PARTIÇÃO
     val alerts: List<NamoaBadges> = emptyList(), // ALERTAS
+    val requiredByTickets: Int? = null, // Itens obrigatorios pela execucao do ticket.
     var isActive: Boolean = false, // AUTO-SELECT
     val canToggle: Boolean = true,// USUARIO PODE MUDAR SWITCH ?,
 ){

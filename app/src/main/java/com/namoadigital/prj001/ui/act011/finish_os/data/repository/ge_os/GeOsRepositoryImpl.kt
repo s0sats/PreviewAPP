@@ -101,4 +101,26 @@ class GeOsRepositoryImpl @Inject constructor(
             emit(success(list))
         }.flowCatch(this::class.java.name).dispatchersIO()
     }
+
+    override fun getDeviceItemRequiredByTicketMissingAnswer(
+        formType: Int,
+        formCode: Int,
+        formVersion: Int,
+        formData: Long,
+        ticketPrefix: Int,
+        ticketCode: Int,
+    ): Int{
+        val deviceItemsList = deviceItemDao.getListDeviceItemRequiredByTicket(
+            customerCode = context.getCustomerCode(),
+            formType = formType,
+            formCode = formCode,
+            formVersion = formVersion,
+            formData = formData,
+            ticketPrefix = ticketPrefix,
+            ticketCode = ticketCode,
+        )
+
+        val list = deviceItemsList ?: emptyList()
+        return list.size
+    }
 }

@@ -129,6 +129,9 @@ public class MD_Product_Serial implements Serializable {
     @SerializedName("measure_block_input_time") private Long measure_block_input_time;
     @SerializedName("measure_alert_input_time") private Long measure_alert_input_time;
     @SerializedName("unavailability_reason_option") private int unavailability_reason_option;
+    @SerializedName("sync_structure") private int syncStructure;
+    @SerializedName("sync_big_file") private int syncBigFile;
+
     @Expose
     @SerializedName("structure")
     private List<MD_Product_Serial_Structure> structure = new ArrayList<>();
@@ -849,6 +852,22 @@ public class MD_Product_Serial implements Serializable {
 
     public void setUnavailability_reason_option(int unavailability_reason_option) {
         this.unavailability_reason_option = unavailability_reason_option;
+    }
+
+    public int getSyncStructure() {
+        return syncStructure;
+    }
+
+    public void setSyncStructure(int syncStructure) {
+        this.syncStructure = syncStructure;
+    }
+
+    public int getSyncBigFile() {
+        return syncBigFile;
+    }
+
+    public void setSyncBigFile(int syncBigFile) {
+        this.syncBigFile = syncBigFile;
     }
 
     public List<MD_Product_Serial_Structure> getStructure() {

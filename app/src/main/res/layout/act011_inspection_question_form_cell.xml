@@ -127,7 +127,7 @@
                 />
 
             <TextView
-                android:id="@+id/tv_other_ticket_info"
+                android:id="@+id/tv_ticket_info"
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:textStyle="bold"
                 android:layout_width="0dp"

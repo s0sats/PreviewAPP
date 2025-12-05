@@ -18,8 +18,8 @@ android {
         applicationId = "com.namoadigital.prj001"
         minSdk = 21
         targetSdk = 35
-        versionCode = 474
-        versionName = "6.16.13"
+        versionCode = 479
+        versionName = "6.18.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled = true
@@ -45,8 +45,6 @@ android {
 
 
     }
-
-
 
 
     compileOptions {
@@ -123,9 +121,9 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.common)
-    implementation(libs.hilt.navigation)
-    kapt(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
+    kapt(libs.hilt.ext.compiler)
 
     // Room
     implementation(libs.room.runtime)

@@ -9,11 +9,13 @@ import com.namoadigital.prj001.databinding.Act011FfOptionsCellBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.ui.act011.Act011FfOption
+import java.util.Locale
 
 class Act011FfOptionsAdapter(
     val tabs: List<Act011FormTab>,
     var tabSelected: Int,
     val isFormSO: Boolean,
+    val requiredByTicketTranslate: String,
     val mListener: Act011FfOption.ICustom_Form_FF_Options_ll
 ) : RecyclerView.Adapter<Act011FfOptionsAdapter.MyFormTabVH>() {
 
@@ -77,39 +79,53 @@ class Act011FfOptionsAdapter(
                         )
                     }
                 }
-
+                //
                 tvFormTabName.text = item.name
                 tvFormTabOrder.text = getTabOrder(item)
                 tvFormTabFieldsCount.text =
                     if (item.countInteract != null) "${item.countInteract}/${item.fieldCount}" else item.fieldCount.toString()
+                //
                 tvFormTabTracking.visibility = View.GONE
                 item.tracking?.let {
                     tvFormTabTracking.visibility = View.VISIBLE
                     tvFormTabTracking.text = it
                 }
-
+                //
                 cardForecastCount.visibility = View.GONE
-                if (item.forecastCount != null) {
+                item.forecastCount?.let {
                     cardForecastCount.visibility = View.VISIBLE
                     tvForecastCountVal.text = item.forecastCount.formattedCounter()
                 }
-
+                //
                 cardCriticalForecastCount.visibility = View.GONE
-                if (item.criticalForecastCount != null) {
+                item.criticalForecastCount?.let {
                     cardCriticalForecastCount.visibility = View.VISIBLE
                     tvCriticalForecastCountVal.text = item.criticalForecastCount.formattedCounter()
                 }
-
+                //
                 cardProblemReportedCount.visibility = View.GONE
-                if (item.problemReportedCount != null) {
+                item.problemReportedCount?.let {
                     cardProblemReportedCount.visibility = View.VISIBLE
                     tvProblemReportedCountVal.text = item.problemReportedCount.formattedCounter()
                 }
-
+                //
                 cardNonForecastCount.visibility = View.GONE
-                if (item.nonForecastCount != null) {
+                item.nonForecastCount?.let {
                     cardNonForecastCount.visibility = View.VISIBLE
                     tvNonForecastCountVal.text = item.nonForecastCount.formattedCounter()
+                }
+                //
+                cardRequiredByTicketCount.visibility = View.GONE
+                item.requiredByTicketCount?.let { count ->
+                    if(count > 0) {
+                        cardRequiredByTicketCount.visibility = View.VISIBLE
+                        tvRequiredByTicketCountVal.text = String.format(
+                            Locale.ROOT,
+                            "%s %d",
+                            requiredByTicketTranslate,
+                            count
+                        )
+                    }
                 }
             }
         }

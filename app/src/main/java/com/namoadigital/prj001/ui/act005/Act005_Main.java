@@ -80,7 +80,6 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.extensions.ContextKt;
-import com.namoadigital.prj001.extensions.WorkerHelperKt;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -303,6 +302,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act005_main);
+        //
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        fragmentNav = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        //
+        iniSetup();
+        //
         //LUCHE - 24/06/2020 Worker de agendamento
         ToolBox_Inf.scheduleQuarterScheduleNotification(context);
         ToolBox_Inf.schedule4HoursScheduleNotification(context);
@@ -310,11 +316,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //LUCHE - 06/07/2021 - Add chamada aqui, pois se tem arquivo de outro usr deve ser enviado
         ToolBox_Inf.scheduleUploadOtherUserImgWork(context);
         //
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        fragmentNav = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        //
-        iniSetup();
         initVars();
         iniUIFooter();
         initActions();
@@ -378,7 +379,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if (ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
             call_Act089_Main();
         }
-        scheduleDownloadTicketWorker();
+        //
+        TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
+        //
         mPresenter.deleteSerialSiteInventoryFile();
         invalidateOptionsMenu();
     }
@@ -1273,16 +1276,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule, hasTripUpdateRequired);
 
         }
-
-
         //
-    }
-
-    private void scheduleDownloadTicketWorker() {
-        if (mPresenter.hasTicketForDownload()) {
-            TicketDownloadRestriction.INSTANCE.clearTicketDownloadRestrictionInitialized();
-            WorkerHelperKt.scheduleDownloadTicket(context);
-        }
     }
 
     /**
@@ -2194,36 +2188,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+                        && !wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)
                         && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
                         && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
                 ) {
-
-                    if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
-                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                            mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
-                        } else {
-                            progressDialog.dismiss();
-                            setWsSoProcess("");
-                            setWsProcess("");
-                            refreshUiData();
-                        }
-                    } else {
-                        progressDialog.dismiss();
-                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                            structurePendencyAmount = mPresenter.serialStructureSyncRequiredTotal();
-                            mPresenter.executeSerialStructureUpdate(true, structurePendencyAmount);
-                        } else {
-                            scheduleDownloadTicketWorker();
-                            showSuccessDialog();
-                            //Atualiza traduções
-                            loadTranslation();
-                            //Atualiza menu e os badges
-                            //mPresenter.getMenuItens(hmAux_Trans);
+                    progressDialog.dismiss();
+                    showSuccessDialog();
+                    //Atualiza traduções
+                    loadTranslation();
+                    //Atualiza menu e os badges
+                    //mPresenter.getMenuItens(hmAux_Trans);
 //                    mPresenter.getMenuItensV2(hmAux_Trans);
-                            //Fecha Drawer
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                        }
-                    }
+                    //Fecha Drawer
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
                     //LUCHE - 27/02/2020
                     //Add tratativa pós save após implementação do novo agendamento
@@ -2292,7 +2269,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mPresenter.processWS_SaveReturn(mLink);
 
             mPresenter.executeApSave(); // 3
-        /*} else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
             if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
                 mPresenter.executeSerialStructureUpdate(false, structurePendencyAmount);
             } else {
@@ -2312,7 +2289,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         refreshUiData();
                     }
                 }
-            }*/
+            }
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
@@ -2633,8 +2610,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.executeTripDownload();
             } else if (masterDataSyncFlow) {
                 mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-            } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                mPresenter.executeSerialStructureUpdate(true);
             } else {
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
@@ -2658,8 +2633,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             } else {
                 if (masterDataSyncFlow) {
                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-                } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                    mPresenter.executeSerialStructureUpdate(true);
                 } else {
                     refreshUiData();
                 }
@@ -2719,7 +2692,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     return null;
                 },
                 () -> {
-                    if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                    if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
+                        mPresenter.executeSerialStructureUpdate(true);
+                    } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                         mPresenter.executeWSSoSync();
                     } else if (mPresenter.hasTicketSyncRequired()) {
                         mPresenter.executeWSTicketDownload();
@@ -2728,8 +2703,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     } else {
                         if (masterDataSyncFlow) {
                             mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-                        } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                            mPresenter.executeSerialStructureUpdate(true);
                         } else {
                             refreshUiData();
                         }
@@ -3035,7 +3008,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
+                    mPresenter.executeSerialStructureUpdate(true);
+                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                     mPresenter.executeWSSoSync();
                 } else if (mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
@@ -3466,14 +3441,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 ToolBox_Inf.hasFormProductOutdate(context);
                                 executeSync();
                             } else {
-                                if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                                if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                                    mPresenter.executeSerialStructureUpdate(true);
+                                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                                     mPresenter.executeWSSoSync();
                                 } else if (mPresenter.hasTicketSyncRequired()) {
                                     mPresenter.executeWSTicketDownload();
                                 } else if (mPresenter.hasTripSyncRequired()) {
                                     mPresenter.executeTripDownload();
-                                } else if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
-                                    mPresenter.executeSerialStructureUpdate(true);
                                 }
                             }
                         }
@@ -3641,7 +3616,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                if (hasSoSyncRequiredCloudRule) {
+                                if (hasSerialStructureSyncRequiredCloudRule) {
+                                    mPresenter.executeSerialStructureUpdate(true);
+                                } else if (hasSoSyncRequiredCloudRule) {
                                     mPresenter.executeWSSoSync();
                                 } else if (hasTicketSyncRequired) {
                                     mPresenter.executeWSTicketDownload();
@@ -3692,14 +3669,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         hasTicketSyncRequired ||
                         hasSerialStructureSyncRequiredCloudRule
                 )) {
-            if (hasSoSyncRequiredCloudRule) {
+            if (hasSerialStructureSyncRequiredCloudRule) {
+                mPresenter.executeSerialStructureUpdate(true);
+            } else if (hasSoSyncRequiredCloudRule) {
                 mPresenter.executeWSSoSync();
             } else if (hasTicketSyncRequired) {
                 mPresenter.executeWSTicketDownload();
-            } else if (hasTripSyncRequired) {
-                mPresenter.executeTripDownload();
             } else {
-                mPresenter.executeSerialStructureUpdate(true);
+                mPresenter.executeTripDownload();
             }
         } else if (hasUpdateRequired) {
             if (ToolBox_Con.isOnline(context)) {

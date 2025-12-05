@@ -10,7 +10,6 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env
 import com.namoadigital.prj001.model.TkTicketCache
 import com.namoadigital.prj001.model.ticket.TkTicketToSync
 import com.namoadigital.prj001.util.Constant
@@ -79,6 +78,7 @@ class TkTicketCacheDao(
         const val IS_PRIORITY = "is_priority"
         const val ADDRESS = "address"
         const val AUTOMATIC_TICKET_DOWNLOAD = "automatic_ticket_download"
+        const val SYNC_BIG_FILE = "sync_big_file"
     }
 
     private val toTkTicketCacheMapper: Mapper<Cursor, TkTicketCache>
@@ -314,6 +314,7 @@ class TkTicketCacheDao(
                 ) 
               or c.${AUTOMATIC_TICKET_DOWNLOAD} = 1
             )    
+            AND c.${SYNC_BIG_FILE} = 0
             AND NOT EXISTS(
                 SELECT 1
                     FROM ${TK_TicketDao.TABLE} t
@@ -445,6 +446,9 @@ class TkTicketCacheDao(
                     if(ticketCache.automatic_ticket_download > -1){
                         put(AUTOMATIC_TICKET_DOWNLOAD,ticketCache.automatic_ticket_download)
                     }
+                    if(ticketCache.sync_big_file > -1){
+                        put(SYNC_BIG_FILE,ticketCache.sync_big_file)
+                    }
                 }
             }
             //
@@ -509,6 +513,7 @@ class TkTicketCacheDao(
                             is_priority = getIntOrNull(getColumnIndex(IS_PRIORITY)),
                             address = getIntOrNull(getColumnIndex(ADDRESS)),
                             automatic_ticket_download = getInt(getColumnIndex(AUTOMATIC_TICKET_DOWNLOAD)),
+                            sync_big_file = getInt(getColumnIndex(SYNC_BIG_FILE)),
                     )
                 }
             }

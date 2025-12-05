@@ -496,6 +496,12 @@ public class ToolBox_Inf {
         if (!dirSerialSiteInv.exists()) {
             dirSerialSiteInv.mkdir();
         }
+
+        //BARRIONUEVO - 06/10/2025 - Dir com os arquivos json de lista de estruturas de serial e tickets.
+        File dirBigFileJsonFile = new File(Constant.BIG_FILE_JSON_PATH);
+        if (!dirBigFileJsonFile.exists()) {
+            dirBigFileJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {

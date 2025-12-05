@@ -1,10 +1,10 @@
 package com.namoadigital.prj001.ui.act003;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
+
 import android.content.Context;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -16,8 +16,6 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
 
 /**
  * Created by neomatrix on 17/01/17.

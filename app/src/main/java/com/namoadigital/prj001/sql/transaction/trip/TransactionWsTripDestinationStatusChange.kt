@@ -47,7 +47,7 @@ class TransactionWsTripDestinationStatusChange(
                 status = statusChanged.tripStatus,
                 updateRequired = if (updateRequired) 1 else 0,
                 startDate = startDate,
-                doneDate = if (statusChanged.date == null) null else statusChanged.date,
+                doneDate = if (statusChanged.date != null && statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) statusChanged.date else null,
                 dbInstance = db
             )
 

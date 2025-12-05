@@ -173,6 +173,7 @@ const val TK_TICKET_CREATE_SCRIPT = """
         [stopped_date] text,
         [desired_date] text,
         [is_tmp] int not null default 0,
+        [sync_big_file] int not null default 0,
         CONSTRAINT[pk_tk_ticket]
         PRIMARY KEY([customer_code], [ticket_prefix], [ticket_code]));
 """
@@ -232,6 +233,7 @@ const val TK_TICKET_CACHE_CREATE_SCRIPT = """
         [is_priority] int,
         [address] int,
         [automatic_ticket_download] int not null default 0,
+        [sync_big_file] int not null default 0,
         CONSTRAINT [pk_tk_ticket_cache]
         PRIMARY KEY (customer_code,ticket_prefix,ticket_code));
 """

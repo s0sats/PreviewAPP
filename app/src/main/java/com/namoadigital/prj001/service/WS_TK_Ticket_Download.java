@@ -76,7 +76,7 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
             String ticket_pks = bundle.getString(TK_TicketDao.TICKET_PREFIX, "");
             int isLoginSync = bundle.getInt(IS_LOGIN_PROCESS, 0);
             //
-            WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
+//            WorkerHelperKt.cancelTicketDownloadWorker(getApplicationContext());
             //
             processTicketDownload(ticket_pks,isLoginSync);
             cleanNotification();
@@ -89,7 +89,7 @@ public class WS_TK_Ticket_Download extends BaseWsIntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-            WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
+//            WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
             //Verifica se existem form com pendencia de GPS
             checkSetLocationPendencyPreferenceFalse();
             //Chama atualização da notificação.

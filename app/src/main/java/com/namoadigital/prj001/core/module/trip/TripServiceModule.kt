@@ -5,6 +5,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.di.services.qualifiers.GeneralNotification
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepositoryImp
 import com.namoadigital.prj001.core.trip.data.position.TripPositionRepository
@@ -45,6 +46,7 @@ object TripServiceModule {
 
     @ServiceScoped
     @Provides
+    @GeneralNotification
     fun provideBaseNotificationBuilder(
         @ApplicationContext app: Context
     ): NotificationCompat.Builder {

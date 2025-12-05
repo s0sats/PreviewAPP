@@ -19,7 +19,12 @@ import java.io.File
 
 class Act011FfOption : Fragment() {
     private val mAdapter by lazy {
-        Act011FfOptionsAdapter(mObjectView.tabs, mObjectView.tabSelected, mObjectView.isFormOs, mListener)
+        Act011FfOptionsAdapter(
+            mObjectView.tabs,
+            mObjectView.tabSelected,
+            mObjectView.isFormOs,
+            hmAux_Trans.get("required_by_ticket_count")!!,
+            mListener)
     }
     private lateinit var mObjectView: Act011FfOptionsViewObject
     private lateinit var hmAux_Trans: HMAux
@@ -209,7 +214,8 @@ class Act011FfOption : Fragment() {
         //
         fun getFragTranslationsVars(): List<String> {
             return listOf(
-                "drawer_automatic_lbl"
+                "drawer_automatic_lbl",
+                "required_by_ticket_count"
             )
         }
     }

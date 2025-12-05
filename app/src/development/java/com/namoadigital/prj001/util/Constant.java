@@ -26,7 +26,10 @@ public class Constant extends ConstantBaseApp {
     public static String WS_SERIAL_SEARCH;
     public static String WS_SERIAL_TRACKING_SEARCH;
     public static String WS_PRODUCT_SERIAL_STRUCTURE_SEARCH;
+    public static String WS_PRODUCT_SERIAL_STRUCTURE_SEARCH_SYNC;
     public static String WS_PRODUCT_SERIAL_BACKUP;
+    public static String WS_BIG_FILE_STATUS;
+    public static String WS_BIG_FILE_DONE_DOWNLOAD;
 
     public static String WS_UPLOAD;
 
@@ -70,6 +73,7 @@ public class Constant extends ConstantBaseApp {
     public static String WS_IO_INBOUND_ITEM_SAVE;
     public static String WS_IO_OUTBOUND_ITEM_SAVE;
     public static String WS_IO_TRANSPORT_ORDER_OUT_SEARCH;
+    public static String WS_TICKET_DOWNLOAD_SYNC;
     public static String WS_TICKET_DOWNLOAD;
     public static String WS_TICKET_DOWNLOAD_SERIAL;
     public static String WS_TICKET_CHECKIN;
@@ -144,6 +148,9 @@ public class Constant extends ConstantBaseApp {
         WS_SERIAL_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_product_serial.ws";
         WS_SERIAL_TRACKING_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_serial_tracking.ws";
         WS_PRODUCT_SERIAL_STRUCTURE_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_product_serial_structure.ws";
+        WS_PRODUCT_SERIAL_STRUCTURE_SEARCH_SYNC = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_product_serial_structure_sync.ws";
+        WS_BIG_FILE_STATUS = HTTPS + WS_HOST + "/inc/ws/big_file_status.ws";
+        WS_BIG_FILE_DONE_DOWNLOAD = HTTPS + WS_HOST + "/inc/ws/big_file_done_download.ws";
         WS_PRODUCT_SERIAL_BACKUP = HTTPS + WS_HOST + PREFIX_PRJ001 + "/server_product_serial_backup.ws";
         WS_UPLOAD = HTTPS + WS_HOST + "/inc/ws/aws_file.ws";
         WS_UPLOAD_CHAT = HTTPS + WS_HOST + "/inc/ws/aws_file_node.ws";
@@ -185,6 +192,7 @@ public class Constant extends ConstantBaseApp {
         WS_IO_INBOUND_ITEM_SAVE = HTTPS + WS_HOST + PREFIX_PRJ001 + "/io/server_inbound_item_save.ws";
         WS_IO_OUTBOUND_ITEM_SAVE = HTTPS + WS_HOST + PREFIX_PRJ001 + "/io/server_outbound_item_save.ws";
         WS_IO_TRANSPORT_ORDER_OUT_SEARCH = HTTPS + WS_HOST + PREFIX_PRJ001 + "/io/server_transport_order_out_search.ws";
+        WS_TICKET_DOWNLOAD_SYNC = HTTPS + WS_HOST + PREFIX_PRJ001 + "/tk/server_ticket_sync.ws";
         WS_TICKET_DOWNLOAD = HTTPS + WS_HOST + PREFIX_PRJ001 + "/tk/server_ticket.ws";
         WS_TICKET_DOWNLOAD_SERIAL = HTTPS + WS_HOST + PREFIX_PRJ001 + "/tk/server_ticket_serial.ws";
         WS_TICKET_CHECKIN = HTTPS + WS_HOST + PREFIX_PRJ001 + "/tk/server_ticket_checkin.ws";

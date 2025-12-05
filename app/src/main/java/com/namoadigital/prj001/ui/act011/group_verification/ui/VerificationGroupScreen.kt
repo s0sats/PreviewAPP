@@ -33,10 +33,12 @@ import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
+import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.REQUIRED_BY_TICKET_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.SECTION_ITEM_WITHOUT_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.SECTION_SELECT_VERIFICATION_GROUP_LBL
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupViewModel
 import com.namoadigital.prj001.ui.act011.group_verification.composable.components.VerificationGroupCard
+import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroup
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroupEvent
 import com.namoadigital.prj001.ui.act011.group_verification.domain.model.VerificationGroupState
 
@@ -149,11 +151,21 @@ fun VerificationGroupScreen(
                         style = NamoaTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
+                    val filter: List<VerificationGroup> = state.value.listGroups.filter { it.vgCode == null }
                     RowNamoaBadge(
-                        balls = state.value.listGroups.filter { it.vgCode == null }
+                        balls = filter
                             .flatMap { it.alerts }
                     )
                     Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
+                    if (filter.firstOrNull()?.requiredByTickets != null
+                        && filter.firstOrNull()?.requiredByTickets!! > 0
+                    ) {
+                        Text(
+                            translateMap.textOf(key = REQUIRED_BY_TICKET_LBL) + " " + filter.firstOrNull()?.requiredByTickets,
+                            style = NamoaTheme.typography.titleSmall
+                        )
+                        Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
+                    }
                 }
             }
         }

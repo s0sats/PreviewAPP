@@ -12,6 +12,7 @@ const val INITIAL_SERIAL_STATE_MAINTENANCE_OPT = "initial_serial_state_maintenan
 const val INITIAL_SERIAL_STATE_NO_STOPPED_OPT = "initial_serial_state_no_stopped_opt"
 const val INITIAL_SERIAL_STATE_THIRD_PARTY_ERROR_OPT = "initial_serial_state_third_party_error_opt"
 const val DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL = "dialog_finalize_os_empty_verify_lbl"
+const val DIALOG_FINALIZE_OS_REQUIRED_BY_TICKET_LBL = "dialog_finalize_os_required_by_ticket_lbl"
 const val MKDATETIME_DATE_TTL = "mkdatetime_date_ttl"
 const val MKDATETIME_HOUR_TTL = "mkdatetime_hour_ttl"
 const val DIALOG_FINALIZE_OS_FORM_START_DATE_LBL = "dialog_finalize_os_form_start_date_lbl"

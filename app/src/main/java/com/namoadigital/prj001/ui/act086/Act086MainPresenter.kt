@@ -21,7 +21,6 @@ import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
-import com.namoadigital.prj001.ui.act011.model.OtherTicketInfo
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -66,7 +65,8 @@ class Act086MainPresenter(
             "change_lbl",
             "adjust_lbl",
             "partition_execution_lbl",
-            OtherTicketInfo.Companion.OtherTicketInfoLbl
+            "other_ticket_info_lbl",
+            "required_by_ticket_lbl"
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
