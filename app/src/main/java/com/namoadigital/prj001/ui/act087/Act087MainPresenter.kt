@@ -979,6 +979,16 @@ class Act087MainPresenter(
     }
 
     override fun getInitialSerialState(): InitialSerialState? {
+        var measureTp: MeMeasureTp? = null
+        serialObj.measure_tp_code?.let {
+            measureTp = getMeasureTp(serialObj.customer_code, serialObj.measure_tp_code)
+        }
+
+        val decimal = measureTp?.let { measureTp ->
+            measureTp.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+        }
+
+
         ticketPrefix?.let { prefix ->
             ticketCode?.let { code ->
                 val ticket = ticketDao.getTicket(
@@ -1001,7 +1011,7 @@ class Act087MainPresenter(
                         serialObj.unavailability_reason_option == 1,
                         ticket.isSerialStopped == 1,
                         true,
-                        serialObj.horimeter,
+                        serialObj.horimeter.roundByRestrictionMeasure(decimal),
                         serialObj.horimeter_date,
                         serialObj.horimeter_supplier_uid,
                         serialObj.horimeter_supplier_desc,
@@ -1018,7 +1028,7 @@ class Act087MainPresenter(
             serialObj.unavailability_reason_option == 1,
             isTicketSerialStopped = false,
             isEditMode = true,
-            horimeter = serialObj.horimeter,
+            horimeter = serialObj.horimeter.roundByRestrictionMeasure(decimal),
             horimeter_date = serialObj.horimeter_date,
             horimeter_supplier_uid = serialObj.horimeter_supplier_uid,
             horimeter_supplier_desc = serialObj.horimeter_supplier_desc,

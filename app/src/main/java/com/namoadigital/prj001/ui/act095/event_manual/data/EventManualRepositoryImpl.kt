@@ -248,6 +248,12 @@ class EventManualRepositoryImpl @Inject constructor(
     }
 
     override fun getEventPendency(): List<EventManual> {
+        val userCode = appContext.getUserCode()
+        //
+        if (userCode.isEmpty()){
+            return emptyList()
+        }
+        //
         return eventDao.getAllEventsPending(appContext.getUserCode().toInt())
     }
 

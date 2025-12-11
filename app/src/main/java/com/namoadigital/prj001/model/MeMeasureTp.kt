@@ -34,7 +34,7 @@ class MeMeasureTp(
     ): Boolean{
         return validateMeasureRestriction(
             bypassMinValidation,
-            measureValue,
+            measureValue.roundByRestrictionMeasure(restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT),
             lastMeasureValue,
             lastMeasureDate,
             measureDate

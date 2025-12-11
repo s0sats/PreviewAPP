@@ -539,9 +539,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             tripHasTripUpdate = 1;
         }
 
-        if (hasEventUpdateRequired()) {
-            qtyEvents = getCountEventToUpdate();
-        }
+        qtyEvents = getCountEventToUpdate();
 
         qtySerial = String.valueOf(Integer.valueOf(qtySerial) + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
