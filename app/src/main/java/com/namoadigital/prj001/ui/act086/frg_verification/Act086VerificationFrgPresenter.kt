@@ -5,20 +5,23 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.form_os.domain.usecase.GetDeviceItemIconAndOptionUseCase
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao
+import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
 import com.namoadigital.prj001.model.masterdata.ge_os.toUiMaterialItem
 import com.namoadigital.prj001.sql.GeOsSql_001
+import com.namoadigital.prj001.ui.act086.frg_verification.form_utils.FormItemCheckLabelIcon
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
-import java.util.*
+import java.util.Calendar
 
 class Act086VerificationFrgPresenter(
     private val context: Context,
@@ -26,7 +29,8 @@ class Act086VerificationFrgPresenter(
     private val hmAuxTrans: HMAux,
     private val geOsDao: GeOsDao,
     private val deviceItemDao: GeOsDeviceItemDao,
-    private val mdProductSerialTpDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao
+    private val mdProductSerialTpDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao,
+    private val mdItemCheckLabelDao: MDItemCheckLabelDao,
 ): Act086VerificationFrgContract.I_Presenter {
 
     override fun handleAddPhoto(
@@ -282,6 +286,19 @@ class Act086VerificationFrgPresenter(
             ).toSqlQuery()
         )
         return geOs!!
+    }
+
+    override fun getRadioButtonIconAndLabels(geOsDeviceItem: GeOsDeviceItem, execType: String): FormItemCheckLabelIcon {
+        val getDeviceItemIconAndOption = GetDeviceItemIconAndOptionUseCase(
+            mdItemCheckLabelDao
+        )
+0       //
+        return getDeviceItemIconAndOption.invoke(
+            GetDeviceItemIconAndOptionUseCase.Input (
+                geOsDeviceItem = geOsDeviceItem,
+                execType = execType
+            )
+        )
     }
 
 }

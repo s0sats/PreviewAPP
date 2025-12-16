@@ -66,8 +66,6 @@ class Act011InspectionFormAdapter(
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
             //
-
-
             if (highlightedItemPosition >= 0
                 && highlightedItemPosition == position
             ) {
@@ -223,6 +221,7 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                     binding.tvAutoAlreadyOk.visibility = View.GONE
                     binding.ivPartitionExecution.visibility = View.GONE
+                    binding.tvTicketInfo.visibility = View.GONE
                 } else {
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.btnInspectAnswered.visibility = View.GONE
@@ -289,23 +288,24 @@ class Act011InspectionFormAdapter(
                 }
                 //
                 if (answerStatus != null) {
-                    binding.btnInspectAnswered.text = execTypeTranslated
+                    binding.btnInspectAnswered.text = itemCheckLabelIcon?.itemCheckLabel ?: execTypeTranslated
                     when (execType) {
-                        EXEC_TYPE_FIXED -> {
+                        EXEC_TYPE_FIXED,
+                        EXEC_TYPE_ADJUST-> {
                             binding.btnInspectAnswered.icon =
-                                ContextCompat.getDrawable(
-                                    Objects.requireNonNull(context),
-                                    R.drawable.ic_build_black_24dp
-                                )
-
-                        }
-
-                        EXEC_TYPE_ADJUST -> {
-                            binding.btnInspectAnswered.icon =
-                                ContextCompat.getDrawable(
-                                    Objects.requireNonNull(context),
-                                    R.drawable.ic_build_black_24dp
-                                )
+                                itemCheckLabelIcon?.let{
+                                    it.labelIcon ?: run{
+                                        ContextCompat.getDrawable(
+                                            Objects.requireNonNull(context),
+                                            R.drawable.ic_build_black_24dp
+                                        )
+                                    }
+                                } ?: run{
+                                    ContextCompat.getDrawable(
+                                        Objects.requireNonNull(context),
+                                        R.drawable.ic_build_black_24dp
+                                    )
+                                }
                         }
 
                         EXEC_TYPE_ALERT -> {
@@ -319,10 +319,19 @@ class Act011InspectionFormAdapter(
 
                         EXEC_TYPE_ALREADY_OK -> {
                             binding.btnInspectAnswered.icon =
-                                ContextCompat.getDrawable(
-                                    Objects.requireNonNull(context),
-                                    R.drawable.ic_done_black_24dp
-                                )
+                                itemCheckLabelIcon?.let{
+                                    it.labelIcon ?: run{
+                                        ContextCompat.getDrawable(
+                                            Objects.requireNonNull(context),
+                                            R.drawable.ic_build_black_24dp
+                                        )
+                                    }
+                                } ?: run{
+                                    ContextCompat.getDrawable(
+                                        Objects.requireNonNull(context),
+                                        R.drawable.ic_build_black_24dp
+                                    )
+                                }
 
                         }
 
@@ -348,10 +357,11 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.text =
                         hmAuxTrans.get("inspection_verify_action_lbl")
 
-                    binding.tvAutoAlreadyOk.text =
-                        hmAuxTrans.get("inspection_already_ok_action_lbl")
+                    binding.tvAutoAlreadyOk.text = inspection.alreadyOkLbl?.itemCheckLabel ?: hmAuxTrans.get("inspection_already_ok_action_lbl")
+                    inspection.alreadyOkLbl?.labelIcon?.let{
+                        binding.tvAutoAlreadyOk.icon = it
+                    }
                 }
-
                 //
                 if (isNewItem || dayCount == null) {
                     binding.tvDayCount.visibility = View.GONE

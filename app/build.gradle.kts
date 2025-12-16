@@ -18,8 +18,8 @@ android {
         applicationId = "com.namoadigital.prj001"
         minSdk = 21
         targetSdk = 35
-        versionCode = 480
-        versionName = "6.18.1"
+        versionCode = 485
+        versionName = "6.19.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled = true
@@ -133,6 +133,7 @@ dependencies {
     // Outras bibliotecas
     implementation(libs.gson)
     implementation(libs.play.services.location)
+    implementation(libs.androidsvg)
     implementation("io.socket:socket.io-client:1.0.0") {
         exclude(group = "org.json", module = "json")
     }

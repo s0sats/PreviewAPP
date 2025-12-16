@@ -5,6 +5,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PROCESS;
 import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_WAITING_SYNC;
 import static com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item.APPLY_MATERIAL_REQUIRED;
+import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ADJUST;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ALERT;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_ALREADY_OK;
 import static com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.EXEC_TYPE_FIXED;
@@ -28,9 +29,11 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.core.form_os.domain.usecase.GetDeviceItemDescUseCase;
+import com.namoadigital.prj001.core.form_os.domain.usecase.GetDeviceItemIconAndOptionUseCase;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
@@ -56,10 +59,12 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao;
 import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.extensions.FileHelperKt;
 import com.namoadigital.prj001.extensions.FloatHelperKt;
+import com.namoadigital.prj001.extensions.IconHelperKt;
 import com.namoadigital.prj001.extensions.ListHelperKt;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -129,10 +134,12 @@ import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.sql.transaction.ticket.TransactionSaveTicketStepCtrlAtForm;
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop;
+import com.namoadigital.prj001.ui.act011.model.FormItemCheckLabelIconListItem;
 import com.namoadigital.prj001.ui.act011.model.FormTicketInfo;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments;
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData;
+import com.namoadigital.prj001.ui.act086.frg_verification.form_utils.FormItemCheckLabelIcon;
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -929,6 +936,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.getTicket_prefix(),
                 customFormLocal.getTicket_code()
         );
+        MDItemCheckLabelDao mdItemCheckLabelDao = new MDItemCheckLabelDao(context);
+        List<FormItemCheckLabelIcon> optionList = mdItemCheckLabelDao.getItemCheckLabelIconsList();
+        HashMap<Integer, FormItemCheckLabelIconListItem> iconList = getItemListDrawable(optionList);
+        FormItemCheckLabelIconListItem currentItem = null;
+        FormItemCheckLabelIconListItem itemCheckLabelIcon = null;
         for (GeOsDevice device : devices) {
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
@@ -940,8 +952,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
             List<InspectionCell> inspections = acessoryFormView.getInspections();
             List<GeOsDeviceItem> deviceItem = getDeviceItem(device);
-            for (GeOsDeviceItem item : deviceItem) {
 
+            for (GeOsDeviceItem item : deviceItem) {
                 String itemDesc = new GetDeviceItemDescUseCase().invoke(
                         new GetDeviceItemDescUseCase.Input(
                                 item.getManual_desc(),
@@ -951,9 +963,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 item.isNO_CYCLE()
                         )
                 );
-
                 boolean isReadOnly = !isInProcessing(customFormLocal);
                 MeasureBottomSheetContext measureBottomSheetContext = getMeasureBottomSheetContext(item, isReadOnly);
+                currentItem = getCurrentIconLabel(iconList, item);
+                itemCheckLabelIcon = iconList.get(item.getLabelAlreadyOk());
+
 
                 inspections.add(
                         new InspectionCell(itemDesc,
@@ -985,7 +999,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                         item.getLastMeasureDate(),
                                         measureBottomSheetContext
                                 ) : null,
-                                itemOtherTicketInfo.getTicketFormType(item)
+                                itemOtherTicketInfo.getTicketFormType(item),
+                                currentItem,
+                                itemCheckLabelIcon
                         )
                 );
             }
@@ -998,6 +1014,45 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return acessoryFormViews;
     }
 
+    private HashMap<Integer, FormItemCheckLabelIconListItem> getItemListDrawable(List<FormItemCheckLabelIcon> optionList) {
+        HashMap<Integer, FormItemCheckLabelIconListItem> map = new HashMap<Integer, FormItemCheckLabelIconListItem>();
+        for (FormItemCheckLabelIcon itemCheckLabelIcon : optionList) {
+            map.put(itemCheckLabelIcon.getLabelCode(), new FormItemCheckLabelIconListItem(
+                    itemCheckLabelIcon.getItemCheckLabel(),
+                    IconHelperKt.applySvgFromBase64(
+                            context,
+                            Objects.requireNonNull(itemCheckLabelIcon.getLabelIcon()),
+                            R.color.m3_namoa_primary,
+                            18,
+                            18
+                    )
+                )
+            );
+        }
+        return map;
+    }
+
+    private FormItemCheckLabelIconListItem getCurrentIconLabel(HashMap<Integer, FormItemCheckLabelIconListItem> iconList, GeOsDeviceItem item) {
+        int labelCode = -1;
+        if(Objects.equals(item.getExec_type(), EXEC_TYPE_FIXED)
+                || Objects.equals(item.getExec_type(), EXEC_TYPE_ADJUST)) {
+            labelCode = item.getLabelFixed();
+        }
+        if(Objects.equals(item.getExec_type(), EXEC_TYPE_ALREADY_OK)) {
+            labelCode = item.getLabelAlreadyOk();
+        }
+        return iconList.get(labelCode);
+    }
+
+    @Nullable
+    private FormItemCheckLabelIcon getFormItemCheckLabelIcon(List<FormItemCheckLabelIcon> optionList, int labelCode) {
+        for (FormItemCheckLabelIcon itemCheckLabelIcon : optionList) {
+            if(itemCheckLabelIcon.getLabelCode() == labelCode){
+                return itemCheckLabelIcon;
+            }
+        }
+        return null;
+    }
 
     private boolean isHideAlreadyOKBtn(GeOsDeviceItem item) {
         return !item.isNO_CYCLE()
@@ -1310,7 +1365,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 && ticketCtrl.getCtrl_start_date() == null
         ) {
             ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
-            ticketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+            ticketCtrl.setCtrl_start_user(java.lang.Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
             ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
             ticketCtrl.setCtrl_status(SYS_STATUS_PROCESS);
             ticketCtrl.copyCtrlStatusForInnerProcess();
@@ -1343,7 +1398,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 && tkTicketCtrl.getCtrl_end_date() == null
         ) {
             tkTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
-            tkTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+            tkTicketCtrl.setCtrl_end_user(java.lang.Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
             tkTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
             tkTicketCtrl.setCtrl_status(SYS_STATUS_WAITING_SYNC);
             tkTicketCtrl.copyCtrlStatusForInnerProcess();
@@ -2961,7 +3016,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         deviceItem.setExec_type(EXEC_TYPE_ALREADY_OK);
         deviceItem.setExec_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
         deviceItem.setStatus_answer(SYS_STATUS_DONE);
-
+        FormItemCheckLabelIconListItem radioButtonIconAndLabels = getRadioButtonIconAndLabels(deviceItem, EXEC_TYPE_ALREADY_OK);
         geOsDeviceItemDao.addUpdate(deviceItem);
         String itemDesc = new GetDeviceItemDescUseCase().invoke(
                 new GetDeviceItemDescUseCase.Input(
@@ -2997,7 +3052,32 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 false,
                 false,
                 null,
-                FormTicketInfo.TicketFormType.NO_TICKET
+                FormTicketInfo.TicketFormType.NO_TICKET,
+                radioButtonIconAndLabels,
+                radioButtonIconAndLabels
+        );
+    }
+
+    private FormItemCheckLabelIconListItem getRadioButtonIconAndLabels(GeOsDeviceItem geOsDeviceItem, String execType) {
+        GetDeviceItemIconAndOptionUseCase getDeviceItemIconAndOption = new GetDeviceItemIconAndOptionUseCase(
+                new MDItemCheckLabelDao(context)
+        );
+        //
+        GetDeviceItemIconAndOptionUseCase.Input input = new GetDeviceItemIconAndOptionUseCase.Input(
+                geOsDeviceItem,
+                execType
+        );
+        FormItemCheckLabelIcon itemCheckLabelIcon = getDeviceItemIconAndOption.invoke(input);
+
+        return new FormItemCheckLabelIconListItem(
+                itemCheckLabelIcon.getItemCheckLabel(),
+                IconHelperKt.applySvgFromBase64(
+                        context,
+                        Objects.requireNonNull(itemCheckLabelIcon.getLabelIcon()),
+                        R.color.m3_namoa_primary,
+                        18,
+                        18
+                )
         );
     }
 

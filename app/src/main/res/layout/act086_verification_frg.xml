@@ -78,11 +78,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:drawableStart="@drawable/ic_build_black_24dp"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Ação realizada"
+                android:tag="FIXED"
                 tools:drawableTint="@color/namoa_os_form_done_action_blue" />
 
             <RadioButton
@@ -92,11 +92,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:checked="false"
-                android:drawableStart="@drawable/ic_done_black_24dp"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Já estava ok"
+                android:tag="ALREADY_OK"
                 tools:drawableTint="@color/namoa_os_form_verified_green" />
 
             <RadioButton

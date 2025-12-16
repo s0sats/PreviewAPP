@@ -70,6 +70,8 @@ import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
 import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
 import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
 import com.namoadigital.prj001.dao.event.EventManualDao;
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao;
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelIconDao;
 import com.namoadigital.prj001.dao.md.MDRegionDao;
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao;
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
@@ -152,6 +154,8 @@ import com.namoadigital.prj001.model.TkTicketTypeSite;
 import com.namoadigital.prj001.model.big_file.BigFile;
 import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.model.event.remote.EventManualSync;
+import com.namoadigital.prj001.model.masterdata.label.MDItemCheckLabel;
+import com.namoadigital.prj001.model.masterdata.label.MDItemCheckLabelIcon;
 import com.namoadigital.prj001.model.region.MDRegion;
 import com.namoadigital.prj001.model.trip.FSEventType;
 import com.namoadigital.prj001.model.trip.FSTrip;
@@ -731,6 +735,8 @@ public class WS_Sync extends BaseWsIntentService {
             MDRegionDao mdRegionDao = new MDRegionDao(getApplicationContext());
             MDVerificationGroupDao mdVerificationGroupdao = new MDVerificationGroupDao(getApplicationContext());
             EventManualDao eventManualDao = new EventManualDao(getApplicationContext());
+            MDItemCheckLabelDao mdItemCheckLabelDao = new MDItemCheckLabelDao(getApplicationContext());
+            MDItemCheckLabelIconDao mdItemCheckLabelIconDao = new MDItemCheckLabelIconDao(getApplicationContext());
             //
 
             //
@@ -774,6 +780,8 @@ public class WS_Sync extends BaseWsIntentService {
             mdRegionDao.remove(RegionScriptKt.REMOVE_TABLE);
             mdVerificationGroupdao.deleteAll();
             eventManualDao.deleteAll();
+            mdItemCheckLabelDao.deleteAll();
+            mdItemCheckLabelIconDao.deleteAll();
             //
 
             //
@@ -1766,6 +1774,25 @@ public class WS_Sync extends BaseWsIntentService {
                 //
                 mdItemCheckDao.addUpdate(mdItemCheck, false);
             }
+
+            FileProcessor.INSTANCE.processJsonFiles(
+                    "md_item_check_label-",
+                    new File(ConstantBaseApp.ZIP_PATH),
+                    MDItemCheckLabel.class,
+                    dataList -> {
+                        mdItemCheckLabelDao.addUpdate(dataList, false);
+                    }
+            );
+            //
+            FileProcessor.INSTANCE.processJsonFiles(
+                    "md_item_check_label_icon-",
+                    new File(ConstantBaseApp.ZIP_PATH),
+                    MDItemCheckLabelIcon.class,
+                    dataList -> {
+                        mdItemCheckLabelIconDao.addUpdate(dataList, false);
+                    }
+            );
+
             //Libera pro GB
             files_item_check = null;
             /**

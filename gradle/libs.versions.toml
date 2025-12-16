@@ -127,6 +127,8 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 guava-free = { group = "com.google.guava", name = "guava", version.ref = "guavaVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
+androidsvg = { module = "com.caverock:androidsvg", version = "1.4" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

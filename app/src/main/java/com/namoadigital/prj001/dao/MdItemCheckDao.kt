@@ -32,6 +32,8 @@ class MdItemCheckDao (
         const val ITEM_CHECK_DESC = "item_check_desc"
         const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
         const val ITEM_CHECK_DESC_ALT_VG = "item_check_desc_alt_vg"
+        const val LABEL_FIXED = "label_fixed"
+        const val LABEL_ALREADY_OK = "label_already_ok"
     }
 
     private val toMdItemCheckMapper: Mapper<Cursor,MdItemCheck>
@@ -265,7 +267,9 @@ class MdItemCheckDao (
                         itemCheckId = getString(getColumnIndex(ITEM_CHECK_ID)),
                         itemCheckDesc = getString(getColumnIndex(ITEM_CHECK_ID)),
                         itemCheckGroupCode = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
-                        itemCheckDescAltVg = getStringOrNull(getColumnIndex(ITEM_CHECK_DESC_ALT_VG))
+                        itemCheckDescAltVg = getStringOrNull(getColumnIndex(ITEM_CHECK_DESC_ALT_VG)),
+                        labelFixed = getInt(getColumnIndex(LABEL_FIXED)),
+                        labelAlreadyOk = getInt(getColumnIndex(LABEL_ALREADY_OK)),
                     )
                 }
             }
@@ -298,6 +302,14 @@ class MdItemCheckDao (
                     //
                     put(ITEM_CHECK_GROUP_CODE, item.itemCheckGroupCode)
                     put(ITEM_CHECK_DESC_ALT_VG, item.itemCheckDescAltVg)
+                    //
+                    if(item.labelFixed != null){
+                        put(LABEL_FIXED, item.labelFixed)
+                    }
+                    //
+                    if(item.labelAlreadyOk != null){
+                        put(LABEL_ALREADY_OK, item.labelAlreadyOk)
+                    }
                 }
             }
             //

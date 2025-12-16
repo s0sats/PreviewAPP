@@ -6,6 +6,7 @@ import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceMaterial
+import com.namoadigital.prj001.ui.act086.frg_verification.form_utils.FormItemCheckLabelIcon
 
 interface Act086VerificationFrgContract {
     interface I_View{
@@ -54,6 +55,7 @@ interface Act086VerificationFrgContract {
         fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>)
         fun getMaxMeasureValue(geOsDeviceItem: GeOsDeviceItem): Float
         fun getGeOs(geOsDeviceItem: GeOsDeviceItem): GeOs
+        fun getRadioButtonIconAndLabels(geOsDeviceItem: GeOsDeviceItem, execType: String): FormItemCheckLabelIcon
     }
 
 }

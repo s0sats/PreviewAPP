@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeasureItemViewModel @Inject constructor(
-    private val translateBuild: TranslateBuild,
+    translateBuild: TranslateBuild,
 ) : BaseViewModel<MeasureItemState, MeasureItemEvent>(
     initialState = MeasureItemState(),
     translateBuild = translateBuild,

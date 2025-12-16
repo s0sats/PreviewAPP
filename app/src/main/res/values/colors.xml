@@ -185,7 +185,7 @@
 
     <!--Cores O.S Form-->
     <color name="namoa_os_form_done_action_blue">#496AE2</color>
-    <color name="namoa_os_form_verified_green">#29D930</color>
+    <color name="namoa_os_form_verified_green">#1A5E1D</color>
 <!--    <color name="namoa_os_form_critical_forecast_blue">#4292A8</color>-->
 <!--    <color name="namoa_os_form_critical_forecast_yellow">#E2D23C</color>-->
     <color name="namoa_color_so_form_forecast_item">#4292A8</color>

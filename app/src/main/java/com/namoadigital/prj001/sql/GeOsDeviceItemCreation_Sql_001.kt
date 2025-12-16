@@ -65,7 +65,9 @@ class GeOsDeviceItemCreation_Sql_001(
                         0 ${GeOsDeviceItemDao.HIDE_DAYS_IN_ALERT},
                         ${GeOsDeviceItemDao.PARTITIONED_EXECUTION},
                         1 ${GeOsDeviceItemDao.IS_VISIBLE},
-                        '${GeOsDeviceItemStatusModificationType.ITEM.status}' ${GeOsDeviceItemDao.STATUS_MODIFICATION_TYPE}
+                        '${GeOsDeviceItemStatusModificationType.ITEM.status}' ${GeOsDeviceItemDao.STATUS_MODIFICATION_TYPE},
+                        i.${MdItemCheckDao.LABEL_FIXED},
+                        i.${MdItemCheckDao.LABEL_ALREADY_OK}
                     FROM
                         ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} si,
                         ${MdItemCheckDao.TABLE} i

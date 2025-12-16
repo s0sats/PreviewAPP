@@ -149,6 +149,8 @@ class GeOsDeviceItem(
     @SerializedName("measure_ini_id") var measureStartId: String? = null,
     @Expose
     @SerializedName("measure_fin_id") var measureEndId: String? = null,
+    @SerializedName("label_fixed") var labelFixed: Int,
+    @SerializedName("label_already_ok") var labelAlreadyOk: Int,
 ) : Serializable {
 
 

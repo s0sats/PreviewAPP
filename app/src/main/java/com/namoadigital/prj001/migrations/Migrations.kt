@@ -52,6 +52,8 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelIconDao
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
@@ -66,6 +68,8 @@ import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_POSITION_CREATE_SC
 import com.namoadigital.prj001.database.scripts.multi.FS_TRIP_USER_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.event.eventManualTable
 import com.namoadigital.prj001.database.scripts.multi.masterdata.GEOsVgScript
+import com.namoadigital.prj001.database.scripts.multi.masterdata.MDItemCheckLabelIconTable
+import com.namoadigital.prj001.database.scripts.multi.masterdata.MDItemCheckLabelTable
 import com.namoadigital.prj001.database.scripts.multi.masterdata.MD_REGION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.masterdata.mdVerificationGroupDatabaseTable
 import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.VGProductSerialScript
@@ -1962,6 +1966,106 @@ val migrationV27 = object : MigrationSQLite(27, 28) {
         //
     }
 
+}
+
+val migrationV28 = object : MigrationSQLite(27, 28){
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        db.execSQL(MDItemCheckLabelTable.generateCreateTableScript())
+        db.execSQL(
+            """
+               INSERT INTO [${MDItemCheckLabelDao.TABLE_NAME}]
+                (
+                ${MDItemCheckLabelDao.CUSTOMER_CODE},
+                ${MDItemCheckLabelDao.LABEL_CODE},
+                ${MDItemCheckLabelDao.LABEL_TYPE},
+                ${MDItemCheckLabelDao.LABEL_ID},
+                ${MDItemCheckLabelDao.LABEL_DESC},
+                ${MDItemCheckLabelDao.LABEL_ICON_ID},
+                ${MDItemCheckLabelDao.ACTIVE}
+                )
+                VALUES 
+                (
+                 145,
+                 1,
+                 "FIXED",
+                 "INTERVENTION",
+                 "Intervenção realizada",
+                 "WRENCH",
+                 1
+                ),
+                (
+                145,
+                2,
+                "ALREADY_OK",
+                "ALREADY_OK",
+                "Checado",
+                "CHECK",
+                1
+                )                                     
+                                     
+            """.trimIndent()
+        )
+        db.execSQL(MDItemCheckLabelIconTable.generateCreateTableScript())
+        db.execSQL(
+            """
+               INSERT INTO [${MDItemCheckLabelIconDao.TABLE_NAME}]
+                (
+                ${MDItemCheckLabelIconDao.LABEL_ICON_ID},
+                ${MDItemCheckLabelIconDao.LABEL_ICON},
+                ${MDItemCheckLabelIconDao.LABEL_ICON_DESC}
+                )
+                VALUES 
+                 (
+                "WRENCH",
+                "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgaWQ9IkViZW5lXzEiIGRhdGEtbmFtZT0iRWJlbmUgMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICA8ZGVmcz4NCiAgICA8c3R5bGU+DQogICAgICAuY2xzLTEgew0KICAgICAgICBmaWxsOiAjODQ4NDg0Ow0KICAgICAgfQ0KICAgIDwvc3R5bGU+DQogIDwvZGVmcz4NCiAgPGcgaWQ9IkdlbmVyYXRpdmVzX09iamVrdCIgZGF0YS1uYW1lPSJHZW5lcmF0aXZlcyBPYmpla3QiPg0KICAgIDxnPg0KICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNS4yMiwxLjhzLjAzLjA5LjA0LjE0YzAsLjA0LjM5LjQxLjQ3LjUuMzYuNDIsMi40MSwyLjQ0LDIuNDksMi42OC4wNS4xNC0uNjQsMi43OC0uNzYsMi44OS0uMS4wOS0yLjQ3LjcxLTIuNi42Ny0uNDktLjE2LTIuOTMtMi44NC0zLjIxLTIuODgtLjA0LDAtLjA4LS4wMS0uMTEtLjAzLS45Nyw0LjI1LDMuMjMsNy45MSw3LjMyLDYuMjcuMDgtLjAzLjE2LS4wNy4yNS0uMTEsMS4yNS0uNTcsMi4yNC0xLjYsMi43Ni0yLjg3QzEzLjYzLDQuOCw5LjU5LjQ2LDUuMjIsMS44WiIvPg0KICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTEuOTcsOS4wOWgtLjFjLS41MiwxLjI2LTEuNTEsMi4yOC0yLjc2LDIuODYtLjA4LjA0LS4xNi4wNy0uMjUuMTFsLjA1LjA5YzMuMzIsMy41NSw2Ljc3LDcuMiwxMC40NCwxMC4zNywxLjgxLjcxLDMuNTUtLjk5LDMuMDEtMi44My0uNTItMS44LTguODEtOC42Ni0xMC40LTEwLjU4WiIvPg0KICAgIDwvZz4NCiAgPC9nPg0KPC9zdmc+",
+                "Chave de boca"
+                ),     
+                (
+                "CHECK",
+                "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzdmcgaWQ9IkViZW5lXzEiIGRhdGEtbmFtZT0iRWJlbmUgMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICA8ZGVmcz4NCiAgICA8c3R5bGU+DQogICAgICAuY2xzLTEgew0KICAgICAgICBmaWxsOiAjODQ4NDg0Ow0KICAgICAgfQ0KICAgIDwvc3R5bGU+DQogIDwvZGVmcz4NCiAgPGcgaWQ9IkdlbmVyYXRpdmVzX09iamVrdCIgZGF0YS1uYW1lPSJHZW5lcmF0aXZlcyBPYmpla3QiPg0KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIxOC4yMSA0LjkzIDIwLjg5IDcuNTUgMTAuNzggMTcuNjggMTAuNzQgMTcuNzIgNS4wNSAxMS45NCA3LjYyIDkuMzggMTAuNzUgMTIuMzcgMTguMjEgNC45MyIvPg0KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTExLjUuMjZjMi4zNy0uMTEsNS4wNC42Miw2Ljk2LDIuMDNsLTIuMTUsMi4wM0M5LjAzLjA4LjI4LDguMjUsNC4wNiwxNS44MmM0LjIzLDguNDcsMTYuNzIsNS4zOCwxNi43OS0zLjY3LDAtLjMzLS4yMy0xLjY3LS4xOS0xLjgxLjA1LS4xOCwyLjIzLTIuNiwyLjQxLTIuNjNoMGMxLjU3LDUuMDQuNDgsOS45MS0zLjcsMTMuMzgtNi4xMiw1LjA4LTE1LjI0LDIuNTYtMTguMjYtNC43M0MtMS45NSw4Ljk1LDMuNTcuNjQsMTEuNS4yNloiLz4NCiAgPC9nPg0KPC9zdmc+",
+                "Check"
+                )                    
+            """.trimIndent()
+        )
+        //
+        db.addMissingColumns(
+            tableName = MdItemCheckDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = MdItemCheckDao.LABEL_FIXED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                Column(
+                    name = MdItemCheckDao.LABEL_ALREADY_OK,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "2"
+                ),
+            )
+        )
+        //
+        db.addMissingColumns(
+            tableName = GeOsDeviceItemDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = GeOsDeviceItemDao.LABEL_FIXED,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "1"
+                ),
+                Column(
+                    name = GeOsDeviceItemDao.LABEL_ALREADY_OK,
+                    type = ColumnType.INT,
+                    isNullable = false,
+                    defaultValue = "2"
+                ),
+            )
+        )
+
+    }
 }
 
 @Deprecated(message = "Use a função com objeto Column")

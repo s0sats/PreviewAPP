@@ -9,4 +9,6 @@ class MdItemCheck(
     @SerializedName("item_check_desc") val itemCheckDesc: String,
     @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?,
     @SerializedName("item_check_desc_alt_vg") val itemCheckDescAltVg: String?,
+    @SerializedName("label_fixed") val labelFixed: Int,
+    @SerializedName("label_already_ok") val labelAlreadyOk: Int,
 )

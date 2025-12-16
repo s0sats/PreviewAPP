@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,17 +37,21 @@ import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.databinding.FormOsFixedAdjustFrgAlertDialogBinding
 import com.namoadigital.prj001.extensions.SpannableStringStyle.applyColor
 import com.namoadigital.prj001.extensions.SpannableStringStyle.customText
 import com.namoadigital.prj001.extensions.SpannableStringStyle.fontSize
 import com.namoadigital.prj001.extensions.SpannableStringStyle.spanStyleWith
+import com.namoadigital.prj001.extensions.applySvgFromBase64
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.extensions.hideKeyboard
 import com.namoadigital.prj001.extensions.showAlertWithYesOrNot
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.ui.act086.bottomsheet.adjust.Act086_BottomSheet
@@ -59,6 +64,7 @@ import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.manager.Measur
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureBottomSheetContext
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemArguments
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemKey
+import com.namoadigital.prj001.ui.act086.frg_verification.form_utils.FormItemCheckLabelIcon
 import com.namoadigital.prj001.ui.act086.utils.ConfirmationInfo
 import com.namoadigital.prj001.ui.act086.utils.DialogReason
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -80,6 +86,8 @@ import java.util.concurrent.TimeUnit
  * create an instance of this fragment.
  */
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
+    private lateinit var rdoAnswerFixedLbl: FormItemCheckLabelIcon
+    private lateinit var rdoAnswerAlreadyOkLbl: FormItemCheckLabelIcon
     private val IN_READONLY = "IN_READONLY"
     private var isOsPartial = false
     private var isOtherTicket = false
@@ -108,7 +116,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 requireContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 ConstantBaseApp.DB_VERSION_CUSTOM
-            )
+            ),
+            MDItemCheckLabelDao(requireContext())
         )
     }
     private lateinit var prefixPhoto: String
@@ -223,7 +232,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         is MeasurementState.ColorByMeasure.RED -> {
                             act086VerificationFrgRdoAnswerAlreadyDone.apply {
                                 isEnabled = false
-                                applyDrawableStartColor(this, R.color.namoa_pipeline_header_icon)
+                                setRdoIcon(
+                                    rdoAnswerAlreadyOkLbl,
+                                    act086VerificationFrgRdoAnswerAlreadyDone,
+                                    R.color.namoa_pipeline_header_icon
+                                )
                                 if (isChecked) act086VerificationFrgRgAnswers.clearCheck()
                             }
                         }
@@ -231,7 +244,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         is MeasurementState.ColorByMeasure.BLUE -> {
                             act086VerificationFrgRdoAnswerAlreadyDone.apply {
                                 isEnabled = true
-                                applyDrawableStartColor(this, R.color.namoa_os_form_verified_green)
+                                setRdoIcon(
+                                    rdoAnswerAlreadyOkLbl,
+                                    act086VerificationFrgRdoAnswerAlreadyDone,
+                                    R.color.namoa_os_form_verified_green
+                                )
                             }
                         }
 
@@ -335,10 +352,26 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         // Aplica estado padrão
         radios.forEach { (radio, activeColor) ->
             radio.isEnabled = containsValue
-            applyDrawableStartColor(
-                radio,
-                if (containsValue) activeColor else R.color.namoa_pipeline_header_icon
-            )
+            if(radio.tag != null){
+                if(radio.tag == EXEC_TYPE_FIXED){
+                    setRdoIcon(
+                        rdoAnswerFixedLbl,
+                        act086VerificationFrgRdoAnswerFixed,
+                        if (containsValue) R.color.namoa_os_form_done_action_blue else R.color.namoa_pipeline_header_icon
+                    )
+                } else if(radio.tag == EXEC_TYPE_ALREADY_OK){
+                    setRdoIcon(
+                        rdoAnswerAlreadyOkLbl,
+                        act086VerificationFrgRdoAnswerAlreadyDone,
+                        if (containsValue) R.color.namoa_os_form_verified_green else R.color.namoa_pipeline_header_icon
+                    )
+                }
+            }else {
+                applyDrawableStartColor(
+                    radio,
+                    if (containsValue) activeColor else R.color.namoa_pipeline_header_icon
+                )
+            }
         }
     }
 
@@ -394,6 +427,22 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 //Se item novo e esta desabilitando, seta icones cinza
                 if (isNewVerification && !enabledState) {
                     if (it is RadioButton) {
+                        if(it.tag != null){
+                            if(it.tag == EXEC_TYPE_FIXED){
+                                setRdoIcon(
+                                    rdoAnswerFixedLbl,
+                                    act086VerificationFrgRdoAnswerFixed,
+                                    R.color.namoa_pipeline_header_icon
+                                )
+                            } else if(it.tag == EXEC_TYPE_ALREADY_OK){
+                                setRdoIcon(
+                                    rdoAnswerAlreadyOkLbl,
+                                    act086VerificationFrgRdoAnswerAlreadyDone,
+                                    R.color.namoa_pipeline_header_icon
+                                )
+                            }
+                        }
+                        //
                         applyDrawableStartColor(
                             it,
                             R.color.namoa_pipeline_header_icon
@@ -447,14 +496,18 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
      */
     private fun configRdoStartDrawableColor() {
         with(binding) {
-            applyDrawableStartColor(
+            setRdoIcon(
+                rdoAnswerFixedLbl,
                 act086VerificationFrgRdoAnswerFixed,
                 R.color.namoa_os_form_done_action_blue
             )
-            applyDrawableStartColor(
+            //
+            setRdoIcon(
+                rdoAnswerAlreadyOkLbl,
                 act086VerificationFrgRdoAnswerAlreadyDone,
                 R.color.namoa_os_form_verified_green
             )
+            //
             applyDrawableStartColor(
                 act086VerificationFrgRdoAnswerAlert,
                 R.color.namoa_os_form_problem_red
@@ -479,6 +532,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }?.let {
                 DrawableCompat.setTint(it, ContextCompat.getColor(context, drawableTintColor))
             }
+        }
+    }
+
+    private fun applyDrawableStart(
+        radioButton: RadioButton,
+        drawable: Drawable,
+    ) {
+        radioButton.apply {
+            setCompoundDrawables(drawable, null, null, null)
         }
     }
 
@@ -654,7 +716,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     visibility = rdoAdjustAlreadyOk
                     isEnabled = !isOsPartial
                     if (isOsPartial) {
-                        applyDrawableStartColor(
+                        setRdoIcon(
+                            rdoAnswerAlreadyOkLbl,
                             this,
                             R.color.namoa_pipeline_header_icon
                         )
@@ -682,7 +745,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     isVisible = true
                     isEnabled = !isOsPartial
                     if (isOsPartial) {
-                        applyDrawableStartColor(
+                        setRdoIcon(
+                            rdoAnswerAlreadyOkLbl,
                             this,
                             R.color.namoa_pipeline_header_icon
                         )
@@ -694,9 +758,23 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun setLabels() {
         with(binding) {
-            act086VerificationFrgRdoAnswerFixed.text =
-                getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
-            act086VerificationFrgRdoAnswerAlreadyDone.text = hmAux_Trans["already_checked_lbl"]
+            rdoAnswerFixedLbl = mPresenter.getRadioButtonIconAndLabels(geOsDeviceItem, EXEC_TYPE_FIXED)
+            rdoAnswerAlreadyOkLbl = mPresenter.getRadioButtonIconAndLabels(geOsDeviceItem, EXEC_TYPE_ALREADY_OK)
+            //
+            setRdoIcon(
+                rdoAnswerFixedLbl,
+                act086VerificationFrgRdoAnswerFixed,
+                R.color.namoa_os_form_done_action_blue
+            )
+            //
+            setRdoIcon(
+                rdoAnswerAlreadyOkLbl,
+                act086VerificationFrgRdoAnswerAlreadyDone,
+                R.color.namoa_os_form_verified_green
+            )
+            //
+            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
+            act086VerificationFrgRdoAnswerAlreadyDone.text = rdoAnswerAlreadyOkLbl.itemCheckLabel ?: hmAux_Trans["already_checked_lbl"]
             act086VerificationFrgRdoAnswerAlert.text = getAlertAnswerLbl()
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
             act086VerificationFrgTvRequireFields.text = hmAux_Trans["fill_below_fields_lbl"]
@@ -715,6 +793,69 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     false
                 }
             }
+        }
+    }
+
+    private fun setRdoIcon(
+        formItemCheckLabelIcon:FormItemCheckLabelIcon,
+        radioButton: RadioButton,
+        @ColorRes color:Int) {
+
+        formItemCheckLabelIcon.labelIcon?.let {
+            applySvgFromBase64(
+                requireContext(),
+                it,
+                color
+            )?.let { icon ->
+                applyDrawableStart(
+                    radioButton,
+                    icon,
+                )
+            }?: run{
+                handleLabelIconNullability(radioButton, color)
+            }
+        }?: run{
+            handleLabelIconNullability(radioButton, color)
+        }
+    }
+
+    private fun handleLabelIconNullability(radioButton: RadioButton, color: Int) {
+        if (radioButton.tag != null) {
+            if (radioButton.tag == EXEC_TYPE_FIXED) {
+                applyVectorToRadioButton(radioButton, R.drawable.ic_build_black_24dp, color)
+            } else if (radioButton.tag == EXEC_TYPE_ALREADY_OK) {
+                applyVectorToRadioButton(radioButton, R.drawable.ic_done_black_24dp, color)
+            }
+        }
+        applyDrawableStartColor(
+            radioButton,
+            color
+        )
+    }
+
+    private fun applyVectorToRadioButton(radioButton: RadioButton, drawable: Int, colorRes: Int) {
+
+        val originalDrawable: Drawable? = ContextCompat.getDrawable(requireContext(), drawable)
+
+
+        originalDrawable?.let {
+
+            // 2. Cria uma cópia mutável para não afetar outras instâncias do mesmo drawable.
+            val wrappedDrawable = DrawableCompat.wrap(it).mutate()
+
+            // 3. Obtém a cor a partir do recurso de cor.
+            val color = ContextCompat.getColor(requireContext(), colorRes)
+
+            // 4. Aplica o filtro de cor (tint) no drawable.
+            DrawableCompat.setTint(wrappedDrawable, color)
+
+            // 5. Define o drawable à esquerda do RadioButton.
+            radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                wrappedDrawable, // left
+                null,           // top
+                null,           // right
+                null            // bottom
+            )
         }
     }
 
@@ -1061,6 +1202,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsFixedAdjustFrgAlertDialogBinding.inflate(layoutInflater)
         val geOs = mPresenter.getGeOs(geOsDeviceItem)
+
         with(dialogBinding) {
             //
             tvAlertMsg.text = message
@@ -1561,14 +1703,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
 
     private fun getMaintenanceLbl(exec_type: String = ""): SpannableString {
-
-        val maintenance = hmAux_Trans["action_done_lbl"]!!
+        val maintenance = rdoAnswerFixedLbl.itemCheckLabel ?: hmAux_Trans["action_done_lbl"]!!
         val changelbl = hmAux_Trans["change_lbl"]!!
         val adjustlbl = hmAux_Trans["adjust_lbl"]!!
 
         with(binding) {
             return when (exec_type) {
-                GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                EXEC_TYPE_FIXED -> {
                     if (geOsDeviceItem.change_adjust == 1) {
                         spanStyleWith("$maintenance\n$changelbl") {
                             customText = listOf(changelbl)

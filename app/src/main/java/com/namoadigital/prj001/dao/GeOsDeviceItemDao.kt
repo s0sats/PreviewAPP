@@ -103,6 +103,8 @@ class GeOsDeviceItemDao(
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_ID = "last_measure_id"
         const val LAST_MEASURE_ALERT = "last_measure_alert"
+        const val LABEL_FIXED = "label_fixed"
+        const val LABEL_ALREADY_OK = "label_already_ok"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -676,6 +678,13 @@ class GeOsDeviceItemDao(
                         measureEndValue = getDoubleOrNull(getColumnIndex(MEASURE_END_VALUE)),
                         measureStartId = getStringOrNull(getColumnIndex(MEASURE_START_ID)),
                         measureEndId = getStringOrNull(getColumnIndex(MEASURE_END_ID)),
+                        labelFixed = getInt(getColumnIndex(
+                            LABEL_FIXED
+                        )),
+                        labelAlreadyOk = getInt(getColumnIndex(
+                            LABEL_ALREADY_OK
+                        )),
+
                     )
                 }
             }
@@ -839,6 +848,10 @@ class GeOsDeviceItemDao(
                     put(MEASURE_START_ID, it.measureStartId)
                     //
                     put(MEASURE_END_ID, it.measureEndId)
+                    //
+                    put(LABEL_FIXED, it.labelFixed)
+                    //
+                    put(LABEL_ALREADY_OK, it.labelAlreadyOk)
                 }
             }
             return contentValues

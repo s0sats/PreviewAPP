@@ -308,6 +308,8 @@ class Act086MainPresenter(
                 color_item = GeOsDeviceItemStatusColor.GRAY,
                 status_modification_type = null,
                 automatic_selection_state = null,
+                labelFixed = 1,
+                labelAlreadyOk = 2,
             )
         }
         //

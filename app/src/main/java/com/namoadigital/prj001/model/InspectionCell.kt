@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+import com.namoadigital.prj001.ui.act011.model.FormItemCheckLabelIconListItem
 import com.namoadigital.prj001.ui.act011.model.FormTicketInfo.TicketFormType
 import com.namoadigital.prj001.ui.act086.bottomsheet.measure_item.model.MeasureItemData
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -35,7 +36,9 @@ data class InspectionCell(
     val read_only: Boolean = false,
     val measureItemData: MeasureItemData? = null,
     val ticketFormType: TicketFormType = TicketFormType.NO_TICKET,
-) : Serializable {
+    val itemCheckLabelIcon: FormItemCheckLabelIconListItem?,
+    val alreadyOkLbl: FormItemCheckLabelIconListItem?,
+    ) : Serializable {
     var isDone: Boolean = false
 
     @ColorInt

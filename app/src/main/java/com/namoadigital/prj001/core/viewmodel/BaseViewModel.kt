@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<State : TranslateState, Event>(
     initialState: State,
-    private val translateBuild: TranslateBuild,
+    protected val translateBuild: TranslateBuild,
     private val applyTranslation: (State, TranslateMap) -> State,
 ) : ViewModel() {
 
