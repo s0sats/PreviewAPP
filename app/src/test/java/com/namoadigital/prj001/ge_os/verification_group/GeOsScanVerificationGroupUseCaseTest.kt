@@ -51,7 +51,8 @@ class GeOsScanVerificationGroupUseCaseTest {
             ticketPrefix = null,
             ticketCode = null,
             isBlockExecution = false,
-            isPreventiveOs = false
+            isPreventiveOs = false,
+            isExecAllGroups = true,
         )
 
         // VG 1: manual_date não é nulo → status deve ser MANUALLY_FORCED_DATE
@@ -173,7 +174,8 @@ class GeOsScanVerificationGroupUseCaseTest {
             ticketPrefix = null,
             ticketCode = null,
             isBlockExecution = false,
-            isPreventiveOs = false
+            isPreventiveOs = false,
+            isExecAllGroups = true,
         )
 
         // Mock de VGs com diferentes cenários
@@ -317,7 +319,8 @@ class GeOsScanVerificationGroupUseCaseTest {
             ticketPrefix = null,
             ticketCode = null,
             isBlockExecution = false,
-            isPreventiveOs = false
+            isPreventiveOs = false,
+            isExecAllGroups = true,
         )
 
         // Mock de VG com condições normais
@@ -380,7 +383,8 @@ class GeOsScanVerificationGroupUseCaseTest {
             ticketPrefix = null,
             ticketCode = null,
             isBlockExecution = false,
-            isPreventiveOs = false
+            isPreventiveOs = false,
+            isExecAllGroups = true,
         )
 
         // Mock com VGs em estado de alerta
@@ -464,7 +468,8 @@ class GeOsScanVerificationGroupUseCaseTest {
             ticketPrefix = null,
             ticketCode = null,
             isBlockExecution = false,
-            isPreventiveOs = false
+            isPreventiveOs = false,
+            isExecAllGroups = false,
         )
 
         val mockVgList = listOf(

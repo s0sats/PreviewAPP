@@ -56,7 +56,8 @@ class GeOsCreateFormOsStructureUseCase  @Inject constructor(
                     ticketPrefix = input.ticketPrefix,
                     ticketCode = input.ticketCode,
                     isBlockExecution = ProcessVg.isBlockExecution(input.formOsHeader.process_vg),
-                    isPreventiveOs = input.formOsHeader.process_type == PROCESS_TYPE_PREVENTIVE
+                    isPreventiveOs = input.formOsHeader.process_type == PROCESS_TYPE_PREVENTIVE,
+                    isExecAllGroups = ProcessVg.isForceExecutionAllGroups(input.formOsHeader.process_vg),
                 )
             )
 

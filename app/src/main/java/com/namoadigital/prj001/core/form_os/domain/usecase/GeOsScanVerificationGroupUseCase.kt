@@ -25,7 +25,8 @@ class GeOsScanVerificationGroupUseCase(
         val ticketPrefix: Int?,
         val ticketCode: Int?,
         val isBlockExecution: Boolean,
-        val isPreventiveOs: Boolean
+        val isPreventiveOs: Boolean,
+        val isExecAllGroups: Boolean
     )
 
     override fun invoke(input: Input): List<GeOsVg> {
@@ -111,7 +112,7 @@ class GeOsScanVerificationGroupUseCase(
             }
 
 
-            item.isActive = isVerificationGroupActive(vgStatus, item, ticketPrefix, ticketCode, isBlockExecution, input.isPreventiveOs)
+            item.isActive = isVerificationGroupActive(vgStatus, item, ticketPrefix, ticketCode, isBlockExecution, input.isPreventiveOs, input.isExecAllGroups)
             item.hasExpired = isGroupExpired(vgStatus)
             item.vgStatus = vgStatus.status
             //
@@ -127,13 +128,15 @@ class GeOsScanVerificationGroupUseCase(
     private fun isVerificationGroupActive(
         vgStatus: VgStatus,
         item: GeOsVg,
-        ticketPrefix : Int?,
-        ticketCode : Int?,
+        ticketPrefix: Int?,
+        ticketCode: Int?,
         isBlockExecution: Boolean,
-        isPreventiveOs: Boolean
+        isPreventiveOs: Boolean,
+        execAllGroups: Boolean
     ): Int{
 
         return when {
+            execAllGroups -> 1
             !isPreventiveOs && item.isExecOnlyPreventive() -> 0
             isBlockExecution -> 0
             isGroupExpired(vgStatus) == 1 || isOtherPartitionActived(item, ticketPrefix, ticketCode) -> 1

@@ -199,6 +199,7 @@ class MapToVerificationGroupsUseCase @Inject constructor(
         isReadOnly: Boolean,
     ): Boolean = when {
         isReadOnly -> false
+        (ProcessVg.isForceExecutionAllGroups(processVg))-> false
         !isPreventiveType && isExecOnlyPreventive() -> false
         processVg == ProcessVg.BLOCK_EXECUTION -> false
         inPartitionExecution -> false
