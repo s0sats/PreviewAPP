@@ -26,6 +26,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_LAST_MEASURE_DATE_LBL
+import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_REQUIRED_BY_TICKET_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_INVALID_INITIAL_SERIAL_STATE_DATE_ERROR_MSG
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_NOT_FINALIZED_DATE_INCORRECT_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL
@@ -86,6 +87,7 @@ object FinishOsTranslateModule {
             DIALOG_SELECT_BACKUP_SERIAL_HELP_LBL,
             DIALOG_SELECT_BACKUP_SERIAL_HINT,
             DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL,
+            DIALOG_FINALIZE_OS_REQUIRED_BY_TICKET_LBL,
             DIALOG_FINALIZE_OS_FORM_START_DATE_LBL,
             DIALOG_FINALIZE_OS_FORM_END_DATE_LBL,
             DIALOG_FINALIZE_OS_FORM_ELAPSED_TIME_LBL,
