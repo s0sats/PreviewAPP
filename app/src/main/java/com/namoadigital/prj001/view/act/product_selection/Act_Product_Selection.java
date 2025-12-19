@@ -3,7 +3,6 @@ package com.namoadigital.prj001.view.act.product_selection;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
@@ -358,7 +357,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         lv_groups_products.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
+
+                ActProductSelectionListItem currentItem = (ActProductSelectionListItem) parent.getItemAtPosition(position);
+                HMAux item = currentItem.getSource();
                 HMAux lastIndex = (HMAux) currentIndex.clone();
                 //
                 mStack.push(lastIndex);
@@ -467,7 +468,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     @Override
-    public void loadGroups_Products(List<HMAux> groups_products) {
+    public void loadGroups_Products(List<ActProductSelectionListItem> groups_products) {
 
         if (groups_products.isEmpty()) {
             tv_empty_list.setVisibility(View.VISIBLE);
@@ -475,7 +476,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
             return;
         }
 
-        List<HMAux> listWithAllProducts = null;
+        List<ActProductSelectionListItem> listWithAllProducts = null;
         if (showAllProducts && currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
             listWithAllProducts = new ArrayList<>();
             HMAux itemAllProducts = new HMAux();
@@ -483,7 +484,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
             itemAllProducts.put("full_desc", "");
             itemAllProducts.put("type", "other");
             itemAllProducts.put("desc", hmAux_Trans.get("product_all_lbl"));
-            listWithAllProducts.add(itemAllProducts);
+            listWithAllProducts.add(new ActProductSelectionListItem(itemAllProducts, null));
             listWithAllProducts.addAll(groups_products);
         }
         tv_empty_list.setVisibility(View.GONE);

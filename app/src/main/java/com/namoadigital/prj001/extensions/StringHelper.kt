@@ -144,3 +144,7 @@ fun getFormattedAddress(address: String): String {
         .replace("-", "")
         .replace(" ", "+")
 }
+
+fun String.splitWithRegex(expression: String): List<String> {
+    return this.split(expression.toRegex(), limit = 10)
+}

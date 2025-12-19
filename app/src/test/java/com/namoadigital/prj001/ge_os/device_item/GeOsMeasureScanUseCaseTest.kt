@@ -379,6 +379,8 @@ class GeOsMeasureScanUseCaseTest {
         automatic_selection_state = null,
         ticket_prefix = null,
         ticket_code = null,
+        labelFixed = 1,
+        labelAlreadyOk = 2,
     )
 
 }

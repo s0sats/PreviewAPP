@@ -1,29 +1,31 @@
 package com.namoadigital.prj001.view.act.product_selection;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
-
 import android.content.Context;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
+import com.namoadigital.prj001.extensions.SpannableStringKt;
+import com.namoadigital.prj001.extensions.StringHelperKt;
+import com.namoadigital.prj001.extensions.hmaux.HmAuxHelperKt;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act007_001;
-import com.namoadigital.prj001.sql.Sql_Act007_002;
 import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_001;
-import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
+import com.namoadigital.prj001.sql.material.GetMaterialListSql;
+import com.namoadigital.prj001.sql.material.GetProductListSql;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.Normalizer;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Act_Product_Selection_Presenter implements Act_Product_Selection_Contract.I_Presenter {
 
@@ -55,37 +57,54 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             );
         }
         ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
-                new Sql_Act007_002(
+                new GetProductListSql(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
                         (filter.trim().equals("")
                             ? "null"
                             : ToolBox_Inf.getNoAccentStringForGlobSql(filter)
-                        ),
+                        ).trim(),
                         (int) group_code
                 ).toSqlQuery()
         );
 
-        ArrayList<HMAux> data = new ArrayList<>();
+        ArrayList<ActProductSelectionListItem> data = new ArrayList<>();
 
         if(groups.size() > 1) {
             ToolBox_Inf.sortResults(groups);
         }
         //
-        data.addAll(groups);
-        //
-
-        if(products.size() > 1) {
-            ToolBox_Inf.sortResults(products);
+        for (HMAux group : groups) {
+            data.add(
+                    new ActProductSelectionListItem(
+                            group,
+                            null
+                    )
+            );
         }
-
-        data.addAll(products);
+        //
+        if(products.size() > 1) {
+            HmAuxHelperKt.sortResults(products);
+//            ToolBox_Inf.sortResults(products);
+        }
+        List<@NotNull String> highlightWords = StringHelperKt.splitWithRegex(filter, "\\s+");
+        for (HMAux product : products) {
+            data.add(
+                    new ActProductSelectionListItem(
+                            product,
+                            SpannableStringKt.highlightText(
+                                Objects.requireNonNull(product.get("full_desc")),
+                                highlightWords
+                            )
+                    )
+            );
+        }
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
                     productDao.getByString(new MD_Product_Sql_001(
                                     ToolBox_Con.getPreference_Customer_Code(context),
-                                    Long.parseLong(data.get(0).get("code"))
+                                    Long.parseLong(Objects.requireNonNull(data.get(0).getSource().get("code")))
                             ).toSqlQuery()
                     )
             );
@@ -130,32 +149,51 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         //
         ArrayList<HMAux> products = new ArrayList<>();
         products = (ArrayList<HMAux>) allProductDao.query_HM(
-                new Sql_Act027_Product_Selection_002(
+                new GetMaterialListSql(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
-                        (filter.trim().equals("") ? "null" : ToolBox_Inf.getNoAccentStringForGlobSql(filter)),
+                        (filter.trim().equals("") ? "null" : ToolBox_Inf.getNoAccentStringForGlobSql(filter)).trim(),
                         (int) group_code
                 ).toSqlQuery()
         );
         //
-        ArrayList<HMAux> data = new ArrayList<>();
+        ArrayList<ActProductSelectionListItem> data = new ArrayList<>();
         //
         if(groups.size() > 1) {
             ToolBox_Inf.sortResults(groups);
         }
-        data.addAll(groups);
-        //
-        if(products.size() > 1) {
-            ToolBox_Inf.sortResults(products);
+        for (HMAux group : groups) {
+            data.add(
+                    new ActProductSelectionListItem(
+                            group,
+                            null
+                    )
+            );
         }
         //
-        data.addAll(products);
+        if(products.size() > 1) {
+            HmAuxHelperKt.sortResults(products);
+//            ToolBox_Inf.sortResults(products);
+        }
+        //
+        List<@NotNull String> highlightWords = StringHelperKt.splitWithRegex(filter, "\\s+");
+        for (HMAux product : products) {
+            data.add(
+                    new ActProductSelectionListItem(
+                            product,
+                            SpannableStringKt.highlightText(
+                                    Objects.requireNonNull(product.get("full_desc")),
+                                    highlightWords
+                            )
+                    )
+            );
+        }
         //
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
                     productDao.getByString(new MD_Product_Sql_001(
                                     ToolBox_Con.getPreference_Customer_Code(context),
-                                    Long.parseLong(data.get(0).get("code"))
+                                    Long.parseLong(Objects.requireNonNull(data.get(0).getSource().get("code")))
                             ).toSqlQuery()
                     )
             );

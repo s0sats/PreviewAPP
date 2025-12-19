@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.view.act.product_selection;
 
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
 
@@ -11,7 +10,7 @@ public interface Act_Product_Selection_Contract {
 
     interface I_View {
 
-        void loadGroups_Products(List<HMAux> groups_products);
+        void loadGroups_Products(List<ActProductSelectionListItem> groups_products);
 
         void sendResult(MD_Product md_product);
     }

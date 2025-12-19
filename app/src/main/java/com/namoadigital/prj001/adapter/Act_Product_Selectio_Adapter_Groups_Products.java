@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.view.act.product_selection.ActProductSelectionListItem;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 02/02/17.
@@ -25,10 +27,10 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
 
     private Context context;
     private int resource;
-    private List<HMAux> data;
+    private List<ActProductSelectionListItem> data;
     private HMAux hmAux_Trans;
 
-    public Act_Product_Selectio_Adapter_Groups_Products(Context context, int resource, List<HMAux> data, HMAux hmAux_Trans) {
+    public Act_Product_Selectio_Adapter_Groups_Products(Context context, int resource, List<ActProductSelectionListItem> data, HMAux hmAux_Trans) {
         this.context = context;
         this.resource = resource;
         this.data = data;
@@ -47,7 +49,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong((data.get(position).get("code")));
+        return Long.parseLong((Objects.requireNonNull(data.get(position).getSource().get("code"))));
     }
 
     @Override
@@ -59,7 +61,9 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
             convertView = mInflater.inflate(resource, parent, false);
         }
 
-        HMAux item = data.get(position);
+        HMAux item = data.get(position).getSource();
+        SpannableString itemDesc = data.get(position).getProductDescHighlight();
+
 
         LinearLayout ll_fundo = (LinearLayout)
                 convertView.findViewById(R.id.act_product_selection_content_cell_ll_background);
@@ -102,6 +106,9 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
                 customId = item.get("full_desc").replace(item.get("desc"), "").trim();
                 if (customId.contains("(")) {
                     SpannableString id_string = new SpannableString(item.get("full_desc"));
+                    if(itemDesc != null) {
+                        id_string = itemDesc;
+                    }
                     id_string.setSpan(
                             new TextAppearanceSpan(context, com.google.android.material.R.style.TextAppearance_Material3_LabelSmall),
                             item.get("full_desc").indexOf("("),
@@ -116,15 +123,23 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
                     );
                     tv_desc.setText(id_string);
                 } else {
-                    tv_desc.setText(item.get("desc"));
+                    setTvDesc(itemDesc, tv_desc, item);
                 }
             } else {
-                tv_desc.setText(item.get("desc"));
+                setTvDesc(itemDesc, tv_desc, item);
             }
             //tv_id.setText(" ("+item.get("id")+")");
 
         }
 
         return convertView;
+    }
+
+    private void setTvDesc(SpannableString itemDesc, TextView tv_desc, HMAux item) {
+        if(itemDesc != null) {
+            tv_desc.setText(itemDesc);
+        }else{
+            tv_desc.setText(item.get("desc"));
+        }
     }
 }
