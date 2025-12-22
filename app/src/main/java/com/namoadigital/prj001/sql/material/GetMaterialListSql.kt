@@ -18,7 +18,7 @@ class GetMaterialListSql(
     init{
         val charFilter = if(s_filter == "null") null else s_filter?.trim()
         var searchWords = charFilter?.split("\\s+".toRegex(), limit = 10)
-        Log.d("searchWords", "$searchWords")
+
         searchWords?.let {
             if (it.size > 0) {
                 affinityCounterQuery = getAffinityCounterQuery(it)
@@ -49,7 +49,7 @@ class GetMaterialListSql(
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .joinToString(" +\n") { term ->
-                "IIF(lower($criteria) GLOB lower('*$term*'), 1, 0)"
+                "CASE WHEN lower($criteria) GLOB lower('*$term*') THEN 1 ELSE 0 END "
             }
     }
 

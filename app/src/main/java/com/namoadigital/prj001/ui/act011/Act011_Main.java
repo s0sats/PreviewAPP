@@ -2226,8 +2226,8 @@ public class Act011_Main extends Base_Activity
      */
     @Override
     protected void onPause() {
-        Log.d("Error_Sup", "--------------onPause-------------------");
-        Log.d("Error_Sup", "canSave: " + canSave);
+//        Log.d("Error_Sup", "--------------onPause-------------------");
+//        Log.d("Error_Sup", "canSave: " + canSave);
         super.onPause();
         if (canSave) {
             saveV2(false);
@@ -4912,8 +4912,8 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
-        Log.d("Error_Sup", "--------------processCustom_error-------------------");
-        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
+//        Log.d("Error_Sup", "--------------processCustom_error-------------------");
+//        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         //
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
@@ -4955,8 +4955,8 @@ public class Act011_Main extends Base_Activity
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        Log.d("Error_Sup", "--------------processError_1-------------------");
-        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
+//        Log.d("Error_Sup", "--------------processError_1-------------------");
+//        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         //
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (bypassSendDataErrorAlert()) {
@@ -4992,8 +4992,8 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        Log.d("Error_Sup", "--------------processCloseACT 3 -------------------");
-        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
+//        Log.d("Error_Sup", "--------------processCloseACT 3 -------------------");
+//        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             //
@@ -5071,8 +5071,8 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        Log.d("Error_Sup", "--------------processCloseACT 2 -------------------");
-        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
+//        Log.d("Error_Sup", "--------------processCloseACT 2 -------------------");
+//        Log.d("Error_Sup", "wsSoProcess: " + wsSoProcess);
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
             MD_Product_Serial serialInfo = getSerialInfo();

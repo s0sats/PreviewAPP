@@ -17,7 +17,7 @@ class GetProductListSql(
     init{
         val charFilter = if(s_filter == "null") null else s_filter
         var searchWords = charFilter?.split("\\s+".toRegex(), limit = 10)
-        Log.d("searchWords", "$searchWords")
+
         searchWords?.let {
             if (it.size > 0) {
                 affinityCounterQuery = getAffinityCounterQuery(it)
@@ -40,7 +40,7 @@ class GetProductListSql(
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .joinToString(" +\n") { term ->
-                "IIF(lower(p.product_desc) GLOB lower('*$term*'), 1, 0)"
+                "CASE WHEN lower(p.product_desc) GLOB lower('*$term*') THEN 1 ELSE 0 END"
             }
     }
 

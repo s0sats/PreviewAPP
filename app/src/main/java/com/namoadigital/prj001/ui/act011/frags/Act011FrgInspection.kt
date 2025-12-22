@@ -62,7 +62,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("Form_Refresh", "--------------onCreate-------------------")
+//        Log.d("Form_Refresh", "--------------onCreate-------------------")
         arguments?.let {
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
@@ -76,13 +76,13 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("Form_Refresh", "--------------onViewCreated-------------------")
+//        Log.d("Form_Refresh", "--------------onViewCreated-------------------")
         super.onViewCreated(view, savedInstanceState)
         //Caso seja um recuperação do frg, chama interface que resgata acessoryFormView da act.
         savedInstanceState?.let {
             acessoryFormView = mFrgListener.getObjectView(acessoryFormViewIdx)
         }
-        Log.d("Form_Refresh", "acessoryName: ${acessoryFormView.acessoryName}")
+//        Log.d("Form_Refresh", "acessoryName: ${acessoryFormView.acessoryName}")
         mAdapter =  Act011InspectionFormAdapter(
             acessoryFormView,
             hmAuxTrans,
@@ -105,7 +105,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("Form_Refresh", "--------------onSaveInstanceState-------------------")
+//        Log.d("Form_Refresh", "--------------onSaveInstanceState-------------------")
         outState.putInt(ARG_ACESSORY_FORM_VIEW_IDX, acessoryFormViewIdx)
     }
 
@@ -527,7 +527,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun onDetach() {
         super.onDetach()
-        Log.d("Form_Refresh", "--------------onDetach-------------------")
+//        Log.d("Form_Refresh", "--------------onDetach-------------------")
         _mFrgListener = null
     }
 
@@ -693,7 +693,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     }
 
     fun refreshInspection(acessoryFormView: AcessoryFormView) {
-        Log.d("Form_Refresh", "--------------refreshInspection-------------------")
+//        Log.d("Form_Refresh", "--------------refreshInspection-------------------")
         this.acessoryFormView = acessoryFormView
         CoroutineScope(Dispatchers.Main).launch {
             mAdapter.refreshList(acessoryFormView)
