@@ -2075,6 +2075,9 @@ val migrationV29 = object : MigrationSQLite(29, 30){
                 UPDATE ${GeOsDeviceItemDao.TABLE}
                    SET ${GeOsDeviceItemDao.IS_VISIBLE} = 1
                  WHERE ${GeOsDeviceItemDao.COLOR_ITEM} = '${GeOsDeviceItemStatusColor.YELLOW}'
+                   AND (${GeOsDeviceItemDao.NEXT_CYCLE_MEASURE} IS NOT NULL
+                        OR ${GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE} IS NOT NULL
+                        )
             """.trimIndent()
         )
     }

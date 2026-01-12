@@ -4,6 +4,7 @@ import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUALLY_FORCED_ITEM
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 
 class GeOsApplyVGVisibilityUseCase :
@@ -27,7 +28,7 @@ class GeOsApplyVGVisibilityUseCase :
             ){
                 if(
                     (input.isContinuousForm && it.partitioned_execution == 1)
-                    || (it.bypassVGVisibility)
+                    || (!it.isNO_CYCLE && it.color_item == GeOsDeviceItemStatusColor.YELLOW)
                 ){
                     it.is_visible = 1
                 } else {
