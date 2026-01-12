@@ -71,7 +71,7 @@ class GeOsMeasureScanUseCaseTest {
                 productCode = mdProductSerialMocked.product_code,
                 serialCode = mdProductSerialMocked.serial_code,
                 isContinuousForm = false,
-                geOsVgList = mockVgList
+                expiredGeOsVgList = mockVgList
             )
         )
 

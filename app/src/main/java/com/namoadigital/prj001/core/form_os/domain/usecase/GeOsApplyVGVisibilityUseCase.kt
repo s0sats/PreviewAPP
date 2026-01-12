@@ -25,8 +25,10 @@ class GeOsApplyVGVisibilityUseCase :
                 && it.item_check_status != ITEM_CHECK_STATUS_MANUAL_ALERT
                 && it.item_check_status != ITEM_CHECK_STATUS_MANUALLY_FORCED_ITEM
             ){
-                if(input.isContinuousForm
-                    && it.partitioned_execution == 1){
+                if(
+                    (input.isContinuousForm && it.partitioned_execution == 1)
+                    || (it.bypassVGVisibility)
+                ){
                     it.is_visible = 1
                 } else {
                     it.is_visible = input.geosVgs[index].isActive

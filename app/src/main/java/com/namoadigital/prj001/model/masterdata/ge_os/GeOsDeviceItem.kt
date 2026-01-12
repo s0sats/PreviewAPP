@@ -169,6 +169,8 @@ class GeOsDeviceItem(
     val isCycleExpired = has_expired_cycle == 1
     val isCritical = critical_item == 1
     val isNO_CYCLE = next_cycle_measure == null && next_cycle_limit_date == null
+    val bypassVGVisibility = !isNO_CYCLE && color_item == GeOsDeviceItemStatusColor.YELLOW
+
 
     companion object {
         const val ITEM_CHECK_STATUS_NO_CYCLE = "NO_CYCLE" //NO_CYCLE

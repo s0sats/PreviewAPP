@@ -18,7 +18,7 @@ class GeOsMeasureScanUseCase constructor(
         val productCode: Long,
         val serialCode: Long,
         val isContinuousForm: Boolean,
-        val geOsVgList: List<GeOsVg>
+        val expiredGeOsVgList: List<GeOsVg>
     )
 
     override fun invoke(input: Input): List<GeOsDeviceItem> {
@@ -28,7 +28,7 @@ class GeOsMeasureScanUseCase constructor(
             productCode,
             serialCode,
             isContinuousForm,
-            geOsVgList,
+            expiredGeOsVgList,
         ) = input
 
 
@@ -69,11 +69,11 @@ class GeOsMeasureScanUseCase constructor(
                     if (!isContinuousForm
                         || item.partitioned_execution == 0) {
                         if (item.vg_code != null) {
-                            val index = geOsVgList.binarySearch {
+                            val index = expiredGeOsVgList.binarySearch {
                                 it.vgCode.compareTo(item.vg_code)
                             }
                             if (index >= 0) {
-                                item.item_check_status = geOsVgList[index].vgStatus
+                                item.item_check_status = expiredGeOsVgList[index].vgStatus
                                 item.color_item = GeOsDeviceItemStatusColor.BLUE
                                 item.status_modification_type =
                                     GeOsDeviceItemStatusModificationType.VERIFICATION_GROUP

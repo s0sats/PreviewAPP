@@ -19,8 +19,8 @@ import com.namoadigital.prj001.model.masterdata.ge_os.GeOs
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUALLY_FORCED_ITEM
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
-
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
 import com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.Companion.LOADING_UPDATE_GROUP_LBL
@@ -149,6 +149,7 @@ class GeOsRepositoryImpl constructor(
                          AND ${GeOsDeviceItemDao.PRODUCT_CODE} = $productCode 
                          AND ${GeOsDeviceItemDao.SERIAL_CODE} = $serialCode 
                          AND ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} NOT IN ('${ITEM_CHECK_STATUS_MANUAL_ALERT}', '${ITEM_CHECK_STATUS_MANUALLY_FORCED_ITEM}')
+                         AND ${GeOsDeviceItemDao.COLOR_ITEM} != '${GeOsDeviceItemStatusColor.YELLOW}'
                          $partitionedFilter
                 """.trimIndent()
             )

@@ -1968,7 +1968,7 @@ val migrationV27 = object : MigrationSQLite(27, 28) {
 
 }
 
-val migrationV28 = object : MigrationSQLite(27, 28){
+val migrationV28 = object : MigrationSQLite(28, 29){
     override fun migrate(db: SQLiteDatabase) {
         //
         db.execSQL(MDItemCheckLabelTable.generateCreateTableScript())
@@ -2065,6 +2065,18 @@ val migrationV28 = object : MigrationSQLite(27, 28){
             )
         )
 
+    }
+}
+
+val migrationV29 = object : MigrationSQLite(29, 30){
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+                UPDATE ${GeOsDeviceItemDao.TABLE}
+                   SET ${GeOsDeviceItemDao.IS_VISIBLE} = 1
+                 WHERE ${GeOsDeviceItemDao.COLOR_ITEM} = '${GeOsDeviceItemStatusColor.YELLOW}'
+            """.trimIndent()
+        )
     }
 }
 
