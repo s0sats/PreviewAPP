@@ -72,6 +72,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_ID = "last_measure_id"
         const val LAST_MEASURE_ALERT = "last_measure_alert"
+        const val ITEM_CHECK_STATUS_COLOR = "item_check_status_color"
     }
 
     private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor, MD_Product_Serial_Tp_Device_Item>
@@ -577,6 +578,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         lastMeasureUn = getStringOrNull(getColumnIndex(LAST_MEASURE_UN)),
                         lastMeasureDate = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
                         lastMeasureAlert = getIntOrNull(getColumnIndex(LAST_MEASURE_ALERT)),
+                        itemCheckStatusColor = getString(getColumnIndex(ITEM_CHECK_STATUS_COLOR)),
                     )
                 }
             }
@@ -696,6 +698,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     put(LAST_MEASURE_UN, mdProductSerialTpDeviceItem.lastMeasureUn)
                     put(LAST_MEASURE_DATE, mdProductSerialTpDeviceItem.lastMeasureDate)
                     put(LAST_MEASURE_ALERT, mdProductSerialTpDeviceItem.lastMeasureAlert)
+                    put(ITEM_CHECK_STATUS_COLOR, mdProductSerialTpDeviceItem.itemCheckStatusColor)
                 }
             }
             //

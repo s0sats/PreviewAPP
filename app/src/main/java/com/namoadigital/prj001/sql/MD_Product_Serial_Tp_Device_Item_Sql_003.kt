@@ -22,6 +22,7 @@ class MD_Product_Serial_Tp_Device_Item_Sql_003(
                           tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_SEQ},
                           tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS},
                           tdi.${MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR},
                           mdt.${MdDeviceTpDao.DEVICE_TP_DESC},
                           case when tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE} == 0 then tdi.${MD_Product_Serial_Tp_Device_ItemDao.MANUAL_DESC} else mic.${MdItemCheckDao.ITEM_CHECK_DESC} end ${MdItemCheckDao.ITEM_CHECK_DESC}
                           

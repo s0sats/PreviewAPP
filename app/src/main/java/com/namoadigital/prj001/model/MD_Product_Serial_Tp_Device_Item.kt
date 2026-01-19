@@ -42,6 +42,7 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("last_measure_un") val lastMeasureUn: String? = null,
     @SerializedName("last_measure_date") val lastMeasureDate: String? = null,
     @SerializedName("last_measure_alert") val lastMeasureAlert: Int? = null,
+    @SerializedName("item_check_status_color") val itemCheckStatusColor: String? = null,
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1
@@ -115,6 +116,7 @@ class MD_Product_Serial_Tp_Device_Item(
         lastMeasureUn: String?,
         lastMeasureDate: String?,
         lastMeasureAlert: Int?,
+        itemCheckStatusColor: String,
     ) : this(
         item_check_code,
         item_check_seq,
@@ -153,6 +155,7 @@ class MD_Product_Serial_Tp_Device_Item(
         lastMeasureUn,
         lastMeasureDate,
         lastMeasureAlert,
+        itemCheckStatusColor,
     ) {
         this.customer_code = customer_code
         this.product_code = product_code

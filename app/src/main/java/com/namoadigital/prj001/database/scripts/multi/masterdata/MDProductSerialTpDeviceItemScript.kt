@@ -4,6 +4,7 @@ import com.namoadigital.prj001.core.database.CollationType
 import com.namoadigital.prj001.core.database.ColumnType
 import com.namoadigital.prj001.core.database.DatabaseTable
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 
 private val mdProductSerialTpDeviceItemTable = with(MD_Product_Serial_Tp_Device_ItemDao) {
     DatabaseTable(
@@ -162,6 +163,13 @@ private val mdProductSerialTpDeviceItemTable = with(MD_Product_Serial_Tp_Device_
                 type = ColumnType.INT,
                 isNullable = true,
             ),
+            DatabaseTable.Column(
+                name = ITEM_CHECK_STATUS_COLOR,
+                type = ColumnType.TEXT,
+                collation = CollationType.NOCASE,
+                isNullable = false,
+                defaultValue = GeOsDeviceItemStatusColor.GRAY.toString()
+            )
         ),
         primaryKey = listOf(
             CUSTOMER_CODE,

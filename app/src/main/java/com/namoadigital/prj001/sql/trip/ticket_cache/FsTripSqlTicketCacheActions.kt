@@ -23,7 +23,7 @@ class FsTripSqlTicketCacheActions(
            AND (c.${TkTicketCacheDao.ADDRESS} is null OR c.${TkTicketCacheDao.ADDRESS} = 0)
            AND c.${TkTicketCacheDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')  
            AND c.${TkTicketCacheDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}')
-           and  (strftime('%Y-%m-%d', c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT','+7 days'))
+           
            AND NOT EXISTS(SELECT 1
                                 FROM ${TK_TicketDao.TABLE} t
                                 WHERE c.${TK_TicketDao.CUSTOMER_CODE} = t.${TkTicketCacheDao.CUSTOMER_CODE}

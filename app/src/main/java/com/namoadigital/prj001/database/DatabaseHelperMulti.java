@@ -316,6 +316,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV28().migrate(db);
                 case 29:
                     MigrationsKt.getMigrationV29().migrate(db);
+                case 30:
+                    MigrationsKt.getMigrationV30().migrate(db);
                     break;
             }
 

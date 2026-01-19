@@ -12,6 +12,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_004
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_003
@@ -354,6 +355,7 @@ class MD_Product_Serial_Tp_DeviceDao(
                 item[MdItemCheckDao.ITEM_CHECK_DESC]!!,
                 item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS]!!,
                 item[MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM]!!.toInt(),
+                GeOsDeviceItemStatusColor.getStatusColor(item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR])?:GeOsDeviceItemStatusColor.GRAY,
                 getMaterialList(materialList)
             )
             //

@@ -5,7 +5,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao
-import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.sql.SqlAct083_002
@@ -137,7 +136,7 @@ class FsTripSqlTicketActions(
            AND t.${TK_TicketDao.MAIN_USER} = $userCode
            AND t.${TK_TicketDao.USER_FOCUS} = $isFocused
            AND t.${TK_TicketDao.HAS_ADDRESS} = 0
-           and  (strftime('%Y-%m-%d', t.${TK_TicketDao.KANBAN_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT','+7 days'))
+           
            AND t.${TK_TicketDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')  
            AND t.${TK_TicketDao.KANBAN_STAGE} IN ('${TK_TicketDao.KANBAN_STAGE_EXECUTION}', '${TK_TicketDao.KANBAN_STAGE_RELEASE_FOR_EXECUTION}')
            $serialFilter

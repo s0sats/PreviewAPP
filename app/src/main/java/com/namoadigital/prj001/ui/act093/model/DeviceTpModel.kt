@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act093.model
 
+import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItemStatusColor
+
 data class DeviceTpModel(
     val customer_code: Int = 0,
     val product_code: Int = 0,
@@ -11,5 +13,6 @@ data class DeviceTpModel(
     val item_check_desc: String = "",
     val item_check_status: String = "",
     val critical_item: Int = 0,
+    val color_item: GeOsDeviceItemStatusColor,
     val materialListFormatted: String = ""
 )

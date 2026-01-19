@@ -2083,6 +2083,52 @@ val migrationV29 = object : MigrationSQLite(29, 30){
     }
 }
 
+val migrationV30 = object : MigrationSQLite(30, 31){
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = MD_Product_Serial_Tp_Device_ItemDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR,
+                    type = ColumnType.TEXT,
+                    isNullable = false,
+                    defaultValue = GeOsDeviceItemStatusColor.GRAY.toString()
+                ),
+            )
+        )
+
+        db.execSQL(
+            """ 
+            UPDATE ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} 
+            SET ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR}  = '${GeOsDeviceItemStatusColor.RED}'
+            WHERE ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS} =  '${ITEM_CHECK_STATUS_MANUAL_ALERT}'
+        """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} 
+            SET ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR}  = '${GeOsDeviceItemStatusColor.YELLOW}'
+            WHERE ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS} not in  ('${ITEM_CHECK_STATUS_MANUAL_ALERT}','${ITEM_CHECK_STATUS_NORMAL}','${ITEM_CHECK_STATUS_FORCED}','${ITEM_CHECK_STATUS_MANUAL}') 
+              AND ${MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM} = 1
+              AND ${MD_Product_Serial_Tp_Device_ItemDao.VG_ACTION} = 0  
+        """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """ 
+            UPDATE ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} 
+            SET ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS_COLOR}  = '${GeOsDeviceItemStatusColor.BLUE}'
+            WHERE ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS} not in  ('${ITEM_CHECK_STATUS_MANUAL_ALERT}','${ITEM_CHECK_STATUS_NORMAL}','${ITEM_CHECK_STATUS_MANUAL}') 
+              AND (${MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM} = 0 
+                    OR ${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS} = "${ITEM_CHECK_STATUS_FORCED}"
+                    OR ${MD_Product_Serial_Tp_Device_ItemDao.VG_ACTION} = 1
+                  )              
+        """.trimIndent()
+        )
+    }
+}
+
 @Deprecated(message = "Use a função com objeto Column")
 fun SQLiteDatabase.addMissingColumnsIfNecessary(
     tableName: String,
