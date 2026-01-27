@@ -1,7 +1,9 @@
 package com.namoadigital.prj001.core.form_os.domain.usecase
 
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
+import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
+import com.namoadigital.prj001.model.TkTicketVG
 import com.namoadigital.prj001.model.masterdata.ge_os.vg.GeOsVg
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.VgStatus
 import com.namoadigital.prj001.util.ConstantBaseApp.MAX_DATE_VALUE
@@ -9,6 +11,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class GeOsScanVerificationGroupUseCase(
     val repository: GeOsRepository,
+    val ticketRepository: TicketRepository
 ) : UseCaseWithoutFlow<GeOsScanVerificationGroupUseCase.Input, List<GeOsVg>> {
 
     data class Input(
@@ -111,8 +114,22 @@ class GeOsScanVerificationGroupUseCase(
                 }
             }
 
+            val ticketVG = ticketRepository.getTicketVG(
+                prefix = ticketPrefix ?: -1,
+                code = ticketCode ?: -1,
+                groupCode = item.vgCode
+            )
 
-            item.isActive = isVerificationGroupActive(vgStatus, item, ticketPrefix, ticketCode, isBlockExecution, input.isPreventiveOs, input.isExecAllGroups)
+            item.isActive = isVerificationGroupActive(
+                vgStatus = vgStatus,
+                item = item,
+                ticketPrefix = ticketPrefix,
+                ticketCode = ticketCode,
+                isBlockExecution = isBlockExecution,
+                isPreventiveOs = input.isPreventiveOs,
+                execAllGroups = input.isExecAllGroups,
+                ticketVG = ticketVG
+            )
             item.hasExpired = isGroupExpired(vgStatus)
             item.vgStatus = vgStatus.status
             //
@@ -132,7 +149,8 @@ class GeOsScanVerificationGroupUseCase(
         ticketCode: Int?,
         isBlockExecution: Boolean,
         isPreventiveOs: Boolean,
-        execAllGroups: Boolean
+        execAllGroups: Boolean,
+        ticketVG: TkTicketVG?
     ): Int{
 
         return when {
@@ -140,6 +158,7 @@ class GeOsScanVerificationGroupUseCase(
             !isPreventiveOs && item.isExecOnlyPreventive() -> 0
             isBlockExecution -> 0
             isGroupExpired(vgStatus) == 1 || isOtherPartitionActived(item, ticketPrefix, ticketCode) -> 1
+            ticketVG != null -> 1
             else -> 0
         }
 

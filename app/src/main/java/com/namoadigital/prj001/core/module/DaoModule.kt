@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.MeMeasureTpDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.dao.TkTicketVGDao
 import com.namoadigital.prj001.dao.event.EventManualDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -140,6 +141,12 @@ object DaoModule {
     ) = EventManualDao(app)
 
     @Provides
+    fun providesTkTicketVGDao(
+        @ApplicationContext app: Context
+    ) = TkTicketVGDao(app)
+
+
+    @Provides
     fun providesPositionDao(
         @ApplicationContext app: Context
     ) = FsTripPositionDao(app)
@@ -260,4 +267,8 @@ object DaoServiceModule {
         @ApplicationContext app: Context
     ) = EventManualDao(app)
 
+    @Provides
+    fun providesTkTicketVGDao(
+        @ApplicationContext app: Context
+    ) = TkTicketVGDao(app)
 }

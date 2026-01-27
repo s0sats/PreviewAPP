@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.md.MDProductSerialVGDao;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.extensions.serial.StructureKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Structure;
@@ -1246,12 +1247,19 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     );
+            MDProductSerialVGDao mdProductSerialVg =
+                    new MDProductSerialVGDao(
+                            context
+                    );
+            //
             for (int i = 0; i < md_product_serial.getStructure().size(); i++) {
-                md_product_serial.getStructure().get(i).setPk(md_product_serial);
+//                md_product_serial.getStructure().get(i).setPk(md_product_serial);
+                StructureKt.setStructuresPK(md_product_serial, md_product_serial.getStructure().get(i));
             }
             for (int i = 0; i < md_product_serial.getStructure().size(); i++) {
                 MD_Product_Serial_Structure md_product_serial_structure = md_product_serial.getStructure().get(i);
                 mdProductSerialTpDeviceDao.addUpdate(md_product_serial_structure.getDevice_tp(), false, db);
+                mdProductSerialVg.addUpdate(md_product_serial_structure.getVerificationGroup(), false, db);
             }
         } catch (Exception e) {
             e.printStackTrace();

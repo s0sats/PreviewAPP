@@ -6,8 +6,6 @@ import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRe
 import com.namoadigital.prj001.core.data.local.repository.serial.ProductSerialRepositoryImp
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepository
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketCacheRepositoryImp
-import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
-import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepository
 import com.namoadigital.prj001.core.trip.data.destination.TripDestinationRepositoryImp
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepository
@@ -18,8 +16,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_SiteDao
-import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -78,13 +74,6 @@ object TripRepositoryModule {
         fsTripDao: FSTripDao
     ): TripDestinationRepository = TripDestinationRepositoryImp(app, dao, fsTripDao)
 
-    @ViewModelScoped
-    @Provides
-    fun providesRepositoryTicket(
-        @ApplicationContext app: Context,
-        dao: TK_TicketDao,
-        formDao: TK_Ticket_FormDao
-    ): TicketRepository = TicketRepositoryImp(app, dao, formDao)
 
     @ViewModelScoped
     @Provides

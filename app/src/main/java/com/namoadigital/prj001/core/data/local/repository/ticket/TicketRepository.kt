@@ -3,6 +3,7 @@ package com.namoadigital.prj001.core.data.local.repository.ticket
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.TK_Ticket_Form
+import com.namoadigital.prj001.model.TkTicketVG
 
 interface TicketRepository {
     fun getTicketPriorityCntList(siteCode: Int): Int
@@ -20,4 +21,10 @@ interface TicketRepository {
         stepCode: Int,
         ticketSeqTmp: Int
     ): TK_Ticket_Form?
+
+    fun getTicketVG(
+        prefix: Int,
+        code: Int,
+        groupCode: Int,
+    ) : TkTicketVG?
 }

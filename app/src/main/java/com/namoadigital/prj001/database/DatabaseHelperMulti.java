@@ -32,6 +32,7 @@ import com.namoadigital.prj001.database.scripts.multi.masterdata.VerificationGro
 import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.MDProductSerialVGScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.TpDeviceItemHistScriptKt;
 import com.namoadigital.prj001.database.scripts.multi.ticket.TkCreateScriptsKt;
+import com.namoadigital.prj001.database.scripts.multi.ticket.TkTicketVGScriptKt;
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -227,6 +228,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append(FSCreateScriptKt.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT);
             script.append(RegionScriptKt.MD_REGION_CREATE_SCRIPT);
             script.append(VerificationGroupKt.getMdVerificationGroupDatabaseTable());
+            script.append(TkTicketVGScriptKt.getTkTicketVGDatabaseTable());
             script.append(MDProductSerialVGScriptKt.getVGProductSerialScript());
             script.append(GEOsVgScriptKt.getGEOsVgScript());
             script.append(EventManualScriptKt.getEventManualTable().generateCreateTableScript());
@@ -318,6 +320,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV29().migrate(db);
                 case 30:
                     MigrationsKt.getMigrationV30().migrate(db);
+                case 31:
+                    MigrationsKt.getMigrationV31().migrate(db);
                     break;
             }
 

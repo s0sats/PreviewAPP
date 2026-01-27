@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.namoadigital.prj001.extensions.serial.StructureKt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -154,7 +155,8 @@ public class MD_Product_Serial implements Serializable {
         //
         if(structure != null) {
             for (int i = 0; i < structure.size(); i++) {
-                structure.get(i).setPk(this);
+                StructureKt.setStructuresPK(this, structure.get(i));
+//                structure.get(i).setPk(this);
             }
         }else{
             structure = new ArrayList<>();

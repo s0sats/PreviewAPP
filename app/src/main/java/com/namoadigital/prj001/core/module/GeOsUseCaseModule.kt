@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.core.module
 
+import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepository
 import com.namoadigital.prj001.core.form_os.domain.repository.GeOsRepository
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsApplyVGVisibilityUseCase
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase
@@ -23,9 +24,10 @@ object GeOsUseCaseModule {
     fun providesGeOsCreateFormOsStructureUseCase(
         repository: GeOsRepository,
         geOsStatusScanUseCase: GeOsStatusScanUseCase,
+        ticketRepository: TicketRepository,
     ): GeOsCreateFormOsStructureUseCase {
         return GeOsCreateFormOsStructureUseCase(
-            GeOsScanVerificationGroupUseCase(repository),
+            GeOsScanVerificationGroupUseCase(repository, ticketRepository),
                     GeOsMeasureScanUseCase(repository, geOsStatusScanUseCase),
                     GeOsOrderTypeScanUseCase(),
                     GeOsApplyVGVisibilityUseCase(),

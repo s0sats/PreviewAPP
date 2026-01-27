@@ -7,9 +7,11 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.sendToWebServiceReceiver
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao
+import com.namoadigital.prj001.dao.TkTicketVGDao
 import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.TK_Ticket_Form
+import com.namoadigital.prj001.model.TkTicketVG
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.sql.trip.ticket.FsTripSqlLateTicket
 import com.namoadigital.prj001.sql.trip.ticket.FsTripSqlNextTicket
@@ -22,7 +24,8 @@ import javax.inject.Inject
 class TicketRepositoryImp @Inject constructor(
     val app: Context,
     val dao: TK_TicketDao,
-    val ticketFormDao: TK_Ticket_FormDao? = null
+    val ticketFormDao: TK_Ticket_FormDao? = null,
+    val tkVerificationGroupDao: TkTicketVGDao? = null
 ) : TicketRepository {
     override fun getTicketPriorityCntList(siteCode: Int): Int {
         val tickets = dao.query(
@@ -132,6 +135,19 @@ class TicketRepositoryImp @Inject constructor(
             ticketCode,
             stepCode,
             ticketSeqTmp
+        )
+    }
+
+    override fun getTicketVG(
+        prefix: Int,
+        code: Int,
+        groupCode: Int,
+    ): TkTicketVG? {
+        return tkVerificationGroupDao?.getTicketVGByGroupCode(
+            customerCode = app.getCustomerCode(),
+            ticketPrefix = prefix,
+            ticketCode = code,
+            groupCode = groupCode
         )
     }
 }

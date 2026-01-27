@@ -15,12 +15,12 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TkTicketOriginNc;
+import com.namoadigital.prj001.model.TkTicketVG;
 import com.namoadigital.prj001.model.ticket.TkTicketToSync;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.sql.TkTicketOriginNcSql002;
 import com.namoadigital.prj001.util.Constant;
@@ -32,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import kotlin.jvm.Throws;
 
 public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     private final Mapper<TK_Ticket, ContentValues> toContentValuesMapper;
@@ -261,6 +259,13 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
             }
+
+            daoObjReturn = tryAddUpdateTicketVG(tk_ticket.getVgs(), db);
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+
+
             //Se db não foi passado, finaliza transaction com sucesso
             if (dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -369,6 +374,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 //Chama insertUpdate de NC, passando db como param aguardando retorno.
                 daoObjReturn = tryAddUpdateOriginNc(tk_ticket.getNc(),db);
                 //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+
+                daoObjReturn = tryAddUpdateTicketVG(tk_ticket.getVgs(), db);
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
                 }
@@ -802,6 +812,13 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         return ticketOriginNcDao.addUpdate(ticketOriginNcs, false, db);
     }
 
+    private DaoObjReturn tryAddUpdateTicketVG(
+            List<TkTicketVG> ticketVgs,
+            SQLiteDatabase db
+    ) {
+        TkTicketVGDao dao = new TkTicketVGDao(context);
+        return dao.addUpdate(ticketVgs, false, db);
+    }
 
     @Override
     public HMAux getByStringHM(String sQuery) {

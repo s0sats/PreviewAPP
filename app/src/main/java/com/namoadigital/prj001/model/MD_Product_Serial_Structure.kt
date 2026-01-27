@@ -3,7 +3,7 @@ package com.namoadigital.prj001.model
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.model.masterdata.product_serial.verification_group.MDProductSerialVg
 
-class MD_Product_Serial_Structure(
+data class MD_Product_Serial_Structure(
     @SerializedName("customer_code") val customer_code: Long,
     @SerializedName("product_code") val product_code: Long,
     @SerializedName("serial_code") val serial_code: Int,
@@ -23,10 +23,4 @@ class MD_Product_Serial_Structure(
     @SerializedName("unavailability_reason_option") val  unavailability_reason_option:Int,
     @SerializedName("vg") val verificationGroup: MutableList<MDProductSerialVg>?,
     @SerializedName("device_tp") val device_tp: MutableList<MD_Product_Serial_Tp_Device> = mutableListOf()
-){
-    fun setPk(md_product_serial: MD_Product_Serial) {
-        for (i in device_tp.indices) {
-            device_tp.get(i).setPk(md_product_serial)
-        }
-    }
-}
+)

@@ -372,6 +372,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("sync_big_file")
     private int syncBigFile;
 
+    @SerializedName("vgs") private ArrayList<TkTicketVG> vgs = new ArrayList<>();
+
     public void setPK() {
 
         if (address != null) {
@@ -405,7 +407,9 @@ public class TK_Ticket implements Cloneable, Serializable {
         for (int i = 0; i < serial.size(); i++) {
             serial.get(i).setPk();
         }
-
+        for (int i = 0; i < vgs.size(); i++) {
+            vgs.get(i).setPk(this);
+        }
     }
 
     public long getCustomer_code() {
@@ -2186,5 +2190,9 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setSyncBigFile(int syncBigFile) {
         this.syncBigFile = syncBigFile;
+    }
+
+    public List<TkTicketVG> getVgs() {
+        return vgs;
     }
 }

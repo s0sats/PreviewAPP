@@ -113,13 +113,26 @@ fun MD_Product_Serial.executeDbTransaction(
         return result
 
 }
-fun MD_Product_Serial.setStructuresPK(serialStructure: MD_Product_Serial_Structure){
-    serialStructure.device_tp.forEach {
-        it.setPk(this)
-    }
+fun MD_Product_Serial.setStructuresPK(serialStructure: MD_Product_Serial_Structure? = null){
+    serialStructure?.let{ structure ->
+        structure.device_tp.forEach {
+            it.setPk(this)
+        }
+        //
+        structure.verificationGroup?.forEach {
+            it.updatePk(this)
+        }
+    }?: run{
+        this.structure.forEach { serialStructure ->
+            serialStructure.device_tp.forEach {
+                it.setPk(this)
+            }
+            //
+            serialStructure.verificationGroup?.forEach {
+                it.updatePk(this)
+            }
+        }
 
-    serialStructure.verificationGroup?.forEach {
-        it.updatePk(this)
     }
 }
 

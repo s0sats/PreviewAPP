@@ -73,6 +73,7 @@ import com.namoadigital.prj001.database.scripts.multi.masterdata.MDItemCheckLabe
 import com.namoadigital.prj001.database.scripts.multi.masterdata.MD_REGION_CREATE_SCRIPT
 import com.namoadigital.prj001.database.scripts.multi.masterdata.mdVerificationGroupDatabaseTable
 import com.namoadigital.prj001.database.scripts.multi.masterdata.product_serial.VGProductSerialScript
+import com.namoadigital.prj001.database.scripts.multi.ticket.tkTicketVGDatabaseTable
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_FORCED
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL
 import com.namoadigital.prj001.model.masterdata.ge_os.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
@@ -2126,6 +2127,12 @@ val migrationV30 = object : MigrationSQLite(30, 31){
                   )              
         """.trimIndent()
         )
+    }
+}
+
+val migrationV31 = object : MigrationSQLite(30, 31){
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(tkTicketVGDatabaseTable)
     }
 }
 
