@@ -204,11 +204,8 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                         type
                     )
                 },
-                validateStartDate = { customerCode, tripPrefix, tripCode, date ->
+                validateStartDate = { date ->
                     viewModel.validateStartTripDate(
-                        customerCode,
-                        tripPrefix,
-                        tripCode,
                         date
                     )
                 },
@@ -242,8 +239,8 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
                     type
                 )
             },
-            validateOriginDate = { customerCode, tripPrefix, tripCode ->
-                viewModel.validateOriginDate(customerCode, tripPrefix, tripCode)
+            validateOriginDate = { newDate ->
+                viewModel.validateOriginDate(newDate)
             },
             onSave = { typeSave ->
 
@@ -365,12 +362,9 @@ class TripExtractFragment : TripBaseFragment<FrgExtractTripBinding>() {
             context = requireContext(),
             trip = viewModel.state.value.trip!!,
             destination = item,
-            validateDateFromDestination = { prefix, code, destinationSeq, newStart, newEnd, type ->
+            validateDateFromDestination = { destinationSeq, newStart, newEnd,->
                 viewModel.validateDateFromDestination(
-                    tripPrefix = prefix,
-                    tripCode = code,
                     destinationSeq = destinationSeq,
-                    type = type,
                     newStart = newStart,
                     newEnd = newEnd
                 )

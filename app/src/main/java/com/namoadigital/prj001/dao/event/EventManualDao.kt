@@ -7,6 +7,7 @@ import android.database.Cursor
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoadigital.prj001.core.database.base.NamoaCustomDatabase
+import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.extensions.toBoolean
 import com.namoadigital.prj001.extensions.toInt
 import com.namoadigital.prj001.model.DaoObjReturn
@@ -241,29 +242,43 @@ class EventManualDao @Inject constructor(
 
     fun getEventConflict(
         currentSeq: Int?,
+        eventDay: Int?,
         userCode: Int,
         newStart: String,
         newEnd: String?
     ): EventConflict? {
 
+        val eventDayQuery = eventDay?.let { "AND em.$EVENT_DAY = '$it'" } ?: ""
+        val currentSeqQuery = currentSeq?.let { "AND em.$EVENT_DAY_SEQ != '$it'" } ?: ""
+
+        // Cláusula para ignorar eventos de espera
+        val waitAllowedFilter = """
+            JOIN ${FSEventTypeDao.TABLE} fet
+              ON fet.${FSEventTypeDao.EVENT_TYPE_CODE} = em.$EVENT_TYPE_CODE
+             AND fet.${FSEventTypeDao.WAIT_ALLOWED} = 1
+    """.trimIndent()
+
         // Conflito de início
         val startOverlap = query(
             """
-            SELECT * FROM $TABLE_NAME
-            WHERE $EVENT_USER = '$userCode'
-            AND $EVENT_STATUS != '${EventStatus.CANCELLED.name}'
-            AND $EVENT_DAY_SEQ != ${currentSeq ?: -1}
-            AND $EVENT_START < '$newStart'
-            AND ($EVENT_END IS NULL OR $EVENT_END > '$newStart')
-            LIMIT 1
-        """.trimIndent()
+                    SELECT * FROM $TABLE_NAME em
+                    $waitAllowedFilter
+                    WHERE em.$EVENT_USER = '$userCode'
+                    $eventDayQuery
+                    AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+                    $currentSeqQuery
+                    AND strftime('%s', em.$EVENT_START) <= strftime('%s', '$newStart')
+                    AND (em.$EVENT_END IS NULL OR strftime('%s', em.$EVENT_END) > strftime('%s', '$newStart'))
+                    LIMIT 1
+    """.trimIndent()
         ).firstOrNull()
 
         if (startOverlap != null) {
             return EventConflict(
                 dateStart = startOverlap.dateStart,
                 dateEnd = startOverlap.dateEnd,
-                type = EventConflictType.START_OVERLAP
+                type = EventConflictType.START_OVERLAP,
+                description = startOverlap.description
             )
         }
 
@@ -271,48 +286,55 @@ class EventManualDao @Inject constructor(
         if (newEnd != null) {
             val endOverlap = query(
                 """
-                SELECT * FROM $TABLE_NAME
-                WHERE $EVENT_USER = '$userCode'
-                AND $EVENT_STATUS != '${EventStatus.CANCELLED.name}'
-                AND $EVENT_DAY_SEQ != ${currentSeq ?: -1}
-                AND $EVENT_START < '$newEnd'
-                AND ($EVENT_END IS NULL OR $EVENT_END > '$newEnd')
-                LIMIT 1
-            """.trimIndent()
+        SELECT * FROM $TABLE_NAME em
+        $waitAllowedFilter
+        WHERE em.$EVENT_USER = '$userCode'
+        $eventDayQuery
+        AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+        $currentSeqQuery
+        AND strftime('%s', em.$EVENT_START) < strftime('%s', '$newEnd')
+        AND (em.$EVENT_END IS NULL OR strftime('%s', em.$EVENT_END) >= strftime('%s', '$newEnd'))
+        LIMIT 1
+        """.trimIndent()
             ).firstOrNull()
 
             if (endOverlap != null) {
                 return EventConflict(
                     dateStart = endOverlap.dateStart,
                     dateEnd = endOverlap.dateEnd,
-                    type = EventConflictType.END_OVERLAP
+                    type = EventConflictType.END_OVERLAP,
+                    description = endOverlap.description
                 )
             }
 
-            //  O evento atual engloba completamente outro evento
+            // O evento atual engloba completamente outro evento
             val rangeOverlap = query(
                 """
-                SELECT * FROM $TABLE_NAME
-                WHERE $EVENT_USER = '$userCode'
-                AND $EVENT_STATUS != '${EventStatus.CANCELLED.name}'
-                AND $EVENT_DAY_SEQ != ${currentSeq ?: -1}
-                AND $EVENT_START > '$newStart'
-                AND $EVENT_END < '$newEnd'
-                LIMIT 1
-            """.trimIndent()
+        SELECT * FROM $TABLE_NAME em
+        $waitAllowedFilter
+        WHERE em.$EVENT_USER = '$userCode'
+        $eventDayQuery
+        AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+        $currentSeqQuery
+        AND strftime('%s', em.$EVENT_START) >= strftime('%s', '$newStart')
+        AND strftime('%s', em.$EVENT_END) <= strftime('%s', '$newEnd')
+        LIMIT 1
+        """.trimIndent()
             ).firstOrNull()
 
             if (rangeOverlap != null) {
                 return EventConflict(
                     dateStart = rangeOverlap.dateStart,
                     dateEnd = rangeOverlap.dateEnd,
-                    type = EventConflictType.RANGE_OVERLAP
+                    type = EventConflictType.RANGE_OVERLAP,
+                    description = rangeOverlap.description
                 )
             }
         }
 
         return null
     }
+
 
     @SuppressLint("Range")
     fun getEventsToHistoric(): List<EventHistoricToMyActionsBase> {

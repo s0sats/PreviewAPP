@@ -14,6 +14,7 @@ enum class EventManualKey(
     // Seleção de evento
     EventTypeTitleLbl("event_type_title_lbl"),
     EventTypeSearchHintLbl("event_type_search_hint_lbl"),
+    HasFormInProcessLbl("has_form_in_process_lbl"),
 
     // Formulário do evento
     CostLbl("cost_lbl"),
@@ -53,6 +54,7 @@ enum class EventManualKey(
     ErrorInvalidFutureEndDateMsg("error_invalid_future_end_date_msg"),
     ErrorInvalidEventDateMsg("error_invalid_event_date_msg"),
     ErrorInvalidFormDateMsg("error_invalid_form_date_msg"),
+    ErrorInvalidTripDateMsg("error_invalid_trip_date_msg", listOf("trip_id")),
 
 
     ElapsedJustNowLbl("elapsed_just_now_lbl"),
@@ -72,4 +74,6 @@ enum class EventManualKey(
     DownloadingPhotoLbl("event_download_photo_lbl"),
     NoInternetPhotoLbl("event_no_internet_photo_lbl"),
     RetryButtonLbl("event_retry_button_lbl"),
+
+
 }

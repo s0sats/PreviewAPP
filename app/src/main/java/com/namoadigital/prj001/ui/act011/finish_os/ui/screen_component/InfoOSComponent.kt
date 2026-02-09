@@ -33,9 +33,9 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_LAST_MEASURE_DATE_LBL
-import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.MKDATETIME_DATE_TTL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.MKDATETIME_HOUR_TTL
+import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.EditedField
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishValidation
 import com.namoadigital.prj001.util.ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
 
@@ -47,8 +47,7 @@ fun InfoOSComponent(
     infoOs: FinishFormField.ExpectedTimeOS?,
     componentError: FinishValidation.ComponentError? = null,
     isReadOnly: Boolean,
-    onInitialDateTimeSelected: (String?) -> Unit,
-    onFinalDateTimeSelected: (String?) -> Unit,
+    onInitialDateTimeSelected: (start: String?, end: String?, EditedField) -> Unit,
 ) {
 
     val defaultText = "--:--"
@@ -106,14 +105,6 @@ fun InfoOSComponent(
                 timeExecution = defaultText
             }
 
-            is FinishValidation.Component.InfoOS.InvalidStartDate -> {
-                initialDateError = Pair(
-                    true,
-                    translateMap.textOf(DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL)
-                )
-                finalDateError = Pair(false, "")
-            }
-
             is FinishValidation.Component.InfoOS.DateExceededLastMeasureDate -> {
                 initialDateError = Pair(
                     true,
@@ -124,11 +115,16 @@ fun InfoOSComponent(
                 finalDateError = Pair(false, "")
             }
 
-            is FinishValidation.Component.InfoOS.InvalidEndDate -> {
-                initialDateError = Pair(false, "")
+            is FinishValidation.Component.InfoOS.InvalidBothDateAction -> {
+                val action = componentError.action
+                initialDateError = Pair(
+                    true,
+                    translateMap.textOf(value = action.message, args = action.parameters)
+                )
+
                 finalDateError = Pair(
                     true,
-                    translateMap.textOf(FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL)
+                    translateMap.textOf(value = action.message, args = action.parameters)
                 )
             }
 
@@ -143,6 +139,15 @@ fun InfoOSComponent(
                     }"
                 )
                 finalDateError = Pair(false, "")
+            }
+
+            is FinishValidation.Component.InfoOS.InvalidFutureStartDate -> {
+                initialDateError = Pair(true, translateMap.textOf(componentError.message))
+                finalDateError = Pair(false, "")
+            }
+            is FinishValidation.Component.InfoOS.InvalidFutureEndDate -> {
+                initialDateError = Pair(false, "")
+                finalDateError = Pair(true, translateMap.textOf(componentError.message))
             }
 
             else -> {
@@ -179,7 +184,7 @@ fun InfoOSComponent(
                 timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
                 onDateTimeSelected = {
                     initialDate = it.fullTimeStampGMT
-                    onInitialDateTimeSelected(it.fullTimeStampGMT)
+                    onInitialDateTimeSelected(it.fullTimeStampGMT, finalDate, EditedField.DATE_START)
                 }
             )
 
@@ -202,7 +207,7 @@ fun InfoOSComponent(
                 timeHint = translateLib.textOf(MKDATETIME_HOUR_TTL),
                 onDateTimeSelected = {
                     finalDate = it.fullTimeStampGMT
-                    onFinalDateTimeSelected(it.fullTimeStampGMT)
+                    onInitialDateTimeSelected(initialDate, it.fullTimeStampGMT, EditedField.DATE_END)
                 }
             )
 

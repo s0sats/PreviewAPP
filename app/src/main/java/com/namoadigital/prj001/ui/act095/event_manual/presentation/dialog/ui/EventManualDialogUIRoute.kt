@@ -135,7 +135,14 @@ fun EventUIRoute(
                     )
                 },
                 onDateSelected = { startDate, endDate ->
-                    viewModel.onEvent(EventManualDialogEvent.ValidateDate(startDate, endDate))
+                    val waitAllowed = screen.eventData.eventFieldConfig.waitAllowed
+                    viewModel.onEvent(
+                        EventManualDialogEvent.ValidateDate(
+                            startDate,
+                            endDate,
+                            screen.eventData.eventFieldConfig.waitAllowed
+                        )
+                    )
                 },
                 onSave = { data ->
                     viewModel.onEvent(

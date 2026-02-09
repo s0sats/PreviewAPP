@@ -6,7 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.databinding.DialogTechnicalAddUserBinding
+import com.namoadigital.prj001.databinding.DialogSimpleAdapterBinding
 import com.namoadigital.prj001.extensions.getResourceCode
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.model.trip.FSTrip
@@ -26,9 +26,9 @@ class DialogListUsers constructor(
         userCode: Int,
         userSeq: Int?,
         startDateMillis: Long,
-        endDateMillis: Long?
-    ) -> OutputParams
-) : BaseTripDialog<DialogTechnicalAddUserBinding>(trip, null) {
+        endDateMillis: Long?,
+    ) -> OutputParams,
+) : BaseTripDialog<DialogSimpleAdapterBinding>(trip, null) {
 
     private lateinit var userAdapter: UsersListAdapter
     private lateinit var editDialog: DialogEditUser
@@ -37,7 +37,7 @@ class DialogListUsers constructor(
     init {
         dialog = BaseDialog.Builder(
             context = context,
-            contentView = DialogTechnicalAddUserBinding.inflate(LayoutInflater.from(context)),
+            contentView = DialogSimpleAdapterBinding.inflate(LayoutInflater.from(context)),
             margin = true
         ).content { _, binding ->
             this@DialogListUsers.binding = binding;
@@ -75,17 +75,18 @@ class DialogListUsers constructor(
                     editDialog.show()
                 },
                 updateSizeList = {
-                    if(it == 0) {
+                    if (it == 0) {
                         recyclerView.visibility = View.GONE
                         tvEmptyList.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         recyclerView.visibility = View.VISIBLE
                         tvEmptyList.visibility = View.GONE
                     }
                 }
             )
 
-            edittextFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+            edittextFilter.setOnReportTextChangeListner(object :
+                MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(text: String?) {
                 }
 
@@ -117,7 +118,7 @@ class DialogListUsers constructor(
 
     override fun dismiss() {
         dialog.dismiss()
-        if(!this::editDialog.isInitialized) return
+        if (!this::editDialog.isInitialized) return
         editDialog.dismiss()
     }
 
@@ -130,7 +131,6 @@ class DialogListUsers constructor(
         const val DIALOG_TITLE = "list_user_title_ttl"
         const val DIALOG_FILTER_HINT = "list_user_filter_hint"
         const val DIALOG_EMPTY_LIST = "list_user_empty_list"
-
 
 
         fun loadTranslation(context: Context): HMAux = listOf(

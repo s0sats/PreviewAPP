@@ -16,7 +16,8 @@ data class EventManualDialogState(
     val eventData: EventManualData? = null,
     val errorMessage: String? = null,
     val startDateError: ErrorDate? = null,
-    val endDateError: ErrorDate? = null
+    val endDateError: ErrorDate? = null,
+    val hasFormInProcess: Boolean = false,
 ) : TranslateState {
 
     data class ErrorDate(

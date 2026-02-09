@@ -22,6 +22,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.translate.di.EventTranslate
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MdJustifyItemDao
@@ -81,6 +82,9 @@ class Act092_Main : BaseActivityMvp
     @Inject
     lateinit var getEventManualUseCase: GetEventManualUseCase
 
+    @Inject
+    lateinit var getEventUseCase: GetEventActiveUseCase
+
     @EventTranslate
     @Inject
     lateinit var translateBuild: TranslateBuild
@@ -139,7 +143,8 @@ class Act092_Main : BaseActivityMvp
                 mResource_Code
             ),
             showProductOnFilter = bundle.getBoolean(ConstantBaseApp.SHOW_PRODUCT_IN_ACT006, false),
-            getEventManualUseCase
+            getEventManualUseCase,
+            getEventUseCase
         )
     }
 

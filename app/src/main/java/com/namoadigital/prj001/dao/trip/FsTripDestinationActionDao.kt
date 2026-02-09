@@ -9,17 +9,19 @@ import android.database.sqlite.SQLiteException
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.core.trip.domain.model.ActionConflict
-import com.namoadigital.prj001.core.trip.domain.model.ActionConflictType
 import com.namoadigital.prj001.dao.BaseDao
 import com.namoadigital.prj001.dao.DaoWithReturn
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.trip.FsTripActionDownload
 import com.namoadigital.prj001.model.trip.FsTripDestinationAction
 import com.namoadigital.prj001.sql.TripDownloadPDFSql001
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -420,52 +422,175 @@ class FsTripDestinationActionDao(
         )
     }
 
-    fun getActionConflict(
+    @SuppressLint("Range")
+    fun getDestinationFormDateConflict(
+        customerCode: Long,
+        tripPrefix: Int,
+        tripCode: Int,
+        destinationSeq: Int,
+        newArrivedDate: String,
+        newDepartedDate: String?
+    ): EventConflict? {
+
+        val query = """
+        SELECT
+            MIN(date_start) AS min_form_start,
+            MAX(date_end)   AS max_form_end
+        FROM (
+            -- Custom Forms
+            SELECT
+                ${GE_Custom_Form_DataDao.DATE_START} AS date_start,
+                ${GE_Custom_Form_DataDao.DATE_END}   AS date_end
+            FROM ${GE_Custom_Form_DataDao.TABLE}
+            WHERE ${GE_Custom_Form_DataDao.CUSTOMER_CODE} = $customerCode
+              AND ${GE_Custom_Form_DataDao.TRIP_PREFIX}   = $tripPrefix
+              AND ${GE_Custom_Form_DataDao.TRIP_CODE}     = $tripCode
+              AND ${GE_Custom_Form_DataDao.DESTINATION_SEQ} = $destinationSeq
+              AND ${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}', 
+              '${ConstantBaseApp.SYS_STATUS_DONE}', '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}')
+
+            UNION ALL
+
+            -- Actions FORM
+            SELECT
+                $DATE_START AS date_start,
+                $DATE_END   AS date_end
+            FROM $TABLE
+            WHERE $CUSTOMER_CODE     = $customerCode
+              AND $TRIP_PREFIX       = $tripPrefix
+              AND $TRIP_CODE         = $tripCode
+              AND $DESTINATION_SEQ   = $destinationSeq
+        )
+    """.trimIndent()
+
+        val result = queryObject(query) {
+            it.getString(it.getColumnIndex("min_form_start")) to
+                    it.getString(it.getColumnIndex("max_form_end"))
+        }
+
+        val (minFormStart, maxFormEnd) = result.first()
+
+        // Não há FORMs
+        if (minFormStart.isNullOrBlank() || maxFormEnd.isNullOrBlank()) {
+            return null
+        }
+
+        val arrivedMs = ToolBox_Inf.dateToMilliseconds(newArrivedDate)
+        val minFormMs = ToolBox_Inf.dateToMilliseconds(minFormStart)
+
+        if (arrivedMs > minFormMs) {
+            return EventConflict(
+                type = EventConflictType.START_OVERLAP,
+                dateStart = minFormStart,
+                dateEnd = maxFormEnd
+            )
+        }
+
+        if (!newDepartedDate.isNullOrBlank()) {
+            val departedMs = ToolBox_Inf.dateToMilliseconds(newDepartedDate)
+            val maxFormMs  = ToolBox_Inf.dateToMilliseconds(maxFormEnd)
+
+            if (departedMs < maxFormMs) {
+                return EventConflict(
+                    type = EventConflictType.END_OVERLAP,
+                    dateStart = minFormStart,
+                    dateEnd = maxFormEnd
+                )
+            }
+        }
+
+        return null
+    }
+
+    fun getDestinationActionConflict(
         customerCode: Long,
         tripPrefix: Int,
         tripCode: Int,
         destinationSeq: Int,
         newStart: String,
         newEnd: String?,
-    ): ActionConflict? {
+        validateStartDateEquals: Boolean = false
+    ): EventConflict? {
 
-        if (newEnd == null) {
-            // só valida "começou antes"
-            return query(
-                """
-            SELECT * FROM $TABLE
-            WHERE $CUSTOMER_CODE = '$customerCode'
-              AND $TRIP_PREFIX = '$tripPrefix'
-              AND $TRIP_CODE = '$tripCode'
-              AND $DESTINATION_SEQ = '$destinationSeq'
-              AND strftime('%s', $DATE_START) < strftime('%s', '$newStart')
-            LIMIT 1
-            """.trimIndent()
-            ).firstOrNull()?.let {
-                ActionConflict(it.dateStart, it.dateEnd, ActionConflictType.START_OVERLAP)
-            }
-        }
+        val destinationFilter = if(destinationSeq == -1) ""
+        else "AND $DESTINATION_SEQ = '$destinationSeq'"
 
-        val conflict = query(
+        val validationStart = if(validateStartDateEquals) "<" else "<="
+        val validationEnd = if(validateStartDateEquals) ">" else ">="
+
+        // Conflito de início
+        val startOverlap = query(
             """
         SELECT * FROM $TABLE
         WHERE $CUSTOMER_CODE = '$customerCode'
           AND $TRIP_PREFIX = '$tripPrefix'
           AND $TRIP_CODE = '$tripCode'
-          AND $DESTINATION_SEQ = '$destinationSeq'
-          AND (
-                strftime('%s', $DATE_START) < strftime('%s', '$newStart')
-             OR strftime('%s', $DATE_END)   > strftime('%s', '$newEnd')
-          )
+          $destinationFilter
+        AND strftime('%s', $DATE_START) $validationStart strftime('%s', '$newStart')
+        AND ($DATE_END IS NULL OR strftime('%s', $DATE_END) > strftime('%s', '$newStart'))
         LIMIT 1
         """.trimIndent()
-        ).firstOrNull() ?: return null
+        ).firstOrNull()
 
-        return ActionConflict(
-            dateStart = conflict.dateStart,
-            dateEnd = conflict.dateEnd,
-            type = ActionConflictType.RANGE_OVERLAP
-        )
+        if (startOverlap != null) {
+            return EventConflict(
+                dateStart = startOverlap.dateStart,
+                dateEnd = startOverlap.dateEnd,
+                type = EventConflictType.START_OVERLAP,
+                description = startOverlap.actDesc
+            )
+        }
+
+        // Conflito de término
+        if (newEnd != null) {
+            val endOverlap = query(
+                """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+              AND $TRIP_PREFIX = '$tripPrefix'
+              AND $TRIP_CODE = '$tripCode'
+              $destinationFilter
+            AND strftime('%s', $DATE_START) < strftime('%s', '$newEnd')
+            AND ($DATE_END IS NULL OR strftime('%s', $DATE_END) $validationEnd strftime('%s', '$newEnd'))
+            LIMIT 1
+            """.trimIndent()
+            ).firstOrNull()
+
+            if (endOverlap != null) {
+                return EventConflict(
+                    dateStart = endOverlap.dateStart,
+                    dateEnd = endOverlap.dateEnd,
+                    type = EventConflictType.END_OVERLAP,
+                    description = endOverlap.actDesc
+                )
+            }
+
+            // O evento atual engloba completamente outro evento
+            if(destinationSeq == -1) {
+                val rangeOverlap = query(
+                    """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+              AND $TRIP_PREFIX = '$tripPrefix'
+              AND $TRIP_CODE = '$tripCode'
+            AND strftime('%s', $DATE_START) >= strftime('%s', '$newStart')
+            AND strftime('%s', $DATE_END) <= strftime('%s', '$newEnd')
+            LIMIT 1
+            """.trimIndent()
+                ).firstOrNull()
+
+                if (rangeOverlap != null) {
+                    return EventConflict(
+                        dateStart = rangeOverlap.dateStart,
+                        dateEnd = rangeOverlap.dateEnd,
+                        type = EventConflictType.RANGE_OVERLAP,
+                        description = rangeOverlap.actDesc
+                    )
+                }
+            }
+        }
+
+        return null
     }
 
     class CursorToFsTripDestinationAction : Mapper<Cursor, FsTripDestinationAction> {

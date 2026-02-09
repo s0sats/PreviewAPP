@@ -14,7 +14,6 @@ import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.CombineGeOsWithMea
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.FinishOSUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.GetFinishOsDataUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.SaveFormOsUseCase
-import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ValidateFinishOSUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_custom.GeCustomFormUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_custom.GetCustomFormDataByIdUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_custom.GetCustomFormLocalByIdUseCase
@@ -92,16 +91,4 @@ object FormUseCaseModule {
         return GetMeasureTpByCode(repository)
     }
 
-
-    @Provides
-    @ViewModelScoped
-    fun providesValidateFormUseCase(
-        getGeOsByIdUseCase: GetGeOsByIdUseCase,
-        getMeasureTpByCode: GetMeasureTpByCode,
-    ): ValidateFinishOSUseCase {
-        return ValidateFinishOSUseCase(
-            getGeOsByIdUseCase = getGeOsByIdUseCase,
-            getMeasureTpByCode = getMeasureTpByCode,
-        )
-    }
 }

@@ -713,19 +713,38 @@ class FsTripDestinationDao @Inject constructor(
 
     }
 
+    fun getLastDestinationDeparted(
+        customerCode: Long,
+        prefix: Int,
+        code: Int
+    ) = query(
+            """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+            AND $TRIP_PREFIX = '$prefix'
+            AND $TRIP_CODE = '$code'        
+            AND $DESTINATION_STATUS == '${DestinationStatus.DEPARTED.name}'
+            ORDER BY $DESTINATION_SEQ DESC
+            LIMIT 1
+        """.trimIndent()
+        ).firstOrNull()
+
     fun getLastDestination(
         customerCode: Long,
         prefix: Int,
         code: Int,
     ): FsTripDestination? {
-        val query = query("""
+
+        val query = query(
+            """
             SELECT * FROM $TABLE
             WHERE $CUSTOMER_CODE = '$customerCode'
             AND $TRIP_PREFIX = '$prefix'
             AND $TRIP_CODE = '$code'
             ORDER BY $DESTINATION_SEQ DESC
             LIMIT 1
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         return query.firstOrNull()
     }
@@ -961,6 +980,12 @@ class FsTripDestinationDao @Inject constructor(
             }
         }
     }
+
+
+    fun checkRangeDestinationWithForm() {
+
+    }
+
 
     class CursorToFsTripDestination : Mapper<Cursor, FsTripDestination> {
         @SuppressLint("Range")

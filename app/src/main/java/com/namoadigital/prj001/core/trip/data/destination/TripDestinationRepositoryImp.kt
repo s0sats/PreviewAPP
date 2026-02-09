@@ -660,6 +660,15 @@ class TripDestinationRepositoryImp @Inject constructor(
         )
     }
 
+    override fun getLastDestinationDeparted(
+        prefix: Int,
+        code: Int,
+    ): FsTripDestination? = dao.getLastDestinationDeparted(
+        customerCode = context.getCustomerCode(),
+        prefix = prefix,
+        code = code
+    )
+
     override fun getLastDestination(
         prefix: Int,
         code: Int,
@@ -667,7 +676,7 @@ class TripDestinationRepositoryImp @Inject constructor(
         return dao.getLastDestination(
             customerCode = context.getCustomerCode(),
             prefix = prefix,
-            code = code
+            code = code,
         )
     }
 
@@ -685,6 +694,14 @@ class TripDestinationRepositoryImp @Inject constructor(
             destinationSeq,
             type,
         )
+    }
+
+    override fun getListDestinations(prefix: Int, code: Int) : List<FsTripDestination> {
+        return dao.listAllDestinations(
+            context.getCustomerCode(),
+            prefix,
+            code
+        ) ?: emptyList()
     }
 
     override fun getNextValidDestination(
@@ -706,5 +723,9 @@ class TripDestinationRepositoryImp @Inject constructor(
 
     override fun getNextDestinationSeq(tripPrefix: Int, tripCode: Int): Int? {
         return dao.getNextDestinationSeq(tripPrefix, tripCode)
+    }
+
+    override fun getCurrentDestination(): FsTripDestination? {
+        return dao.getOnSiteDestination()
     }
 }

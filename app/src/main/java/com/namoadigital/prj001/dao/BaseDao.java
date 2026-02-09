@@ -5,6 +5,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MODE_MULTI;
 import static com.namoadigital.prj001.util.ToolBox_Con.getDBHelperName;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.namoadigital.prj001.database.DatabaseHelperChat;
@@ -12,6 +13,9 @@ import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
 import com.namoadigital.prj001.database.DatabaseManager;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 18/01/17.
@@ -22,9 +26,9 @@ public class BaseDao {
     protected Context context;
     protected SQLiteDatabase db;
 
-    private String mDB_NAME;
-    private int mDB_VERSION;
-    private String mMode;
+    private final String mDB_NAME;
+    private final int mDB_VERSION;
+    private final String mMode;
 
     private boolean mIgnoreCounter = false;
 
@@ -97,4 +101,27 @@ public class BaseDao {
 
         }
     }
+
+    public interface CursorMapper<R> {
+        R map(Cursor cursor);
+    }
+
+    public <R> List<R> queryObject(String query, CursorMapper<R> mapper) {
+        List<R> result = new ArrayList<>();
+        openDB();
+
+        try {
+            Cursor cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                result.add(mapper.map(cursor));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(this.getClass().getName(), e);
+        } finally {
+            closeDB();
+        }
+        return result;
+    }
+
 }

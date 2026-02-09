@@ -6,6 +6,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.AUTO_SYNC_FORM;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.EXTRACT_DIALOG_INFO_RESOURCE;
 import static com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.LABEL_ERROR_GET_LIST_VERIFICATION_GROUP;
 import static com.namoadigital.prj001.ui.act011.group_verification.VerificationGroupFragment.TITLE_ERROR_GET_LIST_VERIFICATION_GROUP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
@@ -85,6 +86,8 @@ import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.core.translate.TranslateBuild;
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -183,6 +186,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -616,6 +620,11 @@ public class Act011_Main extends Base_Activity
         transList.addAll(VerificationGroupFragment.Companion.loadTranslation());
         transList.add("other_ticket_info_lbl");
         transList.add("required_by_ticket_lbl");
+
+        Map<String, String> timelineTranslate = new TranslateBuild(context)
+                .resource(EXTRACT_DIALOG_INFO_RESOURCE)
+                .listVarsKeys(() -> Arrays.asList(TimelineBlockTranslate.values()))
+                .build();
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -638,6 +647,7 @@ public class Act011_Main extends Base_Activity
         );
         //
         hmAux_Trans.putAll(formOsFragTransient);
+        hmAux_Trans.putAll(timelineTranslate);
     }
 
     /**

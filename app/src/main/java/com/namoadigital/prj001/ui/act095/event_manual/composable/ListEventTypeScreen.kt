@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act095.event_manual.composable
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,11 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.namoa_digital.namoa_library.compose.theme.NamoaTheme
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.model.trip.FSEventType
@@ -107,7 +111,13 @@ fun EventTypeListScreen(
                     .padding(top = NamoaTheme.spacing.medium)
             )
         } else {
-            ListEventsTypeComponent(eventsFiltered, translateMap, onSelected, events)
+            ListEventsTypeComponent(
+                eventsFiltered = eventsFiltered,
+                translateMap = translateMap,
+                hasFormInProcess = state.hasFormInProcess,
+                onSelected = onSelected,
+                events = events
+            )
         }
     }
 
@@ -118,6 +128,7 @@ fun EventTypeListScreen(
 private fun ListEventsTypeComponent(
     eventsFiltered: List<FSEventType>,
     translateMap: TranslateMap,
+    hasFormInProcess: Boolean,
     onSelected: (FSEventType) -> Unit,
     events: List<FSEventType>
 ) {
@@ -130,28 +141,54 @@ private fun ListEventsTypeComponent(
             style = NamoaTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(eventsFiltered) { event ->
+        return
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(eventsFiltered) { event ->
+
+            val isItemEnabled = !(hasFormInProcess && event.isWaitAllowed)
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(if (isItemEnabled) 1f else 0.55f),
+                shape = NamoaTheme.shapes.small,
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isItemEnabled)
+                        Color.White
+                    else
+                        colorResource(id = R.color.namoa_color_gray_7)
+                ),
+                enabled = isItemEnabled,
+                onClick = { onSelected(event) }
+            ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(NamoaTheme.shapes.small)
-                        .clickable { onSelected(event) }
-                        .padding(vertical = NamoaTheme.spacing.mediumSmall)
+                    modifier = Modifier.padding(
+                        vertical = NamoaTheme.spacing.mediumSmall,
+                        horizontal = NamoaTheme.spacing.small
+                    )
                 ) {
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = NamoaTheme.spacing.small),
-                        text = event.eventTypeDesc
+                        text = event.eventTypeDesc,
+                        style = NamoaTheme.typography.bodyMedium,
+                        color = if (isItemEnabled)
+                            NamoaTheme.colors.onSurface
+                        else
+                            NamoaTheme.colors.onSurfaceVariant
                     )
                 }
-                if (events.last() != event) HorizontalDivider()
+            }
+
+            if (events.last() != event) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = NamoaTheme.spacing.medium)
+                )
             }
         }
     }
 }
+
 

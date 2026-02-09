@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act011.finish_os.di.modules
 
 import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.translate.TranslateMap
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.EXTRACT_DIALOG_INFO_RESOURCE
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZED_OS_MACHINE_STOPPED_SWITCH_TTL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_MAINTENANCE
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_FINALIZED_OS_OPTION_STOPPED_BY_THIRD_PARTY
@@ -37,6 +39,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_SELECT_BA
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_SELECT_BACKUP_SERIAL_HELP_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.DIALOG_SELECT_BACKUP_SERIAL_HINT
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
+import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.FORM_OS_INFO_START_DATE_FUTURE_ERROR_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.INITIAL_SERIAL_STATE_DATE_LBL
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.INITIAL_SERIAL_STATE_MAINTENANCE_OPT
 import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.INITIAL_SERIAL_STATE_NO_STOPPED_OPT
@@ -68,8 +71,6 @@ object FinishOsTranslateModule {
     fun providesFinishOsTranslate(
         translateBuild: TranslateBuild
     ): TranslateMap {
-
-        
         val list = mutableListOf(
             DIALOG_FINALIZE_FORM_SO_TTL,
             INITIAL_SERIAL_STATE_TTL,
@@ -97,6 +98,7 @@ object FinishOsTranslateModule {
             DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL,
             DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL,
             FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL,
+            FORM_OS_INFO_START_DATE_FUTURE_ERROR_LBL,
             DIALOG_NOT_FINALIZE_INFO_LBL,
             DIALOG_NOT_FINALIZE_DECIDE_PLANNING_LBL,
             DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL,
@@ -116,10 +118,22 @@ object FinishOsTranslateModule {
             DIALOG_FINALIZE_FORM_OS_DIALOG_CLOSE_CONFIRM_MSG,
         )
 
-        return translateBuild
+        val mutable = mutableMapOf<String, String>()
+
+        val translate = translateBuild
             .resource(ACT011)
             .listVars(list)
             .build()
+
+        val timelineTranslate = translateBuild
+            .resource(EXTRACT_DIALOG_INFO_RESOURCE)
+            .listVarsKeys { TimelineBlockTranslate.entries }
+            .build()
+
+        mutable.putAll(translate)
+        mutable.putAll(timelineTranslate)
+
+        return mutable
     }
 
 }

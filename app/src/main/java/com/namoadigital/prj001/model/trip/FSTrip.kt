@@ -49,6 +49,7 @@ data class FSTrip(
     val hasSyncRequired = syncRequired == 1
     val isRequiredFleetData = requireFleetData == 1
     val isRequireDestinationFleetData = requireDestinationFleetData == 1
+    val tripId = "$tripPrefix.$tripCode"
 
     fun setPk() {
         //

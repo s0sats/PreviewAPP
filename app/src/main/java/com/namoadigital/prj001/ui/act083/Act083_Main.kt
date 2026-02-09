@@ -33,6 +33,7 @@ import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.di.EventTranslate
 import com.namoadigital.prj001.core.translate.textOf
 import com.namoadigital.prj001.core.trip.domain.usecase.CheckStatusForReadOnlyUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_ProductDao
@@ -135,6 +136,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     @Inject
     lateinit var getEventManualUseCase: GetEventManualUseCase
 
+    @Inject
+    lateinit var getEventUseCase: GetEventActiveUseCase
+
     @EventTranslate
     @Inject
     lateinit var translateBuild: TranslateBuild
@@ -193,7 +197,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase(),
             ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build(),
             FlowTicketAccessUseCase.Companion.Factory(context).build(),
-            getEventManualUseCase
+            getEventManualUseCase,
+            getEventUseCase
         )
     }
 

@@ -11,6 +11,8 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsCreateFormOsStructureUseCase.Input
 import com.namoadigital.prj001.core.form_os.domain.usecase.GeOsSaveSerialStructureUseCase
+import com.namoadigital.prj001.core.translate.TranslateBuild
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
@@ -54,6 +56,7 @@ import com.namoadigital.prj001.sql.MdOrderTypeSql_001
 import com.namoadigital.prj001.sql.MdOrderTypeSql_002
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.EXTRACT_DIALOG_INFO_RESOURCE
 import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act087.model.InitialSerialState
 import com.namoadigital.prj001.ui.act087.model.LastMeasureDataConsider
@@ -176,7 +179,12 @@ class Act087MainPresenter(
     }
 
     override fun getTranslation(): HMAux {
-        return hmAuxTrans
+        val translate = TranslateBuild(context)
+            .resource(EXTRACT_DIALOG_INFO_RESOURCE)
+            .listVarsKeys { TimelineBlockTranslate.entries }
+            .build()
+
+        return hmAuxTrans.apply { putAll(translate) }
     }
 
     override fun validateBundleParams(): Boolean {

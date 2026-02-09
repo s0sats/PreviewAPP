@@ -15,7 +15,8 @@ data class TripState(
     var updateTripScreen: Boolean = false,
     val listExtract: List<Extract<*>>? = null,
     val progressState: ProgressState = ProgressState.Hide(true),
-    val endTripDate: String? = trip?.doneDate
+    val endTripDate: String? = trip?.doneDate,
+    val hasFormInProcess: Boolean = false
 ) {
     val containsEvent = event != null
     val tripStatus = trip?.tripStatus?.toTripStatus()

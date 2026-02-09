@@ -404,6 +404,7 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                     btnSaveToStyleFilled(this)
 
                     btnOpenFormOs.apply {
+                        isEnabled = viewModel.state.value.event == null
                         text =
                             if (model.custom_form_status == ConstantBase.SYS_STATUS_WAITING_SYNC) {
                                 hmAuxTranslate[TRIP_ACTION_FORM_OS_BTN]
@@ -523,6 +524,11 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                 }
                 //
                 btnRightAction.setOnClickListener {
+                    if(viewModel.state.value.containsEvent){
+                        showDialogEventInProcess()
+                        return@setOnClickListener
+                    }
+
                     showConfirmDialog(
                         hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_TTL],
                         hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_MSG],

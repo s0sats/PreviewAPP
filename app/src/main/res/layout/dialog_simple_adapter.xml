@@ -37,15 +37,43 @@
             app:layout_constraintTop_toTopOf="@+id/tv_title"
             app:tint="@color/m3_namoa_onSurface" />
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"
+            app:cardBackgroundColor="#F4A6A6"
+            android:visibility="gone"
+            android:layout_marginVertical="8dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/edittext_filter_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+
+            <TextView
+                android:id="@+id/tv_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Você não possui usuários cadastrados."
+                android:textAlignment="center"
+                android:padding="8dp"
+                android:textColor="@color/m3_namoa_onSurface"
+                style="@style/TextAppearance.Material3.BodySmall"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edittext_filter_layout"
             style="@style/NamoaTheme3.TextInputLayout.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="8dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/card_warning"
             app:placeholderTextColor="@color/m3_namoa_onSurface"
             app:startIconDrawable="@drawable/ic_search_black_24dp"
             app:startIconTint="@color/m3_namoa_onSurfaceVariant"
@@ -62,6 +90,8 @@
                 app:mNFC="false"
                 app:mOCR="false" />
         </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <TextView
             android:id="@+id/tv_empty_list"

@@ -11,6 +11,7 @@ import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.preference.CurrentTripPrefModel
 import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import kotlinx.coroutines.flow.Flow
 
 interface TripRepository {
@@ -75,5 +76,8 @@ interface TripRepository {
         tripPrefix: Int,
         tripCode: Int,
     ): List<FSTripUser>
+
+    fun getTripConflict(startDate: String, endDate: String?) : EventConflict?
+    fun getLastDateFromTrip(tripPrefix: Int, tripCode: Int) : String?
 
 }

@@ -5,8 +5,9 @@ import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.MeMeasureTp
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.measure_tp.MeasureTpRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class GetMeasureTpByCode(
+class GetMeasureTpByCode @Inject constructor(
     private val repository: MeasureTpRepository
 ) : UseCases<Int, MeMeasureTp?> {
 

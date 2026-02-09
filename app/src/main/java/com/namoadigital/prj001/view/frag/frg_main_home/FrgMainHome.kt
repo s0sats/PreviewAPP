@@ -18,7 +18,6 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act005MainMenuTagAdapter
-import com.namoadigital.prj001.core.domain.usecase.form_local.HasFormInProcessUseCase
 import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.translate.TranslateMap
 import com.namoadigital.prj001.core.translate.di.EventTranslate
@@ -79,9 +78,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View,
     @Inject
     lateinit var hasAccessToEventManualUseCase: AccessToEventManualUseCase
 
-    @Inject
-    lateinit var hasFormInProcessUseCase: HasFormInProcessUseCase
-
     @EventTranslate
     @Inject
     lateinit var eventTranslateBuild: TranslateBuild
@@ -100,7 +96,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View,
         mPresenter = Frg_Main_Home_Presenter(
             requireContext(),
             this,
-            hasFormInProcessUseCase
         )
         //
         loadTranslation()
@@ -144,8 +139,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View,
 
         binding.btnReport.apply {
             isVisible = true
-            isEnabled = !mPresenter.hasFormInProcess()
-            isClickable = !mPresenter.hasFormInProcess()
             text = eventTranslateMap.textOf(EventManualKey.ReportButton)
             setOnClickListener {
                 mListener?.showEditEvent(null)

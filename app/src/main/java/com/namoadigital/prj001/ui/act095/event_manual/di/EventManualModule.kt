@@ -36,7 +36,6 @@ object EventManualModule {
         fileDao = geFileDao
     )
 
-
     @Provides
     fun provideGeCustomFormRepository(
         @ApplicationContext appContext: Context,
@@ -44,6 +43,7 @@ object EventManualModule {
         dataDao: GE_Custom_Form_DataDao,
         geOsDao: GeOsDao,
     ): GeCustomFormRepository = GeCustomFormRepositoryImpl(appContext, localDao, dataDao, geOsDao)
+
 
     @Provides
     fun provideGetEventManualUseCase(

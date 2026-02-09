@@ -12,6 +12,7 @@ import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
@@ -105,6 +106,7 @@ class Act092Presenter(
     private val translateResource: TranslateResource,
     private val showProductOnFilter: Boolean,
     private val getEventManualUseCase: GetEventManualUseCase,
+    private val getEventUseCase: GetEventActiveUseCase,
 ) : Act092_Contract.Presenter {
 
     var actionSelectedPosition: Int = -1
@@ -1762,7 +1764,11 @@ class Act092Presenter(
     }
 
     override fun hasEventManual(): Boolean {
-        return getEventManualUseCase(Unit) != null
+        return when {
+            getEventManualUseCase(Unit) != null -> true
+            getEventUseCase(Unit) != null -> true
+            else -> false
+        }
     }
 
     companion object {

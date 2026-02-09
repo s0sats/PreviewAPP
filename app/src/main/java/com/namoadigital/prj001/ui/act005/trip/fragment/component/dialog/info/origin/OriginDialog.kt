@@ -8,12 +8,15 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
 import com.namoadigital.prj001.databinding.TripOriginDialogBinding
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.date.toFormattedDateAndTime
 import com.namoadigital.prj001.extensions.date.toFormattedString
 import com.namoadigital.prj001.extensions.getResourceCode
-import com.namoadigital.prj001.extensions.parseDate
+import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.setBoxStrokeColorState
 import com.namoadigital.prj001.extensions.setHintTextColor
 import com.namoadigital.prj001.extensions.showMaterialAlert
@@ -33,10 +36,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class OriginDialog constructor(
+class OriginDialog(
     private val context: Context,
     private val trip: FSTrip,
-    private val validateOriginDate: (Long, Int, Int) -> String?,
+    private val validateOriginDate: (String) -> ValidationResult,
     private val listSites: List<HMAux>,
     private val onSave: (originAux: HMAux, date: String, originOptionSelected: OriginOption) -> Unit
 ) : BaseTripDialog<TripOriginDialogBinding>(trip) {
@@ -317,34 +320,47 @@ class OriginDialog constructor(
 
 
     fun checkOriginDate(dateStart: String, hourStart: String): Boolean {
-        validateOriginDate.let { invoke ->
-            val dateError = invoke(
-                trip.customerCode,
-                trip.tripPrefix,
-                trip.tripCode,
-            )
-            //
-            binding.apply {
-                layoutErrorDate.visibility = View.GONE
-                layoutErrorHour.visibility = View.GONE
-            }
-            //
-            dateError?.let {
-                if (isDateBefore(dateError.parseDate(), "$dateStart $hourStart")) {
-                    binding.apply {
-                        layoutErrorDate.visibility = View.VISIBLE
-                        layoutErrorHour.visibility = View.VISIBLE
-                        binding.tvDateError.text =
-                            "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL]} ${it.parseDate()}"
+        val fullDate = "$dateStart $hourStart".parseFullDate()
 
-                        binding.tvHourError.text =
-                            "${hmAuxTranslate[TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL]} ${it.parseDate()}"
+        return when (val validate = validateOriginDate(fullDate)) {
+            is ValidationResult.Conflict -> {
+                binding.apply {
+                    layoutErrorDate.visibility = View.VISIBLE
+                    layoutErrorHour.visibility = View.VISIBLE
+                    tvDateError.text = hmAuxTranslate.textOf(
+                        key = validate.message,
+                        values = validate.message.placeholders.map { placeholder ->
+                            validate.parameters[placeholder] ?: ""
+                        }
+                    )
+                    tvHourError.text = tvDateError.text
+                    edittextOriginDateLayout.apply {
+                        setHintTextColor(context, R.drawable.edittext_error)
+                        setBoxStrokeColorState(context, R.drawable.edittext_error)
                     }
-                    //
-                    return false
+                    edittextOriginHourLayout.apply {
+                        setHintTextColor(context, R.drawable.edittext_error)
+                        setBoxStrokeColorState(context, R.drawable.edittext_error)
+                    }
                 }
+                false
             }
-            return true
+
+            is ValidationResult.Success -> {
+                binding.apply {
+                    layoutErrorDate.visibility = View.GONE
+                    layoutErrorHour.visibility = View.GONE
+                    edittextOriginDateLayout.apply {
+                        setHintTextColor(context, R.drawable.edittext_theme)
+                        setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                    }
+                    edittextOriginHourLayout.apply {
+                        setHintTextColor(context, R.drawable.edittext_theme)
+                        setBoxStrokeColorState(context, R.drawable.edittext_theme)
+                    }
+                }
+                true
+            }
         }
     }
 
@@ -397,6 +413,8 @@ class OriginDialog constructor(
                 TripTranslate.SAVE,
                 TripTranslate.CANCEL,
                 TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL,
+                TimelineBlockTranslate.ERROR_CONFLICT_WITH_EVENT.key,
+                TimelineBlockTranslate.ERROR_CONFLICT_WITH_FORM_LBL.key,
             ).let { list ->
                 return TranslateResource(
                     context,

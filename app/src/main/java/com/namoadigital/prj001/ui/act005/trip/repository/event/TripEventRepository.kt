@@ -7,6 +7,7 @@ import com.namoadigital.prj001.model.trip.FSEventType
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import kotlinx.coroutines.flow.Flow
 
 interface TripEventRepository {
@@ -41,4 +42,8 @@ interface TripEventRepository {
         tripPrefix: Int,
         tripCode: Int
     ): List<FSTripEvent>
+
+    fun getTripEventConflict(dateStart: String, dateEnd: String?, eventSeq: Int, validateStartDateEquals: Boolean = false) : EventConflict?
+
+    fun getEventActive() : FSTripEvent?
 }

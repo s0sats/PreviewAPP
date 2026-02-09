@@ -443,6 +443,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         return custom_form_datas;
     }
 
+
     @Override
     public List<HMAux> query_HM(String s_query) {
         ArrayList<HMAux> custom_form_datas = new ArrayList<>();
@@ -466,70 +467,137 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         return custom_form_datas;
     }
 
-    public EventConflict getConflictingForm(long customerCode, @NonNull String startDate, @Nullable String endDate) {
+    public EventConflict getConflictingForm(
+            long customerCode,
+            @NonNull String startDate,
+            @Nullable String endDate,
+            boolean validRange,
+            @Nullable Integer formData,
+            @Nullable Integer typeCode,
+            @Nullable Integer formCode,
+            @Nullable Integer formVersion,
+            boolean validateStartDateEquals
+    ) {
+        String query = "";
+        String formQuery = "";
+        if(formData != null && typeCode != null && formCode != null && formVersion != null){
+            formQuery += " AND NOT( c." + CUSTOM_FORM_DATA + " = " + formData +
+                    " AND c." + CUSTOM_FORM_TYPE + " = " + typeCode +
+                    " AND c." + CUSTOM_FORM_CODE + " = " + formCode +
+                    " AND c." + CUSTOM_FORM_VERSION + " = " + formVersion + ") ";
+        }
 
-        // Conflito de início
-        List<GE_Custom_Form_Data> startConflict = query(
-                "SELECT * FROM " + TABLE +
-                        " WHERE " + CUSTOMER_CODE + " = " + customerCode +
-                        " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+        String validationStart = validateStartDateEquals ? "<" : "<=";
+        String validationEnd = validateStartDateEquals ? ">" : ">=";
+
+
+// Conflito de início - evento que se sobrepõe ao início
+        List<EventConflict> startConflict = queryObject(
+                "SELECT t." + DATE_START + ", CASE WHEN t." + DATE_END + " GLOB '*1900-01-01*' THEN null ELSE t." + DATE_END + " end " + DATE_END + ", c."+GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC
+                        +" FROM " + TABLE + " t" +
+                        " INNER JOIN " + GE_Custom_Form_LocalDao.TABLE + " c ON t." + CUSTOMER_CODE + " = c."+ GE_Custom_Form_LocalDao.CUSTOMER_CODE +
+                        " AND t." + CUSTOM_FORM_DATA + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA +
+                        " AND t." + CUSTOM_FORM_TYPE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE +
+                        " AND t." + CUSTOM_FORM_CODE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE +
+                        " AND t." + CUSTOM_FORM_VERSION + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION +
+                        " WHERE t." + CUSTOMER_CODE + " = " + customerCode +
+                        " AND t." + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
                         ConstantBaseApp.SYS_STATUS_DONE + "', '" +
                         ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
-                        " AND " + DATE_START + " <= '" + startDate + "'" +
-                        " AND (" + DATE_END + " IS NULL OR " + DATE_END + " >= '" + startDate + "')" +
-                        " ORDER BY " + DATE_START + " ASC LIMIT 1"
+                        formQuery +
+                        " AND strftime('%s', t." + DATE_START + ") "+ validationStart +" strftime('%s', '" + startDate + "')" +
+                        " AND (" +
+                        "   t." + DATE_END + " IS NULL " +
+                        "   OR t." + DATE_END + " < '1900-01-02' " +
+                        "   OR strftime('%s', t." + DATE_END + ") > strftime('%s', '" + startDate + "')" +
+                        ")" +
+                        query +
+                        " ORDER BY t." + DATE_START + " ASC LIMIT 1",
+                cursor -> {
+                    return new EventConflict(
+                            cursor.getString(cursor.getColumnIndex(DATE_START)),
+                            cursor.getString(cursor.getColumnIndex(DATE_END)),
+                            EventConflictType.START_OVERLAP,
+                            cursor.getString(cursor.getColumnIndex(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC))
+                    );
+                }
         );
 
         if (!startConflict.isEmpty()) {
-            GE_Custom_Form_Data form = startConflict.get(0);
-            return new EventConflict(
-                    form.getDate_start(),
-                    form.getDate_end(),
-                    EventConflictType.START_OVERLAP
-            );
+            return startConflict.get(0);
         }
 
-        //  Conflito de término
-        if (endDate != null) {
-            List<GE_Custom_Form_Data> endConflict = query(
-                    "SELECT * FROM " + TABLE +
-                            " WHERE " + CUSTOMER_CODE + " = " + customerCode +
-                            " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+//  Conflito de término
+        if(endDate != null && !endDate.isEmpty()) {
+            List<EventConflict> endConflict = queryObject(
+                    "SELECT t." + DATE_START + ", CASE WHEN t." + DATE_END + " GLOB '*1900-01-01*' THEN null ELSE t." + DATE_END + " end " + DATE_END + ", c."+GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC
+                            + " FROM " + TABLE + " t" +
+                            " INNER JOIN " + GE_Custom_Form_LocalDao.TABLE + " c ON t." + CUSTOMER_CODE + " = c." + GE_Custom_Form_LocalDao.CUSTOMER_CODE +
+                            " AND t." + CUSTOM_FORM_DATA + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA +
+                            " AND t." + CUSTOM_FORM_TYPE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE +
+                            " AND t." + CUSTOM_FORM_CODE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE +
+                            " AND t." + CUSTOM_FORM_VERSION + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION +
+                            " WHERE t." + CUSTOMER_CODE + " = " + customerCode +
+                            " AND t." + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
                             ConstantBaseApp.SYS_STATUS_DONE + "', '" +
                             ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
-                            " AND " + DATE_START + " <= '" + endDate + "'" +
-                            " AND (" + DATE_END + " IS NULL OR " + DATE_END + " >= '" + endDate + "')" +
-                            " ORDER BY " + DATE_START + " ASC LIMIT 1"
+                            formQuery +
+                            " AND strftime('%s', t." + DATE_START + ") < strftime('%s', '" + endDate + "')" +
+                            " AND (" +
+                            "   t." + DATE_END + " IS NULL " +
+                            "   OR t." + DATE_END + " < '1900-01-02' " +
+                            "   OR strftime('%s', t." + DATE_END + ") "+ validationEnd +" strftime('%s', '" + endDate + "')" +
+                            ")" +
+                            query +
+                            " ORDER BY t." + DATE_START + " ASC LIMIT 1",
+                    cursor -> {
+                        return new EventConflict(
+                                cursor.getString(cursor.getColumnIndex(DATE_START)),
+                                cursor.getString(cursor.getColumnIndex(DATE_END)),
+                                EventConflictType.END_OVERLAP,
+                                cursor.getString(cursor.getColumnIndex(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC))
+                        );
+                    }
             );
 
             if (!endConflict.isEmpty()) {
-                GE_Custom_Form_Data form = endConflict.get(0);
-                return new EventConflict(
-                        form.getDate_start(),
-                        form.getDate_end(),
-                        EventConflictType.END_OVERLAP
-                );
+                return endConflict.get(0);
             }
+        }
 
-            //  O formulário atual engloba completamente outro
-            List<GE_Custom_Form_Data> rangeConflict = query(
-                    "SELECT * FROM " + TABLE +
-                            " WHERE " + CUSTOMER_CODE + " = " + customerCode +
-                            " AND " + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
+// A data atual engloba completamente outro
+        if(validRange) {
+            List<EventConflict> rangeConflict = queryObject(
+                    "SELECT t." + DATE_START + ", CASE WHEN t." + DATE_END + " GLOB '*1900-01-01*' THEN null ELSE t." + DATE_END + " end " + DATE_END + ", c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC
+                            + " FROM " + TABLE + " t" +
+                            " INNER JOIN " + GE_Custom_Form_LocalDao.TABLE + " c ON t." + CUSTOMER_CODE + " = c." + GE_Custom_Form_LocalDao.CUSTOMER_CODE +
+                            " AND t." + CUSTOM_FORM_DATA + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA +
+                            " AND t." + CUSTOM_FORM_TYPE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE +
+                            " AND t." + CUSTOM_FORM_CODE + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE +
+                            " AND t." + CUSTOM_FORM_VERSION + " = c." + GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION +
+                            " WHERE t." + CUSTOMER_CODE + " = " + customerCode +
+                            " AND t." + CUSTOM_FORM_STATUS + " IN ('" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "', '" +
                             ConstantBaseApp.SYS_STATUS_DONE + "', '" +
                             ConstantBaseApp.SYS_STATUS_IN_PROCESSING + "')" +
-                            " AND " + DATE_START + " >= '" + startDate + "'" +
-                            " AND (" + DATE_END + " IS NULL OR " + DATE_END + " <= '" + endDate + "')" +
-                            " ORDER BY " + DATE_START + " ASC LIMIT 1"
+                            formQuery +
+                            " AND strftime('%s', t." + DATE_START + ") >= strftime('%s', '" + startDate + "')" +
+                            " AND t." + DATE_END + " IS NOT NULL " +
+                            " AND t." + DATE_END + " >= '1900-01-02' " +
+                            " AND strftime('%s', t." + DATE_END + ") <= strftime('%s', '" + endDate + "')"
+                            + query +
+                            " ORDER BY t." + DATE_START + " ASC LIMIT 1",
+                    cursor -> {
+                        return new EventConflict(
+                                cursor.getString(cursor.getColumnIndex(DATE_START)),
+                                cursor.getString(cursor.getColumnIndex(DATE_END)),
+                                EventConflictType.RANGE_OVERLAP,
+                                cursor.getString(cursor.getColumnIndex(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC))
+                        );
+                    }
             );
 
             if (!rangeConflict.isEmpty()) {
-                GE_Custom_Form_Data form = rangeConflict.get(0);
-                return new EventConflict(
-                        form.getDate_start(),
-                        form.getDate_end(),
-                        EventConflictType.RANGE_OVERLAP
-                );
+                return rangeConflict.get(0);
             }
         }
 

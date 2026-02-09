@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog
 
 import androidx.lifecycle.viewModelScope
+import com.namoadigital.prj001.core.domain.usecase.form_local.HasFormInProcessUseCase
 import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.translate.di.EventTranslate
 import com.namoadigital.prj001.core.translate.textOf
@@ -31,6 +32,7 @@ class EventManualDialogViewModel @Inject constructor(
     @EventTranslate translateBuild: TranslateBuild,
     private val useCases: EventManualUseCases,
     private val validate: ValidateDateEventUseCase,
+    private val hasFormInProcess: HasFormInProcessUseCase
 ) : BaseViewModel<EventManualDialogState, EventManualDialogEvent>(
     initialState = EventManualDialogState(screensLoading = true, isLoading = true),
     translateBuild = translateBuild,
@@ -47,6 +49,8 @@ class EventManualDialogViewModel @Inject constructor(
                 )
             }
         }
+
+        hasFormInProcess()
     }
 
 
@@ -70,7 +74,8 @@ class EventManualDialogViewModel @Inject constructor(
 
             is EventManualDialogEvent.ValidateDate -> validateDate(
                 startDate = event.startDate,
-                endDate = event.endDate
+                endDate = event.endDate,
+                withWaiting = event.withWaiting
             )
 
             is EventManualDialogEvent.UpdateDialogEventState -> {
@@ -96,6 +101,7 @@ class EventManualDialogViewModel @Inject constructor(
     private fun validateDate(
         startDate: String,
         endDate: String?,
+        withWaiting: Boolean
     ) {
         viewModelScope.launch {
 
@@ -136,13 +142,14 @@ class EventManualDialogViewModel @Inject constructor(
                 return@launch
             }
 
-            val output = validate(
-                ValidateDateEventUseCase.Input(
-                    currentSeq = _uiState.value.eventData?.primaryData?.eventDaySeq ?: -1,
+            val output = if(withWaiting) validate(
+                input = ValidateDateEventUseCase.Input(
+                    currentSeq = _uiState.value.eventData?.primaryData?.eventDaySeq,
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    eventDay = _uiState.value.eventData?.primaryData?.eventDay
                 )
-            )
+            ) else null
 
             updateState {
                 when (output?.fieldWithError) {
@@ -236,6 +243,18 @@ class EventManualDialogViewModel @Inject constructor(
                     }
                 )
 
+            }
+        }
+    }
+
+
+    private fun hasFormInProcess(){
+        viewModelScope.launch {
+            val hasForm = hasFormInProcess(Unit)
+            updateState {
+                it.copy(
+                    hasFormInProcess = hasForm.isNotEmpty()
+                )
             }
         }
     }

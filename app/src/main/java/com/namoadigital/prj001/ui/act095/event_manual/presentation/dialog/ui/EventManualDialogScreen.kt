@@ -232,7 +232,7 @@ fun EventManualScreen(
                 onDateSelected = {
                     val startDate = it.fullTimeStampGMT
                     current = current.copy(startDate = startDate)
-                    onDateSelected(startDate, current.endDate)
+                    onDateSelected(startDate, if(waitAllowed) current.endDate else startDate)
                 }
             )
 

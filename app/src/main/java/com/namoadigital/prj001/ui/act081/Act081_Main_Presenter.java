@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
@@ -55,8 +56,16 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter {
     private final MD_Product_SerialDao serialDao;
 
     private final GetEventManualUseCase getEventManualUseCase;
+    private final GetEventActiveUseCase getEventUseCase;
 
-    public Act081_Main_Presenter(Act081_Main_Contract.I_View mView, Context context, HMAux hmAux_Trans, GetEventManualUseCase getEventManualUseCase) {
+
+    public Act081_Main_Presenter(
+            Act081_Main_Contract.I_View mView,
+            Context context,
+            HMAux hmAux_Trans,
+            GetEventManualUseCase getEventManualUseCase,
+            GetEventActiveUseCase getEventUseCase
+    ) {
         this.mView = mView;
         this.context = context;
         this.hmAux_Trans = hmAux_Trans;
@@ -69,6 +78,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.getEventManualUseCase = getEventManualUseCase;
+        this.getEventUseCase = getEventUseCase;
     }
 
     @Override
@@ -379,7 +389,8 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter {
 
     @Override
     public boolean hasEventManual() {
-        return getEventManualUseCase.invoke(Unit.INSTANCE) != null;
+        if(getEventManualUseCase.invoke(Unit.INSTANCE) != null) return true;
+        return getEventUseCase.invoke(Unit.INSTANCE) != null;
     }
 
 }

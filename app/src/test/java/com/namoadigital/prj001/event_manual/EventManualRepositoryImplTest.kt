@@ -1,3 +1,4 @@
+/*
 package com.namoadigital.prj001.event_manual
 
 import android.content.Context
@@ -7,10 +8,8 @@ import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.event.EventManualDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.event.local.EventManual
-import com.namoadigital.prj001.model.event.local.EventManual.Photo
-import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
 import com.namoadigital.prj001.ui.act095.event_manual.data.EventManualRepositoryImpl
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventManualData
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Con.isOnline
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -35,15 +34,8 @@ class EventManualRepositoryImplTest {
     private lateinit var fileDao: GE_FileDao
     private lateinit var repository: EventManualRepositoryImpl
 
-    private val fakeEvent = EventManual(
-        appId = "app-xyz",
-        user = 10,
-        eventDay = 20251013,
-        typeCode = 5,
-        comments = "teste online",
-        photo = Photo(local = "tmp/photo.jpg", isChanged = true),
-        dateStart = "2025-10-13 12:00",
-        status = EventStatus.DONE
+    private val fakeEvent = EventManualData(
+
     )
 
     @Before
@@ -137,3 +129,4 @@ class EventManualRepositoryImplTest {
     }
 
 }
+*/

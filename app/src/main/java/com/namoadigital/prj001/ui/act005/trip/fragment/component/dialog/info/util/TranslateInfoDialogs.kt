@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.ut
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.DialogEventTrip.Companion.DIALOG_EVENT_RETRY_IMAGE_LBL
@@ -98,13 +99,16 @@ object TranslateInfoDialogs {
             DIALOG_START_TRIP_TITLE_LBL,
             DIALOG_DATE_END_LBL,
             DIALOG_ERROR_DATE_END_TRIP_LBL,
-            DIALOG_ERROR_DATE_END_TRIP_FUTURE_LBL
+            DIALOG_ERROR_DATE_END_TRIP_FUTURE_LBL,
         ).let { list ->
+            val newList = mutableListOf<String>()
+            newList.addAll(list)
+            newList.addAll(TimelineBlockTranslate.entries.map { it.key })
             return TranslateResource(
                 context,
                 TripBaseFragment.MODULE_CODE,
                 context.getResource()
-            ).setLanguage(list)
+            ).setLanguage(newList)
         }
 
     }

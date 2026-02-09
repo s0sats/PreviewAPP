@@ -22,7 +22,9 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.TranslateBuild
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
 import com.namoadigital.prj001.databinding.FrgMainFooterBinding
 import com.namoadigital.prj001.databinding.FrgMainHeaderBinding
 import com.namoadigital.prj001.databinding.FrgTripDestinationInfoBinding
@@ -208,6 +210,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.uti
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_DATE_END_TRIP_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_HOUR_HINT
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.EXTRACT_DIALOG_INFO_RESOURCE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.PROCESS_DIALOG_START_DATE_TITLE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.ReportBottomSheet
@@ -252,6 +255,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFrag
 import com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment.Companion.ALERT_GPS_POSITION_NOT_FOUND_TTL
 import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_CONFIRM_TRANSIT_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_CONFIRM_TRANSIT_TRIP_TTL
+import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_WAITING_MINUTE_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination.TripWaitingDestinationFragment.Companion.ALERT_CONFIRM_WAITING_DESTINATION_TRIP_MSG
 import com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination.TripWaitingDestinationFragment.Companion.ALERT_CONFIRM_WAITING_DESTINATION_TRIP_TTL
 import com.namoadigital.prj001.ui.act005.trip.util.ProgressState
@@ -290,9 +294,11 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
     var dialogActive: BaseTripDialog<*>? = null
     private lateinit var bottomSheet: ReportBottomSheet
+
     private val tripReceiver by lazy {
         TripLocationReceiver()
     }
+
     val hmAuxTranslate: HMAux
         get() = loadingTranslate()
 
@@ -680,8 +686,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             dialogActive = OriginDialog(
                 requireContext(),
                 trip,
-                validateOriginDate = { customerCode, tripPrefix, tripCode ->
-                    viewModel.validateOriginDate(customerCode, tripPrefix, tripCode)
+                validateOriginDate = { newDate ->
+                    viewModel.validateOriginDate(newDate)
                 },
                 viewModel.getListSites(),
                 onSave = { originAux, date, option ->
@@ -803,6 +809,7 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
                 context = requireContext(),
                 trip = viewModel.state.value.trip!!,
                 source = viewModel.getListEventType(),
+                hasFormInProcess = viewModel.state.value.hasFormInProcess,
                 osSelectType = { eventType ->
                     callEventTypeFormDialog(eventType, null, false)
                 },
@@ -844,8 +851,8 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
 
                     viewModel.updateEvent(event, tripWsProgress)
                 },
-                checkEventIntersectionDate = { startDateInMilis, endDateInMilis, tripEvent, waiting ->
-                    viewModel.getEventError(startDateInMilis, endDateInMilis, tripEvent, waiting)
+                checkEventIntersectionDate = { startDateInMilis, endDateInMilis, seq, waiting ->
+                    viewModel.getEventError(startDateInMilis, endDateInMilis, seq, waiting)
                 }
             )
             dialogActive?.show()
@@ -1315,6 +1322,16 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
         }.launchIn(lifecycleScope)
     }
 
+    fun showDialogEventInProcess() {
+        showConfirmDialog(
+            hmAuxTranslate[ALERT_CONTAINS_EVENT_TTL],
+            hmAuxTranslate[ALERT_CONTAINS_EVENT_MSG],
+            0,
+            onConfirm = {}
+        )
+    }
+
+
     private fun loadingTranslate(): HMAux {
         listOf(
             SAVE,
@@ -1492,13 +1509,21 @@ abstract class TripBaseFragment<BINDING : ViewBinding> : BaseFragment(), TripInt
             DIALOG_HOUR_HINT,
             DIALOG_ERROR_FUTURE_DATE,
             DIALOG_DATE_START_EXCEEDED_TRIP_LBL,
-            TRIP_DESTINATION_DELETE_BTN
+            TRIP_DESTINATION_DELETE_BTN,
+            ALERT_WAITING_MINUTE_MSG
         ).let { list ->
             return TranslateResource(
                 requireContext(),
                 MODULE_CODE,
                 requireContext().getTripResourceCode()
-            ).setLanguage(list)
+            ).setLanguage(list).apply {
+                val timelineTranslate = TranslateBuild(requireContext())
+                    .resource(EXTRACT_DIALOG_INFO_RESOURCE)
+                    .listVarsKeys { TimelineBlockTranslate.entries }
+                    .build()
+
+                this.putAll(timelineTranslate)
+            }
         }
     }
 

@@ -154,7 +154,7 @@ private fun DialogFinishOS(
         topBar = {
             FinishAppBar(
                 title = translateMap.textOf(DIALOG_FINALIZE_FORM_SO_TTL),
-                onBackPressed = { ->
+                onBackPressed = {
                     ToolBox.alertMSG_YES_NO(
                         context,
                         uiState.translateMap.textOf(
@@ -326,14 +326,16 @@ fun FinishScreen(
         viewModel.validateForm(
             finishValid.copy(
                 validAfterMachineStopped = uiState.data?.showOptionsStopped ?: false
-            )
+            ),
+            editedField = finishValid.infoOs.editedField,
+            isReadOnly = isReadOnly
         )
     }
 
     Column(
         modifier = modifier,
     ) {
-        if (uiState.data!!.showBalloonVerify == true && !isReadOnly) {
+        if (uiState.data!!.showBalloonVerify && !isReadOnly) {
             ShowBallon(
                 modifier = Modifier.padding(NamoaTheme.spacing.medium),
                 text = uiState.translateMap.textOf(DIALOG_FINALIZE_OS_EMPTY_VERIFY_LBL)
@@ -412,12 +414,15 @@ fun FinishScreen(
             infoOs = uiState.data.infoOs,
             isReadOnly = isReadOnly,
             componentError = if (componentError.containsKey(FinishValidation.Component.InfoOS)) componentError[FinishValidation.Component.InfoOS] else null,
-            onInitialDateTimeSelected = { date ->
-                finishValid = finishValid.copy(infoOs = finishValid.infoOs.copy(dateStart = date))
+            onInitialDateTimeSelected = { start, end, editedField ->
+                val updatedValid = finishValid.copy(infoOs = finishValid.infoOs.copy(
+                    dateStart = start,
+                    dateEnd = end,
+                    editedField = editedField
+                ))
+
+                finishValid = updatedValid
             },
-            onFinalDateTimeSelected = { date ->
-                finishValid = finishValid.copy(infoOs = finishValid.infoOs.copy(dateEnd = date))
-            }
         )
 
         Spacer(modifier = Modifier.height(NamoaTheme.spacing.large))

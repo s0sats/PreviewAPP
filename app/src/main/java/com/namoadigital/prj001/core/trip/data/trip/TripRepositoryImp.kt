@@ -66,6 +66,7 @@ import com.namoadigital.prj001.ui.act005.trip.di.model.OriginSites
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.origin.enums.OriginType
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toOriginExtract
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toStartTripExtract
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -1011,5 +1012,19 @@ class TripRepositoryImp @Inject constructor(
             tripPrefix = tripPrefix,
             tripCode = tripCode
         ) ?: emptyList()
+    }
+
+    override fun getTripConflict(
+        startDate: String,
+        endDate: String?
+    ): EventConflict? {
+        return dao.getConflict(
+            startDate = startDate,
+            endDate = endDate
+        )
+    }
+
+    override fun getLastDateFromTrip(tripPrefix: Int, tripCode: Int): String? {
+        return dao.getMaxDateSimple(tripPrefix, tripCode)
     }
 }

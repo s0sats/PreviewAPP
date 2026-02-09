@@ -18,6 +18,8 @@ import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.helper.EventValidation
 import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -653,6 +655,116 @@ class FSTripEventDao(
             AND $TRIP_CODE = '$tripCode'
         """.trimIndent()
         )
+    }
+
+    fun getEventConflict(
+        tripPrefix: Int,
+        tripCode: Int,
+        newStart: String,
+        newEnd: String?,
+        eventSeq: Int,
+        validateStartDateEquals: Boolean = false
+    ): EventConflict? {
+
+        // Cláusula para ignorar eventos de espera
+        val waitAllowedFilter = """
+            JOIN ${FSEventTypeDao.TABLE} fet
+              ON fet.${FSEventTypeDao.EVENT_TYPE_CODE} = em.$EVENT_TYPE_CODE
+             AND fet.${WAIT_ALLOWED} = 1
+    """.trimIndent()
+
+        val validationStart = if(validateStartDateEquals) "<" else "<="
+        val validationEnd = if(validateStartDateEquals) ">" else ">="
+
+
+        // Conflito de início
+        val startOverlap = query(
+            """
+        SELECT * FROM $TABLE em
+        $waitAllowedFilter
+        WHERE em.$TRIP_PREFIX = '$tripPrefix'
+        AND em.$TRIP_CODE = '$tripCode'
+        AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+        AND em.$EVENT_SEQ != '$eventSeq'
+        AND strftime('%s', $EVENT_START) $validationStart strftime('%s', '$newStart')
+        AND (em.$EVENT_END IS NULL OR strftime('%s', em.$EVENT_END) > strftime('%s', '$newStart'))
+        LIMIT 1
+    """.trimIndent()
+        ).firstOrNull()
+
+        if (startOverlap != null) {
+            return EventConflict(
+                dateStart = startOverlap.eventStart,
+                dateEnd = startOverlap.eventEnd,
+                type = EventConflictType.START_OVERLAP,
+                description = startOverlap.eventTypeDesc
+            )
+        }
+
+        // Conflito de término
+        if (newEnd != null) {
+            val endOverlap = query(
+                """
+            SELECT * FROM $TABLE em
+            $waitAllowedFilter
+            WHERE em.$TRIP_PREFIX = '$tripPrefix'
+            AND em.$TRIP_CODE = '$tripCode'
+            AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+            AND em.$EVENT_SEQ != '$eventSeq'
+            AND strftime('%s', em.$EVENT_START) < strftime('%s', '$newEnd')
+            AND (em.$EVENT_END IS NULL OR strftime('%s', em.$EVENT_END) $validationEnd strftime('%s', '$newEnd'))
+            LIMIT 1
+        """.trimIndent()
+            ).firstOrNull()
+
+            if (endOverlap != null) {
+                return EventConflict(
+                    dateStart = endOverlap.eventStart,
+                    dateEnd = endOverlap.eventEnd,
+                    type = EventConflictType.END_OVERLAP,
+                    description = endOverlap.eventTypeDesc
+                )
+            }
+
+            // O evento atual engloba completamente outro evento
+            val rangeOverlap = query(
+                """
+            SELECT * FROM $TABLE em
+            $waitAllowedFilter
+            WHERE em.$TRIP_PREFIX = '$tripPrefix'
+            AND em.$TRIP_CODE = '$tripCode'
+            AND em.$EVENT_STATUS != '${EventStatus.CANCELLED.name}'
+            AND em.$EVENT_SEQ != '$eventSeq'
+            AND strftime('%s', em.$EVENT_START) >= strftime('%s', '$newStart')
+            AND strftime('%s', em.$EVENT_END) <= strftime('%s', '$newEnd')
+            LIMIT 1
+        """.trimIndent()
+            ).firstOrNull()
+
+            if (rangeOverlap != null) {
+                return EventConflict(
+                    dateStart = rangeOverlap.eventStart,
+                    dateEnd = rangeOverlap.eventEnd,
+                    type = EventConflictType.RANGE_OVERLAP,
+                    description = rangeOverlap.eventTypeDesc
+                )
+            }
+        }
+
+        return null
+    }
+
+
+    fun hasEventByTrip(
+        prefix: Int,
+        code: Int
+    ): FSTripEvent? {
+        return query("""
+            SELECT * FROM $TABLE
+            WHERE $TRIP_PREFIX = '$prefix'
+            AND $TRIP_CODE = '$code' 
+            AND $EVENT_STATUS = '${EventStatus.WAITING.name}'
+        """.trimIndent()).firstOrNull()
     }
 
     companion object {

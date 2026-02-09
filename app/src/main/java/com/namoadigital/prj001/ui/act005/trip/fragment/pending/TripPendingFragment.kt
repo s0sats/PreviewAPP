@@ -101,8 +101,7 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                     }
                     //
                     llFooter.apply {
-                        val isEnable =
-                            pendingViewModel.checkStartTrip(it, tripState.destination)
+                        val isEnable = pendingViewModel.checkStartTrip(it, tripState.destination)
                         btnRightAction.isEnabled = isEnable
                         btnFilledRightAction.isEnabled = isEnable
                     }
@@ -228,6 +227,11 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
             //
             llFooter.apply {
                 btnLeftAction.setOnClickListener {
+                    if(viewModel.state.value.containsEvent){
+                        showDialogEventInProcess()
+                        return@setOnClickListener
+                    }
+
                     context?.showMaterialAlert(
                         title = hmAuxTranslate[TripTranslate.ALERT_ABORT_TRIP_TTL] ?: "",
                         msg = hmAuxTranslate[TripTranslate.ALERT_ABORT_TRIP_MSG] ?: "",
@@ -263,6 +267,11 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                 }
                 //
                 btnRightAction.setOnClickListener {
+                    if(viewModel.state.value.containsEvent){
+                        showDialogEventInProcess()
+                        return@setOnClickListener
+                    }
+
                     showConfirmDialog(
                         hmAuxTranslate[ALERT_CONFIRM_START_TRIP_TTL],
                         hmAuxTranslate[ALERT_CONFIRM_START_TRIP_MSG],
@@ -273,6 +282,12 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
                 }
                 //
                 btnFilledRightAction.setOnClickListener {
+
+                    if(viewModel.state.value.containsEvent){
+                        showDialogEventInProcess()
+                        return@setOnClickListener
+                    }
+
                     showConfirmDialog(
                         hmAuxTranslate[ALERT_CONFIRM_START_TRIP_TTL],
                         hmAuxTranslate[ALERT_CONFIRM_START_TRIP_MSG],
@@ -289,6 +304,7 @@ class TripPendingFragment : TripBaseFragment<FrgPendingTripBinding>() {
             }
         }
     }
+
 
     private fun startTripClickListener() {
         val trip = viewModel.state.value.trip

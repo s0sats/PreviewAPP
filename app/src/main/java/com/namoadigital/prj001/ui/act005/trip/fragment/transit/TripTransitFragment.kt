@@ -86,6 +86,23 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
             }
             //
             llFooter.btnFilledRightAction.setOnClickListener {
+                if(viewModel.state.value.containsEvent){
+                    showDialogEventInProcess()
+                    return@setOnClickListener
+                }
+
+                val hasConflict = viewModel.validateConfirmArrivedDestination()
+
+                if(hasConflict){
+                    showConfirmDialog(
+                        title = hmAuxTranslate[ALERT_CONFIRM_TRANSIT_TRIP_TTL],
+                        message = hmAuxTranslate[ALERT_WAITING_MINUTE_MSG],
+                        onConfirm = {},
+                        negBtn = 0
+                    )
+                    return@setOnClickListener
+                }
+
                 showConfirmDialog(
                     hmAuxTranslate[ALERT_CONFIRM_TRANSIT_TRIP_TTL],
                     hmAuxTranslate[ALERT_CONFIRM_TRANSIT_TRIP_MSG],
@@ -117,5 +134,6 @@ class TripTransitFragment : TripBaseFragment<FrgTransitTripBinding>() {
     companion object {
         const val ALERT_CONFIRM_TRANSIT_TRIP_TTL = "alert_confirm_transit_trip_ttl"
         const val ALERT_CONFIRM_TRANSIT_TRIP_MSG = "alert_confirm_transit_trip_msg"
+        const val ALERT_WAITING_MINUTE_MSG = "alert_waiting_minute_msg"
     }
 }

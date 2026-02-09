@@ -76,10 +76,11 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
 
             this.btnNewTrip.apply {
                 val hasEventManual = homeViewModel.hasEventManual()
-                isEnabled = !hasEventManual
+                val hasFormInProcess = homeViewModel.hasFormInProcess()
+                val btnEnabled = !(hasEventManual || hasFormInProcess)
+                isEnabled = btnEnabled
 
-                val color =
-                    if (hasEventManual) android.R.color.darker_gray else R.color.m3_namoa_primary
+                val color = if (btnEnabled) R.color.m3_namoa_primary  else android.R.color.darker_gray
 
                 backgroundTintList = ResourcesCompat.getColorStateList(resources, color, null)
 

@@ -21,6 +21,10 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.GenericSerialListDialog
+import com.namoadigital.prj001.core.blockchain.ValidateTimelineBlockUseCase
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.TimelineValidationAction
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
@@ -51,10 +55,13 @@ import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
+import dagger.hilt.android.AndroidEntryPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
+import javax.inject.Inject
 import kotlin.math.ceil
 
+@AndroidEntryPoint
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
 
     private val PARAM_IS_CREATION_OS = "PARAM_IS_CREATION_OS"
@@ -85,6 +92,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
     private var initialSerialState: InitialSerialState? = null
+
+    @Inject
+    lateinit var validateTimelineBlockUseCase: ValidateTimelineBlockUseCase
 
     //Var usada somente na criação, se isso mudar, deve ser revisto sua inicialização.
     private val formRequiresGPS: Boolean by lazy {
@@ -627,6 +637,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
 
+    override fun updateByValidateResult(action: ValidationResult) {
+
+    }
+
     private fun hasBarcodeSerialMatch(
         serialBkpMachineList: List<BaseSerialSearchItem>,
         productCode: Int,
@@ -947,6 +961,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isStartDateInvalid = isValidStartDate().not()
             val isContinuousFormStartDateInvalid =
                 if (isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
+            val validationResult = validateTimelineBlockUseCase(
+                TimelineValidationAction.ValidateForm(
+                    startDate = mkdtStartDate.getmValue(),
+                    endDate = null
+                )
+            ) as? ValidationResult.Conflict
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(
                     requireContext(),
@@ -1020,7 +1040,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 )
             } else {
                 val isInvalid =
-                    isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid || isInitialSerialStateDateInvalid || isInitialSerialStateResponsableInvalid
+                    isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid || isInitialSerialStateDateInvalid || isInitialSerialStateResponsableInvalid ||
+                            validationResult != null
                 if (isInvalid) {
                     showSaveErroDialog(
                         osTypeInvalid = isOrderTypeInvalid,
@@ -1033,7 +1054,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         isInitialSerialStateResponsableInvalid = isInitialSerialStateResponsableInvalid,
                         calculatedCycle = if (calculatedExecCycle >= 0) calculatedExecCycle else 0.0f,
                         lastCycleVal = formOsHeader.last_cycle_value ?: 0f,
-                        measureSufix = mainMeasureTp?.valueSufix ?: ""
+                        measureSufix = mainMeasureTp?.valueSufix ?: "",
+                        action = validationResult
                     )
                 } else {
                     if (isLocationRequiredAndEnabled()) {
@@ -1726,7 +1748,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         isInitialSerialStateResponsableInvalid: Boolean = false,
         calculatedCycle: Float = 0f,
         lastCycleVal: Float = 0f,
-        measureSufix: String = ""
+        measureSufix: String = "",
+        action: ValidationResult.Conflict? = null
     ) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsHeaderFrgErrorDialogBinding.inflate(layoutInflater)
@@ -1813,6 +1836,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 visibility =
                     if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = "$calculatedCycle $measureSufix"
+            }
+            if(!startDateInvalid) {
+                tvStarDateInvalidMsg.apply {
+                    if (action == null) {
+                        isVisible = false
+                        return@apply
+                    }
+
+                    isVisible = true
+                    text = hmAuxTrans.textOf(action.message, action.parameters)
+                    setPrefix(getString(R.string.unicode_bullet).plus(" "))
+                }
             }
         }
         //

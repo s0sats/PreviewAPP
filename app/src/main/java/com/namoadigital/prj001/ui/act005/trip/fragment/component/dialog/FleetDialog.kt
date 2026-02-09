@@ -13,13 +13,11 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.trip.model.ExtractType
 import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.databinding.TripDialogFleetBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
-import com.namoadigital.prj001.extensions.date.FormatDateType
-import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.parseDatePair
 import com.namoadigital.prj001.extensions.parseFullDate
@@ -48,8 +46,6 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.SAVE_E
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.PhotoUpdate
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_END_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_HINT
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_START_EXCEEDED_TRIP_LBL
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_DATE_END_TRIP_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_HOUR_HINT
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.util.OpenCamera
@@ -69,7 +65,7 @@ class FleetDialog(
     private val destination: FsTripDestination?,
     private val target: TripTarget,
     private val onSave: (endDate: String, fleetPlate: String, odometer: Long?, photoUpdate: PhotoUpdate) -> Unit,
-    private val validateDate: (String) -> Pair<String, ExtractType>?,
+    private val validateDate: (String) -> ValidationResult,
     private val onOpenCamera: OpenCamera,
     getDestinationThresholds: (Long, Int, Int, Int, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
 ) : BaseTripDialog<TripDialogFleetBinding>(trip, getDestinationThresholds) {
@@ -742,7 +738,7 @@ class FleetDialog(
         val hour = etEndHour.text.toString()
         val fullDate = "$date $hour"
 
-        val parsedDate = fullDate.parseFullDate(false)
+        fullDate.parseFullDate(false)
 
         if (dateIsFuture(fullDate)) {
             showDateEndError(
@@ -751,48 +747,40 @@ class FleetDialog(
             return false
         }
 
-        val validationResult = validateDate(parsedDate)
+        val validationResult = validateDate(fullDate)
 
-        if (validationResult == null) {
-            clearDateEndError()
-            return true
+        if (validationResult is ValidationResult.Conflict) {
+            showDateEndError(hmAuxTranslate.textOf(
+                key = validationResult.message,
+                values = validationResult.parameters.values.toList()
+            ))
+            return false
         }
-
-        val (invalidDate, type) = validationResult
-        if(type == ExtractType.START_TRIP){
-            showDateEndError(
-                hmAuxTranslate.textOf(DIALOG_DATE_START_EXCEEDED_TRIP_LBL)
-            )
-        }else{
-            val formattedDate = context.formatDate(FormatDateType.DateAndHour(invalidDate))
-            showDateEndError(
-                "${hmAuxTranslate.textOf(DIALOG_ERROR_DATE_END_TRIP_LBL)} $formattedDate"
-            )
-        }
-        return false
+        clearDateEndError()
+        return true
     }
 
     private fun showDateEndError(message: String) = with(binding) {
-        setStartDateError()
+        setEndDateError()
         tvDateEndInvalid.text = message
         layoutDateEndInvalid.isVisible = true
         tvDateEndInvalid.isVisible = true
     }
 
     private fun clearDateEndError() = with(binding) {
-        resetStartDate()
+        resetEndDate()
         layoutDateEndInvalid.isVisible = false
         tvDateEndInvalid.isVisible = false
     }
 
-    private fun resetStartDate() = with(binding) {
+    private fun resetEndDate() = with(binding) {
         etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_theme)
         etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_theme)
         etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_theme)
         etLayoutEndHour.setHintTextColor(context, R.drawable.edittext_theme)
     }
 
-    fun setStartDateError() = with(binding) {
+    fun setEndDateError() = with(binding) {
         etLayoutEndDate.setBoxStrokeColorState(context, R.drawable.edittext_error)
         etLayoutEndHour.setBoxStrokeColorState(context, R.drawable.edittext_error)
         etLayoutEndDate.setHintTextColor(context, R.drawable.edittext_error)

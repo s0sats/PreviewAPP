@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act011.finish_os.di.usecase
 
-import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
+import com.namoadigital.prj001.core.blockchain.ValidateTimelineBlockUseCase
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.TimelineValidationAction
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.date.isDateBefore
 import com.namoadigital.prj001.extensions.date.isDateBeforeOrEquals
@@ -16,6 +18,8 @@ import com.namoadigital.prj001.ui.act011.finish_os.di.model.ResponsibleStop
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ge_os.GetGeOsByIdUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.measure.GetMeasureTpByCode
 import com.namoadigital.prj001.ui.act011.finish_os.ui.screen_component.MachinesStatus
+import com.namoadigital.prj001.ui.act011.finish_os.ui.translate.FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
+import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.EditedField
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishState
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishValidation
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishValidation.Component
@@ -24,15 +28,19 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.ValidateResult
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class ValidateFinishOSUseCase constructor(
+class ValidateFinishOSUseCase @Inject constructor(
     private val getGeOsByIdUseCase: GetGeOsByIdUseCase,
     private val getMeasureTpByCode: GetMeasureTpByCode,
+    private val validateTimeline: ValidateTimelineBlockUseCase
 ) : UseCases<ValidateFinishOSUseCase.Param, ValidateResult> {
 
     data class Param(
         val validation: FinishValidation,
-        val primaryKey: FinishState.FormPrimaryKey
+        val primaryKey: FinishState.FormPrimaryKey,
+        val editedField: EditedField? = null,
+        val isReadOnly: Boolean = false
     )
 
     override suspend fun invoke(input: Param): Flow<IResult<ValidateResult>> {
@@ -124,25 +132,43 @@ class ValidateFinishOSUseCase constructor(
     ) {
         if (infoOs.dateStart != null && infoOs.dateEnd != null) {
 
+            val action: ValidationResult = if (!input.isReadOnly) {
+                validateTimeline(
+                    input = TimelineValidationAction.ValidateForm(
+                        startDate = infoOs.dateStart,
+                        endDate = infoOs.dateEnd,
+                        formPK = geOs?.getFormPK(),
+                    )
+                )
+            } else {
+                ValidationResult.Success
+            }
+
             when {
-                isDateBefore(infoOs.dateEnd, infoOs.dateStart) -> {
-                    map[Component.InfoOS] = Component.InfoOS.InvalidBothDate
+                action is ValidationResult.Conflict -> {
+                    map[Component.InfoOS] = Component.InfoOS.InvalidBothDateAction(action)
                 }
                 //
-                isDateBefore(
-                    ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"),
-                    infoOs.dateEnd
+                partialExecutionOS != null && isDateBeforeOrEquals(
+                    infoOs.dateStart,
+                    partialExecutionOS
                 ) -> {
-                    map[Component.InfoOS] = Component.InfoOS.InvalidEndDate
+                    map[Component.InfoOS] = Component.InfoOS.PartialExecutionOS
                 }
-                //
-                isDateBefore(
-                    ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"),
-                    infoOs.dateStart
-                ) -> {
-                    map[Component.InfoOS] = Component.InfoOS.InvalidStartDate
+
+                ToolBox_Inf.isFutureDate(infoOs.dateStart) || ToolBox_Inf.isFutureDate(infoOs.dateEnd) -> {
+                    if (input.editedField == EditedField.DATE_END) {
+                        map[Component.InfoOS] = Component.InfoOS.InvalidFutureEndDate(
+                            FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
+                        )
+                    }
+                    if (input.editedField == EditedField.DATE_START) {
+                        map[Component.InfoOS] = Component.InfoOS.InvalidFutureStartDate(
+                            FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
+                        )
+                    }
                 }
-                //
+
                 partialExecutionOS == null && geOs?.measure_value != null -> {
 
                     val validationMeasure = measureTp?.isMeasureRestrictionInvalid(
@@ -157,13 +183,6 @@ class ValidateFinishOSUseCase constructor(
                         map[Component.InfoOS] =
                             Component.InfoOS.DateExceededLastMeasureDate
                     }
-                }
-                //
-                partialExecutionOS != null && isDateBeforeOrEquals(
-                    infoOs.dateStart,
-                    partialExecutionOS
-                ) -> {
-                    map[Component.InfoOS] = Component.InfoOS.PartialExecutionOS
                 }
                 //
                 else -> {}

@@ -11,7 +11,7 @@ sealed class EventManualDialogEvent {
 
     class UpdateDialogEventData(val data: EventManualData) : EventManualDialogEvent()
     class UpdateDialogEventState(val uiState: EventUiState) : EventManualDialogEvent()
-    class ValidateDate(val startDate: String, val endDate: String?) : EventManualDialogEvent()
+    class ValidateDate(val startDate: String, val endDate: String?, val withWaiting: Boolean = false) : EventManualDialogEvent()
 
     object GetListDialogEventType : EventManualDialogEvent()
 }

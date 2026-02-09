@@ -4,10 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.adapter.trip.model.ExtractType
+import com.namoadigital.prj001.core.blockchain.ValidateConfirmArrivedUseCase
+import com.namoadigital.prj001.core.blockchain.ValidateTimelineBlockUseCase
+import com.namoadigital.prj001.core.domain.usecase.form_local.HasFormInProcessUseCase
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.TimelineValidationAction
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.core.trip.domain.usecase.GetDestinationByStatusUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.LocationNotFound
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveDestinationDateUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.SaveFleetDataUseCase.SaveFleetParams
@@ -19,13 +22,13 @@ import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationU
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveOverNightDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase
+import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.model.TK_Ticket
 import com.namoadigital.prj001.model.trip.DestinationCounter
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FSEventType
 import com.namoadigital.prj001.model.trip.FSTrip
-import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripPositionAlertType
 import com.namoadigital.prj001.model.trip.TripStatus
@@ -83,7 +86,10 @@ class TripViewModel @Inject constructor(
     private val validateDate: ValidateDateOnOriginUseCase,
     private val validateStartTrip: ValidateDateOnStartTripUseCase,
     private val validateEndTrip: ValidateDateOnEndTripUseCase,
-    private val validateDateFromDestinationAndActionUseCase: ValidateDateFromDestinationAndActionUseCase
+    private val validateDateFromDestinationAndActionUseCase: ValidateDateFromDestinationAndActionUseCase,
+    private val validateConfirmArrivedUseCase: ValidateConfirmArrivedUseCase,
+    private val validateTimelineBlockUseCase: ValidateTimelineBlockUseCase,
+    private val hasFormInProcess: HasFormInProcessUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TripState())
@@ -154,6 +160,7 @@ class TripViewModel @Inject constructor(
         val listExtract = if (isExtractFrag) extractUseCase(Unit) else null
         //
         initTimeEvent()
+        val hasForm = hasFormInProcess(Unit).isNotEmpty()
         _state.update {
             TripState(
                 trip = trip,
@@ -161,6 +168,7 @@ class TripViewModel @Inject constructor(
                 counter = counter,
                 event = event,
                 listExtract = listExtract,
+                hasFormInProcess = hasForm
             )
         }
 
@@ -525,7 +533,7 @@ class TripViewModel @Inject constructor(
     fun editUser(
         user: TripUserEdit,
         userAction: UserAction,
-        tripWsProgress: TripWsProgress
+        tripWsProgress: TripWsProgress,
     ) {
         viewModelScope.launch {
             userUseCase.edit(
@@ -763,25 +771,22 @@ class TripViewModel @Inject constructor(
     }
 
 
+    fun validateConfirmArrivedDestination() = validateConfirmArrivedUseCase(Unit)
+
     fun validateDateFromDestination(
-        tripPrefix: Int,
-        tripCode: Int,
         destinationSeq: Int?,
         newStart: String,
         newEnd: String?,
-        type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType = GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.BOTH
-    ): ValidateDateFromDestinationAndActionUseCase.Output? {
-        return validateDateFromDestinationAndActionUseCase(
-            ValidateDateFromDestinationAndActionUseCase.Input(
-                prefix = tripPrefix,
-                code = tripCode,
-                seq = destinationSeq ?: -1,
-                newStart = newStart,
-                newEnd = newEnd,
-                destinationType = type
-            )
+    ): ValidationResult {
+        val action = TimelineValidationAction.DestinationEdit(
+            destinationSeq = destinationSeq ?: -1,
+            newArrivedDate = newStart,
+            newDepartedDate = newEnd
         )
 
+        val validationResult = validateTimelineBlockUseCase(action)
+
+        return validationResult
     }
 
 
@@ -814,20 +819,22 @@ class TripViewModel @Inject constructor(
     }
 
     fun getEventError(
-        startDateInMilis: Long,
-        endDateInMilis: Long?,
-        event: FSTripEvent?,
-        waiting: Boolean
-    ): GetEventRestrictionDateUseCase.OutputParams {
+        startDate: String,
+        endDate: String?,
+        seq: Int?,
+        withWaiting: Boolean
+    ): ValidationResult {
 
-        return eventUseCase.getEventRestrictionDate(
-            GetEventRestrictionDateUseCase.InputParams(
-                startDateInMilis,
-                endDateInMilis,
-                event,
-                waiting
-            )
+        val action = TimelineValidationAction.ValidateEvent(
+            eventSeq = seq ?: -1,
+            startDate = startDate,
+            endDate = endDate,
+            withWaiting = withWaiting
         )
+
+        val validationResult = validateTimelineBlockUseCase(action)
+
+        return validationResult
     }
 
     fun getAlertTypeFromPreference(pref: CurrentTripPref, tripStatus: TripStatus): Int? {
@@ -888,52 +895,41 @@ class TripViewModel @Inject constructor(
     }
 
     fun validateOriginDate(
-        customerCode: Long,
-        tripPrefix: Int,
-        tripCode: Int
-    ): String? {
-        return validateDate(
-            ValidateDateOnOriginUseCase.InputParam(
-                customerCode,
-                tripPrefix,
-                tripCode,
-            )
-        ).dateError
+        dateStart: String
+    ): ValidationResult {
+
+        val action = TimelineValidationAction.TripOriginDateEdit(
+            newOriginDate = dateStart
+        )
+
+        val validationResult = validateTimelineBlockUseCase(action)
+
+        return validationResult
     }
 
     fun validateStartTripDate(
-        customerCode: Long,
-        tripPrefix: Int,
-        tripCode: Int,
         date: String,
-    ): Pair<String?, ExtractType> {
-        return validateStartTrip(
-            ValidateDateOnStartTripUseCase.InputParam(
-                customerCode = customerCode,
-                tripPrefix = tripPrefix,
-                tripCode = tripCode,
-                tripDate = date
-            )
+    ): ValidationResult {
+        val action = TimelineValidationAction.TripStartDateEdit(
+            newStartDate = date
         )
-    }
 
-    fun validateEndTripDate(date: String): Pair<String, ExtractType>? {
-        val customerCode = _state.value.trip?.customerCode!!
-        val tripPrefix = _state.value.trip?.tripPrefix!!
-        val tripCode = _state.value.trip?.tripCode!!
+        val validationResult = validateTimelineBlockUseCase(action)
 
-        return validateEndTrip(
-            input = ValidateDateOnEndTripUseCase.InputParam(
-                customerCode = customerCode,
-                tripPrefix = tripPrefix,
-                tripCode = tripCode,
-                tripDate = date
-            )
-        )
+        return validationResult
     }
 
     fun removeLoadingState() {
         _state.loadingState { ProgressState.Hide(true) }
+    }
+
+    fun validateEndTripDate(date: String): ValidationResult {
+        val action = TimelineValidationAction.TripEndDateEdit(newEndDate = date.parseFullDate())
+
+        val validationResult = validateTimelineBlockUseCase(action)
+
+        return validationResult
+
     }
 
     fun getOverNightDestination(fsTrip: FSTrip): FsTripDestination? {
@@ -961,7 +957,7 @@ class TripViewModel @Inject constructor(
 
     fun saveStartTrip(
         dateStart: String,
-        progressTranslate: TripWsProgress
+        progressTranslate: TripWsProgress,
     ) {
         viewModelScope.launch {
             useCase.saveStartDate(dateStart)

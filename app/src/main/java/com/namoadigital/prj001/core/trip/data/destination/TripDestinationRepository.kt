@@ -97,5 +97,8 @@ interface TripDestinationRepository {
     fun getNextDestinationSeq(tripPrefix: Int, tripCode: Int): Int?
 
     fun getLastDestination(prefix: Int, code: Int): FsTripDestination?
+    fun getListDestinations(prefix: Int, code: Int): List<FsTripDestination>
+    fun getCurrentDestination(): FsTripDestination?
 
+    fun getLastDestinationDeparted(prefix: Int, code: Int): FsTripDestination?
 }

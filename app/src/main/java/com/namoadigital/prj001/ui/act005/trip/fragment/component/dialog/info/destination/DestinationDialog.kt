@@ -9,13 +9,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.translate.textOf
-import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationConflict
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase
 import com.namoadigital.prj001.databinding.TripDialogInfoEditBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
-import com.namoadigital.prj001.extensions.date.FormatDateType
-import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.extensions.parseDate
 import com.namoadigital.prj001.extensions.parseDatePair
 import com.namoadigital.prj001.extensions.parseFullDate
@@ -31,15 +28,11 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.uti
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_START_EXCEEDED_END_DATE_DESTINATION_LBL
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_DATE_START_EXCEEDED_TRIP_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_RETRY_IMAGE_LBL
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL
-import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.util.OpenCamera
 import com.namoadigital.prj001.ui.base.BaseDialog
 import com.namoadigital.prj001.util.TextWatcherHelper
-import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,7 +44,7 @@ class DestinationDialog(
     private val trip: FSTrip,
     private val destination: FsTripDestination,
     private val onSave: (SaveDestinationEdit) -> Unit,
-    private val validateDateFromDestination: (prefix: Int, code: Int, destinationSeq: Int?, startDate: String, endDate: String, type: GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> ValidateDateFromDestinationAndActionUseCase.Output?,
+    private val validateDateFromDestination: (destinationSeq: Int?, startDate: String, endDate: String?) -> ValidationResult?,
     getDestinationThresholds: (Long, Int, Int, Int?, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
     private val onOpenCamera: OpenCamera
 ) : BaseTripDialog<TripDialogInfoEditBinding>(trip, getDestinationThresholds) {
@@ -507,74 +500,27 @@ class DestinationDialog(
                 isSuccess = false
             }
             if (isSuccess) {
-                if (dateBeforeStartTrip("$dateStart $hourStart")) {
-                    setStartDateError()
-                    tvDateStartInvalid.text =
-                        hmAuxTranslate[DIALOG_DATE_START_EXCEEDED_TRIP_LBL] + ": " + context.formatDate(
-                            FormatDateType.DateAndHour(trip.startDate ?: "")
+                val validateDestination = validateDateFromDestination(
+                    destination.destinationSeq,
+                    "${etStartDate.text} ${etStartHour.text}".parseFullDate(),
+                    if(etLayoutEndDate.isVisible) "${etEndDate.text} ${etEndHour.text}".parseFullDate() else null,
+                )
+
+
+                when(validateDestination){
+                    is ValidationResult.Conflict -> {
+                        isSuccess = false
+                        setStartDateError()
+                        tvDateStartInvalid.text = hmAuxTranslate.textOf(
+                            key = validateDestination.message,
+                            values = validateDestination.parameters.values.toList()
                         )
-                    layoutDateStartInvalid.visibility = View.VISIBLE
-                    btnSave.isEnabled = false
-                    isSuccess = false
-                } else {
+                    }
 
-
-                    val validateDestination = validateDateFromDestination(
-                        destination.tripPrefix,
-                        destination.tripCode,
-                        destination.destinationSeq,
-                        "${etStartDate.text} ${etStartHour.text}".parseFullDate(),
-                        "${etEndDate.text} ${etEndHour.text}".parseFullDate(),
-                        GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.PREVIOUS
-                    )
-
-                    if (validateDestination == null) {
+                    else -> {
                         setStartDateLayoutSuccess()
                         setEndLayoutSuccess()
                         if (stateButtonValid) updateButtonState()
-                        return@with
-                    }
-
-
-                    val (dateStart, dateEnd, conflict) = validateDestination
-                    val dateStartParsed = dateStart?.parseDate()
-                    val dateEndParsed = dateEnd?.parseDate()
-
-                    when (conflict) {
-                        DestinationConflict.START_OVERLAP -> {
-                            setStartDateError()
-                            tvDateStartInvalid.text =
-                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateStartParsed"
-                            isSuccess = false
-                        }
-
-                        DestinationConflict.END_OVERLAP -> {
-                            setEndDateError()
-                            tvDateEndInvalid.text =
-                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
-                            isSuccess = false
-                        }
-
-                        DestinationConflict.RANGE_OVERLAP -> {
-                            setStartDateError()
-                            tvDateStartInvalid.text =
-                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
-                            isSuccess = false
-                        }
-
-                        DestinationConflict.START_DESTINATION_OVERLAP -> {
-                            setStartDateError()
-                            tvDateStartInvalid.text =
-                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
-                            isSuccess = false
-                        }
-
-                        DestinationConflict.END_DESTINATION_OVERLAP -> {
-                            setEndDateError()
-                            tvDateEndInvalid.text =
-                                "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateStartParsed"
-                            isSuccess = false
-                        }
                     }
                 }
             }
@@ -631,8 +577,8 @@ class DestinationDialog(
 
         with(binding) {
 
-            val startDateFormatted = "${etStartDate.text} ${etStartHour.text}".parseFullDate()
-            val endDateFormatted = "${etEndDate.text} ${etEndHour.text}".parseFullDate()
+            "${etStartDate.text} ${etStartHour.text}".parseFullDate()
+            "${etEndDate.text} ${etEndHour.text}".parseFullDate()
 
             if (dateIsFuture("$dateEnd $hourEnd")) {
                 setEndDateError()
@@ -640,76 +586,27 @@ class DestinationDialog(
                 return false
             }
 
-            if (ToolBox_Inf.dateToMilliseconds(startDateFormatted) > ToolBox_Inf.dateToMilliseconds(
-                    endDateFormatted
-                )
-            ) {
-                setEndDateError()
-                tvDateEndInvalid.text =
-                    hmAuxTranslate[DIALOG_DATE_END_EXCEEDED_START_DATE_DESTINATION_LBL]
-                return false
-            }
-
             val validateDestination = validateDateFromDestination(
-                destination.tripPrefix,
-                destination.tripCode,
                 destination.destinationSeq,
-                startDateFormatted,
-                endDateFormatted,
-                GetDestinationForThresholdValidationUseCase.TripDestinationValidationType.NEXT
+                "${etStartDate.text} ${etStartHour.text}".parseFullDate(),
+                if(etEndDate.isVisible) "${etEndDate.text} ${etEndHour.text}".parseFullDate() else null,
             )
 
-            if (validateDestination == null) {
-                setStartDateLayoutSuccess()
-                setEndLayoutSuccess()
-                if (stateButtonValid) updateButtonState()
-                return true
-            }
 
-
-            val (dateStart, dateEnd, conflict) = validateDestination
-            val dateStartParsed = dateStart?.parseDate()
-            val dateEndParsed = dateEnd?.parseDate()
-
-            when (conflict) {
-                DestinationConflict.START_OVERLAP -> {
-                    setStartDateError()
-                    tvDateStartInvalid.text =
-                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
-                    return false
-                }
-
-                DestinationConflict.END_OVERLAP -> {
+            when(validateDestination) {
+                is ValidationResult.Conflict -> {
                     setEndDateError()
-                    tvDateEndInvalid.text =
-                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateEndParsed"
+                    tvDateEndInvalid.text = hmAuxTranslate.textOf(
+                        key = validateDestination.message,
+                        values = validateDestination.parameters.values.toList()
+                    )
                     return false
                 }
 
-                DestinationConflict.RANGE_OVERLAP -> {
-                    setEndDateError()
-                    tvDateEndInvalid.text =
-                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_HIGHER_THAN_DATE_LBL)} $dateEndParsed"
-                    return false
+                else -> {
+                    setEndLayoutSuccess()
+                    if (stateButtonValid) updateButtonState()
                 }
-
-                DestinationConflict.END_DESTINATION_OVERLAP -> {
-                    setEndDateError()
-                    tvDateEndInvalid.text =
-                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateStartParsed"
-                    return false
-                }
-
-                DestinationConflict.START_DESTINATION_OVERLAP -> {
-                    setStartDateError()
-                    tvDateStartInvalid.text =
-                        "${hmAuxTranslate.textOf(DIALOG_VALUE_SHOULD_BE_LOWER_THAN_DATE_LBL)} $dateEndParsed"
-                    return false
-                }
-
-
-                else -> {}
-
             }
 
             compareDates(

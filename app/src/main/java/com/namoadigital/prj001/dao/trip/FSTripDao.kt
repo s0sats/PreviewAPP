@@ -20,6 +20,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.extensions.isValidPDF
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.location.Coordinates
+import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FsTripDestination
 import com.namoadigital.prj001.model.trip.TripStatus
@@ -31,6 +32,8 @@ import com.namoadigital.prj001.sql.FsTripEventSqlDelete
 import com.namoadigital.prj001.sql.FsTripPositionSqlPreviosTripDelete
 import com.namoadigital.prj001.sql.FsTripSqlDelete
 import com.namoadigital.prj001.sql.FsTripUserSqlDelete
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -1092,6 +1095,137 @@ class FSTripDao @Inject constructor(
             """.trimIndent(),
             dbInstance = db
         )
+    }
+
+    fun getConflict(startDate: String, endDate: String?): EventConflict? {
+
+        // ------------------------------------------------
+        // 1) Conflito de INÍCIO
+        // ------------------------------------------------
+        val startConflict = query(
+                    """
+            SELECT *
+              FROM $TABLE
+             WHERE $TRIP_STATUS != '${TripStatus.CANCELLED.toDescription()}'
+               AND strftime('%s', $ORIGIN_DATE) <= strftime('%s', '$startDate')
+               AND (
+                    $DONE_DATE IS NULL
+                    OR strftime('%s', $DONE_DATE) > strftime('%s', '$startDate')
+               )
+             ORDER BY strftime('%s', $ORIGIN_DATE) ASC
+             LIMIT 1
+            """.trimIndent()
+        )
+
+        if (startConflict.isNotEmpty()) {
+            val trip = startConflict.first()
+            return EventConflict(
+                dateStart = trip.originDate,
+                dateEnd = trip.doneDate,
+                type = EventConflictType.START_OVERLAP,
+                description = trip.tripId
+            )
+        }
+
+        // ------------------------------------------------
+        // 2) Conflito de TÉRMINO
+        // ------------------------------------------------
+        if (!endDate.isNullOrBlank()) {
+            val endConflict = query(
+                """
+        SELECT *
+          FROM $TABLE
+             WHERE $TRIP_STATUS != '${TripStatus.CANCELLED.toDescription()}'
+           AND strftime('%s', $ORIGIN_DATE) < strftime('%s', '$endDate')
+           AND (
+                $DONE_DATE IS NULL
+                OR strftime('%s', $DONE_DATE) >= strftime('%s', '$endDate')
+           )
+         ORDER BY strftime('%s', $ORIGIN_DATE) ASC
+         LIMIT 1
+        """.trimIndent()
+            )
+
+            if (endConflict.isNotEmpty()) {
+                val trip = endConflict.first()
+                return EventConflict(
+                    dateStart = trip.originDate,
+                    dateEnd = trip.doneDate,
+                    type = EventConflictType.END_OVERLAP,
+                    description = trip.tripId
+                )
+            }
+        }
+
+        // ------------------------------------------------
+        // 3) Intervalo engloba outro
+        // ------------------------------------------------
+        if (!endDate.isNullOrBlank()) {
+            val rangeConflict = query(
+                """
+        SELECT *
+          FROM $TABLE
+             WHERE $TRIP_STATUS != '${TripStatus.CANCELLED.toDescription()}'
+           AND strftime('%s', $ORIGIN_DATE) >= strftime('%s', '$startDate')
+           AND strftime('%s', $ORIGIN_DATE) <= strftime('%s', '$endDate')
+         ORDER BY strftime('%s', $ORIGIN_DATE) ASC
+         LIMIT 1
+        """.trimIndent()
+            )
+
+            if (rangeConflict.isNotEmpty()) {
+                val trip = rangeConflict.first()
+                return EventConflict(
+                    dateStart = trip.originDate,
+                    dateEnd = trip.doneDate,
+                    type = EventConflictType.RANGE_OVERLAP,
+                    description = trip.tripId
+                )
+            }
+        }
+
+
+        return null
+    }
+
+
+    fun getMaxDateSimple(
+        tripPrefix: Int,
+        tripCode: Int
+    ): String? {
+        val query = """
+        SELECT MAX(all_dates.date_value) as max_date
+        FROM (
+            
+            SELECT strftime('%Y-%m-%d %H:%M:%S', MAX(${FSTripEventDao.EVENT_END}), 'utc') || ' +00:00' as date_value 
+            FROM ${FSTripEventDao.TABLE} 
+            WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
+            AND ${FSTripEventDao.EVENT_STATUS} != '${TripStatus.CANCELLED.toDescription()}'
+           
+            UNION ALL
+            
+            SELECT strftime('%Y-%m-%d %H:%M:%S', MAX(${FsTripDestinationDao.DEPARTED_DATE}), 'utc') || ' +00:00' as date_value 
+            FROM ${FsTripDestinationDao.TABLE} 
+            WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
+            AND ${FsTripDestinationDao.DESTINATION_STATUS} != '${DestinationStatus.CANCELLED.toDescription()}'
+           
+            UNION ALL
+            
+            SELECT strftime('%Y-%m-%d %H:%M:%S', MAX(${FSTripUserDao.DATE_END}), 'utc') || ' +00:00' as date_value 
+            FROM ${FSTripUserDao.TABLE} 
+            WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
+            AND ${FSTripUserDao.DATE_END} IS NOT NULL
+           
+        ) as all_dates
+        WHERE date_value IS NOT NULL
+    """.trimIndent()
+        return queryObject<String?>(query) { cursor ->
+            cursor.getStringOrNull(
+                cursor.getColumnIndex(
+                    "max_date"
+                )
+            )
+        }.firstOrNull()
     }
 
 

@@ -171,16 +171,14 @@ class TripTransferFragment : TripBaseFragment<FrgTransferTripBinding>() {
                             0,
                             onConfirm = {}
                         )
-                    } else if (state.trip?.fleetEndOdometer != null) {
+                    } else {
                         showConfirmDialog(
                             hmAuxTranslate[ALERT_CONFIRM_END_TRIP_TTL],
                             hmAuxTranslate[ALERT_CONFIRM_END_TRIP_MSG],
                             onConfirm = {
-                                callEndTrip()
+                                showDialogInfoFleet(TripTarget.END)
                             }
                         )
-                    } else {
-                        showDialogInfoFleet(TripTarget.END)
                     }
                 }
             }

@@ -14,7 +14,10 @@ import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
+import com.namoadigital.prj001.core.translate.TranslateBuild
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
+import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
 import com.namoadigital.prj001.databinding.DialogEventTripBinding
 import com.namoadigital.prj001.extensions.date.FormatDateType
 import com.namoadigital.prj001.extensions.date.formatDate
@@ -34,10 +37,10 @@ import com.namoadigital.prj001.model.trip.FSTripEvent
 import com.namoadigital.prj001.model.trip.FSTripPhoto
 import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.BaseTripDialog
+import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.info.util.TranslateInfoDialogs.EXTRACT_DIALOG_INFO_RESOURCE
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.ReportBottomSheet
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.util.OpenCamera
 import com.namoadigital.prj001.ui.base.BaseDialog
-import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,7 +48,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
-class DialogEventTrip constructor(
+class DialogEventTrip(
     private val context: Context,
     private val trip: FSTrip,
     private val event: FSTripEvent?,
@@ -53,7 +56,7 @@ class DialogEventTrip constructor(
     private val eventType: FSEventType,
     private val onOpenCamera: OpenCamera,
     private val onSave: (HMAux, FSSaveEvent) -> Unit,
-    private val checkEventIntersectionDate: (startDateInMilis: Long, endDateInMilis: Long?, tripEvent: FSTripEvent?, waiting: Boolean) -> GetEventRestrictionDateUseCase.OutputParams,
+    private val checkEventIntersectionDate: (startDate: String, endDate: String?, seq: Int?, waiting: Boolean) -> ValidationResult,
 ) : BaseTripDialog<DialogEventTripBinding>(trip) {
 
 
@@ -764,8 +767,8 @@ class DialogEventTrip constructor(
     }
 
     private fun DialogEventTripBinding.isValidStartDate(stateButtonValid: Boolean = true): Boolean {
-        val dateStart = etStartDate.text.toString()
-        val hourStart = etStartHour.text.toString()
+        etStartDate.text.toString()
+        etStartHour.text.toString()
         clearInvalidStartDateLayout()
         clearInvalidEndDateLayout()
         if (dateIsFuture(getStartDateFormatted())) {
@@ -779,91 +782,38 @@ class DialogEventTrip constructor(
             btnFinish.isEnabled = false
             return false
         }
-
-        if (dateBeforeTrip(getStartDateFormatted())) {
-            etLayoutStartDate.setBoxStrokeColorState(context, R.drawable.edittext_error)
-            etLayoutStartHour.setBoxStrokeColorState(context, R.drawable.edittext_error)
-            etLayoutStartDate.setHintTextColor(context, R.drawable.edittext_error)
-            etLayoutStartHour.setHintTextColor(context, R.drawable.edittext_error)
-            tvDateInvalid.text =
-                hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_START_ERROR_LBL] + " " + context.formatDate(
-                    FormatDateType.DateAndHour(trip.originDate ?: "")
-                )
-            layoutDateInvalid.visibility = View.VISIBLE
-            scrollDownToError(scrollView3)
-            btnFinish.isEnabled = false
-            return false
-        }
         //
         if (getStartDateFormatted().isNotBlank()) {
-            val startdateToMilliseconds =
-                ToolBox_Inf.dateToMilliseconds(getStartDateFormatted().parseFullDate())
-
-            val endDateToMilliseconds = if (etLayoutEndDate.isVisible) {
-                ToolBox_Inf.dateToMilliseconds(getEndDateFormatted().parseFullDate())
-            } else {
-                null
-            }
             //
-            compareDates(
-                getStartDateFormatted(),
-                getEndDateFormatted()
-            ) { startDate, endDate ->
-                startDate == endDate
-            }.let { isEqual ->
-                if (isEqual) {
-                    setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!)
-                    setEndDateErrorLayout(
-                        hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!,
-                        false
-                    )
-                    btnFinish.isEnabled = false
-                    return false
-                }
-            }
-            //
-            val tripEventError =
+            val validateResult =
                 checkEventIntersectionDate(
-                    startdateToMilliseconds,
-                    endDateToMilliseconds,
-                    event,
+                    getStartDateFormatted().parseFullDate(false),
+                    when {
+                        etLayoutEndDate.isVisible -> getEndDateFormatted().parseFullDate(false)
+                        !eventType.isWaitAllowed ->  getStartDateFormatted().parseFullDate(false)
+                        else -> event?.eventEnd?.ifEmpty { null }
+                    },
+                    event?.eventSeq,
                     eventType.isWaitAllowed
                 )
-            tripEventError.event?.let {
-                if (tripEventError.startDateError) {
+
+            return when (validateResult) {
+                is ValidationResult.Conflict -> {
+                    btnFinish.isEnabled = false
                     setStartDateErrorLayout(
-                        hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                            FormatDateType.DateAndHour(it.eventStart ?: "")
-                        ) + getEventEndDateErrorMsg(it)
+                        hmAuxTranslate.textOf(
+                            key = validateResult.message,
+                            values = validateResult.parameters.values.toList()
+                        )
                     )
-                } else {
-                    clearInvalidStartDateLayout()
-                }
-                //
-                if (tripEventError.endDateError) {
-                    setEndDateErrorLayout(
-                        hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                            FormatDateType.DateAndHour(it.eventStart ?: "")
-                        ) + getEventEndDateErrorMsg(it), false
-                    )
+                    false
                 }
 
-                scrollDownToError(scrollView3)
-                btnFinish.isEnabled = false
-                return false
-            }
-        }
-        //
-        compareDates(
-            getStartDateFormatted(),
-            getEndDateFormatted()
-        ) { userDate, startDate ->
-            userDate.after(startDate)
-        }.let { isAfter ->
-            if (isAfter) {
-                setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_END_ERROR_LBL]!!)
-                btnFinish.isEnabled = false
-                return false
+                else -> {
+                    clearInvalidStartDateLayout()
+                    if (stateButtonValid) updateStateButtons(checkRequiredRules())
+                    true
+                }
             }
         }
 
@@ -897,87 +847,33 @@ class DialogEventTrip constructor(
             return false
         }
         //
-        compareDates(
-            getStartDateFormatted(),
-            getEndDateFormatted()
-        ) { startDate, endDate ->
-            startDate == endDate
-        }.let { isEqual ->
-            if (isEqual) {
-                setStartDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!)
-                setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_EQUAL_ERROR_LBL]!!, false)
+        //
+        val validateResult =
+            checkEventIntersectionDate(
+                getStartDateFormatted().parseFullDate(),
+                getEndDateFormatted().parseFullDate(),
+                event?.eventSeq,
+                eventType.isWaitAllowed
+            )
+
+        return when (validateResult) {
+            is ValidationResult.Conflict -> {
                 btnFinish.isEnabled = false
-                return false
-            }
-        }
-        //
-        val startdateToMilliseconds =
-            ToolBox_Inf.dateToMilliseconds(getStartDateFormatted().parseFullDate())
-        //
-        val dateToMilliseconds =
-            ToolBox_Inf.dateToMilliseconds(getEndDateFormatted().parseFullDate())
-        //
-        val tripEventError = checkEventIntersectionDate(
-            startdateToMilliseconds,
-            dateToMilliseconds,
-            event,
-            eventType.isWaitAllowed
-        )
-        tripEventError.event?.let {
-            if (tripEventError.startDateError && !tripEventError.endDateError) {
                 setStartDateErrorLayout(
-                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                        FormatDateType.DateAndHour(it.eventStart ?: "")
-                    ) + getEventEndDateErrorMsg(it)
+                    hmAuxTranslate.textOf(
+                        key = validateResult.message,
+                        values = validateResult.parameters.values.toList()
+                    )
                 )
+                false
             }
-            //
-            if (tripEventError.endDateError && !tripEventError.startDateError) {
-                setEndDateErrorLayout(
-                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
-                            context.formatDate(
-                                FormatDateType.DateAndHour(it.eventStart ?: "")
-                            ) + getEventEndDateErrorMsg(it), false
-                )
-            }
-            if (tripEventError.endDateError && tripEventError.startDateError) {
-                //
-                setStartDateErrorLayout(
-                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " + context.formatDate(
-                        FormatDateType.DateAndHour(it.eventStart ?: "")
-                    ) + getEventEndDateErrorMsg(it)
-                )
-                //
-                setEndDateErrorLayout(
-                    hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_CONFLICT_ERROR_LBL] + " " +
-                            context.formatDate(
-                                FormatDateType.DateAndHour(it.eventStart ?: "")
-                            ) + getEventEndDateErrorMsg(it),
-                    false
-                )
-            }
-            //
-            btnFinish.isEnabled = false
-            return false
-        }
 
-
-        compareDates(
-            date,
-            "${etStartDate.text.toString()} ${etStartHour.text.toString()}"
-        ) { userDate, startDate ->
-            userDate.before(startDate)
-        }.let { isBefore ->
-            if (isBefore) {
-                setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_TRIP_DATE_END_ERROR_LBL]!!, true)
-                btnFinish.isEnabled = false
-                return false
+            else -> {
+                clearInvalidStartDateLayout()
+                if (stateButtonValid) updateStateButtons(checkRequiredRules())
+                true
             }
         }
-
-        clearInvalidEndDateLayout()
-        if (stateButtonValid) updateStateButtons()
-        return true
     }
 
     private fun getEventEndDateErrorMsg(it: FSTripEvent): String {
@@ -1000,13 +896,13 @@ class DialogEventTrip constructor(
             }
             return it.eventEnd?.let { end ->
                 " - " + context.formatDate(
-                    FormatDateType.DateAndHour(end ?: "")
+                    FormatDateType.DateAndHour(end)
                 )
             } ?: ""
         } else {
             return it.eventEnd?.let { end ->
                 " - " + context.formatDate(
-                    FormatDateType.DateAndHour(end ?: "")
+                    FormatDateType.DateAndHour(end)
                 )
             } ?: ""
         }
@@ -1151,9 +1047,16 @@ class DialogEventTrip constructor(
         ).let(
             TranslateResource(
                 context = context,
-                mResoure_code = context.getResourceCode(ReportBottomSheet.TRANSLATE.RESOURCE_DIALOG_EVENT_TRIP)
+                mResoure_code = context.getResourceCode(ReportBottomSheet.RESOURCE_DIALOG_EVENT_TRIP)
             )::setLanguage
-        )
+        ).apply {
+            val timelineTranslate = TranslateBuild(context)
+                .resource(EXTRACT_DIALOG_INFO_RESOURCE)
+                .listVarsKeys { TimelineBlockTranslate.entries }
+                .build()
+
+            this.putAll(timelineTranslate)
+        }
     }
 
 

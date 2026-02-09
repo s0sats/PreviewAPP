@@ -212,6 +212,6 @@ public interface Act070_Main_Contract {
 
         void executeTicketSaveProcess(boolean allowOffline);
 
-        boolean hasEventManual();
+        boolean hasEvent();
     }
 }

@@ -28,7 +28,8 @@ interface EventManualRepository {
     fun getEventPendency(): List<EventManual>
 
     fun getEventConflict(
-        currentSeq: Int,
+        currentSeq: Int? = null,
+        eventDay: Int? = null,
         startDate: String,
         endDate: String?
     ): EventConflict?

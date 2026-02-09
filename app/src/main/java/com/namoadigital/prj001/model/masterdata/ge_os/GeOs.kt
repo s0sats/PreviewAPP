@@ -51,6 +51,15 @@ class GeOs(
 
 //    val hasForcedExpiredVg = force_exe_expired_vg == 1
 
+    fun getFormPK(): FormPK {
+        return FormPK(
+            typeCode = custom_form_type,
+            code = custom_form_code,
+            versionCode = custom_form_version,
+            formData = custom_form_data
+        )
+    }
+
     fun getProcessVg(): ProcessVg? {
         return ProcessVg.fromString(process_vg)
     }
@@ -83,5 +92,11 @@ class GeOs(
             0f
         }
 
+    data class FormPK(
+        val typeCode: Int,
+        val code: Int,
+        val versionCode: Int,
+        val formData: Int,
+    )
 
 }

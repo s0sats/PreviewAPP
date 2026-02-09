@@ -4,7 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.trip.model.ExtractType
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.databinding.TripDialogEditStartBinding
 import com.namoadigital.prj001.extensions.parseDate
@@ -21,7 +22,7 @@ import com.namoadigital.prj001.ui.base.BaseDialog
 class EditStartTripDialog(
     private val context: Context,
     private val trip: FSTrip,
-    private val validateStartDate: (Long, Int, Int, String) -> Pair<String?, ExtractType>,
+    private val validateStartDate: (String) -> ValidationResult,
     getDestinationThresholds: (Long, Int, Int, Int?, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
     private val onSave: (String) -> Unit,
 ) : BaseTripDialog<TripDialogEditStartBinding>(trip, getDestinationThresholds) {
@@ -93,44 +94,39 @@ class EditStartTripDialog(
         }
     }
 
+
     private fun isValidStartDate(): Boolean {
-        binding.apply {
-            val dateStart = binding.etStartDate.text.toString()
-            val hourStart = binding.etStartHour.text.toString()
-            validateStartDate.let { invoke ->
-                val error = invoke(
-                    trip.customerCode,
-                    trip.tripPrefix,
-                    trip.tripCode,
-                    "$dateStart $hourStart".parseFullDate(false)
+        val dateStart = binding.etStartDate.text.toString()
+        val hourStart = binding.etStartHour.text.toString()
+        val fullDate = "$dateStart $hourStart".parseFullDate()
+
+        // Validar timeline conflicts
+        when (val validate = validateStartDate(fullDate)) {
+            is ValidationResult.Conflict -> {
+                binding.setStartDateError()
+                binding.tvDateStartInvalid.text = hmAuxTranslate.textOf(
+                    key = validate.message,
+                    values = validate.message.placeholders.map { placeholder ->
+                        validate.parameters[placeholder] ?: ""
+                    }
                 )
-                val (dateError, type) = error
-                //
-                when {
-                    type == ExtractType.ORIGIN && !checkBeforeDate(
-                        dateError,
-                        dateStart,
-                        hourStart
-                    ) -> return false
-
-                    type == ExtractType.DESTINATION && !checkNextDate(
-                        dateError,
-                        dateStart,
-                        hourStart
-                    ) -> return false
-                }
-
-                //
-                if (dateIsFuture("$dateStart $hourStart")) {
-                    setStartDateError()
-                    tvDateStartInvalid.text =
-                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE]
-                    return false
-                }
-
-                resetStartDate()
+                return false
+            }
+            is ValidationResult.Success -> {
+                binding.resetStartDate()
             }
         }
+
+        // Validar se é data futura
+        if (dateIsFuture(fullDate)) {
+            binding.setStartDateError()
+            binding.tvDateStartInvalid.text =
+                hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE]
+            return false
+        }
+
+        // Tudo válido
+        binding.resetStartDate()
         return true
     }
 

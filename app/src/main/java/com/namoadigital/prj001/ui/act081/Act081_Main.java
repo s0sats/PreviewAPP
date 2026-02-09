@@ -22,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.core.translate.TranslateBuild;
 import com.namoadigital.prj001.core.translate.TranslateBuildKt;
 import com.namoadigital.prj001.core.translate.di.EventTranslate;
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
@@ -108,6 +109,9 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
 
     @Inject
     GetEventManualUseCase getEventManualUseCase;
+
+    @Inject
+    GetEventActiveUseCase getEventUseCase;
 
     @EventTranslate
     @Inject
@@ -208,7 +212,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
                 this,
                 context,
                 hmAux_Trans,
-                getEventManualUseCase
+                getEventManualUseCase,
+                getEventUseCase
         );
         //
         mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act006_frg_serial_search);

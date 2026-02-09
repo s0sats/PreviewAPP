@@ -3,10 +3,11 @@ package com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.databinding.DialogTechnicalAddUserBinding
+import com.namoadigital.prj001.databinding.DialogSimpleAdapterBinding
 import com.namoadigital.prj001.extensions.getResourceCode
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.model.trip.FSEventType
@@ -20,7 +21,8 @@ class EventTypeListDialog constructor(
     trip: FSTrip,
     private val source: List<FSEventType>,
     private val osSelectType: (type: FSEventType) -> Unit,
-) : BaseTripDialog<DialogTechnicalAddUserBinding>(trip) {
+    private val hasFormInProcess: Boolean,
+) : BaseTripDialog<DialogSimpleAdapterBinding>(trip) {
 
     private lateinit var eventTypeAdapter: EventTypeListAdapter
     private val hmAuxTranslate = loadTranslation(context)
@@ -29,7 +31,7 @@ class EventTypeListDialog constructor(
 
         dialog = BaseDialog.Builder(
             context = context,
-            contentView = DialogTechnicalAddUserBinding.inflate(LayoutInflater.from(context)),
+            contentView = DialogSimpleAdapterBinding.inflate(LayoutInflater.from(context)),
             margin = true
         ).content { _, binding ->
             this@EventTypeListDialog.binding = binding;
@@ -45,6 +47,10 @@ class EventTypeListDialog constructor(
             edittextFilterLayout.hint = hmAuxTranslate[DIALOG_FILTER_HINT]
             tvEmptyList.text = hmAuxTranslate[DIALOG_EMPTY_LIST]
 
+
+            cardWarning.isVisible = hasFormInProcess
+            tvWarning.text = hmAuxTranslate[DIALOG_HAS_FORM_IN_PROCESS_LBL]
+
             if (source.isEmpty()) {
                 recyclerView.visibility = View.GONE
                 tvEmptyList.visibility = View.VISIBLE
@@ -57,18 +63,20 @@ class EventTypeListDialog constructor(
                     this@EventTypeListDialog.dismiss()
                     osSelectType(eventType)
                 },
+                hasFormInProcess = hasFormInProcess,
                 updateSizeList = {
-                    if(it == 0) {
+                    if (it == 0) {
                         recyclerView.visibility = View.GONE
                         tvEmptyList.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         recyclerView.visibility = View.VISIBLE
                         tvEmptyList.visibility = View.GONE
                     }
                 }
             )
 
-            edittextFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+            edittextFilter.setOnReportTextChangeListner(object :
+                MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(text: String?) {
                 }
 
@@ -109,13 +117,14 @@ class EventTypeListDialog constructor(
         const val DIALOG_TITLE = "list_event_type_title_ttl"
         const val DIALOG_FILTER_HINT = "list_event_type_filter_hint"
         const val DIALOG_EMPTY_LIST = "list_event_type_empty_list"
-
+        const val DIALOG_HAS_FORM_IN_PROCESS_LBL = "dialog_has_form_in_process_lbl"
 
 
         fun loadTranslation(context: Context): HMAux = listOf(
             DIALOG_TITLE,
             DIALOG_FILTER_HINT,
             DIALOG_EMPTY_LIST,
+            DIALOG_HAS_FORM_IN_PROCESS_LBL
         ).let(
             TranslateResource(
                 context = context,

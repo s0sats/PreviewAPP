@@ -3,10 +3,10 @@ package com.namoadigital.prj001.core.trip.domain.usecase.destination
 import android.content.Context
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepository
-import com.namoadigital.prj001.core.trip.domain.model.ActionConflictType
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase.Input
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase.Output
 import com.namoadigital.prj001.extensions.getCustomerCode
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType
 import com.namoadigital.prj001.util.ToolBox_Inf
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -30,7 +30,8 @@ class ValidateDateFromDestinationAndActionUseCase @Inject constructor(
     data class Output(
         val dateStart: String? = null,
         val dateEnd: String? = null,
-        val conflict: DestinationConflict
+        val conflict: DestinationConflict,
+        val message: String? = null,
     )
 
 
@@ -121,10 +122,10 @@ enum class DestinationConflict {
     RANGE_OVERLAP;
 
     companion object {
-        fun fromAction(conflict: ActionConflictType) = when (conflict) {
-            ActionConflictType.START_OVERLAP -> START_OVERLAP
-            ActionConflictType.END_OVERLAP -> END_OVERLAP
-            ActionConflictType.RANGE_OVERLAP -> RANGE_OVERLAP
+        fun fromAction(conflict: EventConflictType) = when (conflict) {
+            EventConflictType.START_OVERLAP -> START_OVERLAP
+            EventConflictType.END_OVERLAP -> END_OVERLAP
+            else -> RANGE_OVERLAP
         }
     }
 }

@@ -258,12 +258,14 @@ class EventManualRepositoryImpl @Inject constructor(
     }
 
     override fun getEventConflict(
-        currentSeq: Int,
+        currentSeq: Int?,
+        eventDay: Int?,
         startDate: String,
         endDate: String?
     ): EventConflict? {
         return eventDao.getEventConflict(
             currentSeq = currentSeq,
+            eventDay = eventDay,
             userCode = appContext.getUserCode().toInt(),
             newStart = startDate,
             newEnd = endDate

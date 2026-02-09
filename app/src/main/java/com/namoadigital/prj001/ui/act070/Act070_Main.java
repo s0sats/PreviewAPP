@@ -59,6 +59,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.core.translate.TranslateBuild;
 import com.namoadigital.prj001.core.translate.TranslateBuildKt;
 import com.namoadigital.prj001.core.translate.di.EventTranslate;
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MdJustifyItemDao;
@@ -197,6 +198,9 @@ public class Act070_Main extends Base_Activity_Frag implements
 
     @Inject
     GetEventManualUseCase getEventManualUseCase;
+
+    @Inject
+    GetEventActiveUseCase getEventUseCase;
 
     @EventTranslate
     @Inject
@@ -468,7 +472,8 @@ public class Act070_Main extends Base_Activity_Frag implements
                 this,
                 hmAux_Trans,
                 getIntent().getExtras().getString(ConstantBaseApp.ACT092, ""),
-                getEventManualUseCase
+                getEventManualUseCase,
+                getEventUseCase
         );
         //
         setActivityData();

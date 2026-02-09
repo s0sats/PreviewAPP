@@ -54,7 +54,13 @@ interface GeCustomFormRepository {
 
     fun getFormConflict(
         startDate: String,
-        endDate: String?
+        endDate: String?,
+        validRange: Boolean = true,
+        formData: Int? = null,
+        typeCode: Int? = null,
+        formCode: Int? = null,
+        formVersion: Int? = null,
+        validateStartDateEquals: Boolean = false
     ): EventConflict?
 
 }

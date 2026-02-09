@@ -12,6 +12,7 @@ import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.Ch
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
@@ -139,7 +140,8 @@ class Act083_Main_Presenter(
     private val useCase: SerialSiteInventoryUseCase,
     private val actionPrefUseCases: ActionPreferenceUseCases,
     private val ticketAccessUseCase: FlowTicketAccessUseCase,
-    private val getEventManualUseCase: GetEventManualUseCase
+    private val getEventManualUseCase: GetEventManualUseCase,
+    private val getEventUseCase: GetEventActiveUseCase
 ) : Act083_Main_Contract.I_Presenter {
 
     private lateinit var myActionFilterParam: MyActionFilterParam
@@ -504,7 +506,7 @@ class Act083_Main_Presenter(
             listOf(MyActions.MY_ACTION_TYPE_TICKET, MyActions.MY_ACTION_TYPE_TICKET_CACHE)
 
         if (!ignoredList.contains(myAction.actionType)) {
-            if (hasEventManual()) {
+            if (hasEvent()) {
                 mView.showMsg(Act083_Main.EVENT_IN_EXECUTION, myAction)
                 return
             }
@@ -2765,8 +2767,12 @@ class Act083_Main_Presenter(
         return fsTripDao.getTrip() != null
     }
 
-    override fun hasEventManual(): Boolean {
-        return getEventManualUseCase(Unit) != null
+    override fun hasEvent(): Boolean {
+        return when {
+            getEventUseCase(Unit) != null -> true
+            getEventManualUseCase(Unit) != null -> true
+            else -> false
+        }
     }
 
 }

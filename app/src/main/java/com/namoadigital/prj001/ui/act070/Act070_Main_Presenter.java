@@ -24,6 +24,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse.ApiCollection;
+import com.namoadigital.prj001.core.trip.domain.usecase.GetEventActiveUseCase;
 import com.namoadigital.prj001.core.util.BroadcastHelper;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -149,13 +150,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private ArrayList<HMAux> workgroupOptionList;
     private final String actRequest;
     private final GetEventManualUseCase getEventManualUseCase;
+    private final GetEventActiveUseCase getEventUseCase;
 
-    public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans, String actRequest, GetEventManualUseCase getEventManualUseCase) {
+    public Act070_Main_Presenter(
+            Context context,
+            Act070_Main_Contract.I_View mView,
+            HMAux hmAux_Trans,
+            String actRequest,
+            GetEventManualUseCase getEventManualUseCase,
+            GetEventActiveUseCase getEventUseCase
+    ) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         this.actRequest = actRequest;
         this.getEventManualUseCase = getEventManualUseCase;
+        this.getEventUseCase = getEventUseCase;
         //
         this.ticketDao = new TK_TicketDao(
                 context,
@@ -1787,11 +1797,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private boolean checkHasEventManual() {
-        if (hasEventManual()) {
+        if (hasEvent()) {
             mView.showAlertEventInExecution();
             return true;
         }
-        return false;
+         return false;
     }
 
     /**
@@ -3647,8 +3657,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean hasEventManual() {
-        return getEventManualUseCase.invoke(Unit.INSTANCE) != null;
+    public boolean hasEvent() {
+        if(getEventManualUseCase.invoke(Unit.INSTANCE) != null) return true;
+        return getEventUseCase.invoke(Unit.INSTANCE) != null;
     }
 
 }

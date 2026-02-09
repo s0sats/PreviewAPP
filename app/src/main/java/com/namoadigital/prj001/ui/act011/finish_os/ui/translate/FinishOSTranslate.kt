@@ -27,6 +27,7 @@ const val DIALOG_FINALIZE_OS_INFO_START_DATE_EXCEEDED_END_DATE_LBL =
 const val DIALOG_FINALIZE_OS_INFO_END_DATE_EXCEEDED_START_DATE_LBL =
     "dialog_finalize_os_info_end_date_exceeded_start_date_lbl"
 const val FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL = "form_os_info_end_date_future_error_lbl"
+const val FORM_OS_INFO_START_DATE_FUTURE_ERROR_LBL = "form_os_info_start_date_future_error_lbl"
 const val DIALOG_NOT_FINALIZE_INFO_LBL = "dialog_not_finalized_info_lbl"
 const val DIALOG_NOT_FINALIZE_DECIDE_PLANNING_LBL = "dialog_not_finalized_decide_planning_lbl"
 const val DIALOG_NOT_FINALIZED_PARTIAL_EXECUTION_LBL = "dialog_not_finalized_partial_execution_lbl"

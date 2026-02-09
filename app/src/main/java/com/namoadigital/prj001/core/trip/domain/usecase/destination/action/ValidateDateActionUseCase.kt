@@ -2,12 +2,13 @@ package com.namoadigital.prj001.core.trip.domain.usecase.destination.action
 
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.trip.data.destination.action.TripDestinationActionRepository
-import com.namoadigital.prj001.core.trip.domain.model.ActionConflict
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
+
 import javax.inject.Inject
 
 class ValidateDateActionUseCase @Inject constructor(
     private val repository: TripDestinationActionRepository
-) : UseCaseWithoutFlow<ValidateDateActionUseCase.Input, ActionConflict?> {
+) : UseCaseWithoutFlow<ValidateDateActionUseCase.Input, EventConflict?> {
 
 
     data class Input(
@@ -19,7 +20,7 @@ class ValidateDateActionUseCase @Inject constructor(
     )
 
 
-    override fun invoke(input: Input): ActionConflict? {
+    override fun invoke(input: Input): EventConflict? {
         val (prefix, code, seq, newStart, newEnd) = input
 
         return repository.checkDateConflict(

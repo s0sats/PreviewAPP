@@ -168,13 +168,24 @@ class GeCustomFormRepositoryImpl @Inject constructor(
 
     override fun getFormConflict(
         startDate: String,
-        endDate: String?
+        endDate: String?,
+        validRange: Boolean,
+        formData: Int?,
+        typeCode: Int?,
+        formCode: Int?,
+        formVersion: Int?,
+        validateStartDateEquals: Boolean
     ): EventConflict? {
-        val customerCode = context.getCustomerCode()
         return dataDao.getConflictingForm(
-            customerCode,
+            context.getCustomerCode(),
             startDate,
-            endDate
+            endDate,
+            validRange,
+            formData,
+            typeCode,
+            formCode,
+            formVersion,
+            validateStartDateEquals
         )
     }
 

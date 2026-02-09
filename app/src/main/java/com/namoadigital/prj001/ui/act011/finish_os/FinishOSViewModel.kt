@@ -17,6 +17,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.FinishOSUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.GetFinishOsDataUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.di.usecase.ValidateFinishOSUseCase
 import com.namoadigital.prj001.ui.act011.finish_os.ui.screen_component.MachinesStatus
+import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.EditedField
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishState
 import com.namoadigital.prj001.ui.act011.finish_os.ui.utils.FinishValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -119,19 +120,23 @@ class FinishOSViewModel @Inject constructor(
     }
 
     fun validateForm(
-        finishValidation: FinishValidation
+        finishValidation: FinishValidation,
+        editedField: EditedField? = null,
+        isReadOnly: Boolean = false
     ) {
         viewModelScope.launch {
             validateUseCase(
                 input = ValidateFinishOSUseCase.Param(
                     validation = finishValidation,
-                    primaryKey = _state.value.formPrimaryKey!!
+                    primaryKey = _state.value.formPrimaryKey!!,
+                    editedField = editedField,
+                    isReadOnly = isReadOnly
                 )
             ).results(
                 success = { response ->
                     _state.update {
                         it.copy(
-                            isValidForm = response
+                            isValidForm = response,
                         )
                     }
                 }

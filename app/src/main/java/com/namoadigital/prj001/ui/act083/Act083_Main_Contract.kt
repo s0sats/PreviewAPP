@@ -134,7 +134,7 @@ interface Act083_Main_Contract {
             destination: SelectionDestinationAvailable,
             isOnline: Boolean = true
         )
-        fun hasEventManual(): Boolean
+        fun hasEvent(): Boolean
     }
 
 }

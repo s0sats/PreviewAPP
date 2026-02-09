@@ -6,7 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.databinding.DialogTechnicalAddUserBinding
+import com.namoadigital.prj001.databinding.DialogSimpleAdapterBinding
 import com.namoadigital.prj001.extensions.getResourceCode
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.model.next_os.ListReservedUserRec
@@ -22,7 +22,7 @@ class DialogReservedUserList(
     private val onClose: () -> Unit
 ) {
 
-    private lateinit var binding: DialogTechnicalAddUserBinding
+    private lateinit var binding: DialogSimpleAdapterBinding
     private lateinit var userAdapter: ReservedUserListAdapter
 
     private val hmAuxTranslate = loadTranslation(context)
@@ -30,7 +30,7 @@ class DialogReservedUserList(
     private val dialog by lazy {
         BaseDialog.Builder(
             context = context,
-            contentView = DialogTechnicalAddUserBinding.inflate(LayoutInflater.from(context)),
+            contentView = DialogSimpleAdapterBinding.inflate(LayoutInflater.from(context)),
             margin = true
         ).content { _, binding ->
             this@DialogReservedUserList.binding = binding

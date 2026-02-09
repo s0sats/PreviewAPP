@@ -42,11 +42,9 @@ class UsersListAdapter constructor(
 
         fun onBinding(item: TripUserEdit) {
             with(binding) {
-                textView.apply {
-                    applyVisibilityIfTextExists(item.userName)
-                    setOnClickListener {
-                        selectUser(item)
-                    }
+                textView.applyVisibilityIfTextExists(item.userName)
+                cardLayout.setOnClickListener {
+                    selectUser(item)
                 }
             }
         }

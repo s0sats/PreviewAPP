@@ -6,7 +6,8 @@ import com.namoadigital.prj001.extensions.date.formatRange
 data class EventConflict(
     val dateStart: String?,
     val dateEnd: String?,
-    val type: EventConflictType
+    val type: EventConflictType,
+    val description: String? = null
 ) {
 
     fun range(context: Context): String = context.formatRange(dateStart, dateEnd)

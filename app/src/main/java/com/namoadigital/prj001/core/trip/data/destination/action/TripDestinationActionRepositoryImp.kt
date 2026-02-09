@@ -3,7 +3,7 @@ package com.namoadigital.prj001.core.trip.data.destination.action
 import android.content.Context
 import com.namoadigital.prj001.adapter.trip.model.Extract
 import com.namoadigital.prj001.core.trip.data.destination.action.mapping.toTripForms
-import com.namoadigital.prj001.core.trip.domain.model.ActionConflict
+
 import com.namoadigital.prj001.core.trip.domain.model.TripSiteExtract
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local
 import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.model.trip.FsTripDestinationAction
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toActionExtract
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -70,18 +71,35 @@ class TripDestinationActionRepositoryImp @Inject constructor(
         tripCode: Int,
         destinationSeq: Int?,
         newStart: String,
-        newEnd: String?
-    ): ActionConflict? {
+        newEnd: String?,
+        validateStartDateEquals: Boolean
+    ): EventConflict? {
 
-        destinationSeq ?: return null
+        return dao.getDestinationActionConflict(
+            customerCode = context.getCustomerCode(),
+            tripPrefix,
+            tripCode,
+            destinationSeq ?: -1,
+            newStart = newStart,
+            newEnd = newEnd,
+            validateStartDateEquals = validateStartDateEquals
+        )
+    }
 
-        return dao.getActionConflict(
+    override fun getDestinationFormDateConflict(
+        tripPrefix: Int,
+        tripCode: Int,
+        destinationSeq: Int,
+        newArrivedDate: String,
+        newDepartedDate: String?,
+    ): EventConflict? {
+        return dao.getDestinationFormDateConflict(
             customerCode = context.getCustomerCode(),
             tripPrefix,
             tripCode,
             destinationSeq,
-            newStart = newStart,
-            newEnd = newEnd
+            newArrivedDate,
+            newDepartedDate
         )
     }
 

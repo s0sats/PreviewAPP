@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act095.event_manual.domain.usecases
 
 import android.content.Context
 import com.namoadigital.prj001.core.UseCaseWithoutFlow
+import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.ui.act011.finish_os.data.repository.ge_custom_form.GeCustomFormRepository
 import com.namoadigital.prj001.ui.act095.event_manual.domain.repository.EventManualRepository
 import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflictType
@@ -11,18 +12,21 @@ import javax.inject.Inject
 
 enum class EventManualDateType(val key: EventManualKey) {
     EVENT(EventManualKey.ErrorInvalidEventDateMsg),
-    FORM(EventManualKey.ErrorInvalidFormDateMsg)
+    FORM(EventManualKey.ErrorInvalidFormDateMsg),
+    TRIP(EventManualKey.ErrorInvalidTripDateMsg)
 }
 
 class ValidateDateEventUseCase @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val repository: EventManualRepository,
-    private val formRepository: GeCustomFormRepository
+    private val formRepository: GeCustomFormRepository,
+    private val tripRepository: TripRepository
 ) : UseCaseWithoutFlow<ValidateDateEventUseCase.Input, ValidateDateEventUseCase.Output?> {
 
 
     data class Input(
-        val currentSeq: Int,
+        val currentSeq: Int?,
+        val eventDay: Int?,
         val startDate: String,
         val endDate: String?
     )
@@ -44,10 +48,16 @@ class ValidateDateEventUseCase @Inject constructor(
         val eventConflict = repository.getEventConflict(
             currentSeq = input.currentSeq,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            eventDay = input.eventDay
         )
 
         val formConflict = formRepository.getFormConflict(
+            startDate = input.startDate,
+            endDate = input.endDate,
+        )
+
+        val tripConflict = tripRepository.getTripConflict(
             startDate = input.startDate,
             endDate = input.endDate
         )
@@ -55,6 +65,7 @@ class ValidateDateEventUseCase @Inject constructor(
         val typeConflict = when {
             eventConflict != null -> EventManualDateType.EVENT to eventConflict
             formConflict != null -> EventManualDateType.FORM to formConflict
+            tripConflict != null -> EventManualDateType.TRIP to tripConflict
             else -> null
         }
 

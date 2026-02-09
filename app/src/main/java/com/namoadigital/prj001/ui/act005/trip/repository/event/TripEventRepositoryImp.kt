@@ -38,6 +38,7 @@ import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
 import com.namoadigital.prj001.ui.act005.trip.TripViewModel
 import com.namoadigital.prj001.ui.act005.trip.di.enums.EventStatus
 import com.namoadigital.prj001.ui.act005.trip.repository.mapping.toExtract
+import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventConflict
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -429,6 +430,32 @@ class TripEventRepositoryImp @Inject constructor(
             customerCode = context.getCustomerCode(),
             tripPrefix = tripPrefix,
             tripCode = tripCode,
+        )
+    }
+
+    override fun getTripEventConflict(
+        dateStart: String,
+        dateEnd: String?,
+        eventSeq: Int,
+        validateStartDateEquals: Boolean
+    ) : EventConflict? {
+        val currentTrip = tripDao.getTrip() ?: return null
+
+        return eventDao.getEventConflict(
+            tripPrefix = currentTrip.tripPrefix,
+            tripCode = currentTrip.tripCode,
+            newStart = dateStart,
+            newEnd = dateEnd,
+            eventSeq = eventSeq,
+            validateStartDateEquals
+        )
+    }
+
+    override fun getEventActive(): FSTripEvent? {
+        val currentTrip = tripDao.getTrip() ?: return null
+        return eventDao.hasEventByTrip(
+            currentTrip.tripPrefix,
+            currentTrip.tripCode,
         )
     }
 

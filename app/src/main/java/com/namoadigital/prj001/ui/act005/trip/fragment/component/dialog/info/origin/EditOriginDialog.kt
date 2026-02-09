@@ -8,6 +8,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.translate.textOf
+import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResult
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.databinding.TripDialogInfoEditBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
@@ -34,10 +36,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class EditOriginDialog constructor(
+class EditOriginDialog(
     private val context: Context,
     private val trip: FSTrip,
-    private val validateOriginDate: (Long, Int, Int) -> String?,
+    private val validateOriginDate: (String) -> ValidationResult,
     getDestinationThresholds: (Long, Int, Int, Int?, GetDestinationForThresholdValidationUseCase.TripDestinationValidationType) -> Pair<FsTripDestination?, FsTripDestination?>,
     private val onSave: (SaveOriginEdit) -> Unit,
     private val onOpenCamera: OpenCamera,
@@ -60,7 +62,7 @@ class EditOriginDialog constructor(
             contentView = TripDialogInfoEditBinding.inflate(LayoutInflater.from(context))
         ).content { _, binding ->
             with(binding) {
-                this@EditOriginDialog.binding = this;
+                this@EditOriginDialog.binding = this
                 initializeViews()
                 observerPhoto()
                 initializeListeners()
@@ -376,26 +378,29 @@ class EditOriginDialog constructor(
         binding.apply {
             val dateStart = binding.etStartDate.text.toString()
             val hourStart = binding.etStartHour.text.toString()
-            validateOriginDate.let { invoke ->
-                val dateError = invoke(
-                    trip.customerCode,
-                    trip.tripPrefix,
-                    trip.tripCode,
-                )
-                //
-                if (!checkNextDate(dateError, dateStart, hourStart)) {
-                    return false
-                }
-                //
-                if (dateIsFuture("$dateStart $hourStart")) {
-                    setStartDateError()
-                    tvDateStartInvalid.text =
-                        hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE]
-                    return false
-                }
 
-                resetStartDate()
+            val fullDate = "$dateStart $hourStart".parseFullDate()
+
+            val validationResult = validateOriginDate(fullDate)
+
+            if (validationResult is ValidationResult.Conflict) {
+                setStartDateError()
+                tvDateStartInvalid.text =
+                    hmAuxTranslate.textOf(
+                        key = validationResult.message,
+                        values = validationResult.parameters.values.toList()
+                    )
+                return false
             }
+
+            if (dateIsFuture("$dateStart $hourStart")) {
+                setStartDateError()
+                tvDateStartInvalid.text =
+                    hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE]
+                return false
+            }
+
+            resetStartDate()
         }
         return true
     }
