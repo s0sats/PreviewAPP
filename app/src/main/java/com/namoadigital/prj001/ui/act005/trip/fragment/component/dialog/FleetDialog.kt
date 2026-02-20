@@ -740,7 +740,7 @@ class FleetDialog(
 
         fullDate.parseFullDate(false)
 
-        if (dateIsFuture(fullDate)) {
+        if (dateIsFuture(fullDate.parseFullDate())) {
             showDateEndError(
                 hmAuxTranslate.textOf(DIALOG_ERROR_FUTURE_DATE)
             )

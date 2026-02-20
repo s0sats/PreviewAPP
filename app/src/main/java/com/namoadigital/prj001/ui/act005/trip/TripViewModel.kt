@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.blockchain.ValidateConfirmArrivedUseCase
+import com.namoadigital.prj001.core.blockchain.ValidateConfirmDepartedUseCase
 import com.namoadigital.prj001.core.blockchain.ValidateTimelineBlockUseCase
 import com.namoadigital.prj001.core.domain.usecase.form_local.HasFormInProcessUseCase
 import com.namoadigital.prj001.core.trip.data.preference.CurrentTripPref
@@ -21,7 +22,6 @@ import com.namoadigital.prj001.core.trip.domain.usecase.TripUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveOverNightDestinationUseCase
-import com.namoadigital.prj001.core.trip.domain.usecase.destination.ValidateDateFromDestinationAndActionUseCase
 import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.results
 import com.namoadigital.prj001.model.TK_Ticket
@@ -39,12 +39,9 @@ import com.namoadigital.prj001.model.trip.toTripStatus
 import com.namoadigital.prj001.service.location.FsTripLocationService
 import com.namoadigital.prj001.ui.act005.trip.di.enums.UserAction
 import com.namoadigital.prj001.ui.act005.trip.di.model.TripUserEdit
-import com.namoadigital.prj001.ui.act005.trip.di.usecase.end_trip.ValidateDateOnEndTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.GetEventTypeUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.TripEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.extract.ListExtractUseCase
-import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.ValidateDateOnOriginUseCase
-import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.ValidateDateOnStartTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.ExecEditUserUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.InputParams
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.OutputParams
@@ -83,13 +80,10 @@ class TripViewModel @Inject constructor(
     private val userUseCase: TripUsersUseCase,
     private val eventUseCase: TripEventUseCase,
     private val extractUseCase: ListExtractUseCase,
-    private val validateDate: ValidateDateOnOriginUseCase,
-    private val validateStartTrip: ValidateDateOnStartTripUseCase,
-    private val validateEndTrip: ValidateDateOnEndTripUseCase,
-    private val validateDateFromDestinationAndActionUseCase: ValidateDateFromDestinationAndActionUseCase,
     private val validateConfirmArrivedUseCase: ValidateConfirmArrivedUseCase,
+    private val validateConfirmDepartedUseCase: ValidateConfirmDepartedUseCase,
     private val validateTimelineBlockUseCase: ValidateTimelineBlockUseCase,
-    private val hasFormInProcess: HasFormInProcessUseCase
+    private val hasFormInProcess: HasFormInProcessUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TripState())
@@ -773,6 +767,8 @@ class TripViewModel @Inject constructor(
 
     fun validateConfirmArrivedDestination() = validateConfirmArrivedUseCase(Unit)
 
+    fun validateConfirmDepartedDestination() = validateConfirmDepartedUseCase(Unit)
+
     fun validateDateFromDestination(
         destinationSeq: Int?,
         newStart: String,
@@ -992,6 +988,10 @@ class TripViewModel @Inject constructor(
                     }
                 )
         }
+    }
+
+    fun deleteTripsInDevice() {
+        useCase.deleteTrips(Unit)
     }
 
 

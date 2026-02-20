@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.core.trip.domain.usecase
 
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.DeleteTripsInDeviceUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.SaveStartDateTripUseCase
 
 data class TripUseCase(
@@ -13,4 +14,5 @@ data class TripUseCase(
     val sendTripFull: SendTripFullUseCase,
     val hasTripWithUpdateRequired: CheckExistsTripUpdateUseCase,
     val saveStartDate: SaveStartDateTripUseCase,
+    val deleteTrips: DeleteTripsInDeviceUseCase
 )

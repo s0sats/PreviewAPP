@@ -148,6 +148,7 @@ fun InfoOSComponent(
             is FinishValidation.Component.InfoOS.InvalidFutureEndDate -> {
                 initialDateError = Pair(false, "")
                 finalDateError = Pair(true, translateMap.textOf(componentError.message))
+                
             }
 
             else -> {

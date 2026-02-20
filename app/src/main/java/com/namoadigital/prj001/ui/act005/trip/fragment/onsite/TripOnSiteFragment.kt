@@ -49,6 +49,7 @@ import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripTranslate.TRIP_A
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.TripNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.closeNotification
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.notification.showNotification
+import com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment.Companion.ALERT_WAITING_MINUTE_MSG
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -528,6 +529,19 @@ class TripOnSiteFragment : TripBaseFragment<FrgOnSiteTripBinding>() {
                         showDialogEventInProcess()
                         return@setOnClickListener
                     }
+
+                    val hasConflict = viewModel.validateConfirmDepartedDestination()
+
+                    if(hasConflict){
+                        showConfirmDialog(
+                            title = hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_TTL],
+                            message = hmAuxTranslate[ALERT_WAITING_MINUTE_MSG],
+                            onConfirm = {},
+                            negBtn = 0
+                        )
+                        return@setOnClickListener
+                    }
+
 
                     showConfirmDialog(
                         hmAuxTranslate[ALERT_CONFIRM_DEPARTED_TRIP_TTL],

@@ -9,6 +9,7 @@ import com.namoadigital.prj001.databinding.DialogEventDoneTripBinding
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.getResourceCode
 import com.namoadigital.prj001.extensions.parseDatePair
+import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.setBoxStrokeColorState
 import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.model.trip.FSTrip
@@ -82,7 +83,7 @@ class EventDoneDialog constructor(
                 return false
             }
 
-            if (dateIsFuture(date)) {
+            if (dateIsFuture(date.parseFullDate())) {
                 tvDateInvalid.text = hmAuxTranslate[DIALOG_EVENT_DONE_INVALIDATE_FUTURE_LBL]
                 layoutDateInvalid.visibility = View.VISIBLE
                 return false

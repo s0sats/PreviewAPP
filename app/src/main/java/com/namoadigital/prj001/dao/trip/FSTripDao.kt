@@ -1228,5 +1228,10 @@ class FSTripDao @Inject constructor(
         }.firstOrNull()
     }
 
+    fun deleteTripsInDevice() {
+        val query = """DELETE FROM $TABLE""".trimIndent()
+        remove(query)
+    }
+
 
 }

@@ -45,6 +45,7 @@ import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.SaveEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.event.TripEventUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.extract.ListExtractUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.origin.ValidateDateOnOriginUseCase
+import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.DeleteTripsInDeviceUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.start_trip.SaveStartDateTripUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.ExecEditUserUseCase
 import com.namoadigital.prj001.ui.act005.trip.di.usecase.user.GetListTechnicalUseCase
@@ -83,7 +84,8 @@ object TripUseCaseModule {
             getEvent = GetEventUseCase(repository),
             sendTripFull = SendTripFullUseCase(repository),
             hasTripWithUpdateRequired = CheckExistsTripUpdateUseCase(repository),
-            saveStartDate = SaveStartDateTripUseCase(repository)
+            saveStartDate = SaveStartDateTripUseCase(repository),
+            deleteTrips = DeleteTripsInDeviceUseCase(repository)
         )
     }
 

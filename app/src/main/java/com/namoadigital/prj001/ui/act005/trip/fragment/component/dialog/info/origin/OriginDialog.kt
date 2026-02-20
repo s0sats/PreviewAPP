@@ -169,7 +169,7 @@ class OriginDialog(
                 })
 
                 setDelegatePickerChange {
-                    errorFutureDate(dateIsFuture(it + " " + edittextHour.text.toString()))
+                    errorFutureDate(dateIsFuture((it + " " + edittextHour.text.toString()).parseFullDate()))
                 }
             }
 
@@ -185,7 +185,7 @@ class OriginDialog(
                 })
 
                 setDelegatePickerChange {
-                    errorFutureDate(dateIsFuture(edittextDate.text.toString() + " " + it))
+                    errorFutureDate(dateIsFuture(((edittextDate.text.toString() + " " + it)).parseFullDate()))
 
                 }
             }

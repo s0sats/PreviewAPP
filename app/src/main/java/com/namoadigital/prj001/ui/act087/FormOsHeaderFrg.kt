@@ -1019,12 +1019,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     || isContinuousFormStartDateInvalid
                     || isInitialSerialStateDateInvalid
                     || isInitialSerialStateResponsableInvalid
+                    || validationResult != null
                 ) {
                     showSaveErroDialog(
                         startDateInvalid = isStartDateInvalid,
                         continuousFormStartDateInvalid = isContinuousFormStartDateInvalid,
                         isInitialSerialStateDateInvalid = isInitialSerialStateDateInvalid,
                         isInitialSerialStateResponsableInvalid = isInitialSerialStateResponsableInvalid,
+                        action = validationResult
                     )
                     return
                 }

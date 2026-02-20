@@ -1027,4 +1027,8 @@ class TripRepositoryImp @Inject constructor(
     override fun getLastDateFromTrip(tripPrefix: Int, tripCode: Int): String? {
         return dao.getMaxDateSimple(tripPrefix, tripCode)
     }
+
+    override fun deleteTripsInDevice() {
+        dao.deleteTripsInDevice()
+    }
 }

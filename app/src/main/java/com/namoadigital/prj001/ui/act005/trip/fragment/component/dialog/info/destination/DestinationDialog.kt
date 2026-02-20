@@ -492,7 +492,7 @@ class DestinationDialog(
 
         with(binding) {
 
-            if (dateIsFuture("$dateStart $hourStart")) {
+            if (dateIsFuture("$dateStart $hourStart".parseFullDate())) {
                 setStartDateError()
                 tvDateStartInvalid.text =
                     hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE]
@@ -580,7 +580,7 @@ class DestinationDialog(
             "${etStartDate.text} ${etStartHour.text}".parseFullDate()
             "${etEndDate.text} ${etEndHour.text}".parseFullDate()
 
-            if (dateIsFuture("$dateEnd $hourEnd")) {
+            if (dateIsFuture("$dateEnd $hourEnd".parseFullDate())) {
                 setEndDateError()
                 tvDateEndInvalid.text = hmAuxTranslate[DIALOG_ERROR_FUTURE_DATE]
                 return false

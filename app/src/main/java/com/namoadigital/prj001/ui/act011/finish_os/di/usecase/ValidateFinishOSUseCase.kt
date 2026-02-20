@@ -152,21 +152,12 @@ class ValidateFinishOSUseCase @Inject constructor(
                 partialExecutionOS != null && isDateBeforeOrEquals(
                     infoOs.dateStart,
                     partialExecutionOS
-                ) -> {
-                    map[Component.InfoOS] = Component.InfoOS.PartialExecutionOS
-                }
+                ) -> { map[Component.InfoOS] = Component.InfoOS.PartialExecutionOS }
 
-                ToolBox_Inf.isFutureDate(infoOs.dateStart) || ToolBox_Inf.isFutureDate(infoOs.dateEnd) -> {
-                    if (input.editedField == EditedField.DATE_END) {
+                ToolBox_Inf.isFutureDate(infoOs.dateEnd) -> {
                         map[Component.InfoOS] = Component.InfoOS.InvalidFutureEndDate(
                             FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
                         )
-                    }
-                    if (input.editedField == EditedField.DATE_START) {
-                        map[Component.InfoOS] = Component.InfoOS.InvalidFutureStartDate(
-                            FORM_OS_INFO_END_DATE_FUTURE_ERROR_LBL
-                        )
-                    }
                 }
 
                 partialExecutionOS == null && geOs?.measure_value != null -> {

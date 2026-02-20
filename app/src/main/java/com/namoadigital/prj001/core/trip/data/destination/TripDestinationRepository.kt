@@ -101,4 +101,9 @@ interface TripDestinationRepository {
     fun getCurrentDestination(): FsTripDestination?
 
     fun getLastDestinationDeparted(prefix: Int, code: Int): FsTripDestination?
+
+    fun getLastDestinationArrived(
+        prefix: Int,
+        code: Int,
+    ): FsTripDestination?
 }

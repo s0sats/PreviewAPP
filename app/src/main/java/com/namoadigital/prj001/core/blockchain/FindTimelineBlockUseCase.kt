@@ -55,7 +55,7 @@ class FindTimelineBlockUseCase @Inject constructor() :
             val virtualBlocks = intersecting.filter { it.type.isVirtual() }
 
             if (solids.isEmpty() && virtualBlocks.isNotEmpty()) {
-                return buildNotFound(startMs, endMs, newTimeline)
+                return buildNotFound(startMs, endMs, newTimeline, blockToIgnore)
             }
 
             if (solids.size > 1 && virtualBlocks.isEmpty()) {
@@ -68,15 +68,24 @@ class FindTimelineBlockUseCase @Inject constructor() :
             }
         }
 
-        return buildNotFound(startMs, endMs, newTimeline)
+        return buildNotFound(startMs, endMs, newTimeline, blockToIgnore)
     }
 
     private fun buildNotFound(
         startMs: Long,
         endMs: Long,
-        timeline: List<TripTimelineBlock>
+        timeline: List<TripTimelineBlock>,
+        blockToIgnore: TripTimelineBlock?
     ): FindBlockResult {
 
+        if(blockToIgnore?.type is TimelineBlockType.FORM){
+            val onSiteFind = timeline.find { (type, description) -> type is TimelineBlockType.ON_SITE && type.destinationSeq == (blockToIgnore.type as TimelineBlockType.FORM).destinationSeq }
+
+            return FindBlockResult.OverlapError(onSiteFind, null)
+        }
+
+
+        //
         val previous = timeline
             .filter { it.endMs() <= startMs }
             .maxByOrNull { it.endMs() }

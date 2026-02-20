@@ -79,5 +79,6 @@ interface TripRepository {
 
     fun getTripConflict(startDate: String, endDate: String?) : EventConflict?
     fun getLastDateFromTrip(tripPrefix: Int, tripCode: Int) : String?
+    fun deleteTripsInDevice()
 
 }

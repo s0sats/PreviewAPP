@@ -78,9 +78,9 @@ fun TranslateMap.textOf(value: TranslateKey, args: Map<String, String>? = null):
 fun TranslateMap.textOf(key: TranslateWildCard, values: List<String>): String {
     if (key.placeholders.isEmpty()) return textOf(key)
 
-    require(values.size == key.placeholders.size) {
+/*    require(values.size == key.placeholders.size) {
         "Key '${key.key}' requires ${key.placeholders.size} args: ${key.placeholders}, but received ${values.size}"
-    }
+    }*/
 
     val args = key.placeholders.zip(values).toMap()
     return textOf(key, args)

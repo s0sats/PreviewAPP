@@ -6,6 +6,7 @@ import com.namoadigital.prj001.core.trip.data.trip.TripRepository
 import com.namoadigital.prj001.core.trip.domain.model.blockchain.TimelineBlockType
 import com.namoadigital.prj001.core.trip.domain.model.blockchain.TripTimelineBlock
 import com.namoadigital.prj001.core.trip.domain.model.enums.TimelineBlockTranslate
+import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.TripStatus
 import com.namoadigital.prj001.model.trip.toTripStatus
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class CreateTripTimelineBlocksUseCase @Inject constructor(
         val destinations = destinationRepository.getListDestinations(
             trip.tripPrefix,
             trip.tripCode
-        )
+        ).filter { it.destinationStatus != DestinationStatus.CANCELLED.name }
 
 
         // Se não houver data de criação, não é possível gerar a linha do tempo.

@@ -96,7 +96,16 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         timeline: List<TripTimelineBlock>,
         currentTrip: FSTrip,
     ): ValidationResult {
+
+        val startMs = ToolBox_Inf.dateToMilliseconds(action.newArrivedDate)
+        val endMs = action.newDepartedDate?.let { ToolBox_Inf.dateToMilliseconds(it) } ?: Long.MAX_VALUE
+
+        if(startMs == endMs){
+            return createConflict(null, TimelineBlockTranslate.ERROR_DATE_RANGE_LBL)
+        }
+
         val blockToIgnore = timeline.findOnSiteBlock(action.destinationSeq)
+
         val findResult = findTimelineBlock(
             startDate = action.newArrivedDate,
             endDate = action.newDepartedDate,
@@ -200,21 +209,30 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         timeline: List<TripTimelineBlock>,
         currentTrip: FSTrip,
     ): ValidationResult {
+
+        fun toMillis(value: String) = ToolBox_Inf.dateToMilliseconds(value)
+
+        val startTrip = currentTrip.startDate
+            ?: return ValidationResult.Success
+
         val lastDate = tripRepository.getLastDateFromTrip(
             tripPrefix = currentTrip.tripPrefix,
             tripCode = currentTrip.tripCode
         )
-        val originDate = lastDate ?: currentTrip.startDate ?: return ValidationResult.Success
+
+        val startDate = lastDate
+            ?.takeIf { toMillis(it) >= toMillis(startTrip) }
+            ?: startTrip
 
         val blockToIgnore = TripTimelineBlock(
             type = TimelineBlockType.RETURN_TRIP(
-                startDate = originDate,
+                startDate = startDate,
                 endDate = action.newEndDate
             )
         )
 
         val findResult = findTimelineBlock(
-            startDate = originDate,
+            startDate = startDate,
             endDate = action.newEndDate,
             timeline = timeline,
             blockToIgnore = blockToIgnore
@@ -230,13 +248,13 @@ class ValidateTimelineBlockUseCase @Inject constructor(
                     message = TimelineBlockTranslate.ERROR_CONFLICT_TRIP_DATE_END_LBL,
                     placeholders = mapOf(
                         "date_start" to formatDateTime(blockToIgnore.type.startDate),
-                        "date_end" to formatDateRange(blockToIgnore.type.endDate)
+                        "date_end" to formatDateTime(blockToIgnore.type.endDate!!)
                     )
                 )
 
             is FindBlockResult.Success -> ValidationResult.Success
 
-            else -> createTripCreateConflict(blockToIgnore, originDate, currentTrip.startDate!!)
+            else -> createTripCreateConflict(blockToIgnore, startTrip, currentTrip.startDate!!)
         }
     }
 
@@ -264,15 +282,16 @@ class ValidateTimelineBlockUseCase @Inject constructor(
                     currentTrip
                 )
 
-            FindBlockResult.InvalidDateRange ->
+            is FindBlockResult.InvalidDateRange ->
                 createConflict(
                     block = null,
                     message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_START_TRIP_LBL,
                     placeholders = mapOf("trip_start_date" to formatDateTime(currentTrip.startDate!!))
                 )
 
-            else ->
-                createConflict(null, TimelineBlockTranslate.ERROR_CONFLICT_GENERIC_LBL)
+            is FindBlockResult.Success -> ValidationResult.Success
+
+            else -> createConflict(null, TimelineBlockTranslate.ERROR_CONFLICT_GENERIC_LBL)
         }
 
         return validationResult.takeUnless { it is ValidationResult.Success }
@@ -305,6 +324,10 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         }
 
         return if (currentTrip == null) {
+            if(blockType.endDate != null && blockType.startMs() > blockType.endMs()!!){
+                return createConflict(null, TimelineBlockTranslate.ERROR_DATE_RANGE_LBL)
+            }
+
             checkExternalConflicts(blockType = blockType)
         } else {
             processTripValidation(blockType, timeline, currentTrip)
@@ -440,32 +463,24 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         val newEndMs = dateToMs(blockToIgnore?.type?.endDate)
 
         return when {
+            // Caso especial para FORM
+            blockToIgnore?.type is TimelineBlockType.FORM ->
+                createDestinationConflict(
+                    block = block,
+                    message = TimelineBlockTranslate.ERROR_CONFLICT_OUT_OF_ON_SITE_LBL)
+
+            // Conflitos de início
             newStartMs <= block.startMs() ->
                 createDestinationConflict(
                     block = block,
-                    message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL
-                )
+                    message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL )
 
-            block.endMs() <= newStartMs -> createDestinationConflict(
-                block = block,
-                message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL
-            )
-
-            newEndMs != null && newEndMs >= block.endMs() -> createDestinationConflict(
-                    block = block,
-                    message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL
-                )
-
-            newEndMs != null && block.startMs() <= newEndMs -> createDestinationConflict(
-                block = block,
-                message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL
-            )
-
-            isFormOutsideOnSite(block, blockToIgnore) ->
+            // Conflitos de fim
+            block.endMs() <= newStartMs ||
+                    (newEndMs != null && (newEndMs >= block.endMs() || block.startMs() <= newEndMs)) ->
                 createDestinationConflict(
                     block = block,
-                    message = TimelineBlockTranslate.ERROR_CONFLICT_OUT_OF_ON_SITE_LBL
-                )
+                    message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_ON_SITE_LBL)
 
             else -> ValidationResult.Success
         }
@@ -543,23 +558,20 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         currentTrip: FSTrip
     ): ValidationResult {
         val eventStartMs = dateToMs(blockType.startDate) ?: return ValidationResult.Success
-        val eventEndMs = dateToMs(blockType.endDate) ?: return ValidationResult.Success
         val tripOriginMs = dateToMs(currentTrip.originDate) ?: return ValidationResult.Success
 
-        val tripEndDate = tripRepository.getLastDateFromTrip(
-            tripPrefix = currentTrip.tripPrefix,
-            tripCode = currentTrip.tripCode
-        ) ?: currentTrip.startDate
-
-        val tripEndMs = dateToMs(tripEndDate) ?: return ValidationResult.Success
-
-        return if (eventStartMs in tripOriginMs..tripEndMs && eventEndMs <= tripEndMs) {
+        return if (eventStartMs >= tripOriginMs) {
             ValidationResult.Success
         } else {
             createConflict(
                 block = null,
                 message = TimelineBlockTranslate.ERROR_CONFLICT_WITH_CREATE_TRIP_LBL,
-                placeholders = mapOf("trip_create_date" to formatDateTime(currentTrip.originDate!!))
+                placeholders = mapOf(
+                    "trip_create_date" to formatDateTime(currentTrip.originDate!!),
+                    "trip_start_date" to (currentTrip.startDate?.let {
+                        formatDateTime(it)
+                    } ?: "")
+                )
             )
         }
     }
@@ -634,9 +646,14 @@ class ValidateTimelineBlockUseCase @Inject constructor(
             { if (currentTrip == null) checkTripConflict(blockType) else null },
             { checkTripEventConflict(blockType) },
             { checkEventManualConflict(blockType) },
-            { checkFormConflict(blockType, currentTrip) },
-            { currentTrip?.let { checkActionConflict(it, blockType) } }
-        ).mapNotNull { it() }.firstOrNull()
+            { if (blockType !is TimelineBlockType.FORM) checkFormConflict(blockType) else null },
+            {
+                if (currentTrip != null && blockType !is TimelineBlockType.FORM) checkActionConflict(
+                    currentTrip,
+                    blockType
+                ) else null
+            }
+        ).firstNotNullOfOrNull { it() }
     }
 
     private fun checkTripEventConflict(blockType: TimelineBlockType): ExternalConflict? {
@@ -680,7 +697,6 @@ class ValidateTimelineBlockUseCase @Inject constructor(
 
     private fun checkFormConflict(
         blockType: TimelineBlockType,
-        currentTrip: FSTrip?
     ): ExternalConflict? {
         val formBlock = blockType as? TimelineBlockType.FORM
 
@@ -738,7 +754,7 @@ class ValidateTimelineBlockUseCase @Inject constructor(
         }
     }
 
-    private inline fun findTimelineBlock(
+    private fun findTimelineBlock(
         startDate: String,
         endDate: String?,
         timeline: List<TripTimelineBlock>,
@@ -755,14 +771,14 @@ class ValidateTimelineBlockUseCase @Inject constructor(
     private fun List<TripTimelineBlock>.findOnSiteBlock(destinationSeq: Int): TripTimelineBlock? =
         find { it.type is TimelineBlockType.ON_SITE && it.type.destinationSeq == destinationSeq }
 
-    private inline fun isConflictingOnSiteBlock(
+    private fun isConflictingOnSiteBlock(
         foundBlock: TripTimelineBlock,
         blockToIgnore: TripTimelineBlock?
     ): Boolean = foundBlock.type is TimelineBlockType.ON_SITE &&
             (blockToIgnore?.type is TimelineBlockType.ON_SITE ||
                     blockToIgnore?.type is TimelineBlockType.PRE_TRIP)
 
-    private inline fun isFormOutsideOnSite(
+    private fun isFormOutsideOnSite(
         foundBlock: TripTimelineBlock,
         blockToIgnore: TripTimelineBlock?
     ): Boolean {

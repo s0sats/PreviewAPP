@@ -421,7 +421,7 @@ abstract class BaseTripDialog<BINDING : ViewBinding>(
         userSelectDate: String,
         comparator: (Date, Date) -> Boolean
     ): Boolean {
-        val simpleDate = SimpleDateFormat("dd/MM/yy HH:mm")
+        val simpleDate = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT)
         val currentSimpleDate = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT)
         return try {
             if (userSelectDate.trim().isEmpty()) return false

@@ -729,6 +729,22 @@ class FsTripDestinationDao @Inject constructor(
         """.trimIndent()
         ).firstOrNull()
 
+    fun getLastDestinationArrived(
+        customerCode: Long,
+        prefix: Int,
+        code: Int
+    ) = query(
+        """
+            SELECT * FROM $TABLE
+            WHERE $CUSTOMER_CODE = '$customerCode'
+            AND $TRIP_PREFIX = '$prefix'
+            AND $TRIP_CODE = '$code'        
+            AND $DESTINATION_STATUS == '${DestinationStatus.ARRIVED.name}'
+            ORDER BY $DESTINATION_SEQ DESC
+            LIMIT 1
+        """.trimIndent()
+    ).firstOrNull()
+
     fun getLastDestination(
         customerCode: Long,
         prefix: Int,

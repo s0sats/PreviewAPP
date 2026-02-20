@@ -135,6 +135,7 @@ class TripHomeFragment : TripBaseFragment<FrgMainTripBinding>() {
                     actionPositiveLbl = hmAuxTranslate[ALERT_NEW_TRIP_CREATE_BTN] ?: "",
                     actionNeutralLbl = hmAuxTranslate[ALERT_NEW_TRIP_CANCEL_BTN] ?: "",
                     actionPositive = { _, _ ->
+                        viewModel.deleteTripsInDevice()
                         listener?.checkGPSPermission()
                     },
                     actionNeutral = { dialogInterface, _ ->

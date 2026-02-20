@@ -48,8 +48,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -438,10 +441,18 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
                 transList
         );
 
+        Map<@NotNull String, @NotNull String> translateBuilder = translateBuild.build();
+
         hmAux_Trans.put(
                 EventManualKey.ErrorEventInExecutionTitle.getKey(),
-                translateBuild.build().get(EventManualKey.ErrorEventInExecutionTitle.getKey())
+                translateBuilder.get(EventManualKey.ErrorEventInExecutionTitle.getKey())
         );
+
+        hmAux_Trans.put(
+                EventManualKey.ErrorEventInExecutionMsg.getKey(),
+                translateBuilder.get(EventManualKey.ErrorEventInExecutionMsg.getKey())
+        );
+
     }
 
 

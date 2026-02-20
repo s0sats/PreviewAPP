@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.isVisible
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -17,7 +15,6 @@ import com.namoadigital.prj001.extensions.date.formatDate
 import com.namoadigital.prj001.extensions.getColorStateListId
 import com.namoadigital.prj001.extensions.getDrawableId
 import com.namoadigital.prj001.extensions.getResourceCode
-import com.namoadigital.prj001.extensions.parseDate
 import com.namoadigital.prj001.extensions.parseDatePair
 import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.setBoxStrokeColorState
@@ -334,7 +331,7 @@ class DialogEditUser(
                 hideError(layoutErrorEndDate)
             }
 
-            if (dateIsFuture(startDate)) {
+            if (dateIsFuture(startDate.parseFullDate())) {
                 tvStartDateError.text = hmAuxTranslate[DIALOG_DATE_ERROR_END_NOT_FUTURE_LBL]
                 etLayoutStartDate.changeStrokeColor(etLayoutStartHour, true)
                 showError(layoutErrorStartDate)
@@ -344,7 +341,7 @@ class DialogEditUser(
                 hideError(layoutErrorEndDate)
             }
 
-            if (dateIsFuture(endDate)) {
+            if (dateIsFuture(endDate.parseFullDate())) {
                 tvEndDateError.text = hmAuxTranslate[DIALOG_DATE_ERROR_END_NOT_FUTURE_LBL]
                 etLayoutEndDate.changeStrokeColor(etLayoutEndHour, true)
                 showError(layoutErrorEndDate)

@@ -669,6 +669,15 @@ class TripDestinationRepositoryImp @Inject constructor(
         code = code
     )
 
+    override fun getLastDestinationArrived(
+        prefix: Int,
+        code: Int,
+    ): FsTripDestination? = dao.getLastDestinationArrived(
+        customerCode = context.getCustomerCode(),
+        prefix = prefix,
+        code = code
+    )
+
     override fun getLastDestination(
         prefix: Int,
         code: Int,

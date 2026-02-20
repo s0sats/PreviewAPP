@@ -339,27 +339,19 @@ class DialogEventTrip(
         }
 
         etStartDate.setDelegatePickerChange {
-            if (isValidStartDate()) {
-                isValidEndDate()
-            }
+            updateStateButtons(checkRequiredRules())
         }
 
         etStartHour.setDelegatePickerChange {
-            if (isValidStartDate()) {
-                isValidEndDate()
-            }
+            updateStateButtons(checkRequiredRules())
         }
 
         etEndDate.setDelegatePickerChange {
-            if (isValidEndDate()) {
-                isValidStartDate()
-            }
+            updateStateButtons(checkRequiredRules())
         }
 
         etEndHour.setDelegatePickerChange {
-            if (isValidEndDate()) {
-                isValidStartDate()
-            }
+            updateStateButtons(checkRequiredRules())
         }
 
         etCost.addTextChangedListener(
@@ -541,56 +533,47 @@ class DialogEventTrip(
 
             val cost = etCost.text.toString()
             val comment = etComment.text.toString()
-            val isExistsPhoto = ivPhoto.visibility == View.VISIBLE
+            val isExistsPhoto = ivPhoto.isVisible
             val endDateExists = etLayoutEndDate.isVisible
-            //
-            if (cost.isNullOrBlank() && checkRequired) {
+
+            val startValid = isValidStartDate(false)
+            val endValid = if (endDateExists) isValidEndDate(false) else true
+
+            if (cost.isBlank() && checkRequired) {
                 updateFieldColorForRequiredStatus(etLayoutCost, type.isRequiredCost)
             } else {
-                if (!cost.isNullOrBlank()) {
+                if (cost.isNotBlank()) {
                     updateFieldColorForRequiredStatus(etLayoutCost, false)
                 }
             }
-            //
-            if (comment.isNullOrBlank() && checkRequired) {
+
+            if (comment.isBlank() && checkRequired) {
                 updateFieldColorForRequiredStatus(etLayoutComment, type.isRequiredComment)
             } else {
-                if (!comment.isNullOrBlank()) {
+                if (comment.isNotBlank()) {
                     updateFieldColorForRequiredStatus(etLayoutComment, false)
                 }
             }
-            //
+
             if (isSaveMode()) {
                 btnFinish.isEnabled = when {
                     isNewEvent && isFirstSelected -> true
-                    isNewEvent && !isValidStartDate(false) -> false
-                    !isNewEvent && (!isValidStartDate(false) || endDateExists && !isValidEndDate(
-                        false
-                    )) -> false
-
-                    else -> if (!isNewEvent) {
-                        checkFormState()
-                    } else {
-                        true
-                    }
+                    isNewEvent && !startValid -> false
+                    !isNewEvent && (!startValid || endDateExists && !endValid) -> false
+                    else -> if (!isNewEvent) checkFormState() else true
                 }
             } else {
-
                 btnFinish.isEnabled = when {
-                    !isValidStartDate(false) -> false
-                    (type.isRequiredCost && cost.isEmpty()) -> false
-                    (type.isRequiredComment && comment.isEmpty()) -> false
-                    (type.isRequiredPhoto && !isExistsPhoto) -> false
-                    !isValidStartDate(false) || endDateExists && !isValidEndDate(false) -> false
-                    else -> if (!isNewEvent && isExtractFlow) {
-                        checkFormState()
-                    } else {
-                        true
-                    }
+                    !startValid -> false
+                    type.isRequiredCost && cost.isEmpty() -> false
+                    type.isRequiredComment && comment.isEmpty() -> false
+                    type.isRequiredPhoto && !isExistsPhoto -> false
+                    endDateExists && !endValid -> false
+                    else -> if (!isNewEvent && isExtractFlow) checkFormState() else true
                 }
             }
-            scrollView3.postInvalidate()
 
+            scrollView3.postInvalidate()
             return
         }
         scrollView3.postInvalidate()
@@ -767,11 +750,7 @@ class DialogEventTrip(
     }
 
     private fun DialogEventTripBinding.isValidStartDate(stateButtonValid: Boolean = true): Boolean {
-        etStartDate.text.toString()
-        etStartHour.text.toString()
-        clearInvalidStartDateLayout()
-        clearInvalidEndDateLayout()
-        if (dateIsFuture(getStartDateFormatted())) {
+        if (dateIsFuture(getStartDateFormatted().parseFullDate())) {
             etLayoutStartDate.setBoxStrokeColorState(context, R.drawable.edittext_error)
             etLayoutStartHour.setBoxStrokeColorState(context, R.drawable.edittext_error)
             etLayoutStartDate.setHintTextColor(context, R.drawable.edittext_error)
@@ -834,14 +813,12 @@ class DialogEventTrip(
 
     private fun DialogEventTripBinding.isValidEndDate(stateButtonValid: Boolean = true): Boolean {
         val date = getEndDateFormatted()
-        clearInvalidStartDateLayout()
-        clearInvalidEndDateLayout()
         if (etEndDate.text.toString().isEmpty() || etEndHour.text.toString().isEmpty()) {
 //            updateStateButtons()
             return false
         }
 
-        if (dateIsFuture(date)) {
+        if (dateIsFuture(date.parseFullDate())) {
             setEndDateErrorLayout(hmAuxTranslate[DIALOG_EVENT_DATE_FUTURE_ERROR_LBL]!!, true)
             btnFinish.isEnabled = false
             return false
@@ -858,18 +835,17 @@ class DialogEventTrip(
 
         return when (validateResult) {
             is ValidationResult.Conflict -> {
-                btnFinish.isEnabled = false
-                setStartDateErrorLayout(
+                setEndDateErrorLayout(
                     hmAuxTranslate.textOf(
                         key = validateResult.message,
                         values = validateResult.parameters.values.toList()
-                    )
+                    ), true
                 )
                 false
             }
 
             else -> {
-                clearInvalidStartDateLayout()
+                clearInvalidEndDateLayout()
                 if (stateButtonValid) updateStateButtons(checkRequiredRules())
                 true
             }

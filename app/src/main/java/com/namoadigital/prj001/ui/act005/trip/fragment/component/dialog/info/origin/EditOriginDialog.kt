@@ -393,7 +393,7 @@ class EditOriginDialog(
                 return false
             }
 
-            if (dateIsFuture("$dateStart $hourStart")) {
+            if (dateIsFuture("$dateStart $hourStart".parseFullDate())) {
                 setStartDateError()
                 tvDateStartInvalid.text =
                     hmAuxTranslate[TranslateInfoDialogs.DIALOG_ERROR_FUTURE_DATE]
