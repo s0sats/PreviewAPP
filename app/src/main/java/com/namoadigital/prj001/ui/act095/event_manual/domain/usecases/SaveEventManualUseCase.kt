@@ -6,11 +6,13 @@ import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
+import com.namoadigital.prj001.core.data.local.repository.md_site.MdSiteRepository
 import com.namoadigital.prj001.extensions.getUserCode
 import com.namoadigital.prj001.extensions.suspendResults
 import com.namoadigital.prj001.ui.act095.event_manual.domain.repository.EventManualRepository
 import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventManualData
 import com.namoadigital.prj001.util.ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT
+import com.namoadigital.prj001.util.ToolBox_Con
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,7 +23,8 @@ import javax.inject.Inject
 
 class SaveEventManualUseCase @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val repository: EventManualRepository
+    private val repository: EventManualRepository,
+    private val siteRepository: MdSiteRepository,
 ) : UseCases<SaveEventManualUseCase.Params, Unit> {
 
     data class Params(
@@ -31,8 +34,22 @@ class SaveEventManualUseCase @Inject constructor(
 
     override suspend fun invoke(input: Params): Flow<IResult<Unit>> = flow {
         val eventData = prepareEventData(input.data, input.isEditMode)
-
-        repository.saveEvent(eventManualData = eventData).suspendResults(
+        var eventManualData = eventData
+        //
+        if(eventData.eventSiteCode == null) {
+            val site = siteRepository.getSiteByCode(
+                ToolBox_Con.getPreference_Site_Code(appContext)
+            )
+            //
+             site?.let {
+                 eventManualData = eventData.copy(
+                    eventSiteCode = it.site_code.toInt(),
+                    eventSite = it.site_desc,
+                )
+            }
+        }
+        //
+        repository.saveEvent(eventManualData = eventManualData).suspendResults(
             success = { event -> emit(success(Unit)) },
             failed = { emit(failed(it)) },
             loading = { isLoading, msg -> emit(loading(isLoading, msg)) }

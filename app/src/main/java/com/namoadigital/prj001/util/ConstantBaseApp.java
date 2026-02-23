@@ -335,6 +335,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_CUSTOMER = "footer_customer";
     public static final String FOOTER_SITE_LBL = "footer_site_lbl";
     public static final String FOOTER_SITE = "footer_site";
+    public static final String FOOTER_SITE_WARNING = "footer_site_warning";
     public static final String FOOTER_ZONE_LBL = "footer_zone_lbl";
     public static final String FOOTER_ZONE = "footer_zone";
     public static final String FOOTER_OPERATION_LBL = "footer_operation_lbl";

@@ -35,6 +35,8 @@ data class EventManualData(
     val endDate: String? = null,
     val photo: PhotoData? = null,
     val eventFieldConfig: EventFieldConfig = EventFieldConfig(),
+    val eventSiteCode: Int? = null,
+    val eventSite: String? = null,
 ) {
 
     /**
@@ -108,6 +110,8 @@ data class EventManualData(
             dateStart = startDate!!,
             dateEnd = endDate,
             status = status!!,
+            eventSiteCode = eventSiteCode,
+            eventSiteDesc = eventSite,
         )
     }
 }

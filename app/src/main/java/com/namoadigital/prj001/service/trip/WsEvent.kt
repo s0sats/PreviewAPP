@@ -119,7 +119,8 @@ class   WsEvent : BaseWsIntentService("WsEvent", IntentServiceMode.UPLOAD_DATA()
                                     photoUrl = null,
                                     eventStart = request.eventStart ?: "",
                                     eventEnd = request.eventEnd ?: "",
-                                    eventPhotoChanged = request.changedPhoto
+                                    eventPhotoChanged = request.changedPhoto,
+                                    destinationSeq =  request.destinationSeq,
                                 ), db
                             )
                         }.success {

@@ -19,6 +19,7 @@ data class FSTripEvent(
     @Expose @SerializedName("eventPhotoChanged") var eventPhotoChanged: Int,
     @Expose @SerializedName("eventAllowedTime") var allowedTime: String?,
     @Expose @SerializedName("eventTimeAlert") var timeAlert: Int?,
+    @Expose @SerializedName("destinationSeq") var destinationSeq: Int?,
 ) {
     @SerializedName("customerCode")
     var customerCode: Long = -1
@@ -49,7 +50,8 @@ data class FSTripEvent(
         photoLocal: String?,
         photoName: String?,
         photoUrl: String?,
-        eventPhotoChanged: Int
+        eventPhotoChanged: Int,
+        destinationSeq: Int?,
     ) : this(
         eventSeq = eventSeq,
         eventTypeCode = eventTypeCode,
@@ -65,7 +67,8 @@ data class FSTripEvent(
         eventTime = eventTime,
         allowedTime = eventAllowedTime,
         timeAlert = eventTimeAlert,
-        eventPhotoChanged = eventPhotoChanged
+        eventPhotoChanged = eventPhotoChanged,
+        destinationSeq = destinationSeq
     ) {
         this.customerCode = customerCode
         this.tripPrefix = tripPrefix

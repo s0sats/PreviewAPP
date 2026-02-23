@@ -20,7 +20,8 @@ data class EventManualSetRequestItem(
     @Expose @SerializedName("eventStart") val eventStart: String,
     @Expose @SerializedName("eventEnd") val eventEnd: String? = null,
     @Expose @SerializedName("changedPhoto") val changedPhoto: Int = 0,
-    @Expose @SerializedName("eventStatus") val eventStatus: String
+    @Expose @SerializedName("eventStatus") val eventStatus: String,
+    @Expose @SerializedName("eventSiteCode") val eventSiteCode: Int?,
 ) {
     fun toEntity(
         updateRequired: Boolean = false
@@ -42,7 +43,8 @@ data class EventManualSetRequestItem(
         dateStart = eventStart,
         dateEnd = eventEnd,
         status = EventStatus.valueOf(eventStatus),
-        isUpdateRequired = updateRequired
+        eventSiteCode = eventSiteCode,
+        isUpdateRequired = updateRequired,
     )
 
 }

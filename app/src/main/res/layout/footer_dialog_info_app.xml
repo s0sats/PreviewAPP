@@ -134,10 +134,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-
                     android:text="Stuttgart"
                     android:textColor="@color/namoa_color_light_blue_lib"
                     android:textSize="@dimen/font_size_item_md_lib" />
+
+                <TextView
+                    android:id="@+id/footer_tv_event_manual_warning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:visibility="gone"
+                    tools:text="Seleção de Site desabilitada enquanto Evento em progresso"
+                    android:textColor="@color/namoa_color_red"
+                    android:textSize="@dimen/font_size_item_md_lib" />
+
+
+
             </LinearLayout>
 
             <com.namoa_digital.namoa_library.ctls.SearchableSpinner

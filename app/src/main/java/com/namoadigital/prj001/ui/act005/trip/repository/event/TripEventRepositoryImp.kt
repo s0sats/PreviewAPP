@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
+import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.extensions.coroutines.flowCatch
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.getCustomerCode
@@ -54,6 +55,7 @@ class TripEventRepositoryImp @Inject constructor(
     private val dao: FSEventTypeDao,
     private val eventDao: FSTripEventDao,
     private val tripDao: FSTripDao,
+    private val tripDestinationDao: FsTripDestinationDao,
     private val fileDao: GE_FileDao
 ) : TripEventRepository, BaseTripRepository(context) {
 
@@ -86,7 +88,7 @@ class TripEventRepositoryImp @Inject constructor(
         return flow {
             tripDao.getTrip()?.let { trip ->
                 val isOnlineMode = ToolBox_Con.isOnline(context) && !trip.hasUpdateRequired
-
+                val destinationSeq = getDestinationSeq(dateStart)
                 photoPath?.let { imagePath ->
                     GE_File().apply {
                         file_code = imagePath.replace(TripViewModel.JPG_EXTENSION, "")
@@ -111,7 +113,8 @@ class TripEventRepositoryImp @Inject constructor(
                     eventStart = dateStart,
                     eventEnd = dateEnd,
                     changedPhoto = changePhoto,
-                    eventStatus = eventStatus.name
+                    eventStatus = eventStatus.name,
+                    destinationSeq = destinationSeq,
                 )
 
                 if (!isOnlineMode) {
@@ -176,6 +179,7 @@ class TripEventRepositoryImp @Inject constructor(
                                                 this.eventTypeCode = request.eventTypeCode
                                                 this.eventTypeDesc = request.eventTypeDesc
                                                 this.eventPhotoChanged = 0
+                                                this.destinationSeq = destinationSeq
                                             }
                                             eventDao.update(tripEvent, db)
 
@@ -198,7 +202,8 @@ class TripEventRepositoryImp @Inject constructor(
                                                 photoUrl = null,
                                                 eventStart = request.eventStart ?: "",
                                                 eventEnd = request.eventEnd ?: "",
-                                                eventPhotoChanged = 0
+                                                eventPhotoChanged = 0,
+                                                destinationSeq = request.destinationSeq,
                                             ), db
                                         )
                                     }.success {
@@ -223,6 +228,11 @@ class TripEventRepositoryImp @Inject constructor(
                 }
             }
         }.flowCatch(this::class.java.name).flowOn(Dispatchers.IO)
+    }
+
+    private fun getDestinationSeq(dateStart: String?):Int? {
+        return tripDestinationDao.getDestinationSeq(dateStart)
+
     }
 
     private suspend fun FlowCollector<IResult<Unit>>.handleOfflineEvent(
@@ -284,7 +294,8 @@ class TripEventRepositoryImp @Inject constructor(
                         photoUrl = null,
                         eventStart = eventRequest.eventStart ?: "",
                         eventEnd = eventRequest.eventEnd ?: "",
-                        eventPhotoChanged = eventRequest.changedPhoto
+                        eventPhotoChanged = eventRequest.changedPhoto,
+                        destinationSeq = eventRequest.destinationSeq,
                     ), db
                 )
             }

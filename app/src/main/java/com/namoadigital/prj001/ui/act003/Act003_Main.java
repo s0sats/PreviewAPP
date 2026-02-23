@@ -21,10 +21,12 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -32,10 +34,14 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Created by neomatrix on 17/01/17.
  */
-
+@AndroidEntryPoint
 public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private Context context;
@@ -46,6 +52,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private TextView lv_sites_empty_list;
     private Act003_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
+    @Inject
+    GetEventManualUseCase getEventManualUseCase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +107,11 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //Substituido conjunto WBR + WS pelo Workmanager
         ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
 
-        mPresenter = new Act003_Main_Presenter_Impl(context, this);
+        mPresenter = new Act003_Main_Presenter_Impl(
+                context,
+                this,
+                getEventManualUseCase
+        );
         //Chama start do serviço do Chat.
         mPresenter.startChatService(hmAux_Trans);
         //
@@ -130,12 +142,19 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             callAct033(context);
         } else {
             Bundle bundle = getIntent().getExtras();
-            Integer automaticSite = mPresenter.getAutomaticSite();
-            if(automaticSite == null
-            || (bundle != null && bundle.getInt(Constant.BACK_ACTION, 0) == 1)) {
-                mPresenter.getSites(hmAux_Trans);
-            }else{
-                mPresenter.setSiteCode(automaticSite.toString());
+            EventManual eventManual = mPresenter.hasEventOnGoing();
+
+            if(eventManual != null
+            && eventManual.getEventSiteCode() != null){
+                mPresenter.setSiteCode(eventManual.getEventSiteCode().toString());
+            }else {
+                Integer automaticSite = mPresenter.getAutomaticSite();
+                if (automaticSite == null
+                        || (bundle != null && bundle.getInt(Constant.BACK_ACTION, 0) == 1)) {
+                    mPresenter.getSites(hmAux_Trans);
+                } else {
+                    mPresenter.setSiteCode(automaticSite.toString());
+                }
             }
         }
     }

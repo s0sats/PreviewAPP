@@ -55,6 +55,7 @@ import com.namoadigital.prj001.ui.act011.finish_os.ui.component.DateTimePicker
 import com.namoadigital.prj001.ui.act011.finish_os.ui.component.DateTimeSelected
 import com.namoadigital.prj001.ui.act095.event_manual.composable.EventFormField
 import com.namoadigital.prj001.ui.act095.event_manual.composable.PhotoSection
+import com.namoadigital.prj001.ui.act095.event_manual.composable.ReadOnlyField
 import com.namoadigital.prj001.ui.act095.event_manual.composable.controller.PhotoController
 import com.namoadigital.prj001.ui.act095.event_manual.composable.controller.rememberPhotoController
 import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain.model.EventManualData
@@ -139,6 +140,17 @@ fun EventManualScreen(
         )
 
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+            current.eventSiteCode?.let{
+                ReadOnlyField(
+                    label = translateMap.textOf(EventManualKey.SiteLbl),
+                    value = "${current.eventSite?:EventManualKey.SiteDescNotFound} ($it)",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = NamoaTheme.spacing.medium)
+                    ,
+                )
+            }
 
             // Campo: Custo
             if (!current.eventFieldConfig.isCostHidden()) {

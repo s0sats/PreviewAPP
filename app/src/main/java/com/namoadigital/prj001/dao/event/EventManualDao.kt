@@ -48,6 +48,8 @@ class EventManualDao @Inject constructor(
         const val CHANGED_PHOTO = "changed_photo"
         const val EVENT_STATUS = "event_status"
         const val UPDATE_REQUIRED = "update_required"
+        const val EVENT_SITE_CODE = "event_site_code"
+        const val EVENT_SITE_DESC = "event_site_desc"
 
         //tmp
         const val APP_ID = "app_id"
@@ -164,6 +166,8 @@ class EventManualDao @Inject constructor(
                 dateStart = getString(getColumnIndex(EVENT_START)),
                 dateEnd = getStringOrNull(getColumnIndex(EVENT_END)),
                 status = EventStatus.valueOf(getString(getColumnIndex(EVENT_STATUS))),
+                eventSiteCode = getIntOrNull(getColumnIndex(EVENT_SITE_CODE)),
+                eventSiteDesc = getStringOrNull(getColumnIndex(EVENT_SITE_DESC)),
                 isUpdateRequired = getInt(getColumnIndex(UPDATE_REQUIRED)).toBoolean(),
             )
         }
@@ -190,6 +194,8 @@ class EventManualDao @Inject constructor(
                 put(EVENT_START, it.dateStart)
                 put(EVENT_END, it.dateEnd)
                 put(EVENT_STATUS, it.status.name)
+                put(EVENT_SITE_CODE, it.eventSiteCode)
+                put(EVENT_SITE_DESC, it.eventSiteDesc)
                 put(UPDATE_REQUIRED, it.isUpdateRequired.toInt())
             }
         }

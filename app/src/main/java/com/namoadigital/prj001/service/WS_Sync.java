@@ -1017,7 +1017,7 @@ public class WS_Sync extends BaseWsIntentService {
                     dataList -> {
                         List<EventManual> entities = new ArrayList<>();
                         for (EventManualSync sync : dataList) {
-                            entities.add(sync.toEntity());
+                            entities.add(sync.toEntity(getApplicationContext()));
                         }
                         eventManualDao.addUpdate(entities, false);
                     }
@@ -1026,7 +1026,7 @@ public class WS_Sync extends BaseWsIntentService {
             //Libera pro GB
             files_product_group = null;
             //
-            // Processamento Product Group Product
+            // Pro cessamento Product Group Product
             //
             File[] files_product_group_product = ToolBox_Inf.getListOfFiles_v2("md_product_group_product-");
 

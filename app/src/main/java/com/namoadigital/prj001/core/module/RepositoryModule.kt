@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao
+import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepository
 import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepositoryImp
 import dagger.Module
@@ -37,9 +38,10 @@ object RepositoryModule {
         dao: FSEventTypeDao,
         eventDao: FSTripEventDao,
         tripDao: FSTripDao,
+        tripDestinationDao: FsTripDestinationDao,
         fileDao: GE_FileDao
     ): TripEventRepository {
-        return TripEventRepositoryImp(app, dao, eventDao, tripDao, fileDao)
+        return TripEventRepositoryImp(app, dao, eventDao, tripDao, tripDestinationDao, fileDao)
     }
 
 }

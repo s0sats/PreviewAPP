@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.BaseDao
@@ -431,6 +432,7 @@ class FSTripEventDao(
                         eventPhotoChanged = getInt(getColumnIndex(PHOTO_CHANGED)),
                         eventStart = getString(getColumnIndex(EVENT_START)),
                         eventEnd = getStringOrNull(getColumnIndex(EVENT_END)),
+                        destinationSeq = getIntOrNull(getColumnIndex(DESTINATION_SEQ)),
                     )
                 }
             }
@@ -466,6 +468,7 @@ class FSTripEventDao(
                     put(EVENT_TIME_ALERT, position.timeAlert)
                     put(EVENT_STATUS, position.eventStatus)
                     put(PHOTO_CHANGED, position.eventPhotoChanged)
+                    put(DESTINATION_SEQ, position.destinationSeq)
                 }
             }
 
@@ -586,7 +589,8 @@ class FSTripEventDao(
                 photoLocal = it[PHOTO_LOCAL]!!,
                 photoName = it[PHOTO_NAME]!!,
                 photoUrl = it[PHOTO_URL]!!,
-                eventPhotoChanged = it[PHOTO_CHANGED]?.toInt() ?: 0
+                eventPhotoChanged = it[PHOTO_CHANGED]?.toInt() ?: 0,
+                destinationSeq = it[DESTINATION_SEQ]?.toInt(),
             )
             EventValidation(
                 event = fsTripEvent,
@@ -788,6 +792,7 @@ class FSTripEventDao(
         const val PHOTO_CHANGED = "photo_changed"
         const val EVENT_START = "event_start"
         const val EVENT_END = "event_end"
+        const val DESTINATION_SEQ = "destination_seq"
 
         fun instance(context: Context) = FSTripEventDao(context)
 

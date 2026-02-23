@@ -9,13 +9,19 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import kotlin.Unit;
 
 /**
  * Created by neomatrix on 17/01/17.
@@ -28,10 +34,12 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     private MD_SiteDao md_siteDao;
     private HMAux item;
     private CH_MessageDao messageDao;
+    private GetEventManualUseCase getEventManualUseCase;
 
-    public Act003_Main_Presenter_Impl(Context context, Act003_Main_View mView) {
+    public Act003_Main_Presenter_Impl(Context context, Act003_Main_View mView, GetEventManualUseCase getEventManualUseCase) {
         this.context = context;
         this.mView = mView;
+        this.getEventManualUseCase = getEventManualUseCase;
         //
         this.md_siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         this.messageDao = new CH_MessageDao(context);
@@ -173,6 +181,25 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
         if(userInfo!= null) {
             return userInfo.getAutomatic_site_code();
         }
+        return null;
+    }
+
+    @Override
+    public EventManual hasEventOnGoing() {
+        EventManual eventManual = getEventManualUseCase.invoke(Unit.INSTANCE);
+        if(eventManual != null
+                && eventManual.getEventSiteCode() != null){
+            MD_Site mdSite = md_siteDao.getByString(
+                    new MD_Site_Sql_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            eventManual.getEventSiteCode().toString()
+                    ).toSqlQuery()
+            );
+            if(mdSite != null){
+                return eventManual;
+            }
+        }
+
         return null;
     }
 

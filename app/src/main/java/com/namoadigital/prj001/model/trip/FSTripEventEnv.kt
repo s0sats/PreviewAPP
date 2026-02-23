@@ -17,7 +17,8 @@ data class FSTripEventEnv(
     @Expose @SerializedName("eventPhoto") val eventPhoto: String?,
     @Expose @SerializedName("eventStart") val eventStart: String?,
     @Expose @SerializedName("eventEnd") val eventEnd: String?,
-    @Expose @SerializedName("changedPhoto") val changedPhoto: Int
+    @Expose @SerializedName("changedPhoto") val changedPhoto: Int,
+    @Expose @SerializedName("destinationSeq") val destinationSeq: Int?
 ){
     companion object{
         val WS_BUNDLE_KEY = FSTripEventEnv::class.java.name

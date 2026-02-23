@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act005.trip.di.usecase.event
 
 import com.namoadigital.prj001.core.IResult
-import com.namoadigital.prj001.core.UseCaseWithoutFlow
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.ui.act005.trip.fragment.component.dialog.report.event.FSSaveEvent
 import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepository

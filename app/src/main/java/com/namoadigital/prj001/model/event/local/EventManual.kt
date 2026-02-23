@@ -19,6 +19,8 @@ data class EventManual(
     val dateStart: String,
     val dateEnd: String? = null,
     val status: EventStatus,
+    val eventSiteCode: Int?,
+    val eventSiteDesc: String? = null,
     val isUpdateRequired: Boolean = false,
 ) {
 
@@ -57,7 +59,9 @@ data class EventManual(
             localPath = photo.local,
             isChangedPhoto = photo.isChanged
         ),
-        eventFieldConfig = eventFieldConfig!!
+        eventFieldConfig = eventFieldConfig!!,
+        eventSiteCode = eventSiteCode,
+        eventSite = eventSiteDesc,
     )
 
     fun toDomain(): EventManualSetRequestItem = EventManualSetRequestItem(
@@ -74,6 +78,7 @@ data class EventManual(
         eventEnd = dateEnd,
         changedPhoto = photo.isChanged.toInt(),
         eventStatus = status.name,
-        description = description
+        description = description,
+        eventSiteCode = eventSiteCode,
     )
 }

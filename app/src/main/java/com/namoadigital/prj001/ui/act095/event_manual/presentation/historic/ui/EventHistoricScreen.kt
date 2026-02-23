@@ -248,11 +248,19 @@ fun EventCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
-
             if (!item.comments.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
                 Text(
                     text = item.comments,
+                    style = NamoaTheme.typography.bodyMedium,
+                    color = NamoaTheme.colors.onSurfaceVariant,
+                )
+            }
+
+            if (!item.eventSiteDesc.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(NamoaTheme.spacing.small))
+                Text(
+                    text = item.eventSiteDesc,
                     style = NamoaTheme.typography.bodyMedium,
                     color = NamoaTheme.colors.onSurfaceVariant,
                 )

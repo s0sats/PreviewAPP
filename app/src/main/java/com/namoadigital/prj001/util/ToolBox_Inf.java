@@ -145,6 +145,8 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.event.EventManualDao;
+import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.extensions.DoubleHelperKt;
 import com.namoadigital.prj001.extensions.EvUserCustomerKt;
@@ -189,6 +191,7 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
+import com.namoadigital.prj001.model.event.local.EventManual;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -276,6 +279,8 @@ import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act088.Act088Main;
+import com.namoadigital.prj001.ui.act095.event_manual.data.EventManualRepositoryImpl;
+import com.namoadigital.prj001.ui.act095.event_manual.domain.usecases.GetEventManualUseCase;
 import com.namoadigital.prj001.worker.WorkLocationAvailability;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
@@ -346,6 +351,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import kotlin.Unit;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -2306,6 +2313,7 @@ public class ToolBox_Inf {
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
         TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
         TextView tv_site_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_value);
+        TextView tv_event_manual_warning =  customView.findViewById(R.id.footer_tv_event_manual_warning);
         final SearchableSpinner ss_site = customView.findViewById(R.id.footer_dialog_app_ss_site);
         //
         LinearLayout ll_zone = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_zone);
@@ -2333,7 +2341,24 @@ public class ToolBox_Inf {
         //
         Bitmap customer_img = getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
         final Dialog customDialog = new Dialog(context);
-        if (editMode && !FsTripHelperKt.isCurrentTrip(context)) {
+
+        GetEventManualUseCase useCase = new GetEventManualUseCase(
+                new EventManualRepositoryImpl(
+                        context,
+                        new FSEventTypeDao(
+                                context,
+                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                Constant.DB_VERSION_CUSTOM
+                        ),
+                        new EventManualDao(context),
+                        new GE_FileDao(context)
+                )
+        );
+        EventManual eventManualInProgress = useCase.invoke(Unit.INSTANCE);
+        boolean enableSite = eventManualInProgress == null;
+        boolean isEditMode = editMode
+                && !FsTripHelperKt.isCurrentTrip(context);
+        if (isEditMode) {
             ll_site.setVisibility(View.GONE);
             ll_zone.setVisibility(View.GONE);
             ll_operation.setVisibility(View.GONE);
@@ -2429,7 +2454,7 @@ public class ToolBox_Inf {
             footer_dialog_app_action_cancel.setVisibility(View.GONE);
             ll_site.setVisibility(View.VISIBLE);
             ll_zone.setVisibility(View.VISIBLE);
-            ll_operation.setVisibility(View.VISIBLE);
+//            ll_operation.setVisibility(View.VISIBLE);
             ss_site.setVisibility(View.GONE);
             ss_zone.setVisibility(View.GONE);
             ss_operation.setVisibility(View.GONE);
@@ -2486,8 +2511,16 @@ public class ToolBox_Inf {
 
         setOperationFooterLayout(context, editMode, hmDialogInfo, ss_operation, ll_operation, tv_operation_lbl, tv_operation_value);
 
-        if (editMode && !FsTripHelperKt.isCurrentTrip(context)) {
-            setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone);
+        if (editMode
+                && !FsTripHelperKt.isCurrentTrip(context)
+        ) {
+            if (!enableSite) {
+                disableSiteSelection(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value);
+                tv_event_manual_warning.setVisibility(View.VISIBLE);
+                String footerSiteDisableByManualEventWarning = hmDialogInfo.get(ConstantBaseApp.FOOTER_SITE_WARNING);
+                tv_event_manual_warning.setText(footerSiteDisableByManualEventWarning);
+            }
+            setEnableUserInfo(context, enableSite, hmDialogInfo, ss_site, ss_zone);
         } else {
             setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value);
         }
@@ -2590,10 +2623,9 @@ public class ToolBox_Inf {
         return has_changes;
     }
 
-    private static void setEnableUserInfo(Context context, HMAux hmDialogInfo, SearchableSpinner ss_site, SearchableSpinner ss_zone) {
+    private static void setEnableUserInfo(Context context, boolean enableSite, HMAux hmDialogInfo, SearchableSpinner ss_site, SearchableSpinner ss_zone) {
         setmFooterSiteCanClean(ss_site, ss_zone);
-        setmSSAction(context, ss_site, ss_zone);
-        //
+
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
                 new MD_Site_Sql_SS_002(
@@ -2602,13 +2634,17 @@ public class ToolBox_Inf {
         );
         HMAux ssSiteValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_SITE), ssSiteOption);
 
-        if (isConcurrentBySiteLicense(context)) {
-            ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
+        if(enableSite) {
+            setmSSAction(context, ss_site, ss_zone);
+            //
+            if (isConcurrentBySiteLicense(context)) {
+                ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
+            }
+            setSSs(ss_site, hmDialogInfo.get(Constant.FOOTER_SITE_LBL), ssSiteValue, ssSiteOption);
+            ss_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
+        }else{
+            ss_site.setVisibility(View.GONE);
         }
-
-        setSSs(ss_site, hmDialogInfo.get(Constant.FOOTER_SITE_LBL), ssSiteValue, ssSiteOption);
-        //
-        ss_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
         //
         ArrayList<HMAux> ssZoneOption = getSiteZoneOption(context, ssSiteValue);
         HMAux ssZoneValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_ZONE), ssZoneOption);
@@ -2667,13 +2703,17 @@ public class ToolBox_Inf {
     }
 
     private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value) {
-        tv_site_lbl.setText(hmDialogInfo.get(Constant.FOOTER_SITE_LBL));
-        tv_site_value.setText(hmDialogInfo.get(Constant.FOOTER_SITE));
-        ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
+        disableSiteSelection(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value);
 
         tv_zone_lbl.setText(hmDialogInfo.get(Constant.FOOTER_ZONE_LBL));
         tv_zone_value.setText(hmDialogInfo.get(Constant.FOOTER_ZONE));
         ll_zone.setVisibility(hmDialogInfo.get(Constant.FOOTER_ZONE) == null || hmDialogInfo.get(Constant.FOOTER_ZONE).length() <= 0 ? View.GONE : View.VISIBLE);
+    }
+
+    private static void disableSiteSelection(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value) {
+        tv_site_lbl.setText(hmDialogInfo.get(Constant.FOOTER_SITE_LBL));
+        tv_site_value.setText(hmDialogInfo.get(Constant.FOOTER_SITE));
+        ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
     }
 
     private static void setOperationFooterLayout(Context context, boolean editMode, HMAux hmDialogInfo, SearchableSpinner ss_operation, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
@@ -2696,6 +2736,8 @@ public class ToolBox_Inf {
             HMAux ssOperationValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_OPERATION), ssOperationOption);
             setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
             ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
+            //
+            ll_operation.setVisibility(View.GONE);
         } else {
             ss_operation.setVisibility(View.GONE);
             tv_operation_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL));
@@ -2782,6 +2824,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
         transList.add("footer_dialog_user_level");
+        transList.add("footer_site_disable_by_manual_event_warning");
         transList.add("sys_not_found_lbl");
         transList.add("sys_site_or_operation_not_found_error");
         transList.add("sys_presented_by_namoa");
@@ -2857,6 +2900,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_CUSTOMER, customerDesc);
         hmAux.put(Constant.FOOTER_SITE_LBL, HmTrans.get("footer_dialog_site_lbl"));
         hmAux.put(Constant.FOOTER_SITE, siteDesc);
+        hmAux.put(Constant.FOOTER_SITE_WARNING, HmTrans.get("footer_site_disable_by_manual_event_warning"));
         hmAux.put(Constant.FOOTER_OPERATION_LBL, HmTrans.get("footer_dialog_operation_lbl"));
         hmAux.put(Constant.FOOTER_OPERATION, operationDesc);
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));

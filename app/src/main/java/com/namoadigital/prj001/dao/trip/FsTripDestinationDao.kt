@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.md.MDRegionDao
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
+import com.namoadigital.prj001.extensions.dao.getIntOrNull
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.trip.DestinationStatus
 import com.namoadigital.prj001.model.trip.FsTripDestination
@@ -1000,6 +1001,23 @@ class FsTripDestinationDao @Inject constructor(
 
     fun checkRangeDestinationWithForm() {
 
+    }
+
+    fun getDestinationSeq(dateStart: String?): Int? {
+
+        return queryObject<Int>(
+            """
+                SELECT $DESTINATION_SEQ
+                FROM $TABLE
+                WHERE strftime('%s', $ARRIVED_DATE) <= strftime('%s', $dateStart)
+                AND (
+                        $DEPARTED_DATE IS NULL
+                        OR strftime('%s', $DEPARTED_DATE) >= strftime('%s', $dateStart)
+                    )
+                """.trimIndent()
+        ) { cursor ->
+            cursor.getIntOrNull(DESTINATION_SEQ)
+        }.firstOrNull()
     }
 
 

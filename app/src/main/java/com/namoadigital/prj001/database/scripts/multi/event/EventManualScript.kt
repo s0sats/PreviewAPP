@@ -25,7 +25,6 @@ val eventManualTable = DatabaseTable(
             name = EventManualDao.EVENT_DAY_SEQ,
             type = ColumnType.INT,
         ),
-
         DatabaseTable.Column(
             name = EventManualDao.APP_ID,
             type = ColumnType.TEXT,
@@ -86,6 +85,16 @@ val eventManualTable = DatabaseTable(
         DatabaseTable.Column(
             name = EventManualDao.UPDATE_REQUIRED,
             type = ColumnType.INT
-        )
+        ),
+        DatabaseTable.Column(
+            name = EventManualDao.EVENT_SITE_CODE,
+            type = ColumnType.INT,
+            isNullable = true
+        ),
+        DatabaseTable.Column(
+            name = EventManualDao.EVENT_SITE_DESC,
+            type = ColumnType.TEXT,
+            isNullable = true,
+        ),
     )
 )

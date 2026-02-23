@@ -82,6 +82,7 @@ const val FS_TRIP_EVENT_CREATE_SCRIPT =
         [${FSTripEventDao.PHOTO_CHANGED}] int not null default 0,
         [${FSTripEventDao.EVENT_START}] text not null collate nocase,
         [${FSTripEventDao.EVENT_END}] text collate nocase,
+        [${FSTripEventDao.DESTINATION_SEQ}] int,
         CONSTRAINT [pk_fs_trip_event] 
         PRIMARY KEY([${FSTripEventDao.CUSTOMER_CODE}], [${FSTripEventDao.TRIP_PREFIX}], [${FSTripEventDao.TRIP_CODE}], [${FSTripEventDao.EVENT_SEQ}])
     );"""

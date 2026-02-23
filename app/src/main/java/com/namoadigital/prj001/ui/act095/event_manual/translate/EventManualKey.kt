@@ -21,6 +21,8 @@ enum class EventManualKey(
     CommentLbl("comment_lbl"),
     AddPhotoBtn("add_photo_btn"),
     PhotoLbl("photo_lbl"),
+    SiteLbl("site_lbl"),
+    SiteDescNotFound("site_desc_not_found"),
 
     // Datas e horários
     StartDateLbl("start_date_lbl"),

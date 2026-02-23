@@ -52,6 +52,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.dao.event.EventManualDao
 import com.namoadigital.prj001.dao.md.MDItemCheckLabelDao
 import com.namoadigital.prj001.dao.md.MDItemCheckLabelIconDao
 import com.namoadigital.prj001.dao.md.MDVerificationGroupDao
@@ -2133,6 +2134,38 @@ val migrationV30 = object : MigrationSQLite(30, 31){
 val migrationV31 = object : MigrationSQLite(30, 31){
     override fun migrate(db: SQLiteDatabase) {
         db.execSQL(tkTicketVGDatabaseTable)
+    }
+}
+
+val migrationV32 = object : MigrationSQLite(31, 32){
+    override fun migrate(db: SQLiteDatabase) {
+        db.addMissingColumns(
+            tableName = EventManualDao.TABLE_NAME,
+            columnsToAdd = listOf(
+                Column(
+                    name = EventManualDao.EVENT_SITE_CODE,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+                Column(
+                    name = EventManualDao.EVENT_SITE_DESC,
+                    type = ColumnType.TEXT,
+                    isNullable = true,
+                ),
+
+            )
+        )
+
+        db.addMissingColumns(
+            tableName = FSTripEventDao.TABLE,
+            columnsToAdd = listOf(
+                Column(
+                    name = FSTripEventDao.DESTINATION_SEQ,
+                    type = ColumnType.INT,
+                    isNullable = true,
+                ),
+            )
+        )
     }
 }
 
