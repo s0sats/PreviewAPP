@@ -1009,10 +1009,10 @@ class FsTripDestinationDao @Inject constructor(
             """
                 SELECT $DESTINATION_SEQ
                 FROM $TABLE
-                WHERE strftime('%s', $ARRIVED_DATE) <= strftime('%s', $dateStart)
+                WHERE strftime('%s', $ARRIVED_DATE) <= strftime('%s', '$dateStart')
                 AND (
                         $DEPARTED_DATE IS NULL
-                        OR strftime('%s', $DEPARTED_DATE) >= strftime('%s', $dateStart)
+                        OR strftime('%s', $DEPARTED_DATE) >= strftime('%s', '$dateStart')
                     )
                 """.trimIndent()
         ) { cursor ->
