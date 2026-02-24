@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 
-class FlowScheduleFromMyActionUseCase constructor(
+class FlowScheduleFromMyActionUseCase(
     private val context: Context,
     private val repository: ActionSerialRepository,
     private val getScheduleFromMyActionUseCase: GetScheduleFromMyActionUseCase
@@ -149,6 +149,7 @@ class FlowScheduleFromMyActionUseCase constructor(
     companion object {
         const val PROFILE_MENU_TICKET_NOT_FOUND = "PROFILE_MENU_TICKET_NOT_FOUND"
         const val SITE_RESTRICTION_CONFIRM = "SITE_RESTRICTION_CONFIRM"
+        const val EVENT_RESTRICTION_NO_ACCESS = "EVENT_RESTRICTION_NO_ACCESS"
         const val SITE_RESTRICTION_NO_ACCESS = "SITE_RESTRICTION_NO_ACCESS"
         const val SERIAL_SITE_OUT_OF_LICENSE = "SERIAL_SITE_OUT_OF_LICENSE"
         const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "MODULE_CHECKLIST_FORM_IN_PROCESSING"

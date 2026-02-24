@@ -75,9 +75,12 @@ import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterP
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.EVENT_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate.ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.ui.act094.ui.Act094_Main
 import com.namoadigital.prj001.ui.act094.util.Act094Translate
@@ -1444,6 +1447,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 }
                 btnNegative = 0
             }
+
+            EVENT_RESTRICTION_NO_ACCESS -> {
+                title = hmAux_Trans.textOf(ALERT_FORM_SITE_RESTRICTION_TTL)
+                msg = hmAux_Trans.textOf(ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG)
+                listener = DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.dismiss()
+                }
+                btnNegative = 0
+            }
         }
 
         if (btnNegative != null) {
@@ -1701,6 +1713,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("alert_free_execution_blocked_msg")
         //
         transList.add("alert_form_site_restriction_ttl")
+        transList.add(ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG)
         transList.add("alert_form_site_restriction_confirm")
         transList.add("dialog_serial_search_ttl")
         transList.add("dialog_serial_search_start")

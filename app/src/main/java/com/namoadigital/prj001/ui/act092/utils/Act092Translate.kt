@@ -46,6 +46,7 @@ object Act092Translate {
     const val ALERT_SITE_RESTRICTION_VIOLATION_MSG = "alert_site_restriction_violation_msg"
 
 
+    const val ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG = "alert_event_restriction_no_access_msg"
     const val ALERT_FORM_SITE_RESTRICTION_TTL = "alert_form_site_restriction_ttl"
     const val ALERT_FORM_SITE_RESTRICTION_CONFIRM = "alert_form_site_restriction_confirm"
     const val ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG =

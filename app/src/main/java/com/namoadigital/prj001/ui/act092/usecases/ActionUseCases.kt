@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.ui.act092.usecases
 
 import android.content.Context
-import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
 import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
+import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.ticket.GetTicketByIdUseCase
@@ -18,7 +18,7 @@ data class ActionPreferenceUseCases(
     val reset: ResetSerialModelPreferenceUseCase? = null,
     val getTicket: GetTicketByIdUseCase? = null
 ) {
-    class ActionUseCasesPreferenceFactory constructor(
+    class ActionUseCasesPreferenceFactory(
         private val context: Context
     ) : NamoaFactory<ActionPreferenceUseCases>() {
 
@@ -63,7 +63,7 @@ data class ActionUseCases(
     companion object {
 
 
-        class ActionUseCasesFactory constructor(
+        class ActionUseCasesFactory(
             private val context: Context
         ) : NamoaFactory<ActionUseCases>() {
 
@@ -108,7 +108,7 @@ data class ActionUseCases(
                         repository,
                         getScheduleFromMyActionUseCase
                     ),
-                    flowTicketSiteAccess = FlowTicketAccessUseCase(context, repository)
+                    flowTicketSiteAccess = FlowTicketAccessUseCase.Companion.Factory(context).build()
                 )
             }
         }

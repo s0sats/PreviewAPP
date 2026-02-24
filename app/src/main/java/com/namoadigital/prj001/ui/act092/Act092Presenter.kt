@@ -67,6 +67,7 @@ import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.SERIAL_CREATION_D
 import com.namoadigital.prj001.ui.act087.Act087Main
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.EVENT_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_SITE_OUT_OF_LICENSE
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_WITHOUT_STRUCTURE
@@ -404,6 +405,10 @@ class Act092Presenter(
                             },
                             error = { message, _ ->
                                 when (message!!) {
+                                    FlowTicketAccessError.EVENT_NOT_ACCESS -> {
+                                        showMsg(EVENT_RESTRICTION_NO_ACCESS, action)
+                                    }
+
                                     FlowTicketAccessError.SITE_NOT_ACCESS -> {
                                         showMsg(SITE_RESTRICTION_NO_ACCESS, action, downloadTicket)
                                     }
@@ -883,6 +888,17 @@ class Act092Presenter(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_TTL,
                                 Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_MSG
+                            )
+                        )
+                    )
+                }
+
+                EVENT_RESTRICTION_NO_ACCESS -> {
+                    view.onEvent(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+                                message = Act092Translate.ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG
                             )
                         )
                     )
@@ -1478,6 +1494,7 @@ class Act092Presenter(
             Act092Translate.ALERT_NO_FORM_FOR_SITE_MSG,
             Act092Translate.ALERT_SITE_RESTRICTION_VIOLATION_MSG,
             Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+            Act092Translate.ALERT_EVENT_RESTRICTION_NO_ACCESS_MSG,
             Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
             Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
             Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING,

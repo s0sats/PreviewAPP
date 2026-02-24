@@ -97,6 +97,7 @@ import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.t
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.EVENT_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase
 import com.namoadigital.prj001.ui.act092.usecases.FlowTicketAccessUseCase.FlowTicketAccessError
@@ -704,6 +705,11 @@ class Act083_Main_Presenter(
                             error = { message, _ ->
                                 CoroutineScope(Dispatchers.Main).launch {
                                     when (message!!) {
+
+                                        FlowTicketAccessError.EVENT_NOT_ACCESS -> {
+                                            mView.showMsg(EVENT_RESTRICTION_NO_ACCESS, action)
+                                        }
+
                                         FlowTicketAccessError.SITE_NOT_ACCESS -> {
                                             mView.showMsg(
                                                 SITE_RESTRICTION_NO_ACCESS,
