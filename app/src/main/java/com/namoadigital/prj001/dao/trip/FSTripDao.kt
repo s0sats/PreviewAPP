@@ -755,11 +755,14 @@ class FSTripDao @Inject constructor(
     }
 
     @Throws(Exception::class)
-    fun updateScn(tripPrefix: Int, tripCode: Int, scn: Int, db: SQLiteDatabase) {
+    fun updateScn(tripPrefix: Int, tripCode: Int, scn: Int, db: SQLiteDatabase, updateRequired: Int? = null) {
+        val updateRequiredFilter = updateRequired?.let{
+            """, $UPDATE_REQUIRED = $updateRequired"""
+        } ?: ""
         db.execSQL(
             """
-            UPDATE $TABLE 
-            SET $SCN = $scn
+            UPDATE $TABLE  
+            SET $SCN = $scn $updateRequiredFilter
             WHERE $TRIP_PREFIX = $tripPrefix 
             AND $TRIP_CODE = $tripCode 
         """.trimIndent()
@@ -832,6 +835,7 @@ class FSTripDao @Inject constructor(
             """
                 UPDATE $TABLE
                 SET $FLEET_LICENCE_PLATE = '$licensePlate',
+                $UPDATE_REQUIRED = 1,
                 $odometerQuery,
                 $imageQuery,
                 $photoName,
@@ -925,10 +929,10 @@ class FSTripDao @Inject constructor(
         fsTripDestination: FsTripDestination,
         scn: Int,
         tripStatus: String,
-        isOnline: Int
+        isUpdateRequired: Int
     ): Boolean {
         val trip = getTrip()
-        val updateRequired = if (isOnline == 1 || (trip?.hasUpdateRequired == true)) {
+        val updateRequired = if (isUpdateRequired == 1 || (trip?.hasUpdateRequired == true)) {
             1
         } else {
             0
@@ -972,8 +976,13 @@ class FSTripDao @Inject constructor(
         siteDesc: String?,
         lat: Double?,
         lon: Double?,
-        db: SQLiteDatabase
+        db: SQLiteDatabase,
+        updateRequired: Int? = null
     ) {
+        val updateRequiredFilter = updateRequired?.let{
+            """, $UPDATE_REQUIRED = $updateRequired"""
+        } ?: ""
+
         addUpdate(
             """
                 UPDATE $TABLE
@@ -983,6 +992,7 @@ class FSTripDao @Inject constructor(
                  $ORIGIN_SITE_DESC = '${siteDesc ?: ""}',
                  $ORIGIN_LAT = '$lat',
                  $ORIGIN_LON = '$lon'
+                 $updateRequiredFilter
                 WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
             """.trimIndent(),
             db
@@ -996,12 +1006,17 @@ class FSTripDao @Inject constructor(
         tripPrefix: Int,
         tripCode: Int,
         originDate: String,
-        db: SQLiteDatabase
+        db: SQLiteDatabase,
+        updateRequired: Int? = null
     ) {
+        val updateRequiredFilter = updateRequired?.let{
+            """, $UPDATE_REQUIRED = $updateRequired"""
+        } ?: ""
         addUpdate(
             """
                 UPDATE $TABLE
                 SET $ORIGIN_DATE = '$originDate'
+                $updateRequiredFilter
                 WHERE $TRIP_PREFIX = $tripPrefix AND $TRIP_CODE = $tripCode
             """.trimIndent(),
             db

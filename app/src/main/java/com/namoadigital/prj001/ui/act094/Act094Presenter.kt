@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act094
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
@@ -13,7 +12,6 @@ import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
 import com.namoadigital.prj001.extensions.suspendResults
 import com.namoadigital.prj001.model.TranslateResource
-import com.namoadigital.prj001.model.trip.FsTripDestination.Companion.TICKET_DESTINATION_TYPE
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.trip.WsSelectDestination
@@ -76,36 +74,10 @@ class Act094Presenter(
         selectionDestinationAvailable: SelectionDestinationAvailable
     ) {
         val trip = fsTripDao.getTrip()
-        GsonBuilder().serializeNulls().create()
         trip?.let {
-            if (!ToolBox_Con.isOnline(context)
-                || it.hasUpdateRequired
-            ) {
-                saveDestination(
-                    context = context,
-                    destination = selectionDestinationAvailable,
-                )
-                return
-            }
-            view.wsProcess = WsSelectDestination.NAME
-            view.onEvent(
-                SelectDestinationUiEvent.OpenDialog(
-                    DialogType.PROCESS(
-                        Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE,
-                        Act094Translate.PROCESS_SELECTION_DESTINATION_MSG
-                    )
-                )
-            )
-            destinationsUseCase.execSelectDestination?.invoke(
-                SelectDestinationParam(
-                    trip.tripPrefix,
-                    trip.tripCode,
-                    trip.scn,
-                    selectionDestinationAvailable.destinationType ?: "",
-                    selectionDestinationAvailable.siteCode,
-                    selectionDestinationAvailable.ticketPrefix,
-                    selectionDestinationAvailable.ticketCode,
-                )
+            saveDestination(
+                context = context,
+                destination = selectionDestinationAvailable,
             )
         } ?: view.onEvent(
             SelectDestinationUiEvent.OpenDialog(
@@ -137,51 +109,35 @@ class Act094Presenter(
                     destination
                 )
             )
-            if (result) {
-                if (destination.destinationType == TICKET_DESTINATION_TYPE) {
-                    val ticket = if (destination.ticketPrefix != null
-                        && destination.ticketCode != null
-                    ) {
-                        ticketDao.getTicket(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            destination.ticketPrefix,
-                            destination.ticketCode
-                        )
-                    } else {
-                        null
-                    }
 
-                    if (!ToolBox_Con.isOnline(context)
-                        || trip?.hasUpdateRequired == true
-                        || forceOfflineFlow
-                        || (ticket != null && ticket.sync_required == 0)
-                    ) {
-                        view.callAct005()
-                        return@let
-                    }
+            if (result) {
+                if (ToolBox_Con.isOnline(context)
+                    && trip?.hasUpdateRequired == false
+                ) {
+                    view.wsProcess = WsSelectDestination.NAME
                     //
-                    view.wsProcess = WS_TK_Ticket_Download::class.java.name
                     view.onEvent(
                         SelectDestinationUiEvent.OpenDialog(
                             DialogType.PROCESS(
-                                Act094Translate.PROCESS_DOWNLOAD_TICKET_DESTINATION_TTL,
-                                Act094Translate.PROCESS_DOWNLOAD_TICKET_DESTINATION_MSG
+                                Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE,
+                                Act094Translate.PROCESS_SELECTION_DESTINATION_MSG
                             )
                         )
                     )
                     //
-                    val mIntent = Intent(context, WBR_TK_Ticket_Download::class.java)
-                    val bundle = Bundle()
-                    bundle.putString(
-                        TK_TicketDao.TICKET_PREFIX,
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                            .toString() + "|" + destination.ticketPrefix + "|" + destination.ticketCode + "|" + 0
+                    destinationsUseCase.execSelectDestination?.invoke(
+                        SelectDestinationParam(
+                            trip.tripPrefix,
+                            trip.tripCode,
+                            trip.scn,
+                            destination.destinationType ?: "",
+                            destination.siteCode,
+                            destination.ticketPrefix,
+                            destination.ticketCode,
+                        )
                     )
-                    mIntent.putExtras(bundle)
-                    //
-                    context.sendBroadcast(mIntent)
-                } else {
-                    view.callAct005()
+                } else{
+                    view.offlineSaveSuccess()
                 }
             } else {
                 view.onEvent(
@@ -193,15 +149,82 @@ class Act094Presenter(
                     )
                 )
             }
-        } ?: view.onEvent(
+        } ?: run {
+            view.onEvent(
+                SelectDestinationUiEvent.OpenDialog(
+                    DialogType.ACTION(
+                        hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_TTL],
+                        hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_MSG],
+                        { dialogInterface, i -> dialogInterface.dismiss() }
+                    )
+                )
+            )
+        }
+    }
+
+    override fun handleTicketDestination(
+        context: Context,
+        ticketPrefix: Int?,
+        ticketCode: Int?,
+    ) {
+        val ticket = if (
+            ticketPrefix != null
+            && ticketCode != null
+        ) {
+            ticketDao.getTicket(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticketPrefix,
+                ticketCode
+            )
+        } else {
+            null
+        }
+        //
+        callTicketDownloadService(
+            context,
+            ticketPrefix,
+            ticketCode,
+            ticket?.sync_required
+        )
+    }
+
+    private fun callTicketDownloadService(
+        context: Context,
+        ticketPrefix: Int?,
+        ticketCode: Int?,
+        syncRequired: Int?
+    ) {
+        if (!ToolBox_Con.isOnline(context)
+            || (syncRequired != null
+                    && syncRequired == 0)
+            || (ticketPrefix == null
+                    && ticketCode == null
+                    )
+        ) {
+            view.callAct005()
+            return
+        }
+        //
+        view.wsProcess = WS_TK_Ticket_Download::class.java.name
+        view.onEvent(
             SelectDestinationUiEvent.OpenDialog(
-                DialogType.ACTION(
-                    hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_TTL],
-                    hmAux_Trans[ALERT_DESTINATION_SAVE_ERROR_MSG],
-                    { dialogInterface, i -> dialogInterface.dismiss() }
+                DialogType.PROCESS(
+                    Act094Translate.PROCESS_DOWNLOAD_TICKET_DESTINATION_TTL,
+                    Act094Translate.PROCESS_DOWNLOAD_TICKET_DESTINATION_MSG
                 )
             )
         )
+        //
+        val mIntent = Intent(context, WBR_TK_Ticket_Download::class.java)
+        val bundle = Bundle()
+        bundle.putString(
+            TK_TicketDao.TICKET_PREFIX,
+            ToolBox_Con.getPreference_Customer_Code(context)
+                .toString() + "|" + ticketPrefix + "|" + ticketCode + "|" + 0
+        )
+        mIntent.putExtras(bundle)
+        //
+        context.sendBroadcast(mIntent)
     }
 
     override fun setView(view: View) {

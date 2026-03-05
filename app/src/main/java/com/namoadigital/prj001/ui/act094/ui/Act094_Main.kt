@@ -123,13 +123,21 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
             WsSelectDestination.NAME -> {
                 wsProcess = ""
                 progressDialog.dismiss()
+                //
                 Toast.makeText(
                     context,
                     hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
                     Toast.LENGTH_SHORT
                 ).show()
+                //
                 selectedDestination?.let {
-                    presenter.saveDestination(context, mLink, it)
+                    presenter.handleTicketDestination(
+                        context,
+                        it.ticketPrefix,
+                        it.ticketCode
+                    )
+                } ?: run {
+                    callAct005()
                 }
             }
 
@@ -174,9 +182,7 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
                 hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
                 Toast.LENGTH_SHORT
             ).show()
-            selectedDestination?.let {
-                presenter.saveDestination(context, mLink?.ifEmpty { null }, it, true)
-            }
+            callAct005()
         }
     }
 
@@ -396,6 +402,15 @@ class Act094_Main : BaseActivityMvp<Contract.Presenter, Act094MainBinding>(), Co
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(mIntent)
         finish()
+    }
+
+    override fun offlineSaveSuccess() {
+        Toast.makeText(
+            context,
+            hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
+            Toast.LENGTH_SHORT
+        ).show()
+        callAct005()
     }
 
     private fun execSelectionItem(

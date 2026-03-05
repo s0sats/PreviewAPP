@@ -13,6 +13,7 @@ import com.namoadigital.prj001.core.trip.domain.model.blockchain.ValidationResul
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinationForThresholdValidationUseCase
 import com.namoadigital.prj001.databinding.TripDialogInfoEditBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
+import com.namoadigital.prj001.extensions.keyboard.hideKeyboard
 import com.namoadigital.prj001.extensions.parseDate
 import com.namoadigital.prj001.extensions.parseDatePair
 import com.namoadigital.prj001.extensions.parseFullDate
@@ -431,6 +432,7 @@ class DestinationDialog(
         bitmap: Bitmap?,
         isUpdatePhoto: Boolean = false
     ) {
+
         ivPhoto.apply {
             if (bitmap == null) {
                 visibility = View.GONE
@@ -751,7 +753,12 @@ class DestinationDialog(
     }
 
     fun updatePhotoDialog() {
-        binding.updatePhotoView(updatePhoto(), true)
+        with(binding){
+            if(etOdometer.isFocused){
+                etOdometer.hideKeyboard()
+            }
+            updatePhotoView(updatePhoto(), true)
+        }
     }
 
     override fun show() {

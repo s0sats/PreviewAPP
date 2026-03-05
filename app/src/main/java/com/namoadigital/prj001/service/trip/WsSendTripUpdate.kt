@@ -9,7 +9,7 @@ import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.trip.data.trip.TripRepository
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.core.wsExceptionTreatment
@@ -48,7 +48,7 @@ class WsSendTripUpdate : BaseWsIntentService("WsSendTripUpdate", IntentServiceMo
     }
 
     fun execute(request: FSTripFullUpdateEnv) {
-        val manager = TokenManager<FSTripFullUpdateEnv>(this)
+        val manager = TripTokenManager().create<FSTripFullUpdateEnv>(this)
         val token = manager.getToken(request, true)
         val requestToken = if(token.isNotBlank()){
             reSend = true

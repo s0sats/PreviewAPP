@@ -50,6 +50,7 @@ interface TripRepository {
         target: String,
         destinationSeq: Int? = null,
         deletePhoto: Boolean,
+        exceptionError: Throwable? = null
     ): Flow<IResult<Unit>>
 
     fun getListSites(): List<OriginSites>

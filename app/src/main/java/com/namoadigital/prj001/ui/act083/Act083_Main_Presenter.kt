@@ -61,6 +61,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl
 import com.namoadigital.prj001.model.TK_Ticket_Step
 import com.namoadigital.prj001.model.TSerial_Search_Rec
 import com.namoadigital.prj001.model.TkTicketCache
+import com.namoadigital.prj001.model.trip.FSTrip
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
@@ -2675,54 +2676,19 @@ class Act083_Main_Presenter(
         val dao = FSTripDao(context)
         val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
         dao.getTrip()?.let { trip ->
-
-            if (!ToolBox_Con.isOnline(context) || trip.hasUpdateRequired) {
-                saveDestination(context = context, destination = selectionDestinationAvailable!!, isOnline = false)
-                return
-            }
-
-            mView.setProcess(WsSelectDestination.NAME)
-            mView.showPD(
-                hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE) ?: "",
-                hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_MSG) ?: ""
+            //
+            val saveDestination = saveDestination(
+                context = context,
+                destination = selectionDestinationAvailable!!,
             )
-
-            destinationUseCase.execSelectDestination?.invoke(
-                SelectDestinationUseCase.SelectDestinationParam(
-                    trip.tripPrefix,
-                    trip.tripCode,
-                    trip.scn,
-                    selectionDestinationAvailable!!.destinationType ?: "",
-                    myActionFilterParam.siteCode?.toInt()
-                )
-            )
-        } ?: mView.showAlertMsg(
-            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_TTL) ?: "",
-            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_MSG) ?: ""
-        )
-
-    }
-
-    override fun saveDestination(
-        context: Context,
-        response: String?,
-        destination: SelectionDestinationAvailable,
-        isOnline: Boolean,
-    ) {
-        val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
-        destinationUseCase.saveDestination?.let {
-            val result = it(
-                SaveDestinationUseCase.GetDestinationParams(
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    response,
-                    destination
-                )
-            )
-            if (result) {
-                if(!isOnline){
+            //
+            if (saveDestination) {
+                if (!ToolBox_Con.isOnline(context) || trip.hasUpdateRequired) {
                     mView.showToast(hmAux_Trans?.textOf(SAVE_TRIP_OFFLINE_TOAST) ?: "")
+                    mView.callAct005()
+                } else {
+                    callWsAddDestination(destinationUseCase, trip, selectionDestinationAvailable)
                 }
-                mView.callAct005()
             } else {
                 mView.showAlertMsg(
                     hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_TTL) ?: "",
@@ -2730,9 +2696,51 @@ class Act083_Main_Presenter(
                 )
             }
         } ?: mView.showAlertMsg(
-            hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_TTL) ?: "",
-            hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_MSG) ?: ""
+            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_TTL) ?: "",
+            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_MSG) ?: ""
         )
+
+    }
+
+    private fun callWsAddDestination(
+        destinationUseCase: DestinationUseCase,
+        trip: FSTrip,
+        selectionDestinationAvailable: SelectionDestinationAvailable?
+    ): Unit? {
+        mView.setProcess(WsSelectDestination.NAME)
+        mView.showPD(
+            hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE) ?: "",
+            hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_MSG) ?: ""
+        )
+
+        return destinationUseCase.execSelectDestination?.invoke(
+            SelectDestinationUseCase.SelectDestinationParam(
+                trip.tripPrefix,
+                trip.tripCode,
+                trip.scn,
+                selectionDestinationAvailable!!.destinationType ?: "",
+                myActionFilterParam.siteCode?.toInt()
+            )
+        )
+    }
+
+    override fun saveDestination(
+        context: Context,
+        response: String?,
+        destination: SelectionDestinationAvailable,
+    ): Boolean {
+        val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
+        return destinationUseCase.saveDestination?.let {
+            val result = it(
+                SaveDestinationUseCase.GetDestinationParams(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    response,
+                    destination
+                )
+            )
+            result
+        } ?: false
+
     }
 
     private fun getTripTickets(

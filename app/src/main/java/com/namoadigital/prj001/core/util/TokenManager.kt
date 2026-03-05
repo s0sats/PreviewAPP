@@ -14,10 +14,11 @@ data class TokenModel(
     @Expose @SerializedName("parameters") var parameters: Any?,
 )
 class TokenManager <T> constructor(
-    private val context: Context
+    private val context: Context,
+    fileName: String = "request_token.json"
 ) {
 
-    private val filePath = "${ConstantBaseApp.DB_PATH}/token/request_token.json"
+    private val filePath = "${ConstantBaseApp.DB_PATH}/token/$fileName"
     private val gson = Gson()
     private val model = loadModel()
     private fun loadModel(): TokenModel {

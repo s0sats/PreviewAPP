@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -189,4 +190,6 @@ public interface Act005_Main_Presenter {
     void executeEventSave(boolean isCloudFlow);
 
     boolean hasEventUpdateRequired();
+
+    void closeNotificationTicketSync(Context context);
 }

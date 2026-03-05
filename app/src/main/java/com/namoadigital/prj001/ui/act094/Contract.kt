@@ -13,6 +13,7 @@ interface Contract {
 
         var wsProcess: String
         fun callAct005()
+        fun offlineSaveSuccess()
     }
 
     interface Presenter : BasePresenter<View> {
@@ -33,5 +34,10 @@ interface Contract {
             forceOfflineFlow: Boolean=false
         )
 
+        fun handleTicketDestination(
+            context: Context,
+            ticketPrefix: Int?,
+            ticketCode: Int?,
+        )
     }
 }

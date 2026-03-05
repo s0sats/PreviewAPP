@@ -11,7 +11,7 @@ import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.sendToWebServiceReceiver
 import com.namoadigital.prj001.core.trip.base.BaseTripRepository
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -90,7 +90,7 @@ class TripUserRepositoryImp constructor(
                     userNick = userEdit.userNick
                 ).let { request ->
 
-                    val manager = TokenManager<TripUserSaveEnv>(context)
+                    val manager = TripTokenManager().create<TripUserSaveEnv>(context)
                     val token = manager.getToken(request)
 
                     val model = ApiRequest(

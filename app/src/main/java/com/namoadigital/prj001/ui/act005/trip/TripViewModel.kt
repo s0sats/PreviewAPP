@@ -295,6 +295,7 @@ class TripViewModel @Inject constructor(
         path: String? = null,
         destinationSeq: Int? = null,
         deletePhoto: Boolean = false,
+        exceptionError: Throwable? = null,
     ) {
         viewModelScope.launch {
 
@@ -310,7 +311,8 @@ class TripViewModel @Inject constructor(
                     changePhoto,
                     target,
                     destinationSeq,
-                    deletePhoto
+                    deletePhoto,
+                    exceptionError
                 )
             ).results(
                 success = {
@@ -329,14 +331,22 @@ class TripViewModel @Inject constructor(
                     _state.loadingState { ProgressState.Offline }
                     getCurrentTrip()
                 },
-                loading = { _, _ ->
-                    _state.loadingState {
-                        ProgressState.Online(
-                            process = progressTranslate.process,
-                            title = progressTranslate.title,
-                            message = progressTranslate.message
-                        )
+                loading = { isOnlineMode, _ ->
+                    if (isOnlineMode) {
+                        _state.loadingState {
+                            ProgressState.Online(
+                                process = progressTranslate.process,
+                                title = progressTranslate.title,
+                                message = progressTranslate.message
+                            )
+                        }
+
+                        return@results
                     }
+
+                    _state.loadingState { ProgressState.Offline }
+
+
                 },
                 failed = { throwable ->
                     _state.loadingState { ProgressState.Error(throwable) }
@@ -352,6 +362,18 @@ class TripViewModel @Inject constructor(
                         }
 
                         if (exceptionError is NetworkConnectionException) {
+                            if(target == TripTarget.END){
+                                setTripStatus(
+                                    TripStatus.DONE,
+                                    tripWsProgress = TripWsProgress(
+                                        progressTranslate.process,
+                                        progressTranslate.title,
+                                        progressTranslate.message,
+                                    ),
+                                    endDate = endDate,
+                                )
+                                return@results
+                            }
                             getCurrentTrip()
                         }
                     }
@@ -465,6 +487,7 @@ class TripViewModel @Inject constructor(
             ).results(
                 success = {
                     chainOriginAndFleet?.let {
+                        removeLoadingState()
                         saveFleetData(
                             fleetPlate = chainOriginAndFleet.fleet,
                             odometer = chainOriginAndFleet.odometer.toLong(),
@@ -495,6 +518,22 @@ class TripViewModel @Inject constructor(
                     _state.loadingState { ProgressState.Offline }
                 },
                 error = { errorMsg, exceptionError ->
+
+                    chainOriginAndFleet?.let {
+                        removeLoadingState()
+                        saveFleetData(
+                            fleetPlate = chainOriginAndFleet.fleet,
+                            odometer = chainOriginAndFleet.odometer.toLong(),
+                            path = chainOriginAndFleet.photoUpdate.path,
+                            changePhoto = chainOriginAndFleet.photoUpdate.isNew,
+                            deletePhoto = chainOriginAndFleet.photoUpdate.deletePhoto,
+                            target = TripTarget.START,
+                            progressTranslate = progressTranslateFleet,
+                            exceptionError = exceptionError,
+                        )
+                        return@results
+                    }
+
                     exceptionError?.let {
                         _state.loadingState {
                             ProgressState.Error(
@@ -712,6 +751,7 @@ class TripViewModel @Inject constructor(
             )?.results(
                 success = {
                     chainDestinationAndFleet?.let { chainDestinationAndFleet ->
+                        removeLoadingState()
                         saveFleetData(
                             odometer = chainDestinationAndFleet.odometer,
                             path = chainDestinationAndFleet.photoUpdate.path,

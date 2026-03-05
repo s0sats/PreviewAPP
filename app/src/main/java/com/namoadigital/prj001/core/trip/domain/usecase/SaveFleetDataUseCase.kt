@@ -18,6 +18,7 @@ class SaveFleetDataUseCase(
         val target: TripTarget,
         val destinationSeq: Int? = null,
         val deletePhoto: Boolean = false,
+        val exceptionError: Throwable? = null,
     )
 
     override suspend fun invoke(input: SaveFleetParams): Flow<IResult<Unit>> {
@@ -28,7 +29,8 @@ class SaveFleetDataUseCase(
             input.changePhoto,
             input.target.type,
             input.destinationSeq,
-            input.deletePhoto
+            input.deletePhoto,
+            input.exceptionError,
         )
     }
 

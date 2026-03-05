@@ -2,7 +2,6 @@ package com.namoadigital.prj001.core.trip.data.trip
 
 import android.content.Context
 import android.os.Bundle
-import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.adapter.trip.model.Extract
@@ -17,7 +16,7 @@ import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.sendToWebServiceReceiver
 import com.namoadigital.prj001.core.trip.base.BaseTripRepository
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.dao.GE_FileDao
@@ -72,10 +71,8 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
@@ -136,125 +133,123 @@ class TripRepositoryImp @Inject constructor(
                     startDate = getCurrentDateApi(true)
                 }
 
-                if (tripOnline) {
-                    val modelRequest =
-                        TripStatusChangeEnv(
-                            tripPrefix = trip.tripPrefix,
-                            tripCode = trip.tripCode,
-                            scn = trip.scn,
-                            tripStatus = tripStatus.toDescription(),
-                            startDate = startDate,
-                            doneDate = doneDate
-                        )
-                    val manager = TokenManager<TripStatusChangeEnv>(context)
-                    val token = manager.getToken(modelRequest)
-
-                    val modelEnv = ApiRequest(
-                        token = token,
-                        parameters = modelRequest
-                    ).apply {
-                        session_app = context.getUserSessionAPP()
-                    }
-                    //
-                    context.connectWS<ApiResponse<TripDestinationStatusChangeRec>>(
-                        url = Constant.WS_TRIP_CHANGE_STATUS,
-                        model = modelEnv
-                    ) {
-                        it.results(
-                            success = { response ->
-                                manager.deleteToken()
-                                context.sendBCStatus(
-                                    WsTypeStatus.UPDATE_DIALOG_MESSAGE(
-                                        message = genericTranslate["generic_processing_data"],
-                                        required = "0"
-                                    )
+                saveOfflineTripStatusChange(
+                    trip,
+                    tripStatus,
+                    startDate,
+                    doneDate,
+                    destinationSeq,
+                    destinationStatus,
+                    nextDestinationSeq,
+                    nextDestinationStatus,
+                    nextTripStatus
+                ).results(
+                    success = {
+                        if (tripOnline) {
+                            val modelRequest =
+                                TripStatusChangeEnv(
+                                    tripPrefix = trip.tripPrefix,
+                                    tripCode = trip.tripCode,
+                                    scn = trip.scn,
+                                    tripStatus = tripStatus.toDescription(),
+                                    startDate = startDate,
+                                    doneDate = doneDate
                                 )
-                                response.data?.let { statusChanged ->
-                                    val transaction = TransactionWsTripDestinationStatusChange(
-                                        context = context,
-                                        FSTripDao(context),
-                                        FsTripDestinationDao(context)
-                                    )
-                                    //
-                                    modelEnv.parameters?.let {
-                                        if (transaction.save(
-                                                statusChanged = statusChanged.copy(
-                                                    date = if(statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) doneDate else statusChanged.date
-                                                ),
-                                                startDate = startDate,
+                            val manager = TripTokenManager().create<TripStatusChangeEnv>(context)
+                            val token = manager.getToken(modelRequest)
+
+                            val modelEnv = ApiRequest(
+                                token = token,
+                                parameters = modelRequest
+                            ).apply {
+                                session_app = context.getUserSessionAPP()
+                            }
+                            //
+                            context.connectWS<ApiResponse<TripDestinationStatusChangeRec>>(
+                                url = Constant.WS_TRIP_CHANGE_STATUS,
+                                model = modelEnv
+                            ) {
+                                it.results(
+                                    success = { response ->
+                                        manager.deleteToken()
+                                        context.sendBCStatus(
+                                            WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                                message = genericTranslate["generic_processing_data"],
+                                                required = "0"
                                             )
-                                        ) {
-                                            ToolBox.sendBCStatus(
-                                                context,
-                                                "CLOSE_ACT",
-                                                genericTranslate["generic_process_finalized_msg"],
-                                                HMAux(),
-                                                "",
-                                                "0"
+                                        )
+                                        response.data?.let { statusChanged ->
+                                            val transaction = TransactionWsTripDestinationStatusChange(
+                                                context = context,
+                                                FSTripDao(context),
+                                                FsTripDestinationDao(context)
                                             )
-                                        } else {
-                                            ToolBox.sendBCStatus(
+                                            //
+                                            modelEnv.parameters?.let {
+                                                if (transaction.save(
+                                                        statusChanged = statusChanged.copy(
+                                                            date = if(statusChanged.tripStatus.toTripStatus() == TripStatus.DONE) doneDate else statusChanged.date
+                                                        ),
+                                                        startDate = startDate,
+                                                    )
+                                                ) {
+                                                    ToolBox.sendBCStatus(
+                                                        context,
+                                                        "CLOSE_ACT",
+                                                        genericTranslate["generic_process_finalized_msg"],
+                                                        HMAux(),
+                                                        "",
+                                                        "0"
+                                                    )
+                                                } else {
+                                                    ToolBox.sendBCStatus(
+                                                        context,
+                                                        "CUSTOM_ERROR",
+                                                        genericTranslate["msg_no_data_returned"],
+                                                        "",
+                                                        ""
+                                                    )
+                                                }
+                                            } ?: ToolBox.sendBCStatus(
                                                 context,
                                                 "CUSTOM_ERROR",
                                                 genericTranslate["msg_no_data_returned"],
                                                 "",
                                                 ""
                                             )
+                                        } ?: run {
+                                            if (response.status?.code == 406) {
+                                                ToolBox.sendBCStatus(
+                                                    context,
+                                                    "CUSTOM_ERROR",
+                                                    response.error_msg,
+                                                    "",
+                                                    ""
+                                                )
+                                            }
                                         }
-                                    } ?: ToolBox.sendBCStatus(
-                                        context,
-                                        "CUSTOM_ERROR",
-                                        genericTranslate["msg_no_data_returned"],
-                                        "",
-                                        ""
-                                    )
-                                } ?: run {
-                                    if (response.status?.code == 406) {
-                                        ToolBox.sendBCStatus(
-                                            context,
-                                            "CUSTOM_ERROR",
-                                            response.error_msg,
-                                            "",
-                                            ""
-                                        )
+                                    },
+                                    failed = { throwable ->
+                                        emit(handleNetworkError(throwable, context))
                                     }
-                                }
-                            },
-                            failed = { throwable ->
-                                saveOfflineTripStatusChange(
-                                    trip,
-                                    tripStatus,
-                                    startDate,
-                                    doneDate,
-                                    destinationSeq,
-                                    destinationStatus,
-                                    nextDestinationSeq,
-                                    nextDestinationStatus,
-                                    nextTripStatus,
-                                    throwable
                                 )
                             }
-                        )
+                        } else {
+                            emit(success(Unit))
+                        }
+                    },
+                    failed = {
+                        emit(failed(it))
                     }
-                } else {
-                    saveOfflineTripStatusChange(
-                        trip,
-                        tripStatus,
-                        startDate,
-                        doneDate,
-                        destinationSeq,
-                        destinationStatus,
-                        nextDestinationSeq,
-                        nextDestinationStatus,
-                        nextTripStatus
-                    )
-                }
+                )
+
+
             }
         }.flowCatch(this::class.java.name).flowOn(Dispatchers.IO)
 
     }
 
-    private suspend fun FlowCollector<IResult<Unit>>.saveOfflineTripStatusChange(
+    private suspend fun saveOfflineTripStatusChange(
         it: FSTrip,
         tripStatus: TripStatus,
         startDate: String?,
@@ -265,7 +260,7 @@ class TripRepositoryImp @Inject constructor(
         nextDestinationStatus: String?,
         nextTripStatus: String,
         throwable: Throwable? = null
-    ) {
+    ):IResult<Unit> {
         val transaction = TransactionWsTripDestinationStatusChange(
             context = context,
             FSTripDao(context),
@@ -305,12 +300,11 @@ class TripRepositoryImp @Inject constructor(
             updateRequired = true,
         )
 
-        if (saveReturn) {
-            emit(handleNetworkError(throwable, context))
+        return if (saveReturn) {
+            handleNetworkError(throwable, context)
         } else {
-            emit(failed(IOException("SAVE_ERROR")))
+            failed(IOException("SAVE_ERROR"))
         }
-
     }
 
     private fun getDestinationForTripChange(
@@ -389,20 +383,25 @@ class TripRepositoryImp @Inject constructor(
         target: String,
         destinationSeq: Int?,
         deletePhoto: Boolean,
+        exceptionError: Throwable?,
     ): Flow<IResult<Unit>> = flow {
         dao.getTrip()?.let { trip ->
-            val isOnlineMode = ToolBox_Con.isOnline(context) && !trip.hasUpdateRequired
+            val isOnlineMode = ToolBox_Con.isOnline(context)
+                    && !trip.hasUpdateRequired
+                    && exceptionError == null
 
-            path?.let { imagePath ->
-                GE_File().apply {
-                    file_code = imagePath.replace(JPG_EXTENSION, "")
-                    file_path = imagePath
-                    file_status = GE_File.OPENED
-                    file_date = getCurrentDateApi(true)
-                }.let { fileModel ->
-                    fileDao?.addUpdate(fileModel)
+            if(changePhoto == 1) {
+                path?.let { imagePath ->
+                    GE_File().apply {
+                        file_code = imagePath.replace(JPG_EXTENSION, "")
+                        file_path = imagePath
+                        file_status = GE_File.OPENED
+                        file_date = getCurrentDateApi(true)
+                    }.let { fileModel ->
+                        fileDao?.addUpdate(fileModel)
+                    }
+                    ToolBox_Inf.scheduleUploadImgWork(context)
                 }
-                ToolBox_Inf.scheduleUploadImgWork(context)
             }
 
             val model = TripFleetSetEnv(
@@ -425,138 +424,115 @@ class TripRepositoryImp @Inject constructor(
                 ""
             }
 
-            if (!isOnlineMode) {
-                saveOffline(
-                    model = model,
-                    trip = trip,
-                    destinationSeq = destinationSeq,
-                    odometer = odometer,
-                    imageKey = imageKey,
-                    licensePlate = licensePlate,
-                    deletePhoto = deletePhoto
-                )
-                return@flow
-            }
-
-
-
             emit(loading())
 
-            val manager = TokenManager<TripFleetSetEnv>(context)
-            val token = manager.getToken(model)
-            val modelEnv = ApiRequest(
-                token = token,
-                parameters = model.copy(
-                    imageKey = if (deletePhoto) null else model.imageKey,
-                    imageChanged = if (deletePhoto) 1 else model.imageChanged
-                )
-            ).apply {
-                session_app = context.getUserSessionAPP()
-            }
-
-
-            context.connectWS<ApiResponse<TripFleetSetRec>>(
-                url = Constant.WS_TRIP_FLEET_SET,
-                model = modelEnv
-            ) {
-
-                it.results(
-                    success = { response ->
-                        manager.deleteToken()
-                        context.sendBCStatus(
-                            WsTypeStatus.UPDATE_DIALOG_MESSAGE(
-                                message = genericTranslate["generic_processing_data"],
-                                required = "0"
+            saveOffline(
+                model = model,
+                trip = trip,
+                destinationSeq = destinationSeq,
+                odometer = odometer,
+                imageKey = imageKey,
+                licensePlate = licensePlate,
+            ).results(
+                success = {
+                    if (deletePhoto) {
+                        try {
+                            ToolBox_Inf.deleteLocalImage(imageKey)
+                        } catch (exception: Exception) {
+                            ToolBox.registerException(
+                                javaClass.name,
+                                exception
                             )
-                        )
-                        response.data?.let { data ->
-                            DatabaseTransactionManager(context).executeTransaction { db ->
-                                dao.updateScn(data.tripPrefix, data.tripCode, data.scn, db)
-                                val image = if (!model.deletePhoto) {
-                                    model.imageKey
-                                } else {
-                                    ""
-                                }
-                                when (model.target.toTripTarget()) {
-                                    TripTarget.DESTINATION -> {
-                                        destinationDao?.updateArrivedFleet(
-                                            tripPrefix = data.tripPrefix,
-                                            tripCode = data.tripCode,
-                                            destinationSeq = model.destinationSeq,
-                                            odometer = model.odometer,
-                                            photoPath = image,
-                                            photoChanged = 0,
-                                            db = db
+                        }
+                    }
+                    //
+                    if (isOnlineMode) {
+                        //
+                        val manager = TripTokenManager().create<TripFleetSetEnv>(context)
+                        //
+                        val token = manager.getToken(model)
+                        val modelEnv = ApiRequest(
+                            token = token,
+                            parameters = model
+                        ).apply {
+                            session_app = context.getUserSessionAPP()
+                        }
+                        //
+                        context.connectWS<ApiResponse<TripFleetSetRec>>(
+                            url = Constant.WS_TRIP_FLEET_SET,
+                            model = modelEnv
+                        ) {
+                            it.results(
+                                success = { response ->
+                                    manager.deleteToken()
+                                    context.sendBCStatus(
+                                        WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                            message = genericTranslate["generic_processing_data"],
+                                            required = "0"
                                         )
-                                    }
-
-                                    else -> {
-                                        dao.updateFleet(
+                                    )
+                                    response.data?.let { data ->
+                                        handleRemoteSuccess(
                                             data.tripPrefix,
                                             data.tripCode,
-                                            model.licensePlate,
-                                            model.odometer,
-                                            model.target.toTripTarget(),
-                                            image,
-                                            0,
-                                            db
+                                            data.scn,
+                                        )
+                                    } ?: run {
+                                        context.sendBCStatus(
+                                            WsTypeStatus.CUSTOM_ERROR(
+                                                networkTranslate[NETWORK_GENERIC_ERROR]
+                                            )
                                         )
                                     }
+                                },
+                                failed = { throwable ->
+                                    val result = handleNetworkError(throwable, context)
+                                    emit(result)
                                 }
-                            }.success {
-                                if (deletePhoto) {
-                                    try {
-                                        val file =
-                                            File("${ConstantBase.CACHE_PATH_PHOTO}/${model.imageKey}")
-                                        if (file.exists()) {
-                                            file.delete()
-                                        }
-                                    } catch (exception: Exception) {
-                                        ToolBox.registerException(
-                                            javaClass.name,
-                                            exception
-                                        )
-                                        exception.printStackTrace()
-                                    }
-                                }
-                                context.sendBCStatus(WsTypeStatus.CLOSE_ACT(response = "ok"))
-                            }.failed {
-                                context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
-                            }
-                        } ?: run {
-                            context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[NETWORK_GENERIC_ERROR]))
+                            )
                         }
-                    },
-                    failed = { throwable ->
-                        saveOffline(
-                            model = model,
-                            trip = trip,
-                            destinationSeq = destinationSeq,
-                            odometer = odometer,
-                            imageKey = imageKey,
-                            licensePlate = licensePlate,
-                            deletePhoto = deletePhoto,
-                            networkError = throwable
-                        )
+                    }else{
+                        emit (handleNetworkError(exceptionError, context))
                     }
-                )
-
-            }
-
+                },
+                failed = {
+                    emit(failed(it))
+                }
+            )
         }
     }.flowCatch(this::class.java.name).flowOn(Dispatchers.IO)
 
-    private suspend fun FlowCollector<IResult<Unit>>.saveOffline(
+    private fun handleRemoteSuccess(tripPrefix:Int,
+                                    tripCode:Int,
+                                    scn:Int) {
+        DatabaseTransactionManager(context).executeTransaction { db ->
+            dao.updateScn(
+                tripPrefix,
+                tripCode,
+                scn,
+                db,
+                0
+            )
+        }.success {
+            context.sendBCStatus(WsTypeStatus.CLOSE_ACT(response = "ok"))
+        }.failed {
+            context.sendBCStatus(
+                WsTypeStatus.CUSTOM_ERROR(
+                    networkTranslate[DB_TRANSACTION_ERROR_LBL]
+                )
+            )
+        }
+    }
+
+    private fun saveOffline(
         model: TripFleetSetEnv,
         trip: FSTrip,
         destinationSeq: Int?,
         odometer: Long?,
         imageKey: String?,
         licensePlate: String?,
-        deletePhoto: Boolean,
-        networkError: Throwable? = null
-    ) {
-        DatabaseTransactionManager(context).executeTransaction { db ->
+    ): IResult<Unit> {
+        return DatabaseTransactionManager(context).executeTransaction { db ->
             when (model.target.toTripTarget()) {
                 TripTarget.DESTINATION -> {
                     destinationDao?.let {
@@ -579,6 +555,13 @@ class TripRepositoryImp @Inject constructor(
                         )
                     }
 
+                    dao.updateRequired(
+                        tripPrefix = model.tripPrefix,
+                        tripCode = model.tripCode,
+                        updateRequired = 1,
+                        db = db
+                    )
+
                 }
 
                 else -> {
@@ -600,32 +583,8 @@ class TripRepositoryImp @Inject constructor(
                     )
                 }
             }
-            dao.updateRequired(
-                tripPrefix = model.tripPrefix,
-                tripCode = model.tripCode,
-                updateRequired = 1,
-                db = db
-            )
-        }.results(
-            success = {
-                if (deletePhoto) {
-                    try {
-                        ToolBox_Inf.deleteLocalImage(imageKey)
-                    } catch (exception: Exception) {
-                        ToolBox.registerException(
-                            javaClass.name,
-                            exception
-                        )
-                    }
-                }
 
-                val result = handleNetworkError(networkError, context)
-                emit(result)
-            },
-            failed = {
-                emit(failed(it))
-            }
-        )
+        }
     }
 
     override fun getListSites(): List<OriginSites> {
@@ -667,120 +626,109 @@ class TripRepositoryImp @Inject constructor(
                     originDate = date
                 )
 
-                if (!isOnlineMode) {
-                    saveOriginOffline(envModel)
-                    return@flow
-                }
 
-                emit(loading())
+                saveOriginOffline(envModel).results(
+                    success = {
+                        if (isOnlineMode) {
+                            val manager = TripTokenManager().create<FSTripOriginEnv>(context)
+                            val token = manager.getToken(envModel)
 
-                val manager = TokenManager<FSTripOriginEnv>(context)
-                val token = manager.getToken(envModel)
+                            val model = ApiRequest(
+                                token = token,
+                                parameters = envModel
+                            ).apply {
+                                session_app = context.getUserSessionAPP()
+                            }
 
-                val model = ApiRequest(
-                    token = token,
-                    parameters = envModel
-                ).apply {
-                    session_app = context.getUserSessionAPP()
-                }
-
-                context.connectWS<ApiResponse<FSTripOriginRec>>(
-                    url = Constant.WS_TRIP_ORIGIN_SET,
-                    model = model
-                ) {
-                    it.results(
-                        success = { response ->
-                            manager.deleteToken()
-                            context.sendBCStatus(
-                                WsTypeStatus.UPDATE_DIALOG_MESSAGE(
-                                    message = genericTranslate["generic_processing_data"],
-                                    required = "0"
-                                )
-                            )
-                            if (envModel.originType == null) {
-                                DatabaseTransactionManager(context).executeTransaction {
-                                    response.data?.let { data ->
-                                        dao.updateScn(data.tripPrefix, data.tripCode, data.scn, it)
-                                        dao.updateOriginDate(
-                                            data.tripPrefix,
-                                            data.tripCode,
-                                            envModel.originDate,
-                                            it
+                            context.connectWS<ApiResponse<FSTripOriginRec>>(
+                                url = Constant.WS_TRIP_ORIGIN_SET,
+                                model = model
+                            ) {
+                                it.results(
+                                    success = { response ->
+                                        manager.deleteToken()
+                                        context.sendBCStatus(
+                                            WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                                message = genericTranslate["generic_processing_data"],
+                                                required = "0"
+                                            )
                                         )
-                                    } ?: run {
-                                        context.sendBCStatus(WsTypeStatus.ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
-                                    }
-                                }.success {
-                                    context.sendBCStatus(WsTypeStatus.CLOSE_ACT(""))
-                                }.failed {
-                                    context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
-                                }
-                                return@results
-                            }
+//                                        if (envModel.originType == null) {
+                                            DatabaseTransactionManager(context).executeTransaction {
+                                                response.data?.let { data ->
+                                                    dao.updateScn(
+                                                        data.tripPrefix,
+                                                        data.tripCode,
+                                                        data.scn,
+                                                        it,
+                                                        0
+                                                    )
 
-                            DatabaseTransactionManager(context).executeTransaction {
-                                response.data?.let { data ->
-                                    dao.updateScn(data.tripPrefix, data.tripCode, data.scn, it)
-                                    dao.updateOrigin(
-                                        data.tripPrefix,
-                                        data.tripCode,
-                                        envModel.originDate,
-                                        envModel.originType,
-                                        envModel.originSiteCode,
-                                        envModel.siteDesc,
-                                        envModel.lat,
-                                        envModel.lon,
-                                        it
-                                    )
-                                } ?: run {
-                                    context.sendBCStatus(WsTypeStatus.ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
-                                }
-                            }.success {
-                                context.sendBCStatus(WsTypeStatus.CLOSE_ACT("ok"))
-                            }.failed {
-                                context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                                } ?: run {
+                                                    context.sendBCStatus(WsTypeStatus.ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                                }
+                                            }.success {
+                                                context.sendBCStatus(WsTypeStatus.CLOSE_ACT(""))
+                                            }.failed {
+                                                context.sendBCStatus(
+                                                    WsTypeStatus.CUSTOM_ERROR(
+                                                        networkTranslate[DB_TRANSACTION_ERROR_LBL]
+                                                    )
+                                                )
+                                            }
+//                                        }
+
+                                        /*DatabaseTransactionManager(context).executeTransaction {
+                                            response.data?.let { data ->
+                                                dao.updateScn(data.tripPrefix, data.tripCode, data.scn, it)
+                                            } ?: run {
+                                                context.sendBCStatus(WsTypeStatus.ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                            }
+                                        }.success {
+                                            context.sendBCStatus(WsTypeStatus.CLOSE_ACT("ok"))
+                                        }.failed {
+                                            context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                        }*/
+                                    },
+                                    failed = { throwable ->
+                                        emit(loading(false))
+                                        val result = handleNetworkError(throwable, context)
+                                        emit(result)
+                                    }
+                                )
                             }
-                        },
-                        failed = { throwable ->
-                            saveOriginOffline(envModel, throwable)
+                        }else{
+                            emit(success(Unit))
                         }
-                    )
-                }
+                    },
+                    failed = {
+                        emit(loading(false))
+                        emit(failed(it))
+                    }
+                )
+
+
             }
         }.flowCatch(this::class.java.name).flowOn(Dispatchers.IO)
     }
 
-    private suspend fun FlowCollector<IResult<Unit>>.saveOriginOffline(
+    private fun saveOriginOffline(
         envModel: FSTripOriginEnv,
-        throwable: Throwable? = null
-    ) {
+    ): IResult<Unit> {
         if (envModel.originType == null) {
-            DatabaseTransactionManager(context).executeTransaction { db ->
+            return DatabaseTransactionManager(context).executeTransaction { db ->
                 dao.updateOriginDate(
                     tripPrefix = envModel.tripPrefix,
                     tripCode = envModel.tripCode,
                     originDate = envModel.originDate,
-                    db = db
+                    db = db,
+                    updateRequired = 1
                 )
-                dao.updateRequired(
-                    tripPrefix = envModel.tripPrefix,
-                    tripCode = envModel.tripCode,
-                    updateRequired = 1,
-                    db = db
-                )
-            }.results(
-                success = {
-                    val result = handleNetworkError(throwable, context)
-                    emit(result)
-                },
-                failed = {
-                    emit(failed(it))
-                }
-            )
-            return
+            }
+
         }
 
-        DatabaseTransactionManager(context).executeTransaction { db ->
+        return DatabaseTransactionManager(context).executeTransaction { db ->
             dao.updateOrigin(
                 tripPrefix = envModel.tripPrefix,
                 tripCode = envModel.tripCode,
@@ -790,23 +738,10 @@ class TripRepositoryImp @Inject constructor(
                 siteDesc = envModel.siteDesc,
                 lat = envModel.lat,
                 lon = envModel.lon,
-                db = db
+                db = db,
+                updateRequired = 1
             )
-            dao.updateRequired(
-                tripPrefix = envModel.tripPrefix,
-                tripCode = envModel.tripCode,
-                updateRequired = 1,
-                db = db
-            )
-        }.results(
-            success = {
-                val result = handleNetworkError(throwable, context)
-                emit(result)
-            },
-            failed = {
-                emit(failed(it))
-            }
-        )
+        }
     }
 
 
@@ -930,77 +865,98 @@ class TripRepositoryImp @Inject constructor(
                     startDate = date
                 )
 
-                if (!isOnlineMode) {
-                    DatabaseTransactionManager(context).executeTransaction {
-                        dao.updateStartDate(
-                            trip.tripPrefix,
-                            trip.tripCode,
-                            date,
-                            it
-                        )
 
-                        dao.updateRequired(
-                            tripPrefix = trip.tripPrefix,
-                            tripCode = trip.tripCode,
-                            updateRequired = 1,
-                            it,
-                        )
-                    }
-                    emit(success(Unit))
-                    return@flow
-                }
+                saveStartDate(
+                    trip,
+                    date
+                ).results(
+                    success = {
+                        if (isOnlineMode) {
+                            val manager = TripTokenManager().create<FSTripStartEnv>(context)
+                            val token = manager.getToken(envModel)
 
-
-                emit(loading())
-
-                val manager = TokenManager<FSTripStartEnv>(context)
-                val token = manager.getToken(envModel)
-
-                val model = ApiRequest(
-                    token = token,
-                    parameters = envModel
-                ).apply {
-                    session_app = context.getUserSessionAPP()
-                }
-
-                context.connectWS<ApiResponse<FSTripStartRec>>(
-                    url = Constant.WS_TRIP_START_SET,
-                    model = model
-                ) {
-                    it.results(
-                        success = { response ->
-                            manager.deleteToken()
-                            context.sendBCStatus(
-                                WsTypeStatus.UPDATE_DIALOG_MESSAGE(
-                                    message = genericTranslate["generic_processing_data"],
-                                    required = "0"
-                                )
-                            )
-
-                            DatabaseTransactionManager(context).executeTransaction { db ->
-                                response.data?.let { data ->
-                                    dao.updateScn(data.tripPrefix, data.tripCode, data.scn, db)
-                                    dao.updateStartDate(
-                                        data.tripPrefix,
-                                        data.tripCode,
-                                        envModel.startDate,
-                                        db
-                                    )
-                                }
-                            }.success {
-                                context.sendBCStatus(WsTypeStatus.CLOSE_ACT(""))
-                            }.failed {
-                                context.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                            val model = ApiRequest(
+                                token = token,
+                                parameters = envModel
+                            ).apply {
+                                session_app = context.getUserSessionAPP()
                             }
-                        },
-                        failed = {
-                            emit(failed(it))
-                        }
 
-                    )
-                }
+                            context.connectWS<ApiResponse<FSTripStartRec>>(
+                                url = Constant.WS_TRIP_START_SET,
+                                model = model
+                            ) {
+                                it.results(
+                                    success = { response ->
+                                        manager.deleteToken()
+                                        context.sendBCStatus(
+                                            WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                                message = genericTranslate["generic_processing_data"],
+                                                required = "0"
+                                            )
+                                        )
+
+                                        DatabaseTransactionManager(context).executeTransaction { db ->
+                                            response.data?.let { data ->
+                                                dao.updateScn(
+                                                    data.tripPrefix,
+                                                    data.tripCode,
+                                                    data.scn,
+                                                    db,
+                                                    0
+                                                )
+                                            }
+                                        }.success {
+                                            context.sendBCStatus(WsTypeStatus.CLOSE_ACT(""))
+                                        }.failed {
+                                            context.sendBCStatus(
+                                                WsTypeStatus.CUSTOM_ERROR(
+                                                    networkTranslate[DB_TRANSACTION_ERROR_LBL]
+                                                )
+                                            )
+                                        }
+                                    },
+                                    failed = { throwable ->
+                                        emit(failed(throwable))
+                                    }
+                                )
+                            }
+                        } else {
+                            emit(success(Unit))
+                        }
+                    },
+                    failed = {
+                        emit(failed(it))
+                    }
+                )
+
+
+
+
+
+
+
             }
         }.flowOn(Dispatchers.IO)
+    }
+
+    private fun saveStartDate(
+        trip: FSTrip,
+        date: String
+    ): IResult<Unit> = DatabaseTransactionManager(context).executeTransaction {
+        dao.updateStartDate(
+            trip.tripPrefix,
+            trip.tripCode,
+            date,
+            it
+        )
+
+        dao.updateRequired(
+            tripPrefix = trip.tripPrefix,
+            tripCode = trip.tripCode,
+            updateRequired = 1,
+            it,
+        )
     }
 
 

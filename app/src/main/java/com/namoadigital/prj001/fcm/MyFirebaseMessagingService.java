@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.fcm;
 
+import static com.namoadigital.prj001.core.notification.di.enums.NotificationPriority.HIGH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -18,6 +21,9 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.notification.PushNotification;
+import com.namoadigital.prj001.core.translate.TranslateBuild;
+import com.namoadigital.prj001.core.translate.TranslateBuildKt;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -56,6 +62,7 @@ import com.namoadigital.prj001.sql.TKTicketCacheSql001;
 import com.namoadigital.prj001.sql.TKTicketCacheSql002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
+import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -70,6 +77,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -98,12 +106,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void updateGooglePreferences(String token) {
         ToolBox_Con.setPreference_Google_ID(
-            getApplicationContext(),
-            token);
+                getApplicationContext(),
+                token);
 
         ToolBox_Con.setPreference_Google_ID_OK(
-            getApplicationContext(),
-            ""
+                getApplicationContext(),
+                ""
         );
     }
 
@@ -129,8 +137,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         );
 
         /*
-        * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
-        * */
+         * LOG PARA IDENTIFICAR FALHA OU NÃO DO FCM - APAGAR APOS TESTES
+         * */
         /*try {
             File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
             ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Recebeu fcm - Tamanho getData() =   " + (remoteMessage.getData() == null ? "nullo":remoteMessage.getData().size()) +"\n" , log_file);
@@ -182,12 +190,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             //Se FCM não é o que esta usr logado, aborta FCM
-            if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
+            if (!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))) {
                 return;
             }
             /*
-            * Valida se o customer do FCM esta logado
-            * */
+             * Valida se o customer do FCM esta logado
+             * */
             EV_User_CustomerDao customerDao = new EV_User_CustomerDao(getApplicationContext());
             boolean loggedCustomer = false;
             //Seleciona todos customers con sessão ativa e que tem acesso ao chat.
@@ -199,28 +207,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //
             if (chatSessionCustomers != null && chatSessionCustomers.size() > 0) {
                 for (int i = 0; i < chatSessionCustomers.size(); i++) {
-                    if(fcmMessage.getCustomer().equals(chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE))){
+                    if (fcmMessage.getCustomer().equals(chatSessionCustomers.get(i).get(EV_User_CustomerDao.CUSTOMER_CODE))) {
                         loggedCustomer = true;
                         break;
                     }
                 }
 
-            }else{
+            } else {
                 return;
             }
             //Se o customer do FCM não tem cessão no app, aborta
-            if(!loggedCustomer){
+            if (!loggedCustomer) {
                 return;
             }
             //
             if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.CHAT_NOTIFICATION_TYPE_CHAT)) {
                 if (  /*ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
                       &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
-                      && ToolBox_Inf.isUsrAppLogged(getApplicationContext())
-                    ) {
+                        && ToolBox_Inf.isUsrAppLogged(getApplicationContext())
+                ) {
 //                    Log.d("ChatEvent", "CHAT_NOTIFICATION_TYPE_CHAT   -  getTitle:" + fcmMessage.getTitle());
                     String param = "";
-                    switch (fcmMessage.getTitle()){
+                    switch (fcmMessage.getTitle()) {
                         case Constant.CHAT_NOTIFICATION_FCM_MSG:
                             param = ToolBox_Inf.getWebSocketJsonParam(fcmMessage.getMsg_long().trim());
                             //
@@ -244,7 +252,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             //
                             Intent cRemoveRoomIntent = new Intent(getApplicationContext(), WBR_C_Remove_Room.class);
                             Bundle removeBundle = new Bundle();
-                            removeBundle.putString(Constant.CHAT_WS_JSON_PARAM, gson.toJson(chatCRemoveRoom) );
+                            removeBundle.putString(Constant.CHAT_WS_JSON_PARAM, gson.toJson(chatCRemoveRoom));
                             removeBundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM);
                             cRemoveRoomIntent.putExtras(removeBundle);
                             getApplicationContext().sendBroadcast(cRemoveRoomIntent);
@@ -277,7 +285,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             //LUCHE - 02/05/2019
             //ADD TRATATIVA MODULO IO   IO_
-            else if(fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_IO)) {
+            else if (fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_IO)) {
                 handleIoFCM(fcmMessage);
             }
             //LUCHE - 03/12/2019
@@ -290,11 +298,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
              *        caso negativo atualiza ou insere o ticket cache, acso n possuo acesso de perfil(produto, site, operação e tag operacional)
              *        não insere o ticket e informa a necessidade de sincronismo.
              */
-            else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
+            else if (fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
 
-                switch (fcmMessage.getTitle()){
+                switch (fcmMessage.getTitle()) {
                     case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
                         String module = getFcmModuleByTicketFocusUpdate(fcmMessage);
+                        if (module.equalsIgnoreCase(FCM_MODULE_SYNC)) {
+                            notificationTicketSync().show();
+                        }
                         sendFCMStatus(module);
                         break;
                     case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
@@ -305,18 +316,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         handleTkFMC(fcmMessage);
                         break;
                 }
-            } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
+            } else if (fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
                 //24/03/2020 - Todas as msg de scheduel, devem ser SILENT
-                if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
+                if (fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
                     handleScheduleFCM(fcmMessage);
                 }
-            } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SYNC)) {
-                if( ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE.equals(fcmMessage.getTitle())
-                    || ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())
+            } else if (fcmMessage.getModule().trim().equalsIgnoreCase(FCM_MODULE_SYNC)) {
+                if (ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE.equals(fcmMessage.getTitle())
+                        || ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())
                 ) {
                     ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
                     //LUCHE - 28/06/2021 - Seta todos o ticket para sync_required
-                    if(ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())){
+                    if (ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())) {
                         //Atualiza sync do ticket
                         setSyncRequiredForAllTickets(fcmMessage.getCustomer());
                         //Dispara broadcast especifico para telas do ticket.
@@ -324,7 +335,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     //
                     sendFCMStatus(fcmMessage.getModule());
-                } else if(ConstantBaseApp.FCM_ACTION_SYNC_BIG_FILE.equals(fcmMessage.getTitle())){
+                } else if (ConstantBaseApp.FCM_ACTION_SYNC_BIG_FILE.equals(fcmMessage.getTitle())) {
                     Context context = this;
                     //
                     Gson gson = new GsonBuilder().serializeNulls().create();
@@ -336,7 +347,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     BigFile bigFile = bigPreferenceFileManager.getBigFile();
                     //
                     if (!BigFileStatus.NO_VALUE.name().equalsIgnoreCase(bigFile.getFileStatus())) {
-                        if(bigFile.getFileCode() != null &&
+                        if (bigFile.getFileCode() != null &&
                                 bigFile.getFileCode().equals(remoteBigFile.getFileCode())) {
                             setRemoteBigFile(bigPreferenceFileManager, remoteBigFile, bigFile);
                             if (ToolBox_Con.getPreference_Customer_Code(context) > 0) {
@@ -352,14 +363,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 FSTripFCM tripLongMsg = gson.fromJson(fcmMessage.getMsg_long(), FSTripFCM.class);
                 FSTripDao dao = new FSTripDao(getApplicationContext());
                 FSTrip trip = dao.getTrip();
-                if(trip != null
-                && trip.getTripPrefix() == tripLongMsg.getTrip().getTripPrefix()
-                && trip.getTripCode() == tripLongMsg.getTrip().getTripCode()
-                ){
+                if (trip != null
+                        && trip.getTripPrefix() == tripLongMsg.getTrip().getTripPrefix()
+                        && trip.getTripCode() == tripLongMsg.getTrip().getTripCode()
+                ) {
 
-                    if(trip.getScn() == tripLongMsg.getTrip().getScn()){
+                    if (trip.getScn() == tripLongMsg.getTrip().getScn()) {
                         ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
-                    }else{
+                    } else {
                         dao.setSyncRequired();
                     }
                 }
@@ -369,11 +380,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //Após reclamação de usr verzani de que tinha muitas msg de Atualizar o app namoa no menu notificação
                 //foi solicitado o "ajuste"(GAB***R*a) para inserir as msgs desse tipo com o status de "já lida"
                 //Se FCM for modulo CHECKLIST e tipo WARNING, DEVE ser a msg de atualização deversão.
-                if(!fcmMessage.getModule().isEmpty()
-                    && fcmMessage.getModule().equals(ConstantBaseApp.FCM_MODULE_CHECKLIST)
-                    && !fcmMessage.getType().isEmpty()
-                    && fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_WARNING)
-                ){
+                if (!fcmMessage.getModule().isEmpty()
+                        && fcmMessage.getModule().equals(ConstantBaseApp.FCM_MODULE_CHECKLIST)
+                        && !fcmMessage.getType().isEmpty()
+                        && fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_WARNING)
+                ) {
                     //Seta mensagem como lida
                     fcmMessage.setStatus("1");
                 }
@@ -443,15 +454,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void setSyncRequiredForAllTickets(String customerCode) {
         TK_TicketDao ticketDao = new TK_TicketDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(Long.parseLong(customerCode)),
-            Constant.DB_VERSION_CUSTOM
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(Long.parseLong(customerCode)),
+                Constant.DB_VERSION_CUSTOM
         );
         //
         ticketDao.addUpdate(
-            new SqlMyFirebaseMessagingTicket001(
-                customerCode
-            ).toSqlQuery()
+                new SqlMyFirebaseMessagingTicket001(
+                        customerCode
+                ).toSqlQuery()
         );
     }
 
@@ -468,7 +479,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Constant.DB_VERSION_CUSTOM
         );
         //
-        ticketCacheDao.remove( new TKTicketCacheSql002(
+        ticketCacheDao.remove(new TKTicketCacheSql002(
                         customerCode,
                         ticketPrefix,
                         ticketCode
@@ -487,7 +498,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ticketCode).toSqlQuery()
         );
         //
-        if(ticket != null) {
+        if (ticket != null) {
             ticket.setUser_focus(0);
             ticket.setSync_required(1);
             ticketDao.addUpdate(ticket);
@@ -524,28 +535,33 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        if(ticket == null){
+        if (ticket == null) {
             List<TkTicketCache> caches = new ArrayList<>();
             try {
                 caches = getTicketCacheFromFCM(fcmMessage.getMsg_long());
                 boolean sync_required = true;
-                for(TkTicketCache cache: caches) {
+                for (TkTicketCache cache : caches) {
                     if (ToolBox_Inf.checkTicketMdProfile(
                             getApplicationContext(),
                             String.valueOf(cache.getOpen_site_code()),
                             cache.getOpen_operation_code(),
                             cache.getOpen_product_code(),
                             cache.getTag_operational_code()
-                        )
-                    ){
+                    )
+                    ) {
                         sync_required = false;
                     }
                 }
 
-                if(sync_required){
-                    ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
-                    return ConstantBaseApp.FCM_MODULE_SYNC;
-                }else{
+                if (sync_required) {
+                    ToolBox_Inf.updateUserCustomerSync(
+                            getApplicationContext(),
+                            fcmMessage.getCustomer(),
+                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                            1
+                    );
+                    return FCM_MODULE_SYNC;
+                } else {
                     ticketCacheDao.addUpdate(caches, false);
                     WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
                 }
@@ -553,11 +569,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ToolBox_Inf.registerException(getClass().getName(), e);
                 e.printStackTrace();
             }
-        }else{
+        } else {
             ticket.setSync_required(1);
             ticket.setUser_focus(1);
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticket);
-            if(!daoObjReturn.hasError()) {
+            if (!daoObjReturn.hasError()) {
                 TkTicketCache cache = ticketCacheDao.getByString(
                         new TKTicketCacheSql001(
                                 customerCode,
@@ -582,7 +598,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private ArrayList<TkTicketCache> getTicketCacheFromFCM(String msg_long) throws JSONException {
         //
-        JSONObject jsonObjectRoot = new JSONObject(msg_long);;
+        JSONObject jsonObjectRoot = new JSONObject(msg_long);
         JSONArray jsonObject = jsonObjectRoot.getJSONArray("ticket");
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -598,47 +614,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void handleScheduleFCM(FCMMessage fcmMessage) {
         MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-            Constant.DB_VERSION_CUSTOM
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
         );
         GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-            Constant.DB_VERSION_CUSTOM
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
         );
         GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-            Constant.DB_VERSION_CUSTOM
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
         );
         TK_TicketDao ticketDao = new TK_TicketDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-            Constant.DB_VERSION_CUSTOM
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
         );
         //
         try {
             FCM_Schedule fcmSchedule = new FCM_Schedule(fcmMessage);
-            if(fcmSchedule.isValid()){
+            if (fcmSchedule.isValid()) {
                 FCM_Schedule.FCM_Schedule_Msg_long scheduleMsgLong = fcmSchedule.getSchedule_msg_long();
                /* ArrayList<GE_Custom_Form_Local> formLocalsToUpdate = new ArrayList<>();
                 ArrayList<GE_Custom_Form_Data> formDatasToUpdate = new ArrayList<>();
                 ArrayList<TK_Ticket> ticketsToUpdate = new ArrayList<>();*/
                 //
                 ArrayList<MD_Schedule_Exec> schedulesToUpdate = (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
-                    new Sql_Schedule_FCM_001(
-                        fcmSchedule.getCustomer_code(),
-                        fcmSchedule.getSchedule_prefix(),
-                        fcmSchedule.getSchedule_code(),
-                        fcmSchedule.getSchedule_exec()
-                    ).toSqlQuery()
+                        new Sql_Schedule_FCM_001(
+                                fcmSchedule.getCustomer_code(),
+                                fcmSchedule.getSchedule_prefix(),
+                                fcmSchedule.getSchedule_code(),
+                                fcmSchedule.getSchedule_exec()
+                        ).toSqlQuery()
                 );
                 int dumbDebugger = 0;
                 //Lista Seleciona, executa loop atualizando apenas as informações que vieram
                 for (MD_Schedule_Exec scheduleExec : schedulesToUpdate) {
-                    if( scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
-                        || fcmSchedule.getStatus() == null
+                    if (scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                            || fcmSchedule.getStatus() == null
                       /* TODO analisar com comercial, pois no caso do ticket, ele pode estar no arquivo token e não adiantaria remover o update required
                         || (scheduleExec.getSchedule_type().equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM) && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE))
                         || (scheduleExec.getSchedule_type().equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET) && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))*/
@@ -680,7 +696,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
                             dumbDebugger++;
                         }
-                    }else{
+                    } else {
                         //Status
                         if (fcmSchedule.getStatus() != null &&
                                 !scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE) &&
@@ -696,9 +712,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             dumbDebugger++;
                         }
                         String notificationDesc =
-                            scheduleExec.getSchedule_type().equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
-                                ? scheduleExec.getCustom_form_desc()
-                                : scheduleExec.getTicket_type_desc();
+                                scheduleExec.getSchedule_type().equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
+                                        ? scheduleExec.getCustom_form_desc()
+                                        : scheduleExec.getTicket_type_desc();
                         //Chama notificação.
                         //LUCHE - 07/06/2021 - Com o review 4.0, essa notificação foi apontada como
                         //BÄG então foi removida kkkk
@@ -713,15 +729,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
                 //
-                if(schedulesToUpdate.size() > 0) {
+                if (schedulesToUpdate.size() > 0) {
                     DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
                     if (daoObjReturn.hasError()) {
                         throw new Exception(daoObjReturn.getErrorMsg());
                     }
                 }
             }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
@@ -781,16 +797,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         } catch (JSONException e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
 
         sendFCMStatus(fcmMessage.getTitle());
     }
 
     private void handleIoFCM(FCMMessage fcmMessage) {
-        if(fcmMessage.getTitle().equals(ConstantBaseApp.FCM_ACTION_IO_INBOUND_UPDATE)) {
+        if (fcmMessage.getTitle().equals(ConstantBaseApp.FCM_ACTION_IO_INBOUND_UPDATE)) {
             handleInboundFCM(fcmMessage);
-        }else {
+        } else {
             handleOutboundFCM(fcmMessage);
         }
         //
@@ -798,11 +814,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void handleInboundFCM(FCMMessage fcmMessage) {
-        try{
+        try {
             IO_InboundDao ioInboundDao = new IO_InboundDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
             JSONObject jsonObject = jsonObjectRoot.getJSONObject("inbound");
@@ -815,21 +831,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             // Update S.O.
             ioInboundDao.addUpdate(
-                new IO_Inbound_Sql_012(
-                    Long.parseLong(customer_code),
-                    Integer.parseInt(inbound_prefix),
-                    Integer.parseInt(inbound_code),
-                    Integer.parseInt(inbound_scn)
-                ).toSqlQuery()
+                    new IO_Inbound_Sql_012(
+                            Long.parseLong(customer_code),
+                            Integer.parseInt(inbound_prefix),
+                            Integer.parseInt(inbound_code),
+                            Integer.parseInt(inbound_scn)
+                    ).toSqlQuery()
             );
 
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
     private void handleOutboundFCM(FCMMessage fcmMessage) {
-        try{
+        try {
             IO_OutboundDao ioOutboundDao = new IO_OutboundDao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -855,18 +871,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             );
             //
             sendFCMStatus(fcmMessage.getTitle());
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
 
     private void handleTkFMC(FCMMessage fcmMessage) {
-        try{
+        try {
             TK_TicketDao ticketDao = new TK_TicketDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
             );
             JSONObject jsonObjectRoot = new JSONObject(fcmMessage.getMsg_long());
             JSONObject jsonObject = jsonObjectRoot.getJSONObject("ticket");
@@ -878,19 +894,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //String status = jsonObject.getString("status");
             // Update Ticket
             ticketDao.addUpdate(
-                new TK_Ticket_Sql_003(
-                    Long.parseLong(customer_code),
-                    Integer.parseInt(ticket_prefix),
-                    Integer.parseInt(ticket_code),
-                    Integer.parseInt(ticket_scn)
-                ).toSqlQuery()
+                    new TK_Ticket_Sql_003(
+                            Long.parseLong(customer_code),
+                            Integer.parseInt(ticket_prefix),
+                            Integer.parseInt(ticket_code),
+                            Integer.parseInt(ticket_scn)
+                    ).toSqlQuery()
             );
             //
             WorkerHelperKt.scheduleDownloadTicket(getApplicationContext());
             //
             sendFCMStatus(fcmMessage.getTitle());
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
@@ -898,7 +914,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent mIntent = new Intent();
         mIntent.setAction(Constant.WS_FCM);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        mIntent.putExtra(ConstantBaseApp.SW_TYPE,module_type);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE, module_type);
         //
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }
@@ -929,13 +945,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                ToolBox_Inf.getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
 //        );
         //
-        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(),nm);
+        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(), nm);
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(false);
         builder.setContentTitle(title);
 //        builder.setContentIntent(pi);
         if (fcmmessage_qty > 1) {
-            builder.setContentText("(" + String.valueOf(fcmmessage_qty) + ") " + context.getResources().getString(R.string.message_received_notification_sync));
+            builder.setContentText("(" + fcmmessage_qty + ") " + context.getResources().getString(R.string.message_received_notification_sync));
         } else {
             builder.setContentText(message);
         }
@@ -943,11 +959,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
          *  BARRIONUEVO 03-04-2020
          *  Tratativa para determinar se notification eh cancelavel.
          */
-        if("1".equalsIgnoreCase(cancellable)){
-            builder.setOngoing(false);
-        }else {
-            builder.setOngoing(true);
-        }
+        builder.setOngoing(!"1".equalsIgnoreCase(cancellable));
         //
         long dt_last = ToolBox_Con.getPreference_Google_ID_DT(getApplicationContext());
         Calendar cal_now = Calendar.getInstance();
@@ -970,6 +982,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
             nm.notify(10, builder.getNotification());
         }
+    }
+
+
+
+    public static final int NOTIFICATION_TICKET_ID = 808;
+    private PushNotification.Builder notificationTicketSync() {
+        Context context = getApplicationContext();
+
+        String NOTIFICATION_TICKET_TTL = "notification_ticket_ttl";
+        String NOTIFICATION_TICKET_MSG = "notification_ticket_msg";
+        String NOTIFICATION_RESOURCE = "notification_resource";
+
+        Map<String, String> translateMap = new TranslateBuild(context)
+                .listVars(NOTIFICATION_TICKET_TTL, NOTIFICATION_TICKET_MSG)
+                .resource(NOTIFICATION_RESOURCE)
+                .build();
+
+        return new PushNotification.Builder(
+                context,
+                NOTIFICATION_TICKET_ID,
+                ConstantBaseApp.GENERIC_CHANNEL_ID,
+                AppBase.NAMOA_NOTIF_INFO,
+                R.mipmap.ic_namoa,
+                TranslateBuildKt.textOf(translateMap, NOTIFICATION_TICKET_TTL),
+                TranslateBuildKt.textOf(translateMap, NOTIFICATION_TICKET_MSG)
+        ).ongoing(true)
+                .autoCancel(false)
+                .priority(HIGH);
     }
 
 }

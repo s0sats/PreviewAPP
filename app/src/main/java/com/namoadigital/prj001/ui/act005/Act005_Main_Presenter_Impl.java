@@ -44,6 +44,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory;
+import com.namoadigital.prj001.core.notification.NotificationDispatcher;
 import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp;
 import com.namoadigital.prj001.core.trip.domain.usecase.SendTripFullUseCase;
 import com.namoadigital.prj001.core.trip.domain.usecase.SyncTripUseCase;
@@ -68,6 +69,7 @@ import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.extensions.ContextKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
+import com.namoadigital.prj001.fcm.MyFirebaseMessagingService;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -2692,6 +2694,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     private int getCountEventToUpdate() {
         return eventManualUseCases.getGetCountPendency().invoke(Unit.INSTANCE).size();
+    }
+
+    @Override
+    public void closeNotificationTicketSync(Context context) {
+        NotificationDispatcher.INSTANCE.cancel(context, MyFirebaseMessagingService.NOTIFICATION_TICKET_ID);
     }
 
     @Override

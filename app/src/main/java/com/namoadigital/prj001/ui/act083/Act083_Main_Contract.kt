@@ -132,8 +132,7 @@ interface Act083_Main_Contract {
             context: Context,
             response: String? = null,
             destination: SelectionDestinationAvailable,
-            isOnline: Boolean = true
-        )
+        ):Boolean
         fun hasEvent(): Boolean
     }
 

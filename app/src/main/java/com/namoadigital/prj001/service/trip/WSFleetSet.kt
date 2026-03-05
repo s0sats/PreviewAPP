@@ -12,7 +12,7 @@ import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.loadNetworkTranslate
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.core.wsExceptionTreatment
@@ -60,7 +60,7 @@ class WSFleetSet : BaseWsIntentService("WSFleetSet", IntentServiceMode.UPLOAD_DA
     private fun execute(request: TripFleetSetEnv) {
         val deletePhoto = request.deletePhoto && !request.imageKey.isNullOrBlank()
 
-        val manager = TokenManager<TripFleetSetEnv>(applicationContext)
+        val manager = TripTokenManager().create<TripFleetSetEnv>(applicationContext)
         val token = manager.getToken(request)
         val modelEnv = ApiRequest(
             token = token,

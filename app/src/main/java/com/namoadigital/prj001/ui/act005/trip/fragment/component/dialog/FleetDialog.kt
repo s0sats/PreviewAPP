@@ -19,6 +19,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.destination.GetDestinati
 import com.namoadigital.prj001.databinding.TripDialogFleetBinding
 import com.namoadigital.prj001.extensions.configureToRequiredInput
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
+import com.namoadigital.prj001.extensions.keyboard.hideKeyboard
 import com.namoadigital.prj001.extensions.parseDatePair
 import com.namoadigital.prj001.extensions.parseFullDate
 import com.namoadigital.prj001.extensions.setBoxStrokeColorState
@@ -680,7 +681,13 @@ class FleetDialog(
     }
 
     fun updatePhotoDialog() {
-        binding.updatePhotoViews(updatePhoto())
+        with(binding){
+            if(etOdometer.isFocused){
+                etOdometer.hideKeyboard()
+            }
+
+            updatePhotoViews(updatePhoto())
+        }
     }
 
 

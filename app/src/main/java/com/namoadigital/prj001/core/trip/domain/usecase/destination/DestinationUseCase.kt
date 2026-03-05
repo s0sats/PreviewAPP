@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
+import com.namoadigital.prj001.dao.trip.FsTripPositionDao
 
 data class DestinationUseCase(
     val execGetAvailableDestination: GetAvailablesDestinationsUseCase? = null,
@@ -38,7 +39,8 @@ data class DestinationUseCase(
             val tripDestinationRepository = TripDestinationRepositoryImp(
                 context,
                 FsTripDestinationDao(context),
-                tripDao
+                tripDao,
+                FsTripPositionDao(context),
             )
 
             val tripRepository = TripRepositoryImp(context, tripDao)

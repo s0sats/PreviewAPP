@@ -536,7 +536,7 @@ class FSTripEventDao(
     }
 
     @kotlin.jvm.Throws(SQLiteException::class)
-    fun update(event: FSTripEvent, dbInstance: SQLiteDatabase?) {
+    fun update(event: FSTripEvent, dbInstance: SQLiteDatabase? = null) {
         addUpdate(event, dbInstance).let {
             if (it.hasError()) throw SQLiteException(it.errorMsg)
         }

@@ -9,7 +9,7 @@ import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse.ApiCollection
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.dao.GE_FileDao
 import com.namoadigital.prj001.dao.event.EventManualDao
 import com.namoadigital.prj001.dao.trip.FSEventTypeDao
@@ -162,7 +162,7 @@ class EventManualRepositoryImpl @Inject constructor(
         pendingEvents: List<EventManualSetRequestItem>,
     ): Flow<IResult<Unit>> = flowSafe(tag = "EventManualRepositoryImpl.handleOnlineSave") {
 
-        val tokenManager = TokenManager<List<EventManualSetRequestItem>>(appContext)
+        val tokenManager = TripTokenManager().create<List<EventManualSetRequestItem>>(appContext)
         val token = tokenManager.getToken(pendingEvents)
 
         val requestModel = ApiRequest(

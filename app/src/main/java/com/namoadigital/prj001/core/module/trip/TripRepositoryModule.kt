@@ -18,6 +18,9 @@ import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FSTripUserDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
+import com.namoadigital.prj001.dao.trip.FsTripPositionDao
+import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepository
+import com.namoadigital.prj001.ui.act005.trip.repository.event.TripEventRepositoryImp
 import com.namoadigital.prj001.ui.act005.trip.repository.users.TripUserRepository
 import com.namoadigital.prj001.ui.act005.trip.repository.users.TripUserRepositoryImp
 import dagger.Module
@@ -64,8 +67,9 @@ object TripRepositoryModule {
     fun providesRepositoryTripDestination(
         @ApplicationContext app: Context,
         dao: FsTripDestinationDao,
-        fsTripDao: FSTripDao
-    ): TripDestinationRepository = TripDestinationRepositoryImp(app, dao, fsTripDao)
+        fsTripDao: FSTripDao,
+        fsTripPositionDao: FsTripPositionDao,
+    ): TripDestinationRepository = TripDestinationRepositoryImp(app, dao, fsTripDao, fsTripPositionDao)
 
 
     @ViewModelScoped

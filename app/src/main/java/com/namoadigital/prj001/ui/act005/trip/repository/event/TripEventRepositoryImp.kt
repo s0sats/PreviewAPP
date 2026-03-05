@@ -14,7 +14,7 @@ import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.sendToWebServiceReceiver
 import com.namoadigital.prj001.core.trip.base.BaseTripRepository
 import com.namoadigital.prj001.core.trip.domain.usecase.GetEventRestrictionDateUseCase
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.dao.GE_FileDao
@@ -22,7 +22,8 @@ import com.namoadigital.prj001.dao.trip.FSEventTypeDao
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FSTripEventDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
-import com.namoadigital.prj001.extensions.coroutines.flowCatch
+import com.namoadigital.prj001.extensions.coroutines.dispatchersIO
+import com.namoadigital.prj001.extensions.coroutines.namoaCatch
 import com.namoadigital.prj001.extensions.date.getCurrentDateApi
 import com.namoadigital.prj001.extensions.getCustomerCode
 import com.namoadigital.prj001.extensions.getUserSessionAPP
@@ -43,11 +44,8 @@ import com.namoadigital.prj001.ui.act095.event_manual.presentation.dialog.domain
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class TripEventRepositoryImp @Inject constructor(
@@ -89,17 +87,22 @@ class TripEventRepositoryImp @Inject constructor(
             tripDao.getTrip()?.let { trip ->
                 val isOnlineMode = ToolBox_Con.isOnline(context) && !trip.hasUpdateRequired
                 val destinationSeq = getDestinationSeq(dateStart)
-                photoPath?.let { imagePath ->
-                    GE_File().apply {
-                        file_code = imagePath.replace(TripViewModel.JPG_EXTENSION, "")
-                        file_path = imagePath
-                        file_status = GE_File.OPENED
-                        file_date = getCurrentDateApi(true)
-                    }.let { fileModel ->
-                        fileDao.addUpdate(fileModel)
+                emit(loading(isOnlineMode))
+
+                if (changePhoto == 1) {
+                    photoPath?.let { image ->
+                        GE_File().apply {
+                            file_code = image.replace(TripViewModel.JPG_EXTENSION, "")
+                            file_path = image
+                            file_status = GE_File.OPENED
+                            file_date = getCurrentDateApi(true)
+                        }.let {
+                            fileDao.addUpdate(it)
+                        }
+                        ToolBox_Inf.scheduleUploadImgWork(context)
                     }
-                    ToolBox_Inf.scheduleUploadImgWork(context)
                 }
+
                 val request = FSTripEventEnv(
                     tripPrefix = trip.tripPrefix,
                     tripCode = trip.tripCode,
@@ -117,198 +120,153 @@ class TripEventRepositoryImp @Inject constructor(
                     destinationSeq = destinationSeq,
                 )
 
-                if (!isOnlineMode) {
-                    handleOfflineEvent(trip, request)
-                } else {
-                    emit(loading(true))
+                val existingEvent = eventDao.getEvent(trip.tripPrefix, trip.tripCode, request.eventSeq ?: -1)
 
-                    val manager = TokenManager<FSTripEventEnv>(context)
-                    val token = manager.getToken(request)
-
-                    val model = ApiRequest(
-                        token = token,
-                        parameters = request
-                    ).apply {
-                        session_app = context.getUserSessionAPP()
+                val eventToSave = if (existingEvent != null) {
+                    existingEvent.apply {
+                        this.cost = request.eventCost
+                        this.comment = request.eventComments
+                        eventSeq = request.eventSeq!!
+                        eventStart = request.eventStart
+                        eventEnd = request.eventEnd
+                        this.eventStatus = request.eventStatus
+                        if (request.eventPhoto.isNullOrEmpty()) {
+                            photoName = null
+                            photoUrl = null
+                            photoLocal = null
+                        } else {
+                            photoLocal = request.eventPhoto
+                        }
+                        eventTypeCode = request.eventTypeCode
+                        eventTypeDesc = request.eventTypeDesc
+                        eventPhotoChanged =
+                            if (this.eventPhotoChanged == 1) 1 else request.changedPhoto
+                        this.destinationSeq = destinationSeq
                     }
+                } else {
+                    val lastEventSeq = eventDao.getLastEvent(trip.tripPrefix, trip.tripCode)?.eventSeq ?: 0
+
+                    val newEvent = FSTripEventRec(
+                        tripPrefix = trip.tripPrefix,
+                        tripCode = trip.tripCode,
+                        scn = trip.scn,
+                        eventSeq = lastEventSeq + 1
+                    )
+
+                    FSTripEvent(
+                        customerCode = context.getCustomerCode(),
+                        tripPrefix = trip.tripPrefix,
+                        tripCode = trip.tripCode,
+                        eventTypeCode = request.eventTypeCode,
+                        eventSeq = newEvent.eventSeq,
+                        eventTypeDesc = request.eventTypeDesc,
+                        eventStatus = request.eventStatus,
+                        eventTimeAlert = null,
+                        eventAllowedTime = null,
+                        eventTime = null,
+                        cost = request.eventCost,
+                        comment = request.eventComments,
+                        photoLocal = request.eventPhoto,
+                        photoName = null,
+                        photoUrl = null,
+                        eventStart = request.eventStart ?: "",
+                        eventEnd = request.eventEnd ?: "",
+                        eventPhotoChanged = request.changedPhoto,
+                        destinationSeq = destinationSeq
+                    )
+                }
 
 
-                    context.connectWS<ApiResponse<FSTripEventRec>>(
-                        url = Constant.WS_TRIP_EVENT,
-                        model = model
-                    ) {
-                        it.results(
-                            success = { response ->
-                                manager.deleteToken()
-                                context.sendBCStatus(
-                                    WsTypeStatus.UPDATE_DIALOG_MESSAGE(
-                                        message = genericTranslate["generic_processing_data"],
-                                        required = "0"
+                DatabaseTransactionManager(context).executeTransaction { db ->
+                    eventDao.update(eventToSave, db)
+                    tripDao.updateRequired(trip.tripPrefix, trip.tripCode, 1, db)
+                }.results(
+                    success = {
+
+
+                        val isOnlineMode = ToolBox_Con.isOnline(context) && !trip.hasUpdateRequired
+
+                        if(!isOnlineMode) {
+                            emit(success(Unit))
+                            return@results
+                        }
+
+                        val manager = TripTokenManager().create<FSTripEventEnv>(context)
+                        val token = manager.getToken(request)
+
+                        val env = ApiRequest(
+                            token = token,
+                            parameters = request
+                        ).apply {
+                            session_app = context.getUserSessionAPP()
+                        }
+
+                        context.connectWS<ApiResponse<FSTripEventRec>>(
+                            url = Constant.WS_TRIP_EVENT,
+                            model = env
+                        ){
+                            it.results(
+                                success = { response ->
+                                    manager.deleteToken()
+
+                                    context.sendBCStatus(
+                                        type = WsTypeStatus.UPDATE_DIALOG_MESSAGE(
+                                            message = genericTranslate["generic_processing_data"],
+                                            required = "0"
+                                        )
                                     )
-                                )
-                                response.data?.let { data ->
-                                    DatabaseTransactionManager(context).executeTransaction { db ->
-                                        tripDao.updateScn(
-                                            data.tripPrefix,
-                                            data.tripCode,
-                                            data.scn,
-                                            db
-                                        )
 
-                                        val getEvent = eventDao.getEventFull(
-                                            data.tripPrefix,
-                                            data.tripCode,
-                                            data.eventSeq,
-                                            db
-                                        )
-                                        getEvent?.let { tripEvent ->
-                                            tripEvent.apply {
-                                                this.cost = request.eventCost
-                                                this.comment = request.eventComments
-                                                this.eventSeq = data.eventSeq
-                                                this.eventStart = request.eventStart
-                                                this.eventEnd = request.eventEnd
-                                                this.eventStatus = request.eventStatus
-                                                if (request.eventPhoto.isNullOrEmpty()) {
-                                                    photoName = null
-                                                    photoUrl = null
-                                                    photoLocal = null
-                                                } else {
-                                                    this.photoLocal = request.eventPhoto
-                                                }
-                                                this.eventTypeCode = request.eventTypeCode
-                                                this.eventTypeDesc = request.eventTypeDesc
-                                                this.eventPhotoChanged = 0
-                                                this.destinationSeq = destinationSeq
-                                            }
-                                            eventDao.update(tripEvent, db)
+                                    response.data?.let { data ->
+                                        DatabaseTransactionManager(context).executeTransaction { db ->
 
-                                        } ?: eventDao.update(
-                                            FSTripEvent(
-                                                customerCode = context.getCustomerCode(),
+                                            val updateEvent = eventDao.getEventFull(
                                                 tripPrefix = data.tripPrefix,
                                                 tripCode = data.tripCode,
-                                                eventTypeCode = request.eventTypeCode,
-                                                eventSeq = data.eventSeq,
-                                                eventTypeDesc = request.eventTypeDesc,
-                                                eventStatus = request.eventStatus,
-                                                eventTimeAlert = null,
-                                                eventAllowedTime = null,
-                                                eventTime = null,
-                                                cost = request.eventCost,
-                                                comment = request.eventComments,
-                                                photoLocal = request.eventPhoto,
-                                                photoName = null,
-                                                photoUrl = null,
-                                                eventStart = request.eventStart ?: "",
-                                                eventEnd = request.eventEnd ?: "",
-                                                eventPhotoChanged = 0,
-                                                destinationSeq = request.destinationSeq,
-                                            ), db
-                                        )
-                                    }.success {
-                                        context.sendBCStatus(WsTypeStatus.CLOSE_ACT(response = "ok"))
-                                    }.failed {
-                                        context.sendBCStatus(
-                                            WsTypeStatus.CUSTOM_ERROR(
-                                                networkTranslate[DB_TRANSACTION_ERROR_LBL]
+                                                seq = data.eventSeq,
+                                                dbInstance = db
                                             )
-                                        )
-                                    }
 
-                                } ?: run {
-                                    context.sendBCStatus(WsTypeStatus.ERROR(networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                            updateEvent?.let { event ->
+                                                if(event.eventSeq != data.eventSeq){
+                                                    eventDao.update(
+                                                        event = event.apply {
+                                                            this.eventSeq = data.eventSeq
+                                                        },
+                                                        dbInstance = db
+                                                    )
+                                                }
+                                            }
+
+                                            tripDao.updateScn(
+                                                tripPrefix = data.tripPrefix,
+                                                tripCode = data.tripCode,
+                                                scn = data.scn,
+                                                updateRequired = 0,
+                                                db = db
+                                            )
+
+                                        }.success {
+                                            context.sendBCStatus(type = WsTypeStatus.CLOSE_ACT(response = "ok"))
+                                        }.failed {
+                                            context.sendBCStatus(type = WsTypeStatus.ERROR(message = networkTranslate[DB_TRANSACTION_ERROR_LBL]))
+                                        }
+                                    }
+                                },
+                                failed = { throwable ->
+                                    val result = handleNetworkError(throwable, context)
+                                    emit(result)
                                 }
-                            },
-                            failed = {
-                                handleOfflineEvent(trip, request, it)
-                            }
-                        )
+                            )
+                        }
                     }
-                }
+                )
+
             }
-        }.flowCatch(this::class.java.name).flowOn(Dispatchers.IO)
+        }.namoaCatch(this::class).dispatchersIO()
     }
 
     private fun getDestinationSeq(dateStart: String?):Int? {
         return tripDestinationDao.getDestinationSeq(dateStart)
-
-    }
-
-    private suspend fun FlowCollector<IResult<Unit>>.handleOfflineEvent(
-        trip: FSTrip,
-        eventRequest: FSTripEventEnv,
-        networkError: Throwable? = null
-    ) {
-
-        DatabaseTransactionManager(context).executeTransaction { db ->
-            val lastEventSeq = eventDao.getLastEvent(trip.tripPrefix, trip.tripCode)?.eventSeq ?: 0
-            val newEvent = FSTripEventRec(
-                tripPrefix = trip.tripPrefix,
-                tripCode = trip.tripCode,
-                scn = trip.scn,
-                eventSeq = lastEventSeq + 1
-            )
-
-            val existingEvent =
-                eventDao.getEvent(trip.tripPrefix, trip.tripCode, eventRequest.eventSeq ?: -1)
-
-            if (existingEvent != null) {
-                existingEvent.apply {
-                    cost = eventRequest.eventCost
-                    comment = eventRequest.eventComments
-                    eventSeq = eventRequest.eventSeq!!
-                    eventStart = eventRequest.eventStart
-                    eventEnd = eventRequest.eventEnd
-                    eventStatus = eventRequest.eventStatus
-                    if (eventRequest.eventPhoto.isNullOrEmpty()) {
-                        photoName = null
-                        photoUrl = null
-                        photoLocal = null
-                    } else {
-                        photoLocal = eventRequest.eventPhoto
-                    }
-                    eventTypeCode = eventRequest.eventTypeCode
-                    eventTypeDesc = eventRequest.eventTypeDesc
-                    eventPhotoChanged =
-                        if (this.eventPhotoChanged == 1) 1 else eventRequest.changedPhoto
-                }
-                eventDao.update(existingEvent, db)
-            } else {
-                eventDao.update(
-                    FSTripEvent(
-                        customerCode = context.getCustomerCode(),
-                        tripPrefix = eventRequest.tripPrefix,
-                        tripCode = eventRequest.tripCode,
-                        eventTypeCode = eventRequest.eventTypeCode,
-                        eventSeq = newEvent.eventSeq,
-                        eventTypeDesc = eventRequest.eventTypeDesc,
-                        eventStatus = eventRequest.eventStatus,
-                        eventTimeAlert = null,
-                        eventAllowedTime = null,
-                        eventTime = null,
-                        cost = eventRequest.eventCost,
-                        comment = eventRequest.eventComments,
-                        photoLocal = eventRequest.eventPhoto,
-                        photoName = null,
-                        photoUrl = null,
-                        eventStart = eventRequest.eventStart ?: "",
-                        eventEnd = eventRequest.eventEnd ?: "",
-                        eventPhotoChanged = eventRequest.changedPhoto,
-                        destinationSeq = eventRequest.destinationSeq,
-                    ), db
-                )
-            }
-            tripDao.updateRequired(trip.tripPrefix, trip.tripCode, 1, db)
-        }.results(
-            success = {
-                val result = handleNetworkError(networkError, context)
-                emit(result)
-            },
-            failed = {
-                emit(failed(it))
-            }
-        )
     }
 
     private fun sendToWebService(eventRequest: FSTripEventEnv) {

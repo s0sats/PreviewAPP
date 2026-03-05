@@ -103,9 +103,10 @@ object TripServiceModule {
     fun providesRepositoryDestination(
         @ApplicationContext app: Context,
         dao: FsTripDestinationDao,
-        tripDao: FSTripDao
+        tripDao: FSTripDao,
+        fsTripPositionDao: FsTripPositionDao,
     ): TripDestinationRepository {
-        return TripDestinationRepositoryImp(app, dao, tripDao)
+        return TripDestinationRepositoryImp(app, dao, tripDao, fsTripPositionDao)
     }
 
     @ServiceScoped

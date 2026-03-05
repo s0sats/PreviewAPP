@@ -949,9 +949,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG] ?: "",
                     Toast.LENGTH_SHORT
                 ).show()
-                mPresenter.selectionDestinationAvailable?.let {
-                    mPresenter.saveDestination(context, mLink, it)
-                }
+                callAct005()
             }
 
             else -> progressDialog?.dismiss()
@@ -1563,10 +1561,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 hmAux_Trans[ALERT_DESTINATION_SELECTED_MSG],
                 Toast.LENGTH_SHORT
             ).show()
-            mPresenter.selectionDestinationAvailable?.let {
-                mPresenter.saveDestination(context, null, it)
-            }
 
+            callAct005()
         } else {
             mPresenter.formButtonData = null
             progressDialog.dismiss()

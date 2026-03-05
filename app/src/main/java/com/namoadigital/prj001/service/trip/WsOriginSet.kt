@@ -9,7 +9,7 @@ import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.loadNetworkTranslate
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.core.wsExceptionTreatment
@@ -49,7 +49,7 @@ class WsOriginSet : BaseWsIntentService("WsOriginSet", IntentServiceMode.UPLOAD_
     }
 
     private fun execute(request: FSTripOriginEnv) {
-        val manager = TokenManager<FSTripOriginEnv>(this)
+        val manager = TripTokenManager().create<FSTripOriginEnv>(this)
         val token = manager.getToken(request)
 
         val model = ApiRequest(

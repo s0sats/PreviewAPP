@@ -2,7 +2,6 @@ package com.namoadigital.prj001.model.trip
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.namoadigital.prj001.service.trip.WsAvailablesDestinations
 
 data class TripDestinationStatusChangeEnv(
    @Expose @SerializedName("tripPrefix") var tripPrefix: Int ,

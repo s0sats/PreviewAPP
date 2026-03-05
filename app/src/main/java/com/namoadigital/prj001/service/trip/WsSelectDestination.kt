@@ -4,12 +4,14 @@ import android.content.Intent
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.IResult.Companion.failed
+import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.connectWS
 import com.namoadigital.prj001.core.data.remote.domain.ApiRequest
 import com.namoadigital.prj001.core.data.remote.domain.ApiResponse
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
-import com.namoadigital.prj001.core.util.TokenManager
+import com.namoadigital.prj001.core.util.TripTokenManager
 import com.namoadigital.prj001.core.util.WsTypeStatus
 import com.namoadigital.prj001.core.util.sendBCStatus
 import com.namoadigital.prj001.dao.trip.FSTripDao
@@ -17,6 +19,7 @@ import com.namoadigital.prj001.extensions.getUserSessionAPP
 import com.namoadigital.prj001.extensions.watchStatus
 import com.namoadigital.prj001.receiver.trip.WBR_SelectDestination
 import com.namoadigital.prj001.service.base.BaseWsIntentService
+import com.namoadigital.prj001.sql.transaction.DatabaseTransactionManager
 import com.namoadigital.prj001.ui.act094.destination.domain.select_destination.SelectDestinationEnv
 import com.namoadigital.prj001.ui.act094.destination.domain.select_destination.SelectDestinationRec
 import com.namoadigital.prj001.util.Constant
@@ -104,7 +107,7 @@ class WsSelectDestination :
             currentLon = currentLon,
         )
         //
-        val manager = TokenManager<SelectDestinationEnv>(applicationContext)
+        val manager = TripTokenManager().create<SelectDestinationEnv>(applicationContext)
         val token = manager.getToken(params)
         val modelEnv = ApiRequest(
             token = token,
@@ -127,30 +130,43 @@ class WsSelectDestination :
                         )
                     )
                     response.data?.let { data ->
-                        ToolBox.sendBCStatus(
-                            applicationContext,
-                            "CLOSE_ACT",
-                            hmAux_Trans[""],
-                            HMAux(),
-                            gson.toJson(data),
-                            "0"
-                        )
+                        DatabaseTransactionManager(applicationContext).executeTransaction {
+                            val dao = FSTripDao(applicationContext)
+                            response.data?.let { data ->
+                                dao.updateScn(
+                                    data.tripPrefix,
+                                    data.tripCode,
+                                    data.scn,
+                                    it,
+                                    0
+                                )
+
+                            } ?: run {
+                                applicationContext.sendBCStatus(WsTypeStatus.CUSTOM_ERROR(""))
+                            }
+                        }.success {
+                            applicationContext.sendBCStatus(WsTypeStatus.CLOSE_ACT(gson.toJson(data)))
+                        }.failed {
+                            applicationContext.sendBCStatus(
+                                WsTypeStatus.CUSTOM_ERROR(
+                                    ""
+                                )
+                            )
+                        }
+                    } ?: run {
+                        applicationContext.sendBCStatus(WsTypeStatus.ERROR(""))
                     }
                 },
                 failed = {
-
-                    val trip = tripDao.getTrip()
-                    trip?.let { trip ->
-                            //
-                            ToolBox.sendBCStatus(
-                                applicationContext,
-                                "ERROR_1",
-                                hmAux_Trans[""],
-                                HMAux(),
-                                "",
-                                "0"
-                            )
-                    }
+                    //
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "ERROR_1",
+                        hmAux_Trans[""],
+                        HMAux(),
+                        "",
+                        "0"
+                    )
                 }
             )
         }

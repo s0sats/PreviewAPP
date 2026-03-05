@@ -303,7 +303,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act005_main);
         //
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentNav = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         //
@@ -3270,6 +3270,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPresenter.checkUpdateAvailable(appUpdateManager);
+                        mPresenter.closeNotificationTicketSync(context);
                     }
                 };
                 //

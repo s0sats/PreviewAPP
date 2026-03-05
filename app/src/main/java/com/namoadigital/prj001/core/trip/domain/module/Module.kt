@@ -12,6 +12,7 @@ import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
 import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseCase
 import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao
+import com.namoadigital.prj001.dao.trip.FsTripPositionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,9 +62,10 @@ object Module {
     fun providesTripDestinationRepository(
         @ApplicationContext app: Context,
         dao: FsTripDestinationDao,
-        tripDao: FSTripDao
+        tripDao: FSTripDao,
+        fsTripPositionDao: FsTripPositionDao,
     ): TripDestinationRepository {
-        return TripDestinationRepositoryImp(app, dao, tripDao)
+        return TripDestinationRepositoryImp(app, dao, tripDao, fsTripPositionDao)
     }
 
 }
