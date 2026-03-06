@@ -84,13 +84,16 @@ jobs:
         env:
           CI_MAVEN_REPO: ${{ github.workspace }}\namoa-lib-local
 
-      # 10. Encontra o AAB gerado
-      - name: Find AAB
+            # 10. Encontra o AAB e o Mapping
+      - name: Find AAB and Mapping
         shell: pwsh
         run: |
           $aabPath = Get-ChildItem -Recurse "app\build\outputs\bundle" -Filter "*.aab" | Select-Object -First 1 -ExpandProperty FullName
+          $mappingPath = Get-ChildItem -Recurse "app\build\outputs\mapping" -Filter "mapping.txt" | Select-Object -First 1 -ExpandProperty FullName
           echo "AAB_PATH=$aabPath" >> $env:GITHUB_ENV
+          echo "MAPPING_PATH=$mappingPath" >> $env:GITHUB_ENV
           echo "AAB encontrado: $aabPath"
+          echo "Mapping encontrado: $mappingPath"
 
       # 11. Define a versão da Release
       - name: Get version name
@@ -102,18 +105,29 @@ jobs:
           echo "RELEASE_TAG=v$version-pr$prNumber" >> $env:GITHUB_ENV
           echo "RELEASE_NAME=Release $version (PR #$prNumber)" >> $env:GITHUB_ENV
 
-      # 12. Cria a Release no GitHub com o AAB
+      # 12. Gera o resumo dos últimos commits
+      - name: Get commit history
+        shell: pwsh
+        run: |
+          $commits = git log -10 --pretty=format:"- %s (%an)" | Out-String
+          $summary = @"
+          ## O que mudou
+          $commits
+          "@
+          # Salva em arquivo para evitar problemas com caracteres especiais
+          $summary | Out-File -FilePath "release_notes.md" -Encoding utf8
+          echo "Commits coletados"
+
+      # 13. Cria a Release no GitHub com AAB e Mapping
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_NAME }}
-          body: |
-            AAB gerado automaticamente pelo PR #${{ github.event.pull_request.number }}
-            **Branch:** `${{ github.head_ref }}`
-            **Commit:** `${{ github.sha }}`
-            **Flavor:** productionGPRelease
-          files: ${{ env.AAB_PATH }}
+          body_path: release_notes.md
+          files: |
+            ${{ env.AAB_PATH }}
+            ${{ env.MAPPING_PATH }}
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
