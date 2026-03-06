@@ -84,18 +84,24 @@ jobs:
         env:
           CI_MAVEN_REPO: ${{ github.workspace }}\namoa-lib-local
 
-            # 10. Encontra o AAB e o Mapping
-      - name: Find AAB and Mapping
+      # 11. Encontra o AAB, APK e zipa o Mapping
+      - name: Find artifacts and zip Mapping
         shell: pwsh
         run: |
           $aabPath = Get-ChildItem -Recurse "app\build\outputs\bundle" -Filter "*.aab" | Select-Object -First 1 -ExpandProperty FullName
-          $mappingPath = Get-ChildItem -Recurse "app\build\outputs\mapping" -Filter "mapping.txt" | Select-Object -First 1 -ExpandProperty FullName
-          echo "AAB_PATH=$aabPath" >> $env:GITHUB_ENV
-          echo "MAPPING_PATH=$mappingPath" >> $env:GITHUB_ENV
-          echo "AAB encontrado: $aabPath"
-          echo "Mapping encontrado: $mappingPath"
 
-      # 11. Define a versão da Release
+          $mappingDir = Get-ChildItem -Recurse "app\build\outputs\mapping" -Directory | Select-Object -First 1 -ExpandProperty FullName
+          $mappingZip = "$env:GITHUB_WORKSPACE\mapping.zip"
+          Compress-Archive -Path "$mappingDir\*" -DestinationPath $mappingZip
+
+          echo "AAB_PATH=$aabPath" >> $env:GITHUB_ENV
+          echo "APK_PATH=$apkPath" >> $env:GITHUB_ENV
+          echo "MAPPING_ZIP=$mappingZip" >> $env:GITHUB_ENV
+          echo "AAB: $aabPath"
+          echo "APK: $apkPath"
+          echo "Mapping: $mappingZip"
+
+      # 12. Define a versão da Release
       - name: Get version name
         shell: pwsh
         run: |
@@ -103,22 +109,37 @@ jobs:
           $version = $content -replace '.*versionName = "(.+)".*', '$1'
           $prNumber = "${{ github.event.pull_request.number }}"
           echo "RELEASE_TAG=v$version-pr$prNumber" >> $env:GITHUB_ENV
-          echo "RELEASE_NAME=Release $version (PR #$prNumber)" >> $env:GITHUB_ENV
+          echo "RELEASE_NAME=🚀 Release $version (PR #$prNumber)" >> $env:GITHUB_ENV
 
-      # 12. Gera o resumo dos últimos commits
+      # 13. Gera o resumo dos últimos commits
       - name: Get commit history
         shell: pwsh
         run: |
+          $prNumber = "${{ github.event.pull_request.number }}"
+          $prUrl = "https://github.com/${{ github.repository }}/pull/$prNumber"
+          $branch = "${{ github.head_ref }}"
           $commits = git log -10 --pretty=format:"- %s (%an)" | Out-String
-          $summary = @"
-          ## O que mudou
-          $commits
-          "@
-          # Salva em arquivo para evitar problemas com caracteres especiais
-          $summary | Out-File -FilePath "release_notes.md" -Encoding utf8
-          echo "Commits coletados"
 
-      # 13. Cria a Release no GitHub com AAB e Mapping
+          $notes = @"
+          ## 📋 Informações
+          | | |
+          |---|---|
+          | 🔀 **PR** | [#$prNumber]($prUrl) |
+          | 🌿 **Branch** | ``$branch`` |
+          | 📦 **Flavor** | productionGP + development |
+
+          ## 📝 Últimos commits
+          $commits
+
+          ## 📁 Arquivos
+          - 📦 ``app-productionGP-release.aab`` — build de produção (Google Play)
+          - 🛠️ ``app-development-debug.apk`` — build de desenvolvimento
+          - 🗺️ ``mapping.zip`` — arquivos de ofuscação (ProGuard)
+          "@
+
+          $notes | Out-File -FilePath "release_notes.md" -Encoding utf8
+
+      # 14. Cria a Release no GitHub
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -127,7 +148,8 @@ jobs:
           body_path: release_notes.md
           files: |
             ${{ env.AAB_PATH }}
-            ${{ env.MAPPING_PATH }}
+            ${{ env.APK_PATH }}
+            ${{ env.MAPPING_ZIP }}
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
