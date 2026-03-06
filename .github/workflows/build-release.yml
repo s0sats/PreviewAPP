@@ -101,20 +101,3 @@ jobs:
           prerelease: true   # PR = pre-release; mude para false no merge na main
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-  ```
-
----
-
-## Fluxo final
-```
-Abre PR no PRJ001
-↓
-GitHub Actions dispara
-↓
-Clona NM_Compound_Views → publica .aar localmente no runner
-↓
-PRJ001 consome a library do Maven local
-↓
-Gera AAB assinado (productionRelease)
-↓
-Cria Release "v6.27.0-pr42" no GitHub com o AAB anexado
