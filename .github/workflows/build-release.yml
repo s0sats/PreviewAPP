@@ -5,22 +5,23 @@ on:
     branches: [ main ]
     types: [ opened, synchronize, reopened ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clona o PRJ001
+      # 1. Clona o PreviewAPP
       - name: Checkout PreviewAPP
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       # 2. Clona a library em pasta separada
-      - name: Checkout PreviewLibrary (Library)
+      - name: Checkout PreviewLibrary
         uses: actions/checkout@v4
         with:
-          repository: s0sats/PreviewLibrary   # <- troque aqui
+          repository: s0sats/PreviewLibrary
           token: ${{ secrets.GH_PAT }}
           path: nm-library
 
@@ -43,7 +44,9 @@ jobs:
 
       # 5. Define o path do maven local para a library
       - name: Set CI Maven Repo path
-        run: echo "CI_MAVEN_REPO=${{ github.workspace }}/namoa-lib-local" >> $GITHUB_ENV
+        run: |
+          mkdir -p ${{ github.workspace }}/namoa-lib-local
+          echo "CI_MAVEN_REPO=${{ github.workspace }}/namoa-lib-local" >> $GITHUB_ENV
 
       # 6. Publica a library no Maven local do runner
       - name: Build & Publish Library locally
@@ -51,16 +54,22 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew :namoa_library:publishReleasePublicationToCIRepository
+        env:
+          CI_MAVEN_REPO: ${{ github.workspace }}/namoa-lib-local
 
-      # 7. Decodifica o keystore
+      # 7. Confirma que a library foi publicada
+      - name: Verify library was published
+        run: |
+          find ${{ github.workspace }}/namoa-lib-local -name "*.aar" -o -name "*.pom" | head -20
+
+      # 8. Decodifica o keystore
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" > /tmp/keystore_base64.txt
           base64 -d /tmp/keystore_base64.txt > ${{ github.workspace }}/app/keystore.jks
-          # Valida se o arquivo foi gerado corretamente
           file ${{ github.workspace }}/app/keystore.jks
 
-      # 8. Gera o AAB productionGPRelease assinado
+      # 9. Gera o AAB productionGPRelease assinado
       - name: Build AAB (productionGPRelease)
         run: |
           chmod +x gradlew
@@ -69,15 +78,17 @@ jobs:
             -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
             -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+        env:
+          CI_MAVEN_REPO: ${{ github.workspace }}/namoa-lib-local
 
-      # 9. Encontra o AAB gerado
+      # 10. Encontra o AAB gerado
       - name: Find AAB
         run: |
           AAB_PATH=$(find app/build/outputs/bundle -name "*.aab" | head -1)
           echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
           echo "AAB encontrado: $AAB_PATH"
 
-      # 10. Define a versão da Release com base no versionName
+      # 11. Define a versão da Release
       - name: Get version name
         run: |
           VERSION=$(grep -m1 'versionName' app/build.gradle.kts | sed 's/.*versionName = "\(.*\)"/\1/')
@@ -85,7 +96,7 @@ jobs:
           echo "RELEASE_TAG=v${VERSION}-pr${PR_NUMBER}" >> $GITHUB_ENV
           echo "RELEASE_NAME=Release ${VERSION} (PR #${PR_NUMBER})" >> $GITHUB_ENV
 
-      # 11. Cria a Release no GitHub com o AAB
+      # 12. Cria a Release no GitHub com o AAB
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -93,11 +104,11 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           body: |
             AAB gerado automaticamente pelo PR #${{ github.event.pull_request.number }}
-            
+
             **Branch:** `${{ github.head_ref }}`
             **Commit:** `${{ github.sha }}`
-            **Flavor:** productionRelease
+            **Flavor:** productionGPRelease
           files: ${{ env.AAB_PATH }}
-          prerelease: true   # PR = pre-release; mude para false no merge na main
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
