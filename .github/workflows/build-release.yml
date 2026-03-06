@@ -44,57 +44,63 @@ jobs:
 
       # 5. Define o path do maven local para a library
       - name: Set CI Maven Repo path
+        shell: pwsh
         run: |
-          mkdir -p ${{ github.workspace }}/namoa-lib-local
-          echo "CI_MAVEN_REPO=${{ github.workspace }}/namoa-lib-local" >> $GITHUB_ENV
+          $repoPath = "$env:GITHUB_WORKSPACE\namoa-lib-local"
+          New-Item -ItemType Directory -Force -Path $repoPath
+          echo "CI_MAVEN_REPO=$repoPath" >> $env:GITHUB_ENV
 
       # 6. Publica a library no Maven local do runner
       - name: Build & Publish Library locally
         working-directory: nm-library
+        shell: pwsh
         run: |
-          chmod +x gradlew
-          ./gradlew :namoa_library:publishReleasePublicationToCIRepository
+          .\gradlew.bat :namoa_library:publishReleasePublicationToCIRepository
         env:
-          CI_MAVEN_REPO: ${{ github.workspace }}/namoa-lib-local
+          CI_MAVEN_REPO: ${{ github.workspace }}\namoa-lib-local
 
       # 7. Confirma que a library foi publicada
       - name: Verify library was published
+        shell: pwsh
         run: |
-          find ${{ github.workspace }}/namoa-lib-local -name "*.aar" -o -name "*.pom" | head -20
+          Get-ChildItem -Recurse "$env:GITHUB_WORKSPACE\namoa-lib-local" | Select-Object FullName
 
       # 8. Decodifica o keystore
       - name: Decode Keystore
+        shell: pwsh
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" > /tmp/keystore_base64.txt
-          base64 -d /tmp/keystore_base64.txt > ${{ github.workspace }}/app/keystore.jks
-          file ${{ github.workspace }}/app/keystore.jks
+          $bytes = [System.Convert]::FromBase64String("${{ secrets.KEYSTORE_BASE64 }}")
+          [System.IO.File]::WriteAllBytes("$env:GITHUB_WORKSPACE\app\keystore.jks", $bytes)
 
       # 9. Gera o AAB productionGPRelease assinado
       - name: Build AAB (productionGPRelease)
+        shell: pwsh
         run: |
-          chmod +x gradlew
-          ./gradlew :app:bundleProductionGPRelease \
-            -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
-            -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
-            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          .\gradlew.bat :app:bundleProductionGPRelease `
+            "-Pandroid.injected.signing.store.file=$env:GITHUB_WORKSPACE\app\keystore.jks" `
+            "-Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }}" `
+            "-Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }}" `
+            "-Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}"
         env:
-          CI_MAVEN_REPO: ${{ github.workspace }}/namoa-lib-local
+          CI_MAVEN_REPO: ${{ github.workspace }}\namoa-lib-local
 
       # 10. Encontra o AAB gerado
       - name: Find AAB
+        shell: pwsh
         run: |
-          AAB_PATH=$(find app/build/outputs/bundle -name "*.aab" | head -1)
-          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
-          echo "AAB encontrado: $AAB_PATH"
+          $aabPath = Get-ChildItem -Recurse "app\build\outputs\bundle" -Filter "*.aab" | Select-Object -First 1 -ExpandProperty FullName
+          echo "AAB_PATH=$aabPath" >> $env:GITHUB_ENV
+          echo "AAB encontrado: $aabPath"
 
       # 11. Define a versão da Release
       - name: Get version name
+        shell: pwsh
         run: |
-          VERSION=$(grep -m1 'versionName' app/build.gradle.kts | sed 's/.*versionName = "\(.*\)"/\1/')
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          echo "RELEASE_TAG=v${VERSION}-pr${PR_NUMBER}" >> $GITHUB_ENV
-          echo "RELEASE_NAME=Release ${VERSION} (PR #${PR_NUMBER})" >> $GITHUB_ENV
+          $content = Get-Content "app\build.gradle.kts" | Select-String 'versionName = "(.+)"' | Select-Object -First 1
+          $version = $content -replace '.*versionName = "(.+)".*', '$1'
+          $prNumber = "${{ github.event.pull_request.number }}"
+          echo "RELEASE_TAG=v$version-pr$prNumber" >> $env:GITHUB_ENV
+          echo "RELEASE_NAME=Release $version (PR #$prNumber)" >> $env:GITHUB_ENV
 
       # 12. Cria a Release no GitHub com o AAB
       - name: Create GitHub Release
@@ -104,7 +110,6 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           body: |
             AAB gerado automaticamente pelo PR #${{ github.event.pull_request.number }}
-
             **Branch:** `${{ github.head_ref }}`
             **Commit:** `${{ github.sha }}`
             **Flavor:** productionGPRelease
