@@ -17,9 +17,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
-        val localLib = File(rootDir, "../namoa-lib-local")
-        if (localLib.exists()) {
-            maven { url = uri(localLib) }
+        val ciRepo = System.getenv("CI_MAVEN_REPO")
+        if (ciRepo != null) {
+            maven { url = uri(ciRepo) }
         }
         maven {
             url = uri("file:///C:/Android/LIB")
