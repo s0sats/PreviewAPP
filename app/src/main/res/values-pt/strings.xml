@@ -1,6 +1,7 @@
 <resources>
     <string name="act005_drawer_opened">Drawer Aberto</string>
     <string name="act005_drawer_closed">Drawer Fechado</string>
+    <string name="action_settings">Settings</string>
     <string name="get_customer_alert_title">Cliente</string>
     <string name="generic_start_processing_msg">Iniciando processamento...</string>
     <string name="generic_msg_cancel">Cancelar</string>
